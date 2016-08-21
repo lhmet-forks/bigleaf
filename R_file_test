@@ -1,0 +1,8 @@
+# This is an R file created on Bitbucket
+
+test <- function(a,b){
+  c <- a + b 
+  return(c)
+}
+
+# that's all folks!

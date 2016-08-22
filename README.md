@@ -1,6 +1,6 @@
 # README #
 
-This repository serves as comprehensive collection of functions to calcultate additional variables from water, carbon and energy fluxes measured by EC data as well as meteorological data. The functions assume the vegetation to behave like a "big leaf", i.e. vertical variations within the canopy are ignored.
+This repository serves as comprehensive collection of functions to calcultate additional variables from water, carbon and energy fluxes measured by EC data as well as meteorological data. The functions assumes that the vegetation behaves like a "big leaf", i.e. vertical variations within the canopy are ignored.
 
 
 an (incomplete) list of what should be in the package:
@@ -23,11 +23,19 @@ an (incomplete) list of what should be in the package:
 - PET, Priestley-Taylor
 
 # aerodynamic properties:
-- aerodynamic conductance
+- aerodynamic conductance (different versions)
 - quasi-laminar boundary layer conductance (kB)
 - Monin-Obhukov length
+- stability parameter zeta
 - omega (different versions)
 - Reynolds number
+- stability correction functions (different versions)
 
 # surface conditions
 - D0, T0, C0
+
+# energy balance
+- Bowen ratio
+- energy balance ratio (EBR)
+- "missing" energy
+- Gc uncertainty based on EBR

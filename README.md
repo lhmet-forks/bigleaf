@@ -19,8 +19,11 @@ an (incomplete) list of what should be in the package:
 - Ci
 - Gc conversion ms-1 to mol m-2 s-1
 
-# ET
+# ET and WUE
 - PET, Priestley-Taylor
+- WUE, IWUE, uWUE
+- g1
+
 
 # aerodynamic properties:
 - aerodynamic conductance (different versions)

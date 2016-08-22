@@ -1,6 +1,6 @@
 # README #
 
-This repository serves as comprehensive collection of functions to calcultate additional variables from water, carbon and energy fluxes measured by EC data as well as meteorological data. The functions assumes that the vegetation behaves like a "big leaf", i.e. vertical variations within the canopy are ignored.
+This repository serves as comprehensive collection of functions to calculate from EC flux data and accompanying meteorological data. The functions assumes that the vegetation behaves like a "big leaf", i.e. vertical variations within the canopy are ignored.
 
 
 an (incomplete) list of what should be in the package:

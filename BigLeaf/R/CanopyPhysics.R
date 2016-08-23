@@ -103,7 +103,6 @@
 #' @return a matrix containing Gb, Rb, and kB
 #' 
 #' @export
-
 Gb.Thom <- function(ustar,k=0.41){
   Rb <- 6.2*ustar^-0.667
   Gb <- 1/Rb
@@ -115,20 +114,28 @@ Gb.Thom <- function(ustar,k=0.41){
 
 
 
-# ### Roughness Reynolds number; Massman 1999
-# ReynoldsNumber <- function(hs,ustar,pressure,Tair,pressure0=101325,Tair0=273.15){
-#   # hs = roughness height of the soil [m]
-#   # v = kinematic viscosity of the air
-#   # Tair in K!!
-#   v  <- 1.327e-05*(pressure0/pressure)*(Tair/Tair0)^1.81
-#   Re <- hs*ustar/v
-#   return(Re)
-# }
-# 
-# 
-# 
-# 
-# 
+#' Boundary layer conductance according to Thom 1972
+#' 
+#' An empirical formulation for the quasi-laminar boundary layer conductance
+#' based on ustar
+#' 
+#' @param ustar friction velocity (m s-1)
+#' @param k von-Karman constant (-)
+#' 
+#' @return a matrix containing Gb, Rb, and kB
+#' 
+#' @export
+ReynoldsNumber <- function(hs,ustar,pressure,Tair,pressure0=101325,Tair0=273.15){
+  # hs = roughness height of the soil [m]
+  # v = kinematic viscosity of the air
+  # Tair in K!!
+  v  <- 1.327e-05*(pressure0/pressure)*(Tair/Tair0)^1.81
+  Re <- hs*ustar/v
+  return(Re)
+}
+
+
+
 # ### kB model from Su_2001
 # kB_Su_2001 <- function(rk,Cd,ustar,u,LAI,hs,p,p0,Tair,Tair0,Dl){
 #   fc  <- (1-exp(-LAI/2))                                                        ## as in JSBACH

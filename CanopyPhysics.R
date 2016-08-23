@@ -10,17 +10,17 @@
 
 
 ## global constants
-cp <- 1004.834                        # specific heat of air for constant pressure [J K-1 kg-1] 
-                                      #  (Foken 2008 Eq. 2.54)
-Rgas         <- 8.314510              # universal gas constant [J mol-1 K-1] (Foken p. 245)
-molarMassAir <- 28.96                 # molar mass of dry air [g mol-1] 
-R_dryair     <- 287.0586              # gas constant of dry air [J kg-1 K-1] (Foken p. 245)
-Kelvin       <- 273.15                # conversion Kelvin to Celsius
-eps          <- 0.622                 # ratio of the molecular weight of water vapor to dry air
-gv           <- 9.81                  # gravitational acceleration [m s-2]
-standard_air_pressure_msl <- 101325   # reference atmospheric pressure (at sea level) [Pa]
-rk <- 0.41                            # von Karman constant [-]
-
+constants <- list(
+  cp           = 1004.834,        # specific heat of air for constant pressure [J K-1 kg-1] (Foken 2008 Eq. 2.54)
+  Rgas         = 8.314510,        # universal gas constant [J mol-1 K-1] (Foken p. 245)
+  molarMassAir = 28.96,           # molar mass of dry air [g mol-1] 
+  R_dryair     = 287.0586,        # gas constant of dry air [J kg-1 K-1] (Foken p. 245)
+  Kelvin       = 273.15,          # conversion Kelvin to Celsius
+  eps          = 0.622,           # ratio of the molecular weight of water vapor to dry air [-]
+  gv           = 9.81,            # gravitational acceleration [m s-2]
+  pressure_msl = 101325,          # reference atmospheric pressure (at sea level) [Pa]
+  k            = 0.41             # von Karman constant [-]
+)
 
 
 # ga_complex <- function(temperature,pressure,wspeed,ustar,fh,zr,zs,Dl){
@@ -81,7 +81,73 @@ rk <- 0.41                            # von Karman constant [-]
 #   return(1/ra_h)
 # }
 
+## Alternative version
+# Gb.Thom <- function(ustar,constants){
+#   Rb <- 6.2*ustar^-0.667
+#   Gb <- 1/Rb
+#   kB <- Rb*(constants$k*ustar)
+#   
+#   return(cbind(Rb,Gb,kB))
+# }
 
+
+
+#' Boundary layer conductance according to Thom 1972
+#' 
+#' An empirical formulation for the quasi-laminar boundary layer conductance
+#' based on ustar
+#' 
+#' @param ustar friction velocity (m s-1)
+#' @param k von-Karman constant (-)
+#' 
+#' @return a matrix containing Gb, Rb, and kB
+#' 
+#' @export
+
+Gb.Thom <- function(ustar,k=0.41){
+  Rb <- 6.2*ustar^-0.667
+  Gb <- 1/Rb
+  kB <- Rb*(k*ustar)
+  
+  return(cbind(Rb,Gb,kB))
+}
+
+
+
+
+### Roughness Reynolds number; Massman 1999
+ReynoldsNumber <- function(hs,ustar,pressure,Tair,pressure0=101325,Tair0=273.15){
+  # hs = roughness height of the soil [m]
+  # v = kinematic viscosity of the air
+  # Tair in K!!
+  v  <- 1.327e-05*(pressure0/pressure)*(Tair/Tair0)^1.81
+  Re <- hs*ustar/v
+  return(Re)
+}
+
+
+
+
+
+### kB model from Su_2001
+kB_Su_2001 <- function(rk,Cd,ustar,u,LAI,hs,p,p0,Tair,Tair0,Dl){
+  fc  <- (1-exp(-LAI/2))                                                        ## as in JSBACH
+  Re  <- Reynolds_number(hs=hs,ustar=ustar,p=p,p0=p0,Tair=Tair,Tair0=Kelvin)    ## Su 2001 according to Brutsaert_1982
+  kBs <- 2.46*(Re)^0.25 - log(7.4)                                              # Su_2001 Eq. 13
+  
+  v   <- 1.327*10^-05*((p0/1000)/(p/1000))*(Tair/Tair0)^1.81                    # kinematic viscosity (m^2/s); from=Massman_1999b ; compare with http://www.engineeringtoolbox.com/dry-air-properties-d_973.html
+  Reh <- Dl*u/v                                                                 # Reh = Reynolds number
+  Ct  <- 1*0.71^-0.6667*Reh^-0.5*2                                              # heat transfer coefficient of the leaf (Massman_1999 p.31)
+  kB  <- (rk*Cd)/(4*Ct*ustar/u)*fc^2 + kBs*(1 - fc)^2
+  return(kB)
+}
+
+Gb.Su2001 <- function()
+
+
+  
+  
+  
 ga_complex <- function(temperature,pressure,wspeed,ustar,fh,zr,zs,Dl,disp,z0m,LAI,kB_version,stab_version){
   # computes aerodynamic conductance according to MOST following Foken's receipe
   # source: Liu et al. 2007 HESS (based on Thom 1975)
@@ -150,8 +216,10 @@ ga_complex <- function(temperature,pressure,wspeed,ustar,fh,zr,zs,Dl,disp,z0m,LA
 ga_simple <- function(wspeed,ustar){
   # as previously calculated in the database, neglecting stability corrections
   # second term represents excess resistance (from Monteith & Unsworth 2010 p. 341 Formel 17.8)
-  ra <- wspeed/ustar^2 + 6.2*ustar^-0.667
-  ga <- 1/ra
+  ra_m <- wspeed/ustar^2
+  ra_b <- 6.2*ustar^-0.667
+  ra_h <- ra_m + ra_b
+  ga <- 1/ra_h
   return(ga)
 }
 

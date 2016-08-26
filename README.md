@@ -2,7 +2,7 @@
 
 This repository serves as comprehensive collection of functions that can be used to calculate additional variables from EC flux data and accompanying meteorological data. The functions assume that the vegetation behaves like a "big leaf", i.e. vertical variations within the canopy are ignored.
 
-Note that the folder "BigLeaf" is the actual R-package. The corresponding R code is under BigLeaf/R/
+It's supposed to develop into an R-package to be put on CRAN.
 
 
 an (incomplete) list of what should be in the package:

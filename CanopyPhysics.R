@@ -8,19 +8,27 @@
 ##
 ####-----------------------------------------------------------------------------------
 
+library(devtools)
+library(roxygen2)
+setwd("./BigLeaf")
+
 
 # ## global constants
-# constants <- list(
-#   cp           = 1004.834,        # specific heat of air for constant pressure [J K-1 kg-1] (Foken 2008 Eq. 2.54)
-#   Rgas         = 8.314510,        # universal gas constant [J mol-1 K-1] (Foken p. 245)
-#   molarMassAir = 28.96,           # molar mass of dry air [g mol-1] 
-#   R_dryair     = 287.0586,        # gas constant of dry air [J kg-1 K-1] (Foken p. 245)
-#   Kelvin       = 273.15,          # conversion Kelvin to Celsius
-#   eps          = 0.622,           # ratio of the molecular weight of water vapor to dry air [-]
-#   gv           = 9.81,            # gravitational acceleration [m s-2]
-#   pressure_msl = 101325,          # reference atmospheric pressure (at sea level) [Pa]
-#   k            = 0.41             # von Karman constant [-]
-# )
+#
+constants <- list(
+
+   cp           = 1004.834,        # specific heat of air for constant pressure [J K-1 kg-1] (Foken 2008 Eq. 2.54)
+   Rgas         = 8.314510,        # universal gas constant [J mol-1 K-1] (Foken p. 245)
+   Mair         = 28.96,           # molar mass of dry air [g mol-1] 
+   Rdryair      = 287.0586,        # gas constant of dry air [J kg-1 K-1] (Foken p. 245)
+   Kelvin       = 273.15,          # conversion Kelvin to Celsius
+   eps          = 0.622,           # ratio of the molecular weight of water vapor to dry air (-)
+   gv           = 9.81,            # gravitational acceleration (m s-2)
+   pressure0    = 101325,          # reference atmospheric pressure (at sea level) (Pa)
+   Tair0        = 273.15           # reference air temperature (K)
+   k            = 0.41             # von Karman constant (-)
+
+)
 
 
 # ga_complex <- function(temperature,pressure,wspeed,ustar,fh,zr,zs,Dl){
@@ -95,66 +103,280 @@
 #' Boundary layer conductance according to Thom 1972
 #' 
 #' An empirical formulation for the quasi-laminar boundary layer conductance
-#' based on ustar
+#' based on a simple ustar dependency.
 #' 
 #' @param ustar friction velocity (m s-1)
 #' @param k von-Karman constant (-)
 #' 
-#' @return a matrix containing Gb, Rb, and kB
+#' @return a matrix with the following columns:
+#' 
+#' @references Thom, A., 1972: Momentum, mass and heat exchange of vegetation. Quarterly Journal of the Royal Meteorological Society, 98, 124--134
+#' 
+#' @seealso \code{\link{Gb.Su}}
+#' 
 #' 
 #' @export
-Gb.Thom <- function(ustar,k=0.41){
+Gb.Thom <- function(ustar,constants){
+  # kB <- 1.35*k*(100*ustar)^0.333
   Rb <- 6.2*ustar^-0.667
   Gb <- 1/Rb
-  kB <- Rb*(k*ustar)
+  kB <- Rb*constants$k*ustar
   
-  return(cbind(Rb,Gb,kB))
+  return(data.frame(Rb,Gb,kB))
 }
 
 
-
-
-#' Boundary layer conductance according to Thom 1972
+#' Roughness Reynolds Number
 #' 
 #' An empirical formulation for the quasi-laminar boundary layer conductance
 #' based on ustar
 #' 
-#' @param ustar friction velocity (m s-1)
+#' @param ustar friction velocity (m s^{-1})
 #' @param k von-Karman constant (-)
 #' 
 #' @return a matrix containing Gb, Rb, and kB
 #' 
 #' @export
-ReynoldsNumber <- function(hs,ustar,pressure,Tair,pressure0=101325,Tair0=273.15){
+ReynoldsNumber <- function(hs,ustar,pressure,Tair,constants){
   # hs = roughness height of the soil [m]
   # v = kinematic viscosity of the air
   # Tair in K!!
-  v  <- 1.327e-05*(pressure0/pressure)*(Tair/Tair0)^1.81
+  v  <- 1.327e-05*(constants$pressure0/pressure)*(Tair/constants$Tair0)^1.81
   Re <- hs*ustar/v
+  
   return(Re)
 }
 
 
 
-# ### kB model from Su_2001
-# kB_Su_2001 <- function(rk,Cd,ustar,u,LAI,hs,p,p0,Tair,Tair0,Dl){
-#   fc  <- (1-exp(-LAI/2))                                                        ## as in JSBACH
-#   Re  <- Reynolds_number(hs=hs,ustar=ustar,p=p,p0=p0,Tair=Tair,Tair0=Kelvin)    ## Su 2001 according to Brutsaert_1982
-#   kBs <- 2.46*(Re)^0.25 - log(7.4)                                              # Su_2001 Eq. 13
-#   
-#   v   <- 1.327*10^-05*((p0/1000)/(p/1000))*(Tair/Tair0)^1.81                    # kinematic viscosity (m^2/s); from=Massman_1999b ; compare with http://www.engineeringtoolbox.com/dry-air-properties-d_973.html
-#   Reh <- Dl*u/v                                                                 # Reh = Reynolds number
-#   Ct  <- 1*0.71^-0.6667*Reh^-0.5*2                                              # heat transfer coefficient of the leaf (Massman_1999 p.31)
-#   kB  <- (rk*Cd)/(4*Ct*ustar/u)*fc^2 + kBs*(1 - fc)^2
-#   return(kB)
-# }
-# 
-# Gb.Su2001 <- function()
-# 
-# 
-#   
-#   
-#   
+
+#' Boundary layer conductance according to Su et al. 2001
+#' 
+#' A physically based formulation for the quasi-laminar boundary layer conductance. 
+#'
+#' @param ustar     friction velocity (m s-1)
+#' @param wind         wind speed (m s-1)
+#' @param Patm      atmospheric pressure (Pa)
+#' @param Tair      air temperature (degC)
+#' @param Dl        leaf dimension (m)
+#' @param N         number of leaf sides participating in heat exchange (1 or 2)
+#' @param fc        fractional vegetation cover [0-1] (if not provided, calculated from LAI)
+#' @param LAI       one-sided leaf area index (-)
+#' @param k         von-Karman constant
+#' @param Cd        foliage drag coefficient (-)
+#' @param hs        roughness height of the soil (m)
+#' 
+#' @return a data frame with the following columns:
+#' 
+#' @details If fc (fractional vegetation cover) is missing, it is estimated from LAI:
+#' 
+#' \eqn(fc = 1 - exp(-LAI/2))
+#' 
+#' 
+#' @references 
+#' Su, Z., Schmugge, T., Kustas, W. & Massman, W., 2001: An evaluation of two models for estimation of the roughness height for heat transfer between the land surface and the atmosphere. Journal of Applied Meteorology, 40, 1933--1951.
+#' 
+#' Massman, W., 1999: A model study of kB H- 1 for vegetated surfaces using 'localized near-field' Lagrangian theory. Journal of Hydrology. 223, 27--43.
+#' 
+            
+
+Gb.Su <- function(ustar,wind,Patm,Tair,Dl,N,fc=NULL,LAI,Cd=0.2,hs=0.01,constants){
+  Tair <- Tair + 273.15
+  
+  if (is.null(fc)) {
+    fc  <- (1-exp(-LAI/2)) 
+  } 
+  
+  v   <- 1.327*10^-05*(101325/Patm)*(Tair/273.15)^1.81   # kinematic viscosity (m^2/s); from=Massman_1999b ; compare with http://www.engineeringtoolbox.com/dry-air-properties-d_973.html
+  Re  <- hs*ustar/v                                      # Reynolds number
+  kBs <- 2.46*(Re)^0.25 - log(7.4)                       # Su_2001 Eq. 13       
+  Reh <- Dl*wind/v                                       # Reynolds number
+  Ct  <- 1*0.71^-0.6667*Reh^-0.5*N                       # heat transfer coefficient of the leaf (Massman_1999 p.31)
+  
+  kB  <- (constants$k*Cd)/(4*Ct*ustar/wind)*fc^2 + kBs*(1 - fc)^2
+  Rb  <- kB/(constants$k*ustar) 
+  Gb  <- 1/Rb
+  
+  
+  return(data.frame(Rb,Gb,kB))
+}
+
+
+#' Boundary layer conductance according to McNaughton and van den Hurk 1995 --> check units in original paper!
+#' 
+#' @param ustar     friction velocity (m s-1)
+#' @param leafwidth leaf width (m)
+#' @param LAI       one-sided leaf area index
+#' @param k         von-Karman constant (-)
+#' 
+#' 
+
+Gb.McNaughton <- function(ustar,leafwidth,LAI,constants){
+  Rb <- 130*(sqrt(leafwidth*ustar))/LAI - 1.7
+  
+  #kB <- k*(120/LAI*sqrt(leafwidth*ustar) - 2.5)
+  
+  kB  <- Rb*constants$k*ustar
+  Gb  <- 1/Rb
+  
+  
+  return(data.frame(Rb,Gb,kB))
+}
+
+
+
+#' Air density
+#' 
+#' Air density from air temperature and pressure
+#' 
+#' @param Tair      air temperature (degC)
+#' @param pressure  air pressure (Pa)
+#' @param Mair      molar mass of air (kg mol-1)
+#' @param Rgas      ideal gas constant ()  
+#' 
+#' 
+#' # airDensity <- function(temperature , pressure) {
+#   # function to calculate air density
+#   # input: temperature [K]
+#   #        pressure [Pa] 
+#   # output: air density [kg m-3]  
+#   rho <- molarMassAir * pressure / ( Rgas * temperature ) / 1000
+#   return(rho)
+# } 
+AirDensity <- function(Tair,pressure,constants){
+  Tair <- Tair + constants$Kelvin
+  
+  rho <- constants$Mair * pressure / (constants$Rgas * Tair) / 1000
+  
+  return(rho)
+}
+
+
+#' Monin-Obukhov length
+#' 
+#' title
+#' 
+#' @param Tair      air temperature (degC)
+#' @param pressure  air pressure (Pa)
+#' @param ustar     friction velocity (m s-1)
+#' @param H         sensible heat flux (W m-2)
+#' @param constants constants required
+#'                  cp
+#'                  k
+#'                  g 
+#' 
+#' MOL <- (-rho*cp*ustar^3*temperature)/(rk*gv*fh)
+MoninObukhovlength <- function(Tair,pressure,ustar,H,constants){
+  
+  rho  <- AirDensity(Tair,pressure,constants)
+  Tair <- Tair + constants$Kelvin
+  MOL  <- (-rho*constants$cp*ustar^3*Tair)/(constants$k*constants$g*H)
+  
+  return(MOL)
+}
+
+
+#' Aerodynamic conductance
+#' 
+#' Title
+#' 
+#' @param Tair        air temperature (degC)
+#' @param pressure    air pressure (Pa)
+#' @param wind        wind speed (m s-1)
+#' @param ustar       friction velocity (m s-1)
+#' @param H           sensible heat flux (W m-2)
+#' @param zr          measurement (=reference) height (m)
+#' @param zh          canopy height (m)
+#' @param disp        zero-plane displacement height (m)
+#' @param z0m         roughness length for momentum (m)
+#' @param Dl          characteristic leaf dimension (m)
+#' @param N           number of leaf sides participating in heat exchange (1 or 2)
+#' @param fc          fractional vegetation cover (-)
+#' @param LAI         one-sided leaf area index (m2 m-2)
+#' @param k           von-Karman constant (-)
+#' @param Cd          foliage drag coefficient (-)
+#' @param hs          roughness length of bare soil (m)
+#' @param stability   stability correction function
+#' @param Rbmodel     boundary layer resistance formulation
+#' 
+#' @details 1. McNaughton: Dl instead of leafwidth is taken
+
+Ga <- function(Tair,presssure,wind,ustar,H,zr,zh,disp,z0m,Dl,N,fc=NULL,LAI,k=0.41,Cd=0.2,hs=0.01,stability=c("Businger_1971","Dyer_1970","none"),
+               Rbmodel=c("Thom_1972","McNaughton_1995","Su_2001"))
+  
+  {
+  if (Rbmodel == "Thom_1972"){
+    
+    Rb <- 6.2*ustar^-0.667
+    Gb <- 1/Rb
+    kB <- Rb*k*ustar
+    
+  } else if (Rbmodel == "McNaughton_1995"){
+    
+    Rb <- 130*(sqrt(Dl*ustar))/LAI - 1.7
+    Gb <- 1/Rb
+    kB <- Rb*k*ustar
+    
+  } else if (Rbmodel == "Su_2001"){
+    
+    Tair <- Tair + 273.15
+    
+    if (is.null(fc)) {
+      fc  <- (1-exp(-LAI/2)) 
+    } 
+    
+    v   <- 1.327*10^-05*(101325/Patm)*(Tair/273.15)^1.81   # kinematic viscosity (m^2/s); from=Massman_1999b ; compare with http://www.engineeringtoolbox.com/dry-air-properties-d_973.html
+    Re  <- hs*ustar/v                                      # Reynolds number
+    kBs <- 2.46*(Re)^0.25 - log(7.4)                       # Su_2001 Eq. 13       
+    Reh <- Dl*wind/v                                       # Reynolds number
+    Ct  <- 1*0.71^-0.6667*Reh^-0.5*N                       # heat transfer coefficient of the leaf (Massman_1999 p.31)
+    
+    kB  <- (k*Cd)/(4*Ct*ustar/wind)*fc^2 + kBs*(1 - fc)^2
+    Rb  <- kB/(k*ustar) 
+    Gb  <- 1/Rb
+    
+  }
+  
+  
+  z0h <- z0m/exp(kB)   ## add: if z0m not provided, it is estimated from u/ustar^2
+  
+  if (stability == "none"){
+    
+    Ra_m <- wind/ustar^2
+    
+  } else {
+    
+    
+    
+  } 
+    
+    if (stability == "Businger_1971"){
+    
+    psi_h <- stabilityCorrection_h3(zeta)
+    Ra_m  <- pmax((log((zr - disp)/z0m) - psi_h),0.00001)/(k*ustar)
+    
+  } else if (stability == "Dyer_1970"){
+    
+    psi_h <- stabilityCorrection_h2(zeta)
+    Ra_m  <- pmax((log((zr - disp)/z0m) - psi_h),0.00001)/(k*ustar)
+  }  
+    
+    Ga_m <- 1/Ra_m
+    Ra_h <- Ra_m + Rb
+    Ga_h <- 1/Ra_h
+    
+  return(data.frame(Ga_m,Ra_m,Ga_h,Ra_h,Gb,Rb,kB))
+    
+  }
+  
+  
+  
+  
+  
+  
+  }
+
+
 # ga_complex <- function(temperature,pressure,wspeed,ustar,fh,zr,zs,Dl,disp,z0m,LAI,kB_version,stab_version){
 #   # computes aerodynamic conductance according to MOST following Foken's receipe
 #   # source: Liu et al. 2007 HESS (based on Thom 1975)
@@ -653,4 +875,41 @@ ReynoldsNumber <- function(hs,ustar,pressure,Tair,pressure0=101325,Tair0=273.15)
 # 
 # 
 # 
+
+
+###################################################################################
+#### Energy balance ###############################################################
+###################################################################################
+
+#' biochemical energy (Heat)
+#' 
+#' radiant energy absorbed in photosynthesis or heat release by respiration based on NEE  
+#' 
+#' @param alpha   energy taken up/released by photosynthesis/respiration (J umol-1)
+#' @param NEE     net ecosystem exchange (umol CO2 m-2 s-1)
+#' 
+#' @details the following sign convention is employed: NEE is negative when carbon is taken up by the ecosystem.
+#'          Positive values in the result mean that energy is taken up by the ecosystem, negative ones that heat is 
+#'          released.
+#'          The value of alpha is taken from Nobel_1974 (Meyers_2004), but other values exist (Blanken_1997)
+#' 
+#' @return biochemical energy Sp (W m-2)
+
+Photosyn_energy <- function(alpha=0.422,NEE){
+  Sp <- -alpha*NEE
+  
+  return(Sp)
+}
+
+
+
+
+
+
+
+
+## General literature
+## Gb: Hong_2012
+
+
 # 

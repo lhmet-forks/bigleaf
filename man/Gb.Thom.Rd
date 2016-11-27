@@ -4,22 +4,23 @@
 \alias{Gb.Thom}
 \title{Boundary layer conductance according to Thom 1972}
 \usage{
-Gb.Thom(ustar, constants)
+Gb.Thom(ustar, constants = bigleaf.constants())
 }
 \arguments{
 \item{ustar}{friction velocity (m s-1)}
 
-\item{k}{von-Karman constant (-)}
+\item{constants}{k - von-Karman constant (-)}
 }
 \value{
-a matrix with the following columns:
+a data.frame with the following columns: \ct
 }
 \description{
-An empirical formulation for the quasi-laminar boundary layer conductance
+An empirical formulation for the canopy boundary layer conductance
 based on a simple ustar dependency.
 }
 \references{
-Thom, A., 1972: Momentum, mass and heat exchange of vegetation. Quarterly Journal of the Royal Meteorological Society, 98, 124--134
+Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
+            Quarterly Journal of the Royal Meteorological Society, 98, 124--134
 }
 \seealso{
 \code{\link{Gb.Su}}, \code{\link{Gb.McNaughton}}

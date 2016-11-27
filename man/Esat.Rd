@@ -13,8 +13,8 @@ Esat(Tair, formula = c("Alduchov_1996", "Sonntag_1990"))
 }
 \value{
 A dataframe with the following columns: \cr
-   Esat - Saturation vapor pressure (Pa) \cr
-   delta - Slope of the saturation vapor pressure curve (Pa K-1)
+   \eqn{Esat} - Saturation vapor pressure (Pa) \cr
+   \eqn{delta} - Slope of the saturation vapor pressure curve (Pa K-1)
 }
 \description{
 Calculates Saturation vapor pressure (Esat) over water and the
@@ -25,7 +25,7 @@ Esat (Pa) is calculated based on the Magnus equation:
 
  \deqn{Esat = a * exp((b * Tair) / (c + Tair))}
  
- where the coefficients a, b, c differ with the formula used.
+ where the coefficients a, b, c take different values depending on the formula used.
  The slope of the Esat curve is calculated as the first derivative of the function:
  
  formula

@@ -25,9 +25,38 @@ library(roxygen2)
 # MOL independent of temperature?
 # Esat - output in Pa but usually input is kPa...makes sense?
 
+## TODO:
+# implement input for Gs and Ga functions can be either vectors or a dataframe!
 
 
+## test data
+wind     <- rnorm(20,3,0.8)
+ustar    <- rnorm(20,0.5,0.2)
+Tair     <- rnorm(20,25,2)
+pressure <- rep(101.325,20)
+Rn       <- rnorm(20,400,40)
+H        <- 0.3*Rn
+LE       <- 0.4*Rn
+G        <- 0.1*Rn
+Ga       <- rnorm(20,0.08,0.01)
+VPD      <- rnorm(20,2,0.3)
 
+
+testdf <- data.frame(wind,ustar,Tair,pressure,Rn,
+                     H,LE,G,Ga,VPD)
+
+# z <- 30
+# d <- 15
+# z0m_start <- 2
+# k <- 0.41
+# 
+# ra1 <- wind/ustar^2
+# ra2 <- log((z -d)/z0m)/(k*ustar)
+# 
+# ustar1 <- ustar
+# ustar1[ustar1 < 0.1] <- NA
+# 
+# nls(ra1[] ~ log((z -d)/z0m)/(k*ustar1),start=c(z0m=z0m_start),na.action=na.exclude)
 
 
 # ## global constants
@@ -127,22 +156,25 @@ bigleaf.constants <- function(){
 
 #' Boundary layer conductance according to Thom 1972
 #' 
-#' An empirical formulation for the quasi-laminar boundary layer conductance
+#' An empirical formulation for the canopy boundary layer conductance
 #' based on a simple ustar dependency.
 #' 
 #' @param ustar friction velocity (m s-1)
-#' @param k von-Karman constant (-)
+#' @param constants k - von-Karman constant (-)
 #' 
-#' @return a matrix with the following columns:
+#' @return a data.frame with the following columns: \ct
 #' 
-#' @references Thom, A., 1972: Momentum, mass and heat exchange of vegetation. Quarterly Journal of the Royal Meteorological Society, 98, 124--134
+#' 
+#' @references Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
+#'             Quarterly Journal of the Royal Meteorological Society, 98, 124--134
+#' 
 #' 
 #' @seealso \code{\link{Gb.Su}}, \code{\link{Gb.McNaughton}}
 #' 
 #' 
 #' @export
-Gb.Thom <- function(ustar,constants){
-  # kB <- 1.35*k*(100*ustar)^0.333
+Gb.Thom <- function(ustar,constants=bigleaf.constants()){
+  # kB <- 1.35*k*(100*ustar)^0.33333
   Rb <- 6.2*ustar^-0.667
   Gb <- 1/Rb
   kB <- Rb*constants$k*ustar
@@ -237,7 +269,8 @@ ReynoldsNumber <- function(hs,ustar,pressure,Tair,constants){
 #' 
 #' @seealso \code{\link{Gb.Thom}}, \code{\link{Gb.Su}}
 
-Gb.McNaughton <- function(ustar,leafwidth,LAI,constants){
+## check: kB supposed to be so low??
+Gb.McNaughton <- function(ustar,leafwidth,LAI,constants=bigleaf.constants()){
   Rb <- 130*(sqrt(leafwidth*ustar))/LAI - 1.7
   
   #kB <- k*(120/LAI*sqrt(leafwidth*ustar) - 2.5)
@@ -576,27 +609,6 @@ Ga <- function(Tair,presssure,wind,ustar,constants,H,zr,zh,disp,z0m,Dl,N,LAI,fc=
 }
   
 
-# ## test data
-# wind <- rnorm(100,3,0.8)
-# ustar <- rnorm(100,0.5,0.2)
-# Tair <- 25
-# pressure <- 100000
-# 
-# z <- 30
-# d <- 15
-# z0m_start <- 2
-# k <- 0.41
-# 
-# ra1 <- wind/ustar^2
-# ra2 <- log((z -d)/z0m)/(k*ustar)
-# 
-# ustar1 <- ustar
-# ustar1[ustar1 < 0.1] <- NA
-# 
-# nls(ra1[] ~ log((z -d)/z0m)/(k*ustar1),start=c(z0m=z0m_start),na.action=na.exclude)
-
-
-
 
 
 
@@ -678,15 +690,16 @@ q.to.e <- function(q,pressure){
 #'  Gs_mol: Surface conductance in mol m-2 s-1
 #' 
 #' @export
-GsPM <- function(Tair,pressure,Rn,VPD,LE,Ga,constants){
-
-   delta <- esatFromTemperature(temperature)[,"desatdT"]
-   gamma <- psychrometricConstant(temperature, pressure)
-   rho   <- air.density(Tair, pressure)
+GsPM <- function(Tair,pressure,Rn,VPD,LE,Ga,constants=bigleaf.constants()){
+   
+   VPD   <- VPD * 1000
+   delta <- Esat(Tair)[,"delta"]
+   gamma <- psychrometric.constant(Tair,pressure)
+   rho   <- air.density(Tair,pressure)
  
-   Gs_ms  <- ( LE * Ga * gamma ) / ( delta * Rn + rho * cp * Ga * VPD - LE * ( delta + gamma ) )
+   Gs_ms  <- ( LE * Ga * gamma ) / ( delta * Rn + rho * constants$cp * Ga * VPD - LE * ( delta + gamma ) )
 
-   Gs_mol <- ms.to.mol(Gs_ms,Tair,pressure,constants) 
+   Gs_mol <- mstomol(Gs_ms,Tair,pressure) 
 
    return(data.frame(Gs_ms,Gs_mol))
 
@@ -727,14 +740,14 @@ Temp.virtual <- function(Tair,q){
 #' 
 #'  \deqn{Esat = a * exp((b * Tair) / (c + Tair))}
 #'  
-#'  where the coefficients a, b, c differ with the formula used.
+#'  where the coefficients a, b, c take different values depending on the formula used.
 #'  The slope of the Esat curve is calculated as the first derivative of the function:
 #'  
 #'  formula
 #' 
 #' @return A dataframe with the following columns: \cr
-#'    Esat - Saturation vapor pressure (Pa) \cr
-#'    delta - Slope of the saturation vapor pressure curve (Pa K-1)
+#'    \eqn{Esat} - Saturation vapor pressure (Pa) \cr
+#'    \eqn{delta} - Slope of the saturation vapor pressure curve (Pa K-1)
 #'    
 #'    
 #' 
@@ -792,7 +805,7 @@ Esat <- function(Tair,formula=c("Alduchov_1996","Sonntag_1990")){
 psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
   
   lambda <- LE.vaporization(Tair)
-  gamma  <- (constants$cp * pressure/1000) / (constants$eps * lambda)
+  gamma  <- (constants$cp * pressure*1000) / (constants$eps * lambda)
   
   return(gamma)
 }

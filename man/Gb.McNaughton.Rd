@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf.R
 \name{Gb.McNaughton}
 \alias{Gb.McNaughton}
-\title{Boundary layer conductance according to McNaughton and van den Hurk 1995 --> check units in original paper!}
+\title{Boundary layer conductance according to Su et al. 2001}
 \usage{
 Gb.McNaughton(ustar, leafwidth, LAI, constants)
 }
@@ -11,14 +11,51 @@ Gb.McNaughton(ustar, leafwidth, LAI, constants)
 
 \item{leafwidth}{leaf width (m)}
 
+\item{LAI}{one-sided leaf area index (-)}
+
+\item{wind}{wind speed (m s-1)}
+
+\item{presssure}{atmospheric pressure (Pa)}
+
+\item{Tair}{air temperature (degC)}
+
+\item{Dl}{leaf dimension (m)}
+
+\item{N}{number of leaf sides participating in heat exchange (1 or 2)}
+
+\item{fc}{fractional vegetation cover [0-1] (if not provided, calculated from LAI)}
+
+\item{k}{von-Karman constant}
+
+\item{Cd}{foliage drag coefficient (-)}
+
+\item{hs}{roughness height of the soil (m)}
+
+\item{ustar}{friction velocity (m s-1)}
+
 \item{LAI}{one-sided leaf area index}
 
 \item{k}{von-Karman constant (-)}
 }
+\value{
+a data frame with the following columns:
+}
 \description{
-Boundary layer conductance according to McNaughton and van den Hurk 1995 --> check units in original paper!
+A physically based formulation for the quasi-laminar boundary layer conductance.
+}
+\details{
+If fc (fractional vegetation cover) is missing, it is estimated from LAI:
+
+\eqn(fc = 1 - exp(-LAI/2))
+}
+\references{
+Su, Z., Schmugge, T., Kustas, W. & Massman, W., 2001: An evaluation of two models for estimation of the roughness height for heat transfer between the land surface and the atmosphere. Journal of Applied Meteorology, 40, 1933--1951.
+
+Massman, W., 1999: A model study of kB H- 1 for vegetated surfaces using 'localized near-field' Lagrangian theory. Journal of Hydrology. 223, 27--43.
 }
 \seealso{
+\code{\link{Gb.Thom}}, \code{\link{Gb.McNaughton}}
+
 \code{\link{Gb.Thom}}, \code{\link{Gb.Su}}
 }
 

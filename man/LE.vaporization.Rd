@@ -10,7 +10,7 @@ LE.vaporization(Tair)
 \item{Tair}{Air temperature (deg C)}
 }
 \value{
-latent heat of vaporization (J kg-1)
+\eqn{\lambda} latent heat of vaporization (J kg-1)
 }
 \description{
 Latent heat of vaporization as a function of air temperature.
@@ -18,7 +18,7 @@ Latent heat of vaporization as a function of air temperature.
 \details{
 The following formula is used:
 
-\deqn{lambda = (2.501 - 0.00237Tair)10^6}
+\deqn{\lambda = (2.501 - 0.00237*Tair)10^6}
 }
 \references{
 Stull, B., 1988: An Introduction to Boundary Layer Meteorology (p.641)

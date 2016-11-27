@@ -2,14 +2,14 @@
 % Please edit documentation in R/bigleaf.R
 \name{GsPM}
 \alias{GsPM}
-\title{Surface conductance for water from the Penman-Monteith equation}
+\title{Surface conductance for water}
 \usage{
 GsPM(Tair, pressure, Rn, VPD, LE, Ga, constants)
 }
 \arguments{
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Atmospheric pressure (Pa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{Rn}{Net radiation (W m-2)}
 
@@ -30,7 +30,7 @@ a dataframe with two columns:
  Gs_mol: Surface conductance in mol m-2 s-1
 }
 \description{
-Calculates surface conductance for H2O from the inverted Penman-Monteith
+Calculates surface conductance for water from the inverted Penman-Monteith
              equation.
 }
 \details{

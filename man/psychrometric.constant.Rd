@@ -4,12 +4,15 @@
 \alias{psychrometric.constant}
 \title{Psychrometric constant}
 \usage{
-psychrometric.constant(Tair, pressure, constants)
+psychrometric.constant(Tair, pressure, constants = bigleaf.constants())
 }
 \arguments{
 \item{Tair}{air temperature (degC)}
 
-\item{pressure}{air pressure (Pa)}
+\item{pressure}{air pressure (kPa)}
+
+\item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+eps - ratio of the molecular weight of water vapor to dry air (-)}
 }
 \value{
 the psychrometric constant (Pa K-1)
@@ -18,11 +21,14 @@ the psychrometric constant (Pa K-1)
 Calculates the psychrometric 'constant'
 }
 \details{
-The psychrometric constant is given as:
+The psychrometric constant (\eqn{\gamma}) is given as:
 
- formula
+ \deqn{\gamma = cp * pressure / (eps * \lambda)},
+ 
+ where \eqn{\lambda} is the latent heaf of vaporization (J kg-1), 
+ as calculated with \code{\link{LE.vaporization}}.
 }
 \references{
-test
+Bonan_2008 or Monteith_2010
 }
 

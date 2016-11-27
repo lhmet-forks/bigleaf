@@ -63,7 +63,7 @@ Aerodynamic conductance (Ga) is calculated as:
  to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
  and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length.
- Stability correction functions calculate the coreection based on the formulations by Businger 1971 
+ Stability correction functions calculate the correction based on the formulations by Businger 1971 
  Dyer 1970, based on zeta.
  If "none", atmospheric stability is neglected, and Monin-Obukhov length, and the 
  stability parameter zeta are not calculated.

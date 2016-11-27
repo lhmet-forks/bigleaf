@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf.R
 \name{Esat}
 \alias{Esat}
-\title{Saturation vapor pressure and slope of the curve}
+\title{Saturation vapor pressure (Esat) and slope of the Esat curve}
 \usage{
 Esat(Tair, formula = c("Alduchov_1996", "Sonntag_1990"))
 }
@@ -12,11 +12,9 @@ Esat(Tair, formula = c("Alduchov_1996", "Sonntag_1990"))
 \item{formula}{formula to be used. Either "Alduchov_1996" or "Sonntag_1990"}
 }
 \value{
-A dataframe with the following columns:
-\itemize{
-  \item{Esat} { - Saturation vapor pressure (Pa)}
-  \item{delta}{ - Slope of the saturation vapor pressure curve (Pa K-1)}
-}
+A dataframe with the following columns: \cr
+   Esat - Saturation vapor pressure (Pa) \cr
+   delta - Slope of the saturation vapor pressure curve (Pa K-1)
 }
 \description{
 Calculates Saturation vapor pressure (Esat) over water and the
@@ -27,8 +25,10 @@ Esat (Pa) is calculated based on the Magnus equation:
 
  \deqn{Esat = a * exp((b * Tair) / (c + Tair))}
  
- where the coefficients a, b, c differ with the formula.
- The slope of the Esat curve is calculated as the first derivative of the function.
+ where the coefficients a, b, c differ with the formula used.
+ The slope of the Esat curve is calculated as the first derivative of the function:
+ 
+ formula
 }
 \references{
 Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 

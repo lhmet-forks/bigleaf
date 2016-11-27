@@ -18,29 +18,39 @@ library(roxygen2)
 # - how to write formulas/math. notations
 # - how to write bold/italics
 # - PET and typical values / how to do it right?
-# - derive Ci?
+# - derive Ci? 
+# - when the output is a dataframe - use same or similar notation as for the arguments?
 
-# - how to deal with constants?
+### Issues/check:
+# MOL independent of temperature?
+# Esat - output in Pa but usually input is kPa...makes sense?
+
+
+
+
 
 
 # ## global constants
-#
-constants <- list(
+bigleaf.constants <- function(){
+  
+  list(
+    cp         = 1004.834,        # specific heat of air for constant pressure [J K-1 kg-1] (Foken 2008 Eq. 2.54)
+    Rgas       = 8.31451,         # universal gas constant [J mol-1 K-1] (Foken p. 245)
+    Md         = 0.0289645,       # molar mass of dry air [kg mol-1] (Foken 2008) 
+    Mw         = 0.0180153,       # molar mass of water vapor [kg mol-1] (Foken 2008)
+    eps        = 0.622,           # ratio of the molecular weight of water vapor to dry air (-) or Mw/Md
+    Rv         = 461.5,           # gas constant of water vapor (J kg-1 K-1) (Stull_1988 p.641)
+    Rd         = 287.0586,        # gas constant of dry air (J kg-1 K-1) (Foken p. 245)
+    Kelvin     = 273.15,          # conversion Celsius to Kelvin
+    g          = 9.81,            # gravitational acceleration (m s-2)
+    pressure0  = 101325,          # reference atmospheric pressure at sea level (Pa)
+    Tair0      = 273.15,          # reference air temperature (K)
+    k          = 0.41             # von Karman constant (-)
+  )
 
-   cp         = 1004.834,        # specific heat of air for constant pressure [J K-1 kg-1] (Foken 2008 Eq. 2.54)
-   Rgas       = 8.314510,        # universal gas constant [J mol-1 K-1] (Foken p. 245)
-   Md         = 28.96,           # molar mass of dry air [g mol-1] 
-   Mw         = 18.016,          # molecular mass for H2O (kg mol-1)
-   eps        = 0.622,           # ratio of the molecular weight of water vapor to dry air (-) or Mw/Md
-   Rv         = 461.5,           # gas constant for water vapor (J kg-1 K-1) (Stull_1988 p.641)
-   Rd         = 287.0586,        # gas constant for dry air (J kg-1 K-1) (Foken p. 245)
-   Kelvin     = 273.15,          # conversion Kelvin to Celsius
-   gv         = 9.81,            # gravitational acceleration (m s-2)
-   pressure0  = 101325,          # reference atmospheric pressure (at sea level) (Pa)
-   Tair0      = 273.15,          # reference air temperature (K)
-   k          = 0.41             # von Karman constant (-)
+}
 
-)
+
 
 
 # ga_complex <- function(temperature,pressure,wspeed,ustar,fh,zr,zs,Dl){
@@ -111,6 +121,9 @@ constants <- list(
 # }
 
 
+################################################
+### Boundary layer conductance formulations #### -------------------------------------------------------------------------
+################################################
 
 #' Boundary layer conductance according to Thom 1972
 #' 
@@ -193,26 +206,26 @@ ReynoldsNumber <- function(hs,ustar,pressure,Tair,constants){
 #' @seealso \code{\link{Gb.Thom}}, \code{\link{Gb.McNaughton}}
 #' 
 #' @export
-Gb.Su <- function(ustar,wind,pressure,Tair,Dl,N,fc=NULL,LAI,Cd=0.2,hs=0.01,constants){
-  Tair <- Tair + 273.15
-  
-  if (is.null(fc)) {
-    fc  <- (1-exp(-LAI/2)) 
-  } 
-  
-  v   <- 1.327*10^-05*(101325/pressure)*(Tair/273.15)^1.81   # kinematic viscosity (m^2/s); from=Massman_1999b ; compare with http://www.engineeringtoolbox.com/dry-air-properties-d_973.html
-  Re  <- hs*ustar/v                                      # Reynolds number
-  kBs <- 2.46*(Re)^0.25 - log(7.4)                       # Su_2001 Eq. 13       
-  Reh <- Dl*wind/v                                       # Reynolds number
-  Ct  <- 1*0.71^-0.6667*Reh^-0.5*N                       # heat transfer coefficient of the leaf (Massman_1999 p.31)
-  
-  kB  <- (constants$k*Cd)/(4*Ct*ustar/wind)*fc^2 + kBs*(1 - fc)^2
-  Rb  <- kB/(constants$k*ustar) 
-  Gb  <- 1/Rb
-  
-  
-  return(data.frame(Rb,Gb,kB))
-}
+# Gb.Su <- function(ustar,wind,pressure,Tair,Dl,N,fc=NULL,LAI,Cd=0.2,hs=0.01,constants){
+#   Tair <- Tair + 273.15
+#   
+#   if (is.null(fc)) {
+#     fc  <- (1-exp(-LAI/2)) 
+#   } 
+#   
+#   v   <- 1.327*10^-05*(101325/pressure)*(Tair/273.15)^1.81   # kinematic viscosity (m^2/s); from=Massman_1999b ; compare with http://www.engineeringtoolbox.com/dry-air-properties-d_973.html
+#   Re  <- hs*ustar/v                                      # Reynolds number
+#   kBs <- 2.46*(Re)^0.25 - log(7.4)                       # Su_2001 Eq. 13       
+#   Reh <- Dl*wind/v                                       # Reynolds number
+#   Ct  <- 1*0.71^-0.6667*Reh^-0.5*N                       # heat transfer coefficient of the leaf (Massman_1999 p.31)
+#   
+#   kB  <- (constants$k*Cd)/(4*Ct*ustar/wind)*fc^2 + kBs*(1 - fc)^2
+#   Rb  <- kB/(constants$k*ustar) 
+#   Gb  <- 1/Rb
+#   
+#   
+#   return(data.frame(Rb,Gb,kB))
+# }
 
 
 #' Boundary layer conductance according to McNaughton and van den Hurk 1995 --> check units in original paper!
@@ -237,64 +250,127 @@ Gb.McNaughton <- function(ustar,leafwidth,LAI,constants){
 }
 
 
+############################
+### air pressure, density ## --------------------------------------------------------------------------
+############################
 
 #' Air density
 #' 
 #' @description Air density of moist air from air temperature and pressure
 #' 
 #' @param Tair      air temperature (degC)
-#' @param pressure  air pressure (Pa)
-#' @param Mair      molar mass of air (kg mol-1)
-#' @param Rgas      ideal gas constant ()  
+#' @param pressure  air pressure (kPa)
+#' @param constants Kelvin - conversion degC to Kelvin \cr
+#'                  Rd - gas constant of dry air (J kg-1 K-1)
 #' 
-#' Foken: p/(Rl * Tv)
+#' @details Air density (\eqn{\rho}) is calculated as:
+#' \deqn{\rho = pressure / Rd * Tair}
+#' 
+#' @return air density (kg m-3)
+#' 
+#' @references Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany. 
 
-air.density <- function(Tair,pressure,constants){
-  Tair <- Tair + constants$Kelvin
+air.density <- function(Tair,pressure,constants=bigleaf.constants()){
+  Tair     <- Tair + constants$Kelvin
+  pressure <- pressure*1000
   
-  rho <- constants$Mair * pressure / (constants$Rgas * Tair) / 1000
+  rho <- pressure / (constants$Rd * Tair) 
   
   return(rho)
 }
 
 
-#' Barometric equation
+#' Air pressure from hypsometric equation
 #' 
-#' @description An estimate of mean pressure at some elevation as predicted by the
-#'              Barometric equation
+#' @description An estimate of mean pressure at a given elevation as predicted by the
+#'              hypsometric equation
 #'              
-#' # airDensity <- function(temperature , pressure) {
-#   # function to calculate air density
-#   # input: temperature [K]
-#   #        pressure [Pa] 
-#   # output: air density [kg m-3]  
-#   rho <- molarMassAir * pressure / ( Rgas * temperature ) / 1000
-#   return(rho)
-# } 
+#' @param elev elevation a.s.l. (m)
+#' @param Tair air temperature (degC)
+#' @param q    specific humidity (kg kg-1); optional
+#' @param constants Kelvin- conversion degC to Kelvin \cr
+#'                  pressure0 - reference atmospheric pressure at sea level (Pa) \cr
+#'                  Rd - gas constant of dry air (J kg-1 K-1) \cr
+#'                  g -  gravitational acceleration (m s-2) \cr
+#' 
+#' 
+#' @details 
+#' 
+#' @note the hypsometric equation gives a rough estimate of the standard pressure
+#'       at a given altitude. If specific humidity q is provided, humidity correction
+#'       is applied and the virtual temperature instead of air temperature is used.
+#'
+#' @return air pressure (kPa)
+#'                            
+#' @references Stull, B., 1988: An Introduction to Boundary Layer Meteorology.
+#'             Kluwer Academic Publishers, Dordrecht, Netherlands
+#'             
+hypsometric.equation <- function(elev,Tair,q=NULL,constants=bigleaf.constants()){
+  if(is.null(q)){
+    Temp <- Tair + constants$Kelvin
+  } else {
+    Temp <- Temp.virtual(Tair,q)
+  }
+  
+  pressure <- constants$pressure0 / exp(constants$g * elev / (constants$Rd*Temp))
+  pressure <- pressure/1000
+  
+  return(pressure)
+} 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################
+### Stability parameters and correction ### ---------------------------------------------------
+###########################################
 
 #' Monin-Obukhov length
 #' 
-#' title
+#' @description 
 #' 
 #' @param Tair      air temperature (degC)
-#' @param pressure  air pressure (Pa)
+#' @param pressure  air pressure (kPa)
 #' @param ustar     friction velocity (m s-1)
 #' @param H         sensible heat flux (W m-2)
-#' @param constants constants required
-#'                  cp
-#'                  k
-#'                  g 
+#' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
+#'                  cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+#'                  k - von Karman constant (-) \cr
+#'                  g - gravitational acceleration (m s-2)
 #' 
-#' MOL <- (-rho*cp*ustar^3*temperature)/(rk*gv*fh)
-Monin.Obukhov.length <- function(Tair,pressure,ustar,H,constants){
+#' @description The Monin-Obukhov length (L) is given as:
+#' \deqn{L = - (\rho * cp * ustar^3 * Tair) / (k * g * H)}
+#' 
+#' @return Monin-Obukhov length (m)
+#' 
+#' @references Foken_2008
+#' 
+#' @export
+MoninObukhov.length <- function(Tair,pressure,ustar,H,constants=bigleaf.constants()){
   
-  rho  <- air.density(Tair,pressure,constants)
+  rho  <- air.density(Tair,pressure,constants=bigleaf.constants())
   Tair <- Tair + constants$Kelvin
   MOL  <- (-rho*constants$cp*ustar^3*Tair)/(constants$k*constants$g*H)
   
   return(MOL)
 }
+
+
 
 
 ### from Foken_2008; p.65 (suggested by Businger_1971), in the form of Högstrom 1988
@@ -368,7 +444,7 @@ stab.correction.h.Dyer <- function(zeta){
 #'  to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
 #'  and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
 #'  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length.
-#'  Stability correction functions calculate the coreection based on the formulations by Businger 1971 
+#'  Stability correction functions calculate the correction based on the formulations by Businger 1971 
 #'  Dyer 1970, based on zeta.
 #'  If "none", atmospheric stability is neglected, and Monin-Obukhov length, and the 
 #'  stability parameter zeta are not calculated.
@@ -500,106 +576,29 @@ Ga <- function(Tair,presssure,wind,ustar,constants,H,zr,zh,disp,z0m,Dl,N,LAI,fc=
 }
   
 
-## test data
-wind <- rnorm(100,3,0.8)
-ustar <- rnorm(100,0.5,0.2)
-Tair <- 25
-pressure <- 100000
-
-z <- 30
-d <- 15
-z0m_start <- 2
-k <- 0.41
-
-ra1 <- wind/ustar^2
-ra2 <- log((z -d)/z0m)/(k*ustar)
-
-ustar1 <- ustar
-ustar1[ustar1 < 0.1] <- NA
-
-nls(ra1[] ~ log((z -d)/z0m)/(k*ustar1),start=c(z0m=z0m_start),na.action=na.exclude)
-
-#' Latent heat of vaporization
-#' 
-#' @description Latent heat of vaporization as a function of air temperature.
-#' 
-#' @param Tair  Air temperature (deg C)
-#' 
-#' @details The following formula is used:
-#' 
-#' \deqn{lambda = (2.501 - 0.00237Tair)10^6}
-#' 
-#' @return latent heat of vaporization (J kg-1) 
-#' 
-#' @references Stull, B., 1988: An Introduction to Boundary Layer Meteorology (p.641)
-#'             Kluwer Academic Publishers, Dordrecht, Netherlands
-#'             
-#'             Foken_2008
-#' 
-#' @export
-LE.vaporization <- function(Tair) {
-  
-    k1 <- 2.501
-    k2 <- 0.00237
-    
-    lambda <- ( k1 - k2 * Tair ) * 1e+06
-    
-    return(lambda)
-  }
+# ## test data
+# wind <- rnorm(100,3,0.8)
+# ustar <- rnorm(100,0.5,0.2)
+# Tair <- 25
+# pressure <- 100000
+# 
+# z <- 30
+# d <- 15
+# z0m_start <- 2
+# k <- 0.41
+# 
+# ra1 <- wind/ustar^2
+# ra2 <- log((z -d)/z0m)/(k*ustar)
+# 
+# ustar1 <- ustar
+# ustar1[ustar1 < 0.1] <- NA
+# 
+# nls(ra1[] ~ log((z -d)/z0m)/(k*ustar1),start=c(z0m=z0m_start),na.action=na.exclude)
 
 
 
-#' Saturation vapor pressure (Esat) and slope of the Esat curve
-#' 
-#' @description Calculates Saturation vapor pressure (Esat) over water and the
-#'              corresponding slope of the saturation vapor pressure curve.
-#' 
-#' @param Tair     air temperature (deg C)
-#' @param formula  formula to be used. Either "Alduchov_1996" or "Sonntag_1990"
-#' 
-#' @details Esat (Pa) is calculated based on the Magnus equation:
-#' 
-#'  \deqn{Esat = a * exp((b * Tair) / (c + Tair))}
-#'  
-#'  where the coefficients a, b, c differ with the formula.
-#'  The slope of the Esat curve is calculated as the first derivative of the function.
-#' 
-#' @return A dataframe with the following columns:
-#' \itemize{
-#'   \item{Esat} { - Saturation vapor pressure (Pa)}
-#'   \item{delta}{ - Slope of the saturation vapor pressure curve (Pa K-1)}
-#' }
-#'    
-#'    
-#' 
-#' @references Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 
-#'             saturation vapor pressure. Journal of Applied Meteorology, 1996, 35, 601-609
-#' 
-#'             Sonntag_1990 Important new values of the physical constants of 1986, vapor 
-#'             pressure formulations based on the ITS-90, and psychrometric formulae 
-#'             (--> as used by WMO 2008!)
-#' @export
-Esat <- function(Tair,formula=c("Alduchov_1996","Sonntag_1990")){
-  
-  formula <- match.arg(formula)
-  
-  if (formula == "Alduchov_1996"){
-    a <- 610.94
-    b <- 17.625
-    c <- 243.04
-  } else if (formula == "Sonntag_1990"){
-    a <- 611.2
-    b <- 17.62
-    c <- 243.12
-  }
 
-  Esat <- a * exp((b * Tair) / (c + Tair))
-  
-  delta <- eval(D(expression(a * exp((b * Tair) / (c + Tair))),name="Tair"))
-  
-  return(data.frame(Esat,delta))
-  
-}
+
 
 
 
@@ -648,47 +647,15 @@ q.to.e <- function(q,pressure){
 
 
 
-#' Psychrometric constant
-#' 
-#' @description Calculates the psychrometric 'constant'
-#' 
-#' @param Tair      air temperature (degC)
-#' @param pressure  air pressure (Pa)
-#' 
-#' @details The psychrometric constant is given as:
-#' 
-#'  formula
-#'  
-#' @return the psychrometric constant (Pa K-1)
-#'  
-#' @references test
-#' 
-psychrometric.constant <- function(Tair,pressure,constants){
-  
-  lambda <- LE.vaporization(Tair)
-  gamma  <- (constants$cp * pressure) / (constants$eps * lambda)
-  
-  return(gamma)
-}
 
-  # psychrometricConstant <- function(temperature, pressure) {
-  #   # function to calculate the psychrometric constant
-  #   # source: Bonan et al. 2008
-  #   # input:  temperature [K]
-  #   #         pressure [Pa]
-  #   # output: psychrometric constant gamma [Pa K-1]
-  #   lambda <- latentHeatOfVapourisation(temperature)
-  #   gamma <- ( cp * pressure ) / (eps * lambda)
-  #   return(gamma)
-  # }
 
-#' Surface conductance for water from the Penman-Monteith equation
+#' Surface conductance for water
 #' 
-#' @description Calculates surface conductance for H2O from the inverted Penman-Monteith
+#' @description Calculates surface conductance for water from the inverted Penman-Monteith
 #'              equation.
 #' 
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Atmospheric pressure (Pa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param Rn        Net radiation (W m-2)
 #' @param G         Ground heat flux (W m-2)
 #' @param S         Sum of all storage fluxes (W m-2)
@@ -725,62 +692,208 @@ GsPM <- function(Tair,pressure,Rn,VPD,LE,Ga,constants){
 
 }
 
+#' virtual temperature
+#' 
+#' @description virtual temperature
+#' 
+#' @param Tair air temperature (deg C)
+#' @param q    specific humidity (kg kg-1)
+#' 
+#' @details the virtual temperature is given by:
+#'  \deqn{(Tair+273.15)(1 + 0.61*q)}
+#' 
+#' @note mixing ratio is approximated by specific humidity
+#' 
+#' @return virtual temperature (K)
+#' 
+#' @references Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 
-#' Conversion between conductance units
-#' 
-#' @description Converts canopy/surface conductance from ms-1
-#'              to mol m-2 s-1 (ms.to.mol), or vice versa (mol.to.ms) based on
-#'              the ideal gas law.
-#' 
-#' @param Gc_ms       Canopy/Surface conductance (ms-1)
-#' @param Tair        Air temperature (deg C)
-#' @param pressure    Air pressure (Pa)
-#' @param constants 
-#' 
-#' @return Canopy/Surface conductance in mol m-2 s-1 
-#' 
-#' 
-ms.to.mol <- function(Gc_ms,Tair,pressure,constants){
-  Tair   <- Tair + constants$Kelvin
-  Gc_mol <- Gc_ms * pressure / (constants$Rgas * Tair)
-  
-  return(Gc_mol)
+Temp.virtual <- function(Tair,q){
+   Tair <- Tair + 273.15
+   Tv <- Tair*(1+0.61*q)   # mixing ratio is approximated by specific humidity
+   return(Tv)
 }
 
 
-mol.to.ms <- function(Gc_mol,Tair,pressure,constants){
-  Tair  <- Tair + constants$Kelvin
-  Gc_ms <- Gc_mol * (constants$Rgas * Tair) / pressure
+#' Saturation vapor pressure (Esat) and slope of the Esat curve
+#' 
+#' @description Calculates Saturation vapor pressure (Esat) over water and the
+#'              corresponding slope of the saturation vapor pressure curve.
+#' 
+#' @param Tair     air temperature (deg C)
+#' @param formula  formula to be used. Either "Alduchov_1996" or "Sonntag_1990"
+#' 
+#' @details Esat (Pa) is calculated based on the Magnus equation:
+#' 
+#'  \deqn{Esat = a * exp((b * Tair) / (c + Tair))}
+#'  
+#'  where the coefficients a, b, c differ with the formula used.
+#'  The slope of the Esat curve is calculated as the first derivative of the function:
+#'  
+#'  formula
+#' 
+#' @return A dataframe with the following columns: \cr
+#'    Esat - Saturation vapor pressure (Pa) \cr
+#'    delta - Slope of the saturation vapor pressure curve (Pa K-1)
+#'    
+#'    
+#' 
+#' @references Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 
+#'             saturation vapor pressure. Journal of Applied Meteorology, 1996, 35, 601-609
+#' 
+#'             Sonntag_1990 Important new values of the physical constants of 1986, vapor 
+#'             pressure formulations based on the ITS-90, and psychrometric formulae 
+#'             (--> as used by WMO 2008!)
+#' @export
+Esat <- function(Tair,formula=c("Alduchov_1996","Sonntag_1990")){
   
-  return(Gc_ms)
+  formula <- match.arg(formula)
+  
+  if (formula == "Alduchov_1996"){
+    a <- 610.94
+    b <- 17.625
+    c <- 243.04
+  } else if (formula == "Sonntag_1990"){
+    a <- 611.2
+    b <- 17.62
+    c <- 243.12
+  }
+  
+  Esat <- a * exp((b * Tair) / (c + Tair))
+  
+  delta <- eval(D(expression(a * exp((b * Tair) / (c + Tair))),name="Tair"))
+  
+  return(data.frame(Esat,delta))
+  
 }
 
 
-#' Conversion between LE and ET
+
+#' Psychrometric constant
 #' 
-#' @description converts water loss from mass (ET) to energy (ET) units, and vice versa
+#' @description Calculates the psychrometric 'constant'
+#' 
+#' @param Tair      air temperature (degC)
+#' @param pressure  air pressure (kPa)
+#' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+#'                  eps - ratio of the molecular weight of water vapor to dry air (-)
+#'                  
+#' @details The psychrometric constant (\eqn{\gamma}) is given as:
+#' 
+#'  \deqn{\gamma = cp * pressure / (eps * \lambda)},
+#'  
+#'  where \eqn{\lambda} is the latent heaf of vaporization (J kg-1), 
+#'  as calculated with \code{\link{LE.vaporization}}.
+#'  
+#' @return the psychrometric constant (Pa K-1)
+#'  
+#' @references Bonan_2008 or Monteith_2010
+#' 
+psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
+  
+  lambda <- LE.vaporization(Tair)
+  gamma  <- (constants$cp * pressure/1000) / (constants$eps * lambda)
+  
+  return(gamma)
+}
+
+
+#' Latent heat of vaporization
+#' 
+#' @description Latent heat of vaporization as a function of air temperature.
+#' 
+#' @param Tair  Air temperature (deg C)
+#' 
+#' @details The following formula is used:
+#' 
+#' \deqn{\lambda = (2.501 - 0.00237*Tair)10^6}
+#' 
+#' @return \eqn{\lambda} latent heat of vaporization (J kg-1) 
+#' 
+#' @references Stull, B., 1988: An Introduction to Boundary Layer Meteorology (p.641)
+#'             Kluwer Academic Publishers, Dordrecht, Netherlands
+#'             
+#' @export
+LE.vaporization <- function(Tair) {
+  
+  k1 <- 2.501
+  k2 <- 0.00237
+  
+  lambda <- ( k1 - k2 * Tair ) * 1e+06
+  
+  return(lambda)
+}
+
+
+
+#######################
+## Unit Conversions ### ---------------------------------------------------------------------------
+#######################
+
+#' Conversion between latent heat flux and evapotranspiration
+#' 
+#' @description converts evpaorative water flux from mass (ET=evapotranspiration)
+#'              to energy (LE=latent heat) units, or vice versa
+#'              
+#' @aliases LEtoET ETtoLE
 #' 
 #' @param LE   Latent heat flux (W m-2)
+#' @param ET   Evapotranspiration (kg m-2 s-1)
 #' @param Tair Air temperature (deg C)
 #' 
-#' @return ET Evapotranspiration (kg m-2 s-1)
-LE.to.ET <- function(LE,Tair){
+#' @export
+LEtoET <- function(LE,Tair){
 
-  Tair   <- Tair + Kelvin
-  lambda <- LE.Vaporization(Tair)
+  Tair   <- Tair
+  lambda <- LE.vaporization(Tair)
   ET     <- LE/lambda
    
   return(ET)
 }
 
-ET.to.LE <- function(ET,Tair){
+ETtoLE <- function(ET,Tair){
   
-  Tair   <- Tair + Kelvin
-  lambda <- LE.Vaporization(Tair)
+  Tair   <- Tair
+  lambda <- LE.vaporization(Tair)
   LE     <- ET*lambda
   
   return(LE)
 }
+
+
+#' Conversion between conductance units
+#' 
+#' @description Converts canopy/surface conductance from ms-1
+#'              to mol m-2 s-1, or vice versa
+#' 
+#' @aliases mstomol moltoms
+#' 
+#' @param Gs_ms       Canopy/Surface conductance (ms-1)
+#' @param Gs_mol      Canopy/Surface conductance (mol m-2 s-1)
+#' @param Tair        Air temperature (deg C)
+#' @param pressure    Air pressure (kPa)
+#' @param constants 
+#' 
+#' @references Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.
+#'             2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p --> replace with third edition
+#'             
+#' @export
+mstomol <- function(Gc_ms,Tair,pressure,constants=bigleaf.constants()){
+  Tair   <- Tair + constants$Kelvin
+  Gc_mol <- Gc_ms * pressure*1000 / (constants$Rgas * Tair)
+  
+  return(Gc_mol)
+}
+
+
+moltoms <- function(Gc_mol,Tair,pressure,constants=bigleaf.constants()){
+  Tair  <- Tair + constants$Kelvin
+  Gc_ms <- Gc_mol * (constants$Rgas * Tair) / (pressure*1000)
+  
+  return(Gc_ms)
+}
+
+
 
 # ga_complex <- function(temperature,pressure,wspeed,ustar,fh,zr,zs,Dl,disp,z0m,LAI,kB_version,stab_version){
 #   # computes aerodynamic conductance according to MOST following Foken's receipe
@@ -947,10 +1060,7 @@ ET.to.LE <- function(ET,Tair){
 # ## Foken Micrometeorology formula 2.69
 # # Temp: temperature       [K]
 # #    q: specific humidity [kg kg-1]
-# Temp_virtual <- function(Temp,q){
-#   Tv <- Temp*(1+0.61*q)   # mixing ratio is approximated by specific humidity
-#   return(Tv)
-# }
+
 # 
 # airDensity <- function(temperature , pressure) {
 #   # function to calculate air density

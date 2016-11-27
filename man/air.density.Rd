@@ -4,18 +4,27 @@
 \alias{air.density}
 \title{Air density}
 \usage{
-air.density(Tair, pressure, constants)
+air.density(Tair, pressure, constants = bigleaf.constants())
 }
 \arguments{
 \item{Tair}{air temperature (degC)}
 
-\item{pressure}{air pressure (Pa)}
+\item{pressure}{air pressure (kPa)}
 
-\item{Mair}{molar mass of air (kg mol-1)}
-
-\item{Rgas}{ideal gas constant ()}
+\item{constants}{Kelvin - conversion degC to Kelvin \cr
+Rd - gas constant of dry air (J kg-1 K-1)}
+}
+\value{
+air density (kg m-3)
 }
 \description{
-Air density from air temperature and pressure
+Air density of moist air from air temperature and pressure
+}
+\details{
+Air density (\eqn{\rho}) is calculated as:
+\deqn{\rho = pressure / Rd * Tair}
+}
+\references{
+Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 }
 

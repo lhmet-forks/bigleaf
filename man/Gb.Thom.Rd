@@ -12,7 +12,10 @@ Gb.Thom(ustar, constants = bigleaf.constants())
 \item{constants}{k - von-Karman constant (-)}
 }
 \value{
-a data.frame with the following columns: \ct
+a data.frame with the following columns:
+ \item{Rb}{Boundary layer resistance (s m-1)}
+ \item{Gb}{Boundary layer conductance (m s-1)}
+ \item{kB}{kB-1 parameter (-)}
 }
 \description{
 An empirical formulation for the canopy boundary layer conductance

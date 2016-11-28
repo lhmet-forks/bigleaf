@@ -4,7 +4,7 @@
 \alias{Gb.McNaughton}
 \title{Boundary layer conductance according to Su et al. 2001}
 \usage{
-Gb.McNaughton(ustar, leafwidth, LAI, constants)
+Gb.McNaughton(ustar, leafwidth, LAI, constants = bigleaf.constants())
 }
 \arguments{
 \item{ustar}{friction velocity (m s-1)}

@@ -63,14 +63,14 @@ testdf <- data.frame(wind,ustar,Tair,pressure,Rn,
 bigleaf.constants <- function(){
   
   list(
-    cp         = 1004.834,        # specific heat of air for constant pressure [J K-1 kg-1] (Foken 2008 Eq. 2.54)
-    Rgas       = 8.31451,         # universal gas constant [J mol-1 K-1] (Foken p. 245)
+    cp         = 1004.834,        # specific heat of air for constant pressure (J K-1 kg-1) (Foken 2008 Eq. 2.54)
+    Rgas       = 8.31451,         # universal gas constant (J mol-1 K-1) (Foken p. 245)
     Md         = 0.0289645,       # molar mass of dry air [kg mol-1] (Foken 2008) 
     Mw         = 0.0180153,       # molar mass of water vapor [kg mol-1] (Foken 2008)
     eps        = 0.622,           # ratio of the molecular weight of water vapor to dry air (-) or Mw/Md
     Rv         = 461.5,           # gas constant of water vapor (J kg-1 K-1) (Stull_1988 p.641)
     Rd         = 287.0586,        # gas constant of dry air (J kg-1 K-1) (Foken p. 245)
-    Kelvin     = 273.15,          # conversion Celsius to Kelvin
+    Kelvin     = 273.15,          # conversion degree Celsius to Kelvin
     g          = 9.81,            # gravitational acceleration (m s-2)
     pressure0  = 101325,          # reference atmospheric pressure at sea level (Pa)
     Tair0      = 273.15,          # reference air temperature (K)
@@ -162,8 +162,10 @@ bigleaf.constants <- function(){
 #' @param ustar friction velocity (m s-1)
 #' @param constants k - von-Karman constant (-)
 #' 
-#' @return a data.frame with the following columns: \ct
-#' 
+#' @return a data.frame with the following columns:
+#'  \item{Rb}{Boundary layer resistance (s m-1)}
+#'  \item{Gb}{Boundary layer conductance (m s-1)}
+#'  \item{kB}{kB-1 parameter (-)}
 #' 
 #' @references Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
 #'             Quarterly Journal of the Royal Meteorological Society, 98, 124--134
@@ -338,7 +340,7 @@ air.density <- function(Tair,pressure,constants=bigleaf.constants()){
 #' @references Stull, B., 1988: An Introduction to Boundary Layer Meteorology.
 #'             Kluwer Academic Publishers, Dordrecht, Netherlands
 #'             
-hypsometric.equation <- function(elev,Tair,q=NULL,constants=bigleaf.constants()){
+pressure.from.elevation <- function(elev,Tair,q=NULL,constants=bigleaf.constants()){
   if(is.null(q)){
     Temp <- Tair + constants$Kelvin
   } else {
@@ -661,19 +663,28 @@ q.to.e <- function(q,pressure){
 
 
 
-#' Surface conductance for water
+#' Surface conductance for water vapor
 #' 
-#' @description Calculates surface conductance for water from the inverted Penman-Monteith
+#' @description Calculates surface conductance for water vapor from the inverted Penman-Monteith
 #'              equation.
 #' 
+#' @param data      data.frame or matrix containing all required input variables
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Atmospheric pressure (kPa)
 #' @param Rn        Net radiation (W m-2)
-#' @param G         Ground heat flux (W m-2)
-#' @param S         Sum of all storage fluxes (W m-2)
+#' @param G         optional, Ground heat flux (W m-2)
+#' @param S         optional, Sum of all storage fluxes (W m-2)
 #' @param LE        Latent heat flux (W m-2)
-#' @param VPD       Vapor pressure deficit (Pa)
+#' @param VPD       Vapor pressure deficit (kPa)
 #' @param Ga        Aerodynamic conductance (m s-1)
+#' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+#'                  eps - ratio of the molecular weight of water vapor to dry air (-) \cr
+#'                  Rd - gas constant of dry air (J kg-1 K-1) \cr
+#'                  Rgas - universal gas constant (J mol-1 K-1) \cr
+#'                  Kelvin - conversion degree Celsius to Kelvin
+#' 
+#' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
+#' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0. 
 #' 
 #' @details Surface conductance is calculated from the inverted Penman-Monteith equation:
 #' 
@@ -681,29 +692,85 @@ q.to.e <- function(q,pressure){
 #'  
 #'  Note that Gs > Gc (canopy conductance) in time periods when a significant fraction of 
 #'  ET comes from interception or soil evaporation. 
-#'  Available energy A is given by (Rn - G - S). If G and/or S are not provided, then A = Rn. 
-#' 
+#'  Available energy A is given by (Rn - G - S). If G and/or S are not provided, then A = Rn.
+#'  
+#'  By default, any missing data in G and S are set to 0. If arguments \code{missing.S.as.NA} or \code{missing.S.as.NA} are 
+#'  set to TRUE Gs will give NA for these timesteps.
+#'  
+#'  If pressure is not available, it can be calculated based on elevation data using the 
+#'  function \code{\link{pressure.from.elevation}}
+#'  
 #' 
 #' @return a dataframe with two columns: 
-#' 
-#'  Gs_ms:  Surface conductance in ms-1
-#'  Gs_mol: Surface conductance in mol m-2 s-1
+#'  \item{Gs_ms}{Surface conductance in ms-1}
+#'  \item{Gs_mol}{Surface conductance in mol m-2 s-1}
 #' 
 #' @export
-GsPM <- function(Tair,pressure,Rn,VPD,LE,Ga,constants=bigleaf.constants()){
+GsPM <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,VPD="VPD",LE="LE",Ga="Ga",
+                 constants=bigleaf.constants(),missing.G.as.NA=FALSE,missing.S.as.NA=FALSE){
    
+   Tair     <- check.columns(data,Tair)
+   pressure <- check.columns(data,pressure)
+   Rn       <- check.columns(data,Rn)
+   VPD      <- check.columns(data,VPD)
+   LE       <- check.columns(data,LE)
+   Ga       <- check.columns(data,Ga)
+  
+   if(!is.null(G)){
+     G <- check.columns(data,G)
+     if (!missing.G.as.NA){G[is.na(G)] <- 0}
+   } else {
+     warning("ground heat flux G is not provided and set to 0.")
+     G <- rep(0,nrow(data))
+   }
+   
+   if(!is.null(S)){
+     S <- check.columns(data,S)
+     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
+   } else {
+     warning("Energy storage fluxes S are not provided and set to 0.")
+     S <- rep(0,nrow(data))
+   }
+   
+  
    VPD   <- VPD * 1000
    delta <- Esat(Tair)[,"delta"]
    gamma <- psychrometric.constant(Tair,pressure)
    rho   <- air.density(Tair,pressure)
  
-   Gs_ms  <- ( LE * Ga * gamma ) / ( delta * Rn + rho * constants$cp * Ga * VPD - LE * ( delta + gamma ) )
-
+   Gs_ms  <- ( LE * Ga * gamma ) / ( delta * (Rn-G-S) + rho * constants$cp * Ga * VPD - LE * ( delta + gamma ) )
    Gs_mol <- mstomol(Gs_ms,Tair,pressure) 
 
    return(data.frame(Gs_ms,Gs_mol))
 
 }
+
+
+
+#' checks columns in a data frame 
+#' 
+#' @description
+#' 
+#' @param data         a data.frame or a matrix
+#' @param column_name  the column name
+#' 
+#' 
+#' 
+
+check.columns <- function(data,column_name){
+  if (column_name %in% colnames(data)){
+    var <- data[,column_name]
+    if (is.numeric(var)){
+      return(var)
+    } else {
+      stop("variable '",column_name,"' has to be numeric")
+    }
+  } else {
+    stop("column '",column_name,"' does not exist")
+  }
+}
+
+
 
 #' virtual temperature
 #' 

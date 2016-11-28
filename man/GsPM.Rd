@@ -2,35 +2,49 @@
 % Please edit documentation in R/bigleaf.R
 \name{GsPM}
 \alias{GsPM}
-\title{Surface conductance for water}
+\title{Surface conductance for water vapor}
 \usage{
-GsPM(Tair, pressure, Rn, VPD, LE, Ga, constants)
+GsPM(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = "G",
+  S = "S", VPD = "VPD", LE = "LE", Ga = "Ga",
+  constants = bigleaf.constants(), missing.G.as.NA = FALSE,
+  missing.S.as.NA = FALSE)
 }
 \arguments{
+\item{data}{data.frame or matrix containing all required input variables}
+
 \item{Tair}{Air temperature (deg C)}
 
 \item{pressure}{Atmospheric pressure (kPa)}
 
 \item{Rn}{Net radiation (W m-2)}
 
-\item{VPD}{Vapor pressure deficit (Pa)}
+\item{G}{optional, Ground heat flux (W m-2)}
+
+\item{S}{optional, Sum of all storage fluxes (W m-2)}
+
+\item{VPD}{Vapor pressure deficit (kPa)}
 
 \item{LE}{Latent heat flux (W m-2)}
 
 \item{Ga}{Aerodynamic conductance (m s-1)}
 
-\item{G}{Ground heat flux (W m-2)}
+\item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+eps - ratio of the molecular weight of water vapor to dry air (-) \cr
+Rd - gas constant of dry air (J kg-1 K-1) \cr
+Rgas - universal gas constant (J mol-1 K-1) \cr
+Kelvin - conversion degree Celsius to Kelvin}
 
-\item{S}{Sum of all storage fluxes (W m-2)}
+\item{missing.G.as.NA}{if TRUE, missing G are treated as NA,otherwise set to 0.}
+
+\item{missing.S.as.NA}{if TRUE, missing S are treated as NA,otherwise set to 0.}
 }
 \value{
 a dataframe with two columns: 
-
- Gs_ms:  Surface conductance in ms-1
- Gs_mol: Surface conductance in mol m-2 s-1
+ \item{Gs_ms}{Surface conductance in ms-1}
+ \item{Gs_mol}{Surface conductance in mol m-2 s-1}
 }
 \description{
-Calculates surface conductance for water from the inverted Penman-Monteith
+Calculates surface conductance for water vapor from the inverted Penman-Monteith
              equation.
 }
 \details{
@@ -41,5 +55,11 @@ Surface conductance is calculated from the inverted Penman-Monteith equation:
  Note that Gs > Gc (canopy conductance) in time periods when a significant fraction of 
  ET comes from interception or soil evaporation. 
  Available energy A is given by (Rn - G - S). If G and/or S are not provided, then A = Rn.
+ 
+ By default, any missing data in G and S are set to 0. If arguments \code{missing.S.as.NA} or \code{missing.S.as.NA} are 
+ set to TRUE Gs will give NA for these timesteps.
+ 
+ If pressure is not available, it can be calculated based on elevation data using the 
+ function \code{\link{pressure.from.elevation}}
 }
 

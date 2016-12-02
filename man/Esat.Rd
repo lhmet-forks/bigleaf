@@ -12,9 +12,9 @@ Esat(Tair, formula = c("Alduchov_1996", "Sonntag_1990"))
 \item{formula}{formula to be used. Either "Alduchov_1996" or "Sonntag_1990"}
 }
 \value{
-A dataframe with the following columns: \cr
-   \eqn{Esat} - Saturation vapor pressure (Pa) \cr
-   \eqn{delta} - Slope of the saturation vapor pressure curve (Pa K-1)
+A dataframe with the following columns: 
+   \item{Esat}{Saturation vapor pressure (Pa)}
+   \item{delta}{Slope of the saturation vapor pressure curve (Pa K-1)}
 }
 \description{
 Calculates Saturation vapor pressure (Esat) over water and the

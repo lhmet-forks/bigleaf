@@ -5,7 +5,7 @@
 \title{Surface conductance for water vapor}
 \usage{
 GsPM(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = "G",
-  S = "S", VPD = "VPD", LE = "LE", Ga = "Ga",
+  S = NULL, VPD = "VPD", LE = "LE", Ga = "Ga",
   constants = bigleaf.constants(), missing.G.as.NA = FALSE,
   missing.S.as.NA = FALSE)
 }

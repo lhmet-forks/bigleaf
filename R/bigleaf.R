@@ -19,14 +19,16 @@ library(roxygen2)
 # - how to write bold/italics
 # - PET and typical values / how to do it right?
 # - derive Ci? 
-# - when the output is a dataframe - use same or similar notation as for the arguments?
 
 ### Issues/check:
 # MOL independent of temperature?
 # Esat - output in Pa but usually input is kPa...makes sense?
 
 ## TODO:
-# implement input for Gs and Ga functions can be either vectors or a dataframe!
+# Esat <- provide only one option? Else this option has to be inlcuded in all functions where Esat is used!!
+#         not really, if it was  to be changed, do it in the function directly, not where it is a sub-function!
+# Gs <- provide A instead of Rn, G and S??
+# check e to q conversions again!
 
 
 ## test data
@@ -478,7 +480,8 @@ stab.correction.h.Dyer <- function(zeta){
 #'  The argument stab_correction determines the stability correction function used 
 #'  to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
 #'  and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
-#'  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length.
+#'  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
+#'  calculated with \code{\link{MoninObukhov.length}}
 #'  Stability correction functions calculate the correction based on the formulations by Businger 1971 
 #'  Dyer 1970, based on zeta.
 #'  If "none", atmospheric stability is neglected, and Monin-Obukhov length, and the 
@@ -514,18 +517,16 @@ stab.correction.h.Dyer <- function(zeta){
 
 # TO DO:
 # - include stability correction functions in Ga()
-# - make some constants internal (e.g. Kelvin, Rgas), and the rest as default argument
-#   to the function (+ find out what "." means in front of a function!)
-# - include option of constant kB
+# - find out what "." means in front of a function!)
+# - include option of constant kB -> kB argument ignored unless the option is chosen 
 # - include option to change d and/or z0m
-Ga <- function(Tair,presssure,wind,ustar,constants,H,zr,zh,disp,z0m,Dl,N,LAI,fc=NULL,Cd=0.2,hs=0.01,stab_correction=c("Dyer_1970","Businger_1971","none"),
-               Rb_model=c("Thom_1972","McNaughton_1995","Su_2001")) 
+Ga <- function(Tair,presssure,wind,ustar,H,zr,zh,disp,z0m,Dl,N,LAI,fc=NULL,Cd=0.2,hs=0.01,stab_correction=c("Dyer_1970","Businger_1971","none"),
+               Rb_model=c("Thom_1972","McNaughton_1995","Su_2001","constant_kB"),kB,constants=bigleaf.constants()) 
   {
   
   Rb_model  <- match.arg(Rb_model)
   stability <- match.arg(stability)
   
-  k <- constants$k
   
   if (Rb_model == "Thom_1972"){
     
@@ -539,7 +540,10 @@ Ga <- function(Tair,presssure,wind,ustar,constants,H,zr,zh,disp,z0m,Dl,N,LAI,fc=
     
     Gb <- Gb.Su(ustar,wind,pressure,Tair,Dl,N,fc=fc,LAI,Cd=Cd,hs=hs,constants)
   
-  } 
+  } else if (Rb_model == "constant_kB"){
+    
+    
+  }
   
   Ra_m <- wind/ustar^2
   
@@ -552,11 +556,11 @@ Ga <- function(Tair,presssure,wind,ustar,constants,H,zr,zh,disp,z0m,Dl,N,LAI,fc=
     diff <- numeric(); ustar1 <- ustar; z0m <- numeric()
     for (i in 1:95){
       ustar1[ustar < quantile(ustar,i/100,na.rm=T)] <- NA
-      z0m[i]          <- summary(nls(Ra_m ~ (log((zr - disp)/z0m)/(k*ustar1)),
+      z0m[i]          <- summary(nls(Ra_m ~ (log((zr - disp)/z0m)/(constants$k*ustar1)),
                                 start=c(z0m=z0m_start),na.action=na.omit,
                                 data=environment()))$par[1]
       
-      diff[i] <- sum((Ra_m - (log((zr - disp)/z0m[i])/(k*ustar1)))^2,na.rm=T)
+      diff[i] <- sum((Ra_m - (log((zr - disp)/z0m[i])/(constants$k*ustar1)))^2,na.rm=T)
     }
     
 #     optim(tustar,find_z0m,)
@@ -579,7 +583,7 @@ Ga <- function(Tair,presssure,wind,ustar,constants,H,zr,zh,disp,z0m,Dl,N,LAI,fc=
 
     print(z0m)
     
-    MOL   <- Monin.Obukhov.length(Tair,pressure,ustar,H,constants)
+    MOL   <- MoninObukhov.length(Tair,pressure,ustar,H,constants)
     zeta  <- (zr-disp)/MOL
     
     if (stab_correction == "Businger_1971"){
@@ -592,7 +596,7 @@ Ga <- function(Tair,presssure,wind,ustar,constants,H,zr,zh,disp,z0m,Dl,N,LAI,fc=
       
     }  
     
-    Ra_m  <- pmax((log((zr - disp)/z0m) - psi_h),1e-10)/(k*ustar)
+    Ra_m  <- pmax((log((zr - disp)/z0m) - psi_h),1e-10)/(constants$k*ustar)
     
   } else {
     
@@ -610,54 +614,6 @@ Ga <- function(Tair,presssure,wind,ustar,constants,H,zr,zh,disp,z0m,Dl,N,LAI,fc=
   
 }
   
-
-
-
-
-
-
-#' Conversions between humidity measures
-#' 
-#' @description Conversion between VPD, specific humidity, and relative humidity
-#' 
-#' @param e    vapor pressure (Pa)
-#' @param p    air pressure (Pa)
-#' @param q    specific humidity (kg kg-1)
-#' @param VPD  vapore pressure deficit (kPa)
-#' 
-#' @family humidity conversion
-e.to.q <- function(e,pressure,constants){
-  q <- constants$eps * e / (pressure - 0.378 * e) 
-  
-  return(q)
-}
-
-#' @family humidity conversion
-q.to.e <- function(q,pressure){
-   e <- 5 +5
-}
-
-# convertSpecHumToVapourPressure <- function(spec_hum,pressure) {
-#   # function to convert specific humidity into vapour pressure
-#   # source: Monteith & Unsworth 2008
-#   # input:  spec_hum: specific humidity [g g-1]
-#   #         pressure: atmospheric pressure [Pa]
-#   # output: vapour_pressure: vapour pressure [Pa] 
-#   #vapour_pressure = spec_hum * pressure / ( spec_hum + eps * ( 1 + spec_hum ))
-#   vapour_pressure <- spec_hum / eps * pressure
-#   return(vapour_pressure)
-# }
-# 
-# convertVapourPressureToSpecHum <- function(vapour_pressure,pressure) {
-#   # function to convert specific humidity into vapour pressure
-#   # source: Monteith & Unsworth 2008
-#   # input:  vapour_pressure: vapour pressure [Pa]
-#   #         pressure: atmospheric pressure [Pa]
-#   # output: spec_hum: specific humidity [g g-1]
-#   spec_hum <- eps * vapour_pressure / pressure 
-#   return(spec_hum)
-# }
-
 
 
 
@@ -812,9 +768,9 @@ Temp.virtual <- function(Tair,q){
 #'  
 #'  formula
 #' 
-#' @return A dataframe with the following columns: \cr
-#'    \eqn{Esat} - Saturation vapor pressure (Pa) \cr
-#'    \eqn{delta} - Slope of the saturation vapor pressure curve (Pa K-1)
+#' @return A dataframe with the following columns: 
+#'    \item{Esat}{Saturation vapor pressure (kPa)}
+#'    \item{delta}{Slope of the saturation vapor pressure curve (Pa K-1)}
 #'    
 #'    
 #' 
@@ -840,11 +796,12 @@ Esat <- function(Tair,formula=c("Alduchov_1996","Sonntag_1990")){
   }
   
   Esat <- a * exp((b * Tair) / (c + Tair))
+  Esat <- Esat/1000
   
   delta <- eval(D(expression(a * exp((b * Tair) / (c + Tair))),name="Tair"))
   
-  return(data.frame(Esat,delta))
   
+  return(data.frame(Esat,delta))
 }
 
 
@@ -954,6 +911,8 @@ ETtoLE <- function(ET,Tair){
 #' @param pressure    Air pressure (kPa)
 #' @param constants 
 #' 
+#' @family conductance conversion
+#' 
 #' @references Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.
 #'             2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p --> replace with third edition
 #'             
@@ -966,12 +925,109 @@ mstomol <- function(Gc_ms,Tair,pressure,constants=bigleaf.constants()){
 }
 
 
+#' @rdname mstomol
+#' @family conductance conversion
 moltoms <- function(Gc_mol,Tair,pressure,constants=bigleaf.constants()){
   Tair  <- Tair + constants$Kelvin
   Gc_ms <- Gc_mol * (constants$Rgas * Tair) / (pressure*1000)
   
   return(Gc_ms)
 }
+
+
+
+#' Conversions between humidity measures
+#' 
+#' @description Conversion between vapor pressure, vapor pressure deficit (VPD), specific humidity, and relative humidity.
+#' 
+#' @param e    vapor pressure (kPa)
+#' @param p    air pressure (kPa)
+#' @param q    specific humidity (kg kg-1)
+#' @param VPD  vapor pressure deficit (kPa)
+#' @param rH   relative humidity (-)
+#' 
+#' @family humidity conversion
+#' 
+#' @references Foken_2008
+#' 
+#' @export
+e.to.q <- function(e,pressure,constants=bigleaf.constants()){
+  q <- constants$eps * e / (pressure - (1-constants$eps) * e) 
+  return(q)
+}
+
+
+#' @rdname e.to.q
+#' @family humidity conversion
+#' @export
+q.to.e <- function(q,pressure,constants=bigleaf.constants()){
+  e <- q * pressure / ((1-constants$eps) * q + constants$eps)
+  return(e)
+}
+
+
+#' @rdname e.to.q
+#' @family humidity conversion
+#' @export
+e.to.VPD <- function(e,pressure,Tair){
+  esat <- Esat(Tair)[,"Esat"]
+  VPD  <- esat - e 
+  return(VPD)
+}
+
+
+#' @rdname e.to.q
+#' @family humidity conversion
+#' @export
+VPD.to.e <- function(VPD,pressure,Tair){
+  esat <- Esat(Tair)[,"Esat"]
+  e    <- esat - VPD
+  return(e)
+}
+
+
+#' @rdname e.to.q
+#' @family humidity conversion
+#' @export
+rH.to.VPD <- function(rH,Tair){
+  esat <- Esat(Tair)[,"Esat"]
+  VPD  <- esat - rH*esat
+  return(VPD)
+} 
+
+
+#' @rdname e.to.q
+#' @family humidity conversion
+#' @export
+VPD.to.rH <- function(VPD,Tair){
+  esat <- Esat(Tair)[,"Esat"]
+  rH   <- 1 - VPD/esat
+  return(rH)
+} 
+
+
+#' @rdname e.to.q
+#' @family humidity conversion
+#' @export
+q.to.VPD <- function(q,Tair,pressure,constants=bigleaf.constants()){
+  esat <- Esat(Tair)[,"Esat"]
+  e    <- q.to.e(q,pressure,constants)
+  VPD  <- esat - e
+  return(VPD)
+} 
+
+
+#' @rdname e.to.q
+#' @family humidity conversion
+#' @export
+VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
+  esat <- Esat(Tair)[,"Esat"]
+  e    <- esat - VPD
+  q    <- e.to.q(e,pressure,constants)
+  return(q)
+} 
+
+
 
 
 

@@ -6,6 +6,8 @@
 \title{Conversion between conductance units}
 \usage{
 mstomol(Gc_ms, Tair, pressure, constants = bigleaf.constants())
+
+moltoms(Gc_mol, Tair, pressure, constants = bigleaf.constants())
 }
 \arguments{
 \item{Tair}{Air temperature (deg C)}

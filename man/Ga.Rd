@@ -4,10 +4,10 @@
 \alias{Ga}
 \title{Aerodynamic conductance}
 \usage{
-Ga(Tair, presssure, wind, ustar, constants, H, zr, zh, disp, z0m, Dl, N, LAI,
-  fc = NULL, Cd = 0.2, hs = 0.01, stab_correction = c("Dyer_1970",
-  "Businger_1971", "none"), Rb_model = c("Thom_1972", "McNaughton_1995",
-  "Su_2001"))
+Ga(Tair, presssure, wind, ustar, H, zr, zh, disp, z0m, Dl, N, LAI, fc = NULL,
+  Cd = 0.2, hs = 0.01, stab_correction = c("Dyer_1970", "Businger_1971",
+  "none"), Rb_model = c("Thom_1972", "McNaughton_1995", "Su_2001",
+  "constant_kB"), kB, constants = bigleaf.constants())
 }
 \arguments{
 \item{Tair}{air temperature (degC)}
@@ -62,7 +62,8 @@ Aerodynamic conductance (Ga) is calculated as:
  The argument stab_correction determines the stability correction function used 
  to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
  and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
- where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length.
+ where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
+ calculated with \code{\link{MoninObukhov.length}}
  Stability correction functions calculate the correction based on the formulations by Businger 1971 
  Dyer 1970, based on zeta.
  If "none", atmospheric stability is neglected, and Monin-Obukhov length, and the 

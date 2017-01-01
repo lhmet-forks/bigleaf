@@ -30,6 +30,8 @@ VPD.to.q(VPD, Tair, pressure, constants = bigleaf.constants())
 \arguments{
 \item{e}{vapor pressure (kPa)}
 
+\item{constants}{eps - ratio of the molecular weight of water vapor to dry air (-)}
+
 \item{q}{specific humidity (kg kg-1)}
 
 \item{VPD}{vapor pressure deficit (kPa)}
@@ -42,6 +44,6 @@ VPD.to.q(VPD, Tair, pressure, constants = bigleaf.constants())
 Conversion between vapor pressure, vapor pressure deficit (VPD), specific humidity, and relative humidity.
 }
 \references{
-Foken_2008
+Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 }
 

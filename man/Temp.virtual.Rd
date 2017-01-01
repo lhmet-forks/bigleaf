@@ -4,27 +4,29 @@
 \alias{Temp.virtual}
 \title{virtual temperature}
 \usage{
-Temp.virtual(Tair, q)
+Temp.virtual(Tair, q, constants = bigleaf.constants())
 }
 \arguments{
 \item{Tair}{air temperature (deg C)}
 
 \item{q}{specific humidity (kg kg-1)}
+
+\item{constants}{Kelvin - conversion degree Celsius to Kelvin}
 }
 \value{
-virtual temperature (K)
+virtual temperature (deg C)
 }
 \description{
 virtual temperature
 }
 \details{
 the virtual temperature is given by:
- \deqn{(Tair+273.15)(1 + 0.61*q)}
+ \deqn{Tv = (Tair+273.15)(1 + 0.61*q)}
 }
 \note{
-mixing ratio is approximated by specific humidity
+mixing ratio is approximated by specific humidity.
 }
 \references{
-Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
+Foken T., 2008: Micrometeorology. Springer, Berlin, Germany.
 }
 

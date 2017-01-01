@@ -14,7 +14,8 @@ moltoms(Gc_mol, Tair, pressure, constants = bigleaf.constants())
 
 \item{pressure}{Air pressure (kPa)}
 
-\item{constants}{}
+\item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
+Rgas - universal gas constant (J mol-1 K-1)}
 
 \item{Gs_ms}{Canopy/Surface conductance (ms-1)}
 
@@ -22,7 +23,7 @@ moltoms(Gc_mol, Tair, pressure, constants = bigleaf.constants())
 }
 \description{
 Converts canopy/surface conductance from ms-1
-             to mol m-2 s-1, or vice versa
+             to mol m-2 s-1, or vice versa.
 }
 \references{
 Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.

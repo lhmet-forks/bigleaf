@@ -4,13 +4,18 @@
 \alias{Ga}
 \title{Aerodynamic conductance}
 \usage{
-Ga(Tair, presssure, wind, ustar, H, zr, zh, disp, z0m, Dl, N, LAI, fc = NULL,
-  Cd = 0.2, hs = 0.01, stab_correction = c("Dyer_1970", "Businger_1971",
-  "none"), Rb_model = c("Thom_1972", "McNaughton_1995", "Su_2001",
-  "constant_kB"), kB, constants = bigleaf.constants())
+Ga(data, Tair = "Tair", pressure = "pressure", wind = "wind",
+  ustar = "ustar", H = "H", zr, zh, d, z0m, frac_d = 0.7,
+  frac_z0m = 0.1, Dl, N, LAI, fc = NULL, Cd = 0.2, hs = 0.01,
+  stab_correction = c("Dyer_1970", "Businger_1971", "none"),
+  method_roughness = c("canopy_height", "wind_profile"),
+  Rb_model = c("Thom_1972", "Choudhury_1988", "Su_2001", "constant_kB"),
+  kB = NULL, constants = bigleaf.constants())
 }
 \arguments{
 \item{Tair}{air temperature (degC)}
+
+\item{pressure}{air pressure (Pa)}
 
 \item{wind}{wind speed (m s-1)}
 
@@ -22,7 +27,7 @@ Ga(Tair, presssure, wind, ustar, H, zr, zh, disp, z0m, Dl, N, LAI, fc = NULL,
 
 \item{zh}{canopy height (m)}
 
-\item{disp}{zero-plane displacement height (m)}
+\item{d}{zero-plane displacement height (m)}
 
 \item{z0m}{roughness length for momentum (m)}
 
@@ -42,14 +47,14 @@ Ga(Tair, presssure, wind, ustar, H, zr, zh, disp, z0m, Dl, N, LAI, fc = NULL,
 
 \item{Rb_model}{boundary layer resistance formulation}
 
-\item{pressure}{air pressure (Pa)}
+\item{kB}{kB-1 value; only used if \code{Rb_model = "constant_kB"}}
 }
 \value{
 a dataframe with the following columns:
 }
 \description{
-Aerodynamic conductance, including options for Boundary layer conductance
-             and stability correction functions.
+Aerodynamic conductance, including options for the boundary layer conductance
+             formulation and stability correction functions.
 }
 \details{
 Aerodynamic conductance (Ga) is calculated as:
@@ -66,21 +71,21 @@ Aerodynamic conductance (Ga) is calculated as:
  calculated with \code{\link{MoninObukhov.length}}
  Stability correction functions calculate the correction based on the formulations by Businger 1971 
  Dyer 1970, based on zeta.
- If "none", atmospheric stability is neglected, and Monin-Obukhov length, and the 
+ If "none", atmospheric stability is neglected, and Monin-Obukhov length, as well as the 
  stability parameter zeta are not calculated.
 
- Rb_model determines the boundary layer resistance ("excess resistance") model used. Thom_1972 is an 
- empirical formulation based on the friction velocity (ustar):
+ The argument \code{Rb_model} determines the canopy boundary layer resistance ("excess resistance") model that is used. "Thom_1972" is an 
+ empirical formulation based on the friction velocity (ustar) (Thom 1972):
  
-   formula
+   \deqn{Rb = 0.667u*^0.667}
    
- The model by Mcnaughton and van den Hurk 1995 (McNaughton_1995), calculates Rb
+ The model by Mcnaughton and van den Hurk 1995 ("McNaughton_1995"), calculates Rb
  based on leaf width, LAI and ustar (Note that the original formulation leaf width
  instead of the characteristic leaf dimension (Dl) is taken):
   
     formula
     
- The Su_2001 option calculates Rb based on the physically-based Rb model by Su et tal. 2001,
+ The option "Su_2001" calculates Rb based on the physically-based Rb model by Su et tal. 2001,
  a simplification of the model developed by Massmann 1999:
  
     formula
@@ -90,5 +95,8 @@ Aerodynamic conductance (Ga) is calculated as:
     formula
  
  Both kB and Rb are given in the output.
+}
+\references{
+
 }
 

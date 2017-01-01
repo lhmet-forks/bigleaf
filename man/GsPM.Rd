@@ -4,7 +4,7 @@
 \alias{GsPM}
 \title{Surface conductance for water vapor}
 \usage{
-GsPM(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = "G",
+GsPM(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
   S = NULL, VPD = "VPD", LE = "LE", Ga = "Ga",
   constants = bigleaf.constants(), missing.G.as.NA = FALSE,
   missing.S.as.NA = FALSE)
@@ -57,9 +57,9 @@ Surface conductance is calculated from the inverted Penman-Monteith equation:
  Available energy A is given by (Rn - G - S). If G and/or S are not provided, then A = Rn.
  
  By default, any missing data in G and S are set to 0. If arguments \code{missing.S.as.NA} or \code{missing.S.as.NA} are 
- set to TRUE Gs will give NA for these timesteps.
+ set to TRUE, Gs will give NA for these timesteps.
  
- If pressure is not available, it can be calculated based on elevation data using the 
+ If pressure is not available, it can be approximated by elevation using the 
  function \code{\link{pressure.from.elevation}}
 }
 

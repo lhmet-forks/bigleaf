@@ -16,6 +16,6 @@ LEtoET(LE, Tair)
 }
 \description{
 converts evpaorative water flux from mass (ET=evapotranspiration)
-             to energy (LE=latent heat) units, or vice versa
+             to energy (LE=latent heat) units, or vice versa.
 }
 

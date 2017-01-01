@@ -23,9 +23,9 @@ based on a simple ustar dependency.
 }
 \references{
 Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
-            Quarterly Journal of the Royal Meteorological Society, 98, 124--134
+            Quarterly Journal of the Royal Meteorological Society 98, 124-134.
 }
 \seealso{
-\code{\link{Gb.Su}}, \code{\link{Gb.McNaughton}}
+\code{\link{Gb.Su}}, \code{\link{Gb.Choudhury}}
 }
 

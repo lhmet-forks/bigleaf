@@ -26,10 +26,11 @@ Monin-Obukhov length (m)
 \description{
 
 
-The Monin-Obukhov length (L) is given as:
-\deqn{L = - (\rho * cp * ustar^3 * Tair) / (k * g * H)}
+The Monin-Obukhov length (L) is given by:
+
+             \deqn{L = - (\rho * cp * ustar^3 * Tair) / (k * g * H)}
 }
 \references{
-Foken_2008
+Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 }
 

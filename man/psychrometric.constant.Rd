@@ -7,7 +7,7 @@
 psychrometric.constant(Tair, pressure, constants = bigleaf.constants())
 }
 \arguments{
-\item{Tair}{air temperature (degC)}
+\item{Tair}{air temperature (deg C)}
 
 \item{pressure}{air pressure (kPa)}
 
@@ -18,7 +18,7 @@ eps - ratio of the molecular weight of water vapor to dry air (-)}
 the psychrometric constant (kPa K-1)
 }
 \description{
-Calculates the psychrometric 'constant'
+Calculates the psychrometric 'constant'.
 }
 \details{
 The psychrometric constant (\eqn{\gamma}) is given as:

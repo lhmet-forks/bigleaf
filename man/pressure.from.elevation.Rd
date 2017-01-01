@@ -24,7 +24,7 @@ air pressure (kPa)
 }
 \description{
 An estimate of mean pressure at a given elevation as predicted by the
-             hypsometric equation
+             hypsometric equation.
 }
 \details{
 
@@ -35,7 +35,7 @@ the hypsometric equation gives a rough estimate of the standard pressure
       is applied and the virtual temperature instead of air temperature is used.
 }
 \references{
-Stull, B., 1988: An Introduction to Boundary Layer Meteorology.
-            Kluwer Academic Publishers, Dordrecht, Netherlands
+Stull B., 1988: An Introduction to Boundary Layer Meteorology.
+            Kluwer Academic Publishers, Dordrecht, Netherlands.
 }
 

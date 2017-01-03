@@ -56,7 +56,7 @@ library(roxygen2)
 
 
 
-## test data
+## artificial test data
 wind     <- rnorm(20,3,0.8)
 ustar    <- rnorm(20,0.5,0.2)
 Tair     <- rnorm(20,25,2)
@@ -80,6 +80,9 @@ testdf <- data.frame(wind,ustar,Tair,pressure,Rn,
                      H,LE,G,Ga,Gs,VPD,precip,PPFD,GPP,NEE,day)
 
 
+## real data
+load(paste0(path.pkg,"DK-Sor_",years_selection,"_processed.rda"))
+testdk <- DK_Sor_2010_processed
 
 
 
@@ -177,8 +180,12 @@ bigleaf.constants <- function(){
 #' 
 #' @export                     
 
-filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="ustar",VPD="VPD",GPP="GPP",day="day",month="month",year="year",
-                        tprecip=0.01,precip_hours=24,trad=250,ttemp=5,tustar=0.2,tGPP=0.5,trH=0.95,NAasprecip=F){
+filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="ustar",VPD="VPD",GPP="GPP_nt",Ca="Ca",
+                        day="day",month="month",year="year",quality_ext="_qc",good_quality=c(0,1),excl_vars_qc=c("PPFD","Ca"),
+                        tprecip=0.01,precip_hours=24,trad=200,ttemp=5,tustar=0.2,tGPP=0.5,trH=0.95,NA.as.precip=F){
+  
+  vars    <- c(precip,PPFD,Tair,ustar,VPD,GPP,Ca)
+  vars_qc <- setdiff(vars,excl_vars_qc)
   
   ## test data availability
   precip <- check.columns(data,precip)
@@ -191,8 +198,29 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   month  <- check.columns(data,month)
   year   <- check.columns(data,year)
   
+  if (Ca %in% vars_qc){
+    Ca   <- check.columns(data,Ca) 
+  }
+  
+  ## data quality
+  cat("Quality control:",fill=T)
+  for(var in vars_qc){
+    if (paste0(var,quality_ext) %in% colnames(data)){                             # does column exist?
+      assign(paste0(var,quality_ext),check.columns(data,paste0(var,quality_ext))) # create variable "*_qc", make quality check before
+      var2 <- get(var)
+      var2[get(paste0(var,quality_ext)) > max(good_quality)] <- NA                # exclude bad quality data
+      
+      qc_invalid      <- length(var2[get(paste0(var,quality_ext)) > max(good_quality)]) # count & report
+      qc_invalid_perc <- round((qc_invalid/nrow(data))*100,2)
+      
+      cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) excluded",fill=T,sep="")
+    } 
+  }
+  cat("---------------------------------",fill=T)
+  
   rH <- VPD.to.rH(VPD,Tair)
   
+
   ## hourly or halfhourly data?
   tstep_day <- as.integer(nrow(data) / length(unique(day)))
   thour     <- ifelse(tstep_day == 24,1,2)
@@ -206,7 +234,7 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   growseas_invalid <- which(day %in% growseas_invalid)
   
   # 2) precipitation
-  if (NAasprecip){
+  if (NA.as.precip){
     precip_events <- which(precip > tprecip | is.na(precip))
   } else {
     precip_events <- which(precip > tprecip)
@@ -227,17 +255,31 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   ustar_perc    <- round((length(ustar_invalid)/nrow(data))*100,2)
   rH_perc       <- round((length(rH_invalid)/nrow(data))*100,2)
   
+  addition_precip <- length(setdiff(precip_invalid,unique(growseas_invalid)))
+  addition_PPFD   <- length(setdiff(PPFD_invalid,unique(growseas_invalid,precip_invalid)))
+  addition_Tair   <- length(setdiff(Tair_invalid,unique(growseas_invalid,precip_invalid,PPFD_invalid)))
+  addition_ustar  <- length(setdiff(ustar_invalid,unique(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid)))
+  addition_rH     <- length(setdiff(rH_invalid,unique(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid,ustar_invalid)))
+  
+  addition_precip_perc <- round(addition_precip/nrow(data)*100,2)
+  addition_PPFD_perc <- round(addition_PPFD/nrow(data)*100,2)
+  addition_Tair_perc <- round(addition_Tair/nrow(data)*100,2)
+  addition_ustar_perc <- round(addition_ustar/nrow(data)*100,2)
+  addition_rH_perc <- round(addition_rH/nrow(data)*100,2)
+  
+  cat("Data filters:",fill=T)
   cat(length(growseas_invalid)," data points (",growseas_perc,"%) excluded by growing season filter",fill=T,sep="")
-  cat(length(precip_invalid)," data points (",precip_perc,"%) excluded by precipitation filter",fill=T,sep="")
-  cat(length(PPFD_invalid)," data points (",PPFD_perc,"%) excluded by radiation filter",fill=T,sep="")
-  cat(length(Tair_invalid)," data points (",Tair_perc,"%) excluded by air temperature filter",fill=T,sep="")
-  cat(length(ustar_invalid)," data points (",ustar_perc,"%) excluded by friction velocity filter",fill=T,sep="")
-  cat(length(rH_invalid)," data points (",rH_perc,"%) excluded by relative humidity filter",fill=T,sep="")
+  cat(addition_precip," additional data points (",addition_precip_perc,"%) excluded by precipitation filter (",length(precip_invalid)," data points = ",precip_perc,"% in total)",fill=T,sep="")
+  cat(addition_PPFD," additional data points (",addition_PPFD_perc,"%) excluded by radiation filter (",length(PPFD_invalid)," data points = ",PPFD_perc,"% in total)",fill=T,sep="")
+  cat(addition_Tair," additional data points (",addition_Tair_perc,"%) excluded by air temperature filter (",length(Tair_invalid)," data points = ",Tair_perc,"% in total)",fill=T,sep="")
+  cat(addition_ustar," additional data points (",addition_ustar_perc,"%) excluded by friction velocity filter (",length(ustar_invalid)," data points = ",ustar_perc,"% in total)",fill=T,sep="")
+  cat(addition_rH," additional data points (",addition_rH_perc,"%) excluded by relative humidity filter (",length(rH_invalid)," data points = ",rH_perc,"% in total)",fill=T,sep="")
   
   invalid        <- unique(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid,ustar_invalid,rH_invalid)
   valid[invalid] <- 0
   
-  cat(length(invalid)," data points (",length(invalid)/nrow(data),"%) excluded in total",fill=T,sep="")
+  excl_perc <- round((length(invalid)/nrow(data))*100,2)
+  cat(length(invalid)," data points (",excl_perc,"%) excluded in total",fill=T,sep="")
 
   # 5) set all other columns to NA
   data_filtered <- data.frame(data,valid)
@@ -773,17 +815,18 @@ Gb.Choudhury <- function(wind,ustar,leafwidth,LAI,zh,zr,constants=bigleaf.consta
 #' @param constants k - von-Karman constant (-)
 #'                                   
 #' @note Note that this equation is only valid for z >= d + z0m. All values in \code{heights}
-#'       smaller than d + z0m are set to NA.                                 
+#'       smaller than d + z0m will return 0.                                 
 #'                                  
 #' @return a data.frame with rows representing time and columns representing heights.     
 #'                                            
 #' @references                                                                                                                          
 
-## deal with a) negative wind speeds
-#            b) heights smaller than d + z0m
+## deal with heights smaller than d + z0m
 wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ustar",
                          wind="wind",H="H",zr,d,z0m,formulation=c("Dyer_1970","Businger_1971"),
                          constants=bigleaf.constants()){
+  
+  if( any(heights < d + z0m) ) warning("function is only valid for heights above d + z0m! Wind speed for heights below d + z0m will return 0!") 
   
   formulation <- match.arg(formulation)
   
@@ -793,18 +836,18 @@ wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ust
   ustar    <- check.columns(data,ustar)
   H        <- check.columns(data,H)
   
-  psi_h <- stability.correction.H(Tair,pressure,ustar,H,zr,d,
-                                  formulation=formulation,constants)
-  
   wind_heights <- data.frame(matrix(NA,ncol=length(heights),nrow=length(Tair)))
   colnames(wind_heights) <- paste0(heights,"m")
   for (z in heights){
     i <- which(heights == z)
-    wind_heights[,i] <- (ustar / constants$k) * (log((z - d) / z0m) - psi_h)
+    psi_m <- stability.correction(Tair,pressure,ustar,H,zr=z,d,
+                                  formulation=formulation,constants)[,"psi_m"]
+    wind_heights[,i] <- pmin(pmax(0,(ustar / constants$k) * (log(pmax(0,(z - d)) / z0m) - psi_m)),wind)
   }
   
   return(wind_heights)
 }
+
 
 
 #' Roughness parameters
@@ -849,7 +892,9 @@ wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ust
 #' @return a data.frame with the following columns:
 #'         \item{d}{displacement height (m)}
 #'         \item{z0m}{roughness length for momentum (m)}
-#'         
+#'
+#' @example
+#'                   
 
 
 ## estimation of d seems very unreliable! Evtl. exclude this case...
@@ -863,7 +908,7 @@ roughness.parameters <- function(method=c("canopy_height","wind_profile"),zh=NUL
   if (method == "canopy_height"){
   
     if (is.null(zh)){
-      stop("canopy height (zh) must be provided for method = 'canopy_height'!")
+      stop("canopy height (zh) must be provided for method = 'canopy_height'!") # also for the other one!!
     }
     d   <- frac_d*zh
     z0m <- frac_z0m*zh
@@ -879,23 +924,23 @@ roughness.parameters <- function(method=c("canopy_height","wind_profile"),zh=NUL
     if (is.null(d) & is.null(z0m)){
       
       d   <- frac_d*zh
-      psi_h <- stability.correction.H(Tair,pressure,ustar,H,zr,d,
-                                      formulation=formulation,constants)
+      psi_h <- stability.correction(Tair,pressure,ustar,H,zr,d,
+                                    formulation=formulation,constants)[,"psi_h"]
       
       z0m <- median((zr - d) * exp(-constants$k*wind / ustar - psi_h),na.rm=T)
     
     } else if (is.null(d) & !is.null(z0m)){
       
       d1    <-  frac_d*zh
-      psi_h <- stability.correction.H(Tair,pressure,ustar,H,zr,d=d1,
-                                      formulation=formulation,constants)
+      psi_h <- stability.correction(Tair,pressure,ustar,H,zr,d=d1,
+                                      formulation=formulation,constants)[,"psi_h"]
       
       d <- median(zr - exp( (wind * constants$k) / ustar  - psi_h) * z0m,na.rm=T)
       
     } else if (!is.null(d) & is.null(z0m)){
       
-      psi_h <- stability.correction.H(Tair,pressure,ustar,H,zr,d=frac_d*zh,
-                                      formulation=formulation,constants)
+      psi_h <- stability.correction(Tair,pressure,ustar,H,zr,d=frac_d*zh,
+                                    formulation=formulation,constants)[,"psi_h"]
                                         
       z0m <- median((zr - d) * exp(-constants$k*wind / ustar - psi_h),na.rm=T)
     
@@ -1021,6 +1066,8 @@ pressure.from.elevation <- function(elev,Tair,q=NULL,constants=bigleaf.constants
 #' @export
 MoninObukhov.length <- function(Tair,pressure,ustar,H,constants=bigleaf.constants()){
   
+  ustar[ustar < 0.1] <- NA
+    
   rho  <- air.density(Tair,pressure,constants=bigleaf.constants())
   Tair <- Tair + constants$Kelvin
   MOL  <- (-rho*constants$cp*ustar^3*Tair) / (constants$k*constants$g*H)
@@ -1063,17 +1110,27 @@ stability.parameter <- function(Tair,pressure,ustar,H,zr,d,constants=bigleaf.con
 }
 
 
-#' stability correction functions for sensible heat
+#' stability correction functions for heat, water vapor, and momentum
 #' 
 #' @description dimensionless stability functions needed to correct deviations
 #'              from the exponential wind profile under non-neutral conditions.
 #'              
-#' @param zeta         stability parameter \eqn{\zeta}
+#' @param Tair         air temperature (deg C)
+#' @param pressure     air pressure (kPa)
+#' @param ustar        friction velocity (m s-1)
+#' @param H            sensible heat flux (W m-2)
+#' @param zr           reference height (m)
+#' @param d            zero-plane displacement height (m)
 #' @param formulation  formulation for the stability function. Either "Dyer_1970", or "Businger_1971"
-#'  
+#' @param constants    Kelvin -
+#'                     Rd -
+#'                     cp -
+#'                     k -
+#'                     g -   
+#'    
 #' @details The functions depend on the value of the stability parameter \eqn{\zeta},
 #'          which can be calculated from the function \code{\link{stability.parameter}}.
-#'          The general form of the stability functions is:
+#'          The integration of the universal functions is:
 #'          
 #'          \deqn{-x * zeta} 
 #'          
@@ -1085,7 +1142,9 @@ stability.parameter <- function(Tair,pressure,ustar,H,zr,d,constants=bigleaf.con
 #'          
 #'          The different formulations differ in their value of x and y.
 #'   
-#' @return psi_h the value of the stability function for sensible heat (-)  
+#' @return a data.frame with the following columns:
+#'          \item{psi_h}{the value of the stability function for heat and water vapor (-)}
+#'          \item{psi_m}{the value of the stability function for momentum (-)}
 #' 
 #' @references Dyer, A.J., 1974: A review of flux-profile relationships. 
 #'             Boundary-Layer Meteorology 7, 363-372.
@@ -1096,39 +1155,61 @@ stability.parameter <- function(Tair,pressure,ustar,H,zr,d,constants=bigleaf.con
 #'             Businger, J.A., Wyngaard, J. C., Izumi, I., Bradley, E. F., 1971:
 #'             Flux-Profile relationships in the atmospheric surface layer. 
 #'             J. Atmospheric Sci. 28, 181-189.
+#'             
+#'             Paulson, C.A., 1970: The mathematical representation of wind speed
+#'             and temperature profiles in the unstable atmospheric surface layer.
+#'             Journal of Applied Meteorology 9, 857-861.
 #' 
 #'             Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 #'   
-
-stability.correction.H <- function(Tair,pressure,ustar,H,zr,d,formulation=c("Dyer_1970","Businger_1971"),
-                                   constants=bigleaf.constants()){
+stability.correction <- function(Tair,pressure,ustar,H,zr,d,
+                                 formulation=c("Dyer_1970","Businger_1971"),
+                                 constants=bigleaf.constants()){
   
   formulation  <- match.arg(formulation)
   
   zeta <- stability.parameter(Tair,pressure,ustar,H,zr,d,constants)
   
-  psi_h <- numeric()
+  psi_h = psi_m <- numeric()
   
+  # universal functions
   if (formulation == "Businger_1971"){
-    x <- -7.8
-    y <- 0.95 * ( 1 - 11.6 * zeta)^0.5
+    x_h <- -7.8
+    x_m <- -6
+    y_h <- 0.95 * ( 1 - 11.6 * zeta)^0.5
+    y_m <- (1 - 19.3*zeta)^0.25
   } else if (formulation == "Dyer_1970"){
-    x <- -5
-    y <- (1 - 16 * zeta)^0.5
+    x_h = x_m <- -5
+    y_h       <- (1 - 16 * zeta)^0.5
+    y_m       <- (1 - 16 * zeta)^0.25
   }
 
+  # integration of universal functions (after Paulson_1970 and Foken 2008)
   # stable
-  psi_h[zeta >= 0] <- -x * zeta[zeta >= 0]
+  stable <- zeta >= 0 | is.na(zeta)
+  psi_h[stable] <- x_h * zeta[stable]
+  psi_m[stable] <- x_m * zeta[stable]
   # unstable
-  psi_h[zeta < 0] <- 2 * log(( 1 + y[zeta < 0] ) / 2)  
+  unstable <- zeta < 0 | is.na(zeta)
+  psi_h[unstable] <- 2 * log( (1 + y_h[unstable] ) / 2)  
+  psi_m[unstable] <- 2 * log( (1 + y_m[unstable] ) / 2) + 
+                     log( ( 1 + y_m[unstable]^2 ) / 2) 
+                     -2 * atan(y_m[unstable]) + pi/2
   
-  return(psi_h)
+  return(data.frame(psi_h,psi_m))
 } 
 
+# zeta <- seq(-5,-0.5,0.5)
+# x1<- 2*log(( 1 + (1 - 16 * zeta)^0.5) / 2)
+# x2<- 2*log(( 1 + 1/(1 - 16 * zeta)^-0.5) / 2)
+# 
+# y1 <- 2 * log( 1 +   (0.95*(1 - 11.6*zeta)^0.5) / 2)
+# y2 <- 2 * log( 1 + 1/(0.95*(1 - 11.6*zeta)^-0.5) / 2)
+# 
+# xx1 <- 0.74*(1 - 9*zeta)^-0.5
+# xx2 <- 0.74 + 4.7*zeta
 ### Dyer_1970; Dyer_1974 (similar:Paulson 1970)
 ### Businger_1971: from Foken_2008; p.65 (suggested by Businger_1971), in the form of Högstrom 1988
-
-
 
 
 
@@ -2101,27 +2182,6 @@ Watttomol <- function(PAR,conv.factor){
 # 
 # 
 # 
-# stabilityCorrection_m <- function(zeta,zeta0m,gamma_m,beta_m,z0m,z,d){
-#   # computes the stability function for momentum according to the MOST
-#   # source: Liu et al. 2007 HESS, p771 
-#   psi_m <- as.numeric(rep(NA,length(zeta)))
-# 
-#   # helping variables
-#   x  <- (1 - gamma_m*zeta)^0.25
-#   x0 <- (1 - gamma_m*zeta*(z0m/(z-d)))^0.25
-# 
-#   for (i in seq_along(psi_m)){
-#     if(!is.na(zeta[i])) { 
-#        if (zeta[i] >= 0){    # stable conditions (zeta >= 0)
-#          psi_m[i] <- -beta_m*(zeta[i] - zeta0m[i])
-#        } else {              # unstable conditions (zeta < 0)
-#          psi_m[i] <- 2*log((1 + x[i])/(1 + x0[i])) + log((1 + x[i]^2)/(1 + x0[i]^2)) - 2*atan(x[i]) +
-#            2*atan(x0[i])
-#        }
-#     }
-#   }
-#   return(psi_m)
-# }
 # 
 # 
 # # u     <- rnorm(1,2,0.2)

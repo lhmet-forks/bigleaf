@@ -16,4 +16,7 @@ filter.growseas(GPPd, tGPP, min_int, ws)
 \description{
 filters annual time series for growing season based on smoothed daily GPP time series
 }
+\details{
+none
+}
 

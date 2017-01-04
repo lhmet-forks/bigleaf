@@ -30,6 +30,11 @@ The Monin-Obukhov length (L) is given by:
 
              \deqn{L = - (\rho * cp * ustar^3 * Tair) / (k * g * H)}
 }
+\note{
+Note that L gets very small for very low ustar values with implications
+      for subsequent functions using L as input. It is recommended to filter
+      data and exclude low ustar values (ustar < ~0.2) beforehand.
+}
 \references{
 Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 }

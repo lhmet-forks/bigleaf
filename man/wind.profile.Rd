@@ -2,12 +2,11 @@
 % Please edit documentation in R/bigleaf.R
 \name{wind.profile}
 \alias{wind.profile}
-\title{Wind speed at given levels above the canopy}
+\title{Wind speed at given levels in the surface layer}
 \usage{
 wind.profile(heights, data, Tair = "Tair", pressure = "pressure",
-  ustar = "ustar", wind = "wind", H = "H", zr, d, z0m,
-  formulation = c("Dyer_1970", "Businger_1971"),
-  constants = bigleaf.constants())
+  ustar = "ustar", H = "H", zr, d, z0m, formulation = c("Dyer_1970",
+  "Businger_1971"), constants = bigleaf.constants())
 }
 \arguments{
 \item{heights}{vector with heights for which wind speed is to be 
@@ -29,7 +28,10 @@ calculated.}
 
 \item{z0m}{roughness length for momentum (m)}
 
-\item{constants}{k - von-Karman constant (-)}
+\item{constants}{k - von-Karman constant (-)
+Kelvin - conversion degree Celsius to Kelvin
+cp - specific heat of air for constant pressure (J K-1 kg-1)
+g - gravitational acceleration (m s-2)}
 }
 \value{
 a data.frame with rows representing time and columns representing heights.
@@ -39,19 +41,19 @@ wind speed at a given height above the canopy estimated from single-level
              measurements of wind speed at some distance above the canopy.
 }
 \details{
-The underlying assumption is the existence of an exponential wind profile
+The underlying assumption is the existence of a logarithmic wind profile
          above the height d + z0m (the height at which wind speed mathematically reaches zero
          according to the Monin-Obhukov similarity theory).
          In this case, the wind speed at a given height z is given by:
          
-         \deqn{u(z) = (ustar/k) * (ln((z - d) / z0m) - \psi}
+         \deqn{u(z) = (ustar/k) * (ln((z - d) / z0m) - \psi{m}}
          
-         The roughness parameters zero plane displacement height (d) and roughness length (z0m)
-         can be estimated from \code{\link{roughness.parameters}}.
+         The roughness parameters zero-plane displacement height (d) and roughness length (z0m)
+         can be approximated from \code{\link{roughness.parameters}}.
 }
 \note{
 Note that this equation is only valid for z >= d + z0m. All values in \code{heights}
-      smaller than d + z0m are set to NA.
+      smaller than d + z0m will return 0.
 }
 \references{
 

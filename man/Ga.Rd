@@ -8,7 +8,7 @@ Ga(data, Tair = "Tair", pressure = "pressure", wind = "wind",
   ustar = "ustar", H = "H", zr, zh, d, z0m, frac_d = 0.7,
   frac_z0m = 0.1, Dl, N, LAI, fc = NULL, Cd = 0.2, hs = 0.01,
   stab_correction = c("Dyer_1970", "Businger_1971", "none"),
-  method_roughness = c("canopy_height", "wind_profile"),
+  method_roughness = c("canopy_height", "wind_profile"), stab_roughness = T,
   Rb_model = c("Thom_1972", "Choudhury_1988", "Su_2001", "constant_kB"),
   kB = NULL, constants = bigleaf.constants())
 }

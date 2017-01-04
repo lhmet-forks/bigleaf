@@ -5,10 +5,11 @@
 \title{Filter data}
 \usage{
 filter.data(data, precip = "precip", PPFD = "PPFD", Tair = "Tair",
-  ustar = "ustar", VPD = "VPD", GPP = "GPP", day = "day",
-  month = "month", year = "year", tprecip = 0.01, precip_hours = 24,
-  trad = 250, ttemp = 5, tustar = 0.2, tGPP = 0.5, trH = 0.95,
-  NAasprecip = F)
+  ustar = "ustar", VPD = "VPD", GPP = "GPP_nt", Ca = "Ca",
+  day = "day", month = "month", year = "year", quality_ext = "_qc",
+  good_quality = c(0, 1), excl_vars_qc = c("PPFD", "Ca"), tprecip = 0.01,
+  precip_hours = 24, trad = 200, ttemp = 5, tustar = 0.2, tGPP = 0.5,
+  trH = 0.95, NA.as.precip = F)
 }
 \arguments{
 \item{data}{data.frame or matrix containing all required input variables in 
@@ -26,6 +27,20 @@ half-hourly or hourly resolution. Including year, month, day information}
 
 \item{GPP}{gross primary productivity (umol m-2 s-1)}
 
+\item{Ca}{atmospheric CO2 concentration (umol mol-1)}
+
+\item{day}{day of year}
+
+\item{month}{month}
+
+\item{year}{year}
+
+\item{quality_ext}{}
+
+\item{good_quality}{}
+
+\item{excl_vars_qc}{}
+
 \item{tprecip}{precipitation threshold used to demark a precipitation event (mm)}
 
 \item{precip_hours}{number of hours removed following a precipitation event (h)}
@@ -40,7 +55,7 @@ half-hourly or hourly resolution. Including year, month, day information}
 
 \item{trH}{relative humidity threshold (-)}
 
-\item{NAasprecip}{if TRUE missing precipitation data are treated as precipitation events}
+\item{NA.as.precip}{if TRUE missing precipitation data are treated as precipitation events}
 
 \item{rH}{relative humidity (-), only one of VPD and rH required}
 }

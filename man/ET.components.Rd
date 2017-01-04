@@ -4,8 +4,8 @@
 \alias{ET.components}
 \title{Imposed and Equilibrium Evapotranspiration}
 \usage{
-\method{ET}{components}(data, Tair = "Tair", pressure = "pressure",
-  VPD = "VPD", Rn = "Rn", constants = bigleaf.constants())
+ET.components(data, Tair = "Tair", pressure = "pressure", VPD = "VPD",
+  Rn = "Rn", constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{data.frame or matrix containing all required input variables}

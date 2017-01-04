@@ -4,11 +4,11 @@
 \alias{roughness.parameters}
 \title{Roughness parameters}
 \usage{
-roughness.parameters(method = c("canopy_height", "wind_profile"), zh = NULL,
+roughness.parameters(method = c("canopy_height", "wind_profile"), zh,
   frac_d = 0.7, frac_z0m = 0.1, data, Tair = "Tair",
   pressure = "pressure", wind = "wind", ustar = "ustar", H = "H", zr,
-  d = NULL, z0m = NULL, formulation = c("Dyer_1970", "Businger_1971"),
-  constants = bigleaf.constants())
+  d = NULL, z0m = NULL, stab_roughness = T, formulation = c("Dyer_1970",
+  "Businger_1971"), constants = bigleaf.constants())
 }
 \arguments{
 \item{method}{method used, either "canopy_height", or "wind_profile" \cr
@@ -38,15 +38,24 @@ The following arguments are only needed if method = "wind_profile"!}
 
 \item{z0m}{optional; roughness length for momentum (m)}
 
-\item{constants}{k - von-Karman constant (-)}
+\item{stab_roughness}{should stability correction be considered? Default is TRUE}
+
+\item{formulation}{}
+
+\item{constants}{k - von-Karman constant (-)
+Kelvin - conversion degree Celsius to Kelvin
+cp - specific heat of air for constant pressure (J K-1 kg-1)
+g - gravitational acceleration (m s-2)}
 }
 \value{
 a data.frame with the following columns:
-        \item{d}{displacement height (m)}
+        \item{d}{zero-plane displacement height (m)}
         \item{z0m}{roughness length for momentum (m)}
+
+
 }
 \description{
-a simple approximation of the roughness parameters displacement height (d)
+a simple approximation of the two roughness parameters displacement height (d)
              and roughness length for momentum (z0m).
 }
 \details{
@@ -63,5 +72,10 @@ The two main roughness parameters, the displacement height (d)
          
          If \code{method} is \code{wind_profile}, z0m is estimated by solving
          the windspeed profile for z0m:
+         
+         \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
+                 
+         By default, d in this equation is fixed to 0.7zh, but can be set to any
+         other value.
 }
 

@@ -4,7 +4,9 @@
 \alias{Gb.Choudhury}
 \title{Boundary layer conductance according to Choudhury & Monteith 1988}
 \usage{
-Gb.Choudhury(wind, ustar, leafwidth, LAI, zh, zr,
+Gb.Choudhury(data, Tair = "Tair", pressure = "pressure", wind = "wind",
+  ustar = "ustar", H = "H", leafwidth, LAI, zh, zr, d, z0m,
+  formulation = c("Dyer_1970", "Businger_1971"),
   constants = bigleaf.constants())
 }
 \arguments{

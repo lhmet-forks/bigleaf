@@ -4,11 +4,11 @@
 \alias{WUE.metrics}
 \title{Water Use Efficiency metrics}
 \usage{
-WUE.metrics(data, GPP = "GPP", NEE = "NEE", LE = "LE", VPD = "VPD",
+WUE.metrics(data, GPP = "GPP_nt", NEE = "NEE", LE = "LE", VPD = "VPD",
   Tair = "Tair", constants = bigleaf.constants())
 }
 \arguments{
-\item{data}{Data.frame or matrix containing all required columns}
+\item{data}{data.frame or matrix containing all required variables}
 
 \item{GPP}{Gross primary productivity (umol CO2 m-2 s-1)}
 
@@ -24,14 +24,41 @@ WUE.metrics(data, GPP = "GPP", NEE = "NEE", LE = "LE", VPD = "VPD",
 }
 \value{
 a named vector with the following elements:
+        \item{WUE}{Water-use efficiency ()}
+        \item{WUE_NEE}{Water-use efficiency based on NEE ()}
+        \item{IWUE}{Inherent water-use efficiency ()}
+        \item{uWUE}{Underlying water-use efficiency ()}
 }
 \description{
 Calculation of various water use efficiency metrics
 }
 \details{
 the following metrics are calculated:
+
+         Water-use efficiency (WUE):
+         
+         \deqn{WUE = GPP / ET}
+         
+         Water-use efficiency based on NEE (WUE_NEE):
+         
+         \deqn{WUE_NEE = NEE / ET}
+         
+         Inherent water-use efficiency (IWUE; Beer et al. 2009):
+         
+         \deqn{IWUE = (GPP * VPD) / ET}
+         
+         Underlying water-use efficiency (uWUE; Zhou et al. 2014):
+         
+         \deqn{uWUE= (GPP * sqrt(VPD)) / ET}
+}
+\note{
+Units for VPD can also be hPa. Units change accordingly.
 }
 \references{
-Beer_2009
+Beer, C., et al., 2009: Temporal and among-site variability of inherent
+            water use efficiency at the ecosystem level. Global Biogeochemical Cycles 23, GB2018.
+            
+            Zhou, S., et al., 2014: The effect of vapor pressure deficit on water
+            use efficiency at the subdaily time scale. Geophysical Research Letters 41.
 }
 

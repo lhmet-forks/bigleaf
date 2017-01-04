@@ -5,8 +5,9 @@
 \title{Boundary layer conductance according to Su et al. 2001}
 \usage{
 Gb.Su(data, Tair = "Tair", pressure = "pressure", ustar = "ustar",
-  wind = "wind", H = "H", zh, Dl, N, fc = NULL, LAI, Cd = 0.2,
-  hs = 0.01, Pr = 0.71, constants = bigleaf.constants())
+  wind = "wind", H = "H", zh, zr, d, z0m, Dl, N, fc = NULL, LAI,
+  Cd = 0.2, hs = 0.01, Pr = 0.71, formulation = c("Dyer_1970",
+  "Businger_1971"), constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{a matrix or data.frame containing all required variables}
@@ -20,6 +21,12 @@ Gb.Su(data, Tair = "Tair", pressure = "pressure", ustar = "ustar",
 \item{H}{sensible heat flux (W m-2)}
 
 \item{zh}{canopy height (m)}
+
+\item{zr}{reference height (m)}
+
+\item{d}{zero-plane displacement height (m)}
+
+\item{z0m}{roughness length for momentum (m)}
 
 \item{Dl}{leaf dimension (m)}
 
@@ -49,6 +56,32 @@ a data.frame with the following columns:
 }
 \description{
 A physically based formulation for the canopy boundary layer conductance.
+}
+\details{
+The formulation is based on the kB-1 model developed by Massman 1999. 
+         Su et al. 2001 derived the following approximation:
+          
+         \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2}
+         
+         If fc (fractional vegetation cover) is missing, it is estimated from LAI:
+
+         \deqn{fc = 1 - exp(-LAI/2)}
+         
+         The wind speed at the top of the canopy is calculated using function
+         \code{\link{wind.profile}}.
+         
+         Ct is the heat transfer coefficient of the leaf (Massman 1999):
+         
+         \deqn{Ct = Pr^-2/3 Reh^-1/2 N}
+         
+         where Pr is the Prandtl number, and Reh is the Reynolds number for leaves:
+         
+         \deqn{Dl wind(zh) / v}
+          
+         kBs-1, the kB-1 value for bare soil surface, is calculated according 
+         to Su et al. 2001:
+         
+         \deqn{kBs^-1 = 2.46(Re)^0.25 - ln(7.4)}
 }
 \references{
 Su, Z., Schmugge, T., Kustas, W. & Massman, W., 2001: An evaluation of

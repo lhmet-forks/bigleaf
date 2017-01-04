@@ -23,9 +23,6 @@ library(roxygen2)
 #   save a few lines of code where columns are checked and converted to vectors?
 #   or alternatively: combine to a smaller number of functions, so that this
 #   check does not have to be performed so many times? See how Twutz did it!
-#
-# - include aggregation in data or enable implementation in wrapper function 
-#   such as aggregate()
 
 ### Issues/check:
 # MOL independent of temperature?
@@ -36,16 +33,15 @@ library(roxygen2)
 ## TODO:
 # Esat <- provide only one option? Else this option has to be inlcuded in all functions where Esat is used!!
 #         not really, if it was  to be changed, do it in the function directly, not where it is a sub-function!
+#        options that are not often used may not be indicated: rather changed in the subfunction directly --> ensures consistency! 
 # check e to q conversions again!
 # References for EVERY function!!!
 # check for more functions in Jarvis,McNaughton and the Monteith textbook!!!
-
+# doublecheck Choudhury!
+# write examples!
 
 
 ### still missing:
-# Ga complete 
-# the estimation of d and z0m; reference with dependency on LAI? but not necessary now!
-# wind speed at the top of the canopy
 # ETpot - add other formulations: see Donahue 2010!
 # ET_imp, ET_equ
 # Ci
@@ -54,35 +50,38 @@ library(roxygen2)
 
 
 
+# Notes:
+# other estimates for d and z0m: Shaw and Pereira 1982 (see also Yang_2003)
+# v = kinematic viscosity of the air (m^2/s); from=Massman_1999b ; compare with http://www.engineeringtoolbox.com/dry-air-properties-d_973.html
 
 
 ## artificial test data
-wind     <- rnorm(20,3,0.8)
-ustar    <- rnorm(20,0.5,0.2)
-Tair     <- rnorm(20,25,2)
-pressure <- rep(101.325,20)
-Rn       <- rnorm(20,400,40)
-H        <- 0.3*Rn
-LE       <- 0.4*Rn
-G        <- 0.1*Rn
-Ga       <- rnorm(20,0.08,0.01)
-Gs       <- rnorm(20,0.3,0.02)*(1/41)
-VPD      <- rnorm(20,2,0.3)
-precip   <- c(rep(0,18),0.1,0.001)
-PPFD     <- seq(180,300,length.out=20)
-GPP      <- rnorm(20,20,3)
-NEE      <- -GPP
-day      <- c(rep(1,10),rep(2,10))
-
-
-
-testdf <- data.frame(wind,ustar,Tair,pressure,Rn,
-                     H,LE,G,Ga,Gs,VPD,precip,PPFD,GPP,NEE,day)
+# wind     <- rnorm(20,3,0.8)
+# ustar    <- rnorm(20,0.5,0.2)
+# Tair     <- rnorm(20,25,2)
+# pressure <- rep(101.325,20)
+# Rn       <- rnorm(20,400,40)
+# H        <- 0.3*Rn
+# LE       <- 0.4*Rn
+# G        <- 0.1*Rn
+# Ga       <- rnorm(20,0.08,0.01)
+# Gs       <- rnorm(20,0.3,0.02)*(1/41)
+# VPD      <- rnorm(20,2,0.3)
+# precip   <- c(rep(0,18),0.1,0.001)
+# PPFD     <- seq(180,300,length.out=20)
+# GPP      <- rnorm(20,20,3)
+# NEE      <- -GPP
+# day      <- c(rep(1,10),rep(2,10))
+# 
+# 
+# 
+# testdf <- data.frame(wind,ustar,Tair,pressure,Rn,
+#                      H,LE,G,Ga,Gs,VPD,precip,PPFD,GPP,NEE,day)
 
 
 ## real data
-load(paste0(path.pkg,"DK-Sor_",years_selection,"_processed.rda"))
-testdk <- DK_Sor_2010_processed
+# load(paste0(path.pkg,"DK-Sor_",years_selection,"_processed.rda"))
+# testdk <- DK_Sor_2010_processed
 
 
 
@@ -157,6 +156,13 @@ bigleaf.constants <- function(){
 #' @param VPD           vapor pressure deficit (kPa)
 #' @param rH            relative humidity (-), only one of VPD and rH required
 #' @param GPP           gross primary productivity (umol m-2 s-1)
+#' @param Ca            atmospheric CO2 concentration (umol mol-1)
+#' @param day           day of year
+#' @param month         month
+#' @param year          year
+#' @param quality_ext   
+#' @param good_quality 
+#' @param excl_vars_qc  
 #' @param tprecip       precipitation threshold used to demark a precipitation event (mm)
 #' @param precip_hours  number of hours removed following a precipitation event (h)
 #' @param trad          radiation threshold (umol m-2 s-1)
@@ -164,7 +170,7 @@ bigleaf.constants <- function(){
 #' @param tustar        friction velocity threshold (m s-1)
 #' @param tGPP          GPP threshold (???)
 #' @param trH           relative humidity threshold (-)
-#' @param NAasprecip    if TRUE missing precipitation data are treated as precipitation events
+#' @param NA.as.precip  if TRUE missing precipitation data are treated as precipitation events
 #' 
 #' 
 #' @details growing season:
@@ -180,9 +186,11 @@ bigleaf.constants <- function(){
 #' 
 #' @export                     
 
-filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="ustar",VPD="VPD",GPP="GPP_nt",Ca="Ca",
-                        day="day",month="month",year="year",quality_ext="_qc",good_quality=c(0,1),excl_vars_qc=c("PPFD","Ca"),
-                        tprecip=0.01,precip_hours=24,trad=200,ttemp=5,tustar=0.2,tGPP=0.5,trH=0.95,NA.as.precip=F){
+filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="ustar",
+                        VPD="VPD",GPP="GPP_nt",Ca="Ca",day="day",month="month",year="year",
+                        quality_ext="_qc",good_quality=c(0,1),excl_vars_qc=c("PPFD","Ca"),
+                        tprecip=0.01,precip_hours=24,trad=200,ttemp=5,tustar=0.2,tGPP=0.5,
+                        trH=0.95,NA.as.precip=F){
   
   vars    <- c(precip,PPFD,Tair,ustar,VPD,GPP,Ca)
   vars_qc <- setdiff(vars,excl_vars_qc)
@@ -207,16 +215,15 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   for(var in vars_qc){
     if (paste0(var,quality_ext) %in% colnames(data)){                             # does column exist?
       assign(paste0(var,quality_ext),check.columns(data,paste0(var,quality_ext))) # create variable "*_qc", make quality check before
-      var2 <- get(var)
-      var2[get(paste0(var,quality_ext)) > max(good_quality)] <- NA                # exclude bad quality data
+      data[get(paste0(var,quality_ext)) > max(good_quality),var] <- NA            # exclude bad quality data
       
-      qc_invalid      <- length(var2[get(paste0(var,quality_ext)) > max(good_quality)]) # count & report
+      qc_invalid      <- sum(get(paste0(var,quality_ext)) > max(good_quality)) # count & report
       qc_invalid_perc <- round((qc_invalid/nrow(data))*100,2)
       
       cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) excluded",fill=T,sep="")
     } 
   }
-  cat("---------------------------------",fill=T)
+  cat("-------------------------------------",fill=T)
   
   rH <- VPD.to.rH(VPD,Tair)
   
@@ -256,10 +263,10 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   rH_perc       <- round((length(rH_invalid)/nrow(data))*100,2)
   
   addition_precip <- length(setdiff(precip_invalid,unique(growseas_invalid)))
-  addition_PPFD   <- length(setdiff(PPFD_invalid,unique(growseas_invalid,precip_invalid)))
-  addition_Tair   <- length(setdiff(Tair_invalid,unique(growseas_invalid,precip_invalid,PPFD_invalid)))
-  addition_ustar  <- length(setdiff(ustar_invalid,unique(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid)))
-  addition_rH     <- length(setdiff(rH_invalid,unique(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid,ustar_invalid)))
+  addition_PPFD   <- length(setdiff(PPFD_invalid,unique(c(growseas_invalid,precip_invalid))))
+  addition_Tair   <- length(setdiff(Tair_invalid,unique(c(growseas_invalid,precip_invalid,PPFD_invalid))))
+  addition_ustar  <- length(setdiff(ustar_invalid,unique(c(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid))))
+  addition_rH     <- length(setdiff(rH_invalid,unique(c(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid,ustar_invalid))))
   
   addition_precip_perc <- round(addition_precip/nrow(data)*100,2)
   addition_PPFD_perc <- round(addition_PPFD/nrow(data)*100,2)
@@ -275,15 +282,17 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   cat(addition_ustar," additional data points (",addition_ustar_perc,"%) excluded by friction velocity filter (",length(ustar_invalid)," data points = ",ustar_perc,"% in total)",fill=T,sep="")
   cat(addition_rH," additional data points (",addition_rH_perc,"%) excluded by relative humidity filter (",length(rH_invalid)," data points = ",rH_perc,"% in total)",fill=T,sep="")
   
-  invalid        <- unique(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid,ustar_invalid,rH_invalid)
+  invalid        <- unique(c(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid,ustar_invalid,rH_invalid))
   valid[invalid] <- 0
   
   excl_perc <- round((length(invalid)/nrow(data))*100,2)
+  
   cat(length(invalid)," data points (",excl_perc,"%) excluded in total",fill=T,sep="")
-
+  cat(nrow(data) - length(invalid)," valid data points (",100-excl_perc,"%) remaining.",fill=T,sep="")
+  
   # 5) set all other columns to NA
   data_filtered <- data.frame(data,valid)
-  data_filtered[valid==0,!colnames(data) %in% c(precip,PPFD,Tair,ustar,VPD,GPP,day,month,year)] <- NA
+  data_filtered[valid==0,!colnames(data) %in% c("day","month","year")] <- NA
   
   return(data_filtered)
 }
@@ -300,7 +309,7 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
 #' @param ws     window size used for smoothing
 #' 
 #' 
-#' @details 
+#' @details none 
 
 
 
@@ -378,7 +387,7 @@ filter.growseas <- function(GPPd,tGPP,min_int,ws){  # ws = window size
 #' 
 #' @description Calculation of various water use efficiency metrics
 #' 
-#' @param data      Data.frame or matrix containing all required columns
+#' @param data      data.frame or matrix containing all required variables
 #' @param GPP       Gross primary productivity (umol CO2 m-2 s-1)
 #' @param NEE       Net ecosystem exchange (umol CO2 m-2 s-1)
 #' @param LE        Latent heat flux (W m-2)
@@ -388,15 +397,40 @@ filter.growseas <- function(GPPd,tGPP,min_int,ws){  # ws = window size
 #'
 #' @details the following metrics are calculated:
 #' 
-#' @return a named vector with the following elements:
+#'          Water-use efficiency (WUE):
+#'          
+#'          \deqn{WUE = GPP / ET}
+#'          
+#'          Water-use efficiency based on NEE (WUE_NEE):
+#'          
+#'          \deqn{WUE_NEE = NEE / ET}
+#'          
+#'          Inherent water-use efficiency (IWUE; Beer et al. 2009):
+#'          
+#'          \deqn{IWUE = (GPP * VPD) / ET}
+#'          
+#'          Underlying water-use efficiency (uWUE; Zhou et al. 2014):
+#'          
+#'          \deqn{uWUE= (GPP * sqrt(VPD)) / ET}
 #' 
-#' @references Beer_2009
+#' @return a named vector with the following elements:
+#'         \item{WUE}{Water-use efficiency ()}
+#'         \item{WUE_NEE}{Water-use efficiency based on NEE ()}
+#'         \item{IWUE}{Inherent water-use efficiency ()}
+#'         \item{uWUE}{Underlying water-use efficiency ()}
+#' 
+#' @note Units for VPD can also be hPa. Units change accordingly.
+#' 
+#' @references Beer, C., et al., 2009: Temporal and among-site variability of inherent
+#'             water use efficiency at the ecosystem level. Global Biogeochemical Cycles 23, GB2018.
 #'             
-#'   
-
-### split up per year? or do this externally in aggregate function?!!! Is that working? 
-### or would it be better to split it within the function
-WUE.metrics <- function(data,GPP="GPP",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
+#'             Zhou, S., et al., 2014: The effect of vapor pressure deficit on water
+#'             use efficiency at the subdaily time scale. Geophysical Research Letters 41.
+#'                    
+#'                  
+#'                            
+#' @export
+WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
                         constants=bigleaf.constants()){
   
   GPP  <- check.columns(data,GPP)
@@ -406,9 +440,9 @@ WUE.metrics <- function(data,GPP="GPP",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
   Tair <- check.columns(data,Tair)
   
   
-  ET  <- LEtoET(LE,Tair) * 86400          # kg H2O d-1
-  GPP <- (GPP * 86400/1e06 * Cmol)*1000   # gC m-2 d-1
-  NEE <- (NEE * 86400/1e06 * Cmol)*1000   # gC m-2 d-1
+  ET  <- LEtoET(LE,Tair)                   # kg H2O s-1
+  GPP <- (GPP/1e06 * constants$Cmol)*1000  # gC m-2 s-1
+  NEE <- (NEE/1e06 * constants$Cmol)*1000  # gC m-2 s-1
   
   
   WUE     <- median(GPP/ET,na.rm=T)
@@ -419,6 +453,9 @@ WUE.metrics <- function(data,GPP="GPP",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
   return(c(WUE=WUE,WUE_NEE=WUE_NEE,IWUE=IWUE,uWUE=uWUE))
 }
 
+
+# by(data=testdk2,testdk2[,"month"],WUE.metrics,simplify=T) -> test
+# do.call(cbind,test) -> test2  # convert to data.frame
 
 
 #' Estimation of g1
@@ -612,9 +649,7 @@ Reynolds.Number <- function(Tair,pressure,ustar,hs,constants=bigleaf.constants()
   
   return(data.frame("v"=v,"Re"=Re))
 }
-# hs = roughness height of the soil [m]
-# v = kinematic viscosity of the air (m^2/s); from=Massman_1999b ; compare with http://www.engineeringtoolbox.com/dry-air-properties-d_973.html
-# Tair in K!!
+
 
 
 
@@ -630,6 +665,9 @@ Reynolds.Number <- function(Tair,pressure,ustar,hs,constants=bigleaf.constants()
 #' @param wind      wind speed (m s-1)
 #' @param H         sensible heat flux (W m-2)
 #' @param zh        canopy height (m)
+#' @param zr        reference height (m)
+#' @param d         zero-plane displacement height (m)
+#' @param z0m       roughness length for momentum (m)
 #' @param Dl        leaf dimension (m)
 #' @param N         number of leaf sides participating in heat exchange (1 or 2)
 #' @param fc        fractional vegetation cover [0-1] (if not provided, calculated from LAI)
@@ -649,11 +687,11 @@ Reynolds.Number <- function(Tair,pressure,ustar,hs,constants=bigleaf.constants()
 #' @details The formulation is based on the kB-1 model developed by Massman 1999. 
 #'          Su et al. 2001 derived the following approximation:
 #'           
-#'          \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2
+#'          \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2}
 #'          
 #'          If fc (fractional vegetation cover) is missing, it is estimated from LAI:
 #' 
-#'          \deqn(fc = 1 - exp(-LAI/2))
+#'          \deqn{fc = 1 - exp(-LAI/2)}
 #'          
 #'          The wind speed at the top of the canopy is calculated using function
 #'          \code{\link{wind.profile}}.
@@ -682,9 +720,12 @@ Reynolds.Number <- function(Tair,pressure,ustar,hs,constants=bigleaf.constants()
 #' 
 #' @export
 Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind",
-                  H="H",zh,Dl,N,fc=NULL,LAI,Cd=0.2,hs=0.01,Pr=0.71,
+                  H="H",zh,zr,d,z0m,Dl,N,fc=NULL,LAI,Cd=0.2,hs=0.01,Pr=0.71,
+                  formulation=c("Dyer_1970","Businger_1971"),
                   constants=bigleaf.constants()){
         
+  formulation <- match.arg(formulation)
+  
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
   ustar    <- check.columns(data,ustar)
@@ -695,21 +736,24 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
     fc  <- (1-exp(-LAI/2)) 
   } 
   
-  #wind_zh <- wind.profile(zh,data,) ## check first if that even works!!,check also if stab correctin is necessary
+  wind_zh <- wind.profile(zh,data,zr=zr,d=d,z0m=z0m,formulation=formulation)[,1]
   
   v   <- Reynolds.Number(Tair,pressure,ustar,hs,constants)[,"v"]
   Re  <- Reynolds.Number(Tair,pressure,ustar,hs,constants)[,"Re"]
   kBs <- 2.46 * (Re)^0.25 - log(7.4)
-  Reh <- Dl * wind / v
+  Reh <- Dl * wind_zh / v
   Ct  <- 1*Pr^-0.6667*Reh^-0.5*N                       
 
-  kB  <- (constants$k*Cd)/(4*Ct*ustar/wind)*fc^2 + kBs*(1 - fc)^2
+  kB  <- (constants$k*Cd)/(4*Ct*ustar/wind_zh)*fc^2 + kBs*(1 - fc)^2
   Rb  <- kB/(constants$k*ustar) 
   Gb  <- 1/Rb
   
   
   return(data.frame(Rb,Gb,kB))
 }
+
+## typical values for hs: Shuttleworth and Wallace 1985 from van Bavel and Hillel 1976 -> 0.01m
+
 # Ct = heat transfer coefficient of the leaf (Massman_1999 p.31)
 
 # #' Boundary layer conductance according to McNaughton and van den Hurk 1995
@@ -775,10 +819,17 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
 #' @seealso \code{\link{Gb.Thom}}, \code{\link{Gb.Su}}  
 #'            
 #' @export                                                                                                                                                                                                                                                                                    
-Gb.Choudhury <- function(wind,ustar,leafwidth,LAI,zh,zr,constants=bigleaf.constants()){
+Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H="H",
+                         leafwidth,LAI,zh,zr,d,z0m,formulation=c("Dyer_1970","Businger_1971"),
+                         constants=bigleaf.constants()){
+  
+  formulation <- match.arg(formulation)
+  
+  ustar    <- check.columns(data,ustar)
+  wind     <- check.columns(data,wind)
   
   alpha   <- 4.39 - 3.97*exp(-0.258*LAI)
-  wind_zh <- wind / (exp(alpha*(zr/zh - 1)))
+  wind_zh <- wind.profile(zh,data,zr=zr,d=d,z0m=z0m,formulation=formulation)[,1]
   Gb      <- LAI*((0.02/alpha)*sqrt(wind_zh/leafwidth)*(1-exp(-alpha/2)))
   Rb      <- 1/Gb
   kB      <- Rb*constants$k*ustar
@@ -787,20 +838,20 @@ Gb.Choudhury <- function(wind,ustar,leafwidth,LAI,zh,zr,constants=bigleaf.consta
 }
 
 
-#' Wind speed at given levels above the canopy
+#' Wind speed at given levels in the surface layer
 #' 
 #' @description wind speed at a given height above the canopy estimated from single-level
-#'              measurements of wind speed at some distance above the canopy. 
+#'              measurements of wind speed at some distance above the canopy.
 #'              
-#' @details The underlying assumption is the existence of an exponential wind profile
+#' @details The underlying assumption is the existence of a logarithmic wind profile
 #'          above the height d + z0m (the height at which wind speed mathematically reaches zero
 #'          according to the Monin-Obhukov similarity theory).
 #'          In this case, the wind speed at a given height z is given by:
 #'          
-#'          \deqn{u(z) = (ustar/k) * (ln((z - d) / z0m) - \psi}
+#'          \deqn{u(z) = (ustar/k) * (ln((z - d) / z0m) - \psi{m}}
 #'          
-#'          The roughness parameters zero plane displacement height (d) and roughness length (z0m)
-#'          can be estimated from \code{\link{roughness.parameters}}.
+#'          The roughness parameters zero-plane displacement height (d) and roughness length (z0m)
+#'          can be approximated from \code{\link{roughness.parameters}}.
 #'          
 #' @param heights   vector with heights for which wind speed is to be 
 #'                  calculated.
@@ -813,17 +864,20 @@ Gb.Choudhury <- function(wind,ustar,leafwidth,LAI,zh,zr,constants=bigleaf.consta
 #' @param d         displacement height (m)
 #' @param z0m       roughness length for momentum (m)
 #' @param constants k - von-Karman constant (-)
+#'                  Kelvin - conversion degree Celsius to Kelvin
+#'                  cp - specific heat of air for constant pressure (J K-1 kg-1)
+#'                  g - gravitational acceleration (m s-2)
 #'                                   
 #' @note Note that this equation is only valid for z >= d + z0m. All values in \code{heights}
 #'       smaller than d + z0m will return 0.                                 
 #'                                  
 #' @return a data.frame with rows representing time and columns representing heights.     
 #'                                            
-#' @references                                                                                                                          
-
-## deal with heights smaller than d + z0m
+#' @references
+#' 
+#' @export                                                                                                                          
 wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ustar",
-                         wind="wind",H="H",zr,d,z0m,formulation=c("Dyer_1970","Businger_1971"),
+                         H="H",zr,d,z0m,formulation=c("Dyer_1970","Businger_1971"),
                          constants=bigleaf.constants()){
   
   if( any(heights < d + z0m) ) warning("function is only valid for heights above d + z0m! Wind speed for heights below d + z0m will return 0!") 
@@ -832,7 +886,6 @@ wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ust
   
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
-  wind     <- check.columns(data,wind)
   ustar    <- check.columns(data,ustar)
   H        <- check.columns(data,H)
   
@@ -842,7 +895,7 @@ wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ust
     i <- which(heights == z)
     psi_m <- stability.correction(Tair,pressure,ustar,H,zr=z,d,
                                   formulation=formulation,constants)[,"psi_m"]
-    wind_heights[,i] <- pmin(pmax(0,(ustar / constants$k) * (log(pmax(0,(z - d)) / z0m) - psi_m)),wind)
+    wind_heights[,i] <- pmax(0,(ustar / constants$k) * (log(pmax(0,(z - d)) / z0m) - psi_m))
   }
   
   return(wind_heights)
@@ -852,7 +905,7 @@ wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ust
 
 #' Roughness parameters
 #' 
-#' @description a simple approximation of the roughness parameters displacement height (d)
+#' @description a simple approximation of the two roughness parameters displacement height (d)
 #'              and roughness length for momentum (z0m).
 #'              
 #' @param method    method used, either "canopy_height", or "wind_profile" \cr
@@ -866,12 +919,17 @@ wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ust
 #' @param pressure  air pressure (kPa)
 #' @param wind      wind speed at height zr (m s-1)
 #' @param ustar     friction velocity (m s-1)
-#' @param H         sensible heat flux (W m-2)
-#' @param zr        instrument height (m)
-#' @param d         optional; displacement height (m)
-#' @param z0m       optional; roughness length for momentum (m)
-#' @param constants k - von-Karman constant (-)         
-#' 
+#' @param H              sensible heat flux (W m-2)
+#' @param zr             instrument height (m)
+#' @param d              optional; displacement height (m)
+#' @param z0m            optional; roughness length for momentum (m)
+#' @param stab_roughness should stability correction be considered? Default is TRUE
+#' @param formulation 
+#' @param constants k - von-Karman constant (-)
+#'                  Kelvin - conversion degree Celsius to Kelvin
+#'                  cp - specific heat of air for constant pressure (J K-1 kg-1)
+#'                  g - gravitational acceleration (m s-2)
+#'                  
 #' 
 #' @details The two main roughness parameters, the displacement height (d)
 #'          and the roughness length for momentum (z0m) can be estimated from simple
@@ -887,29 +945,28 @@ wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ust
 #'          If \code{method} is \code{wind_profile}, z0m is estimated by solving
 #'          the windspeed profile for z0m:
 #'          
+#'          \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
 #'                  
+#'          By default, d in this equation is fixed to 0.7zh, but can be set to any
+#'          other value.        
 #' 
 #' @return a data.frame with the following columns:
-#'         \item{d}{displacement height (m)}
+#'         \item{d}{zero-plane displacement height (m)}
 #'         \item{z0m}{roughness length for momentum (m)}
 #'
-#' @example
-#'                   
-
-
-## estimation of d seems very unreliable! Evtl. exclude this case...
-roughness.parameters <- function(method=c("canopy_height","wind_profile"),zh=NULL,frac_d=0.7,frac_z0m=0.1,data,
-                                 Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H="H",zr,d=NULL,z0m=NULL,
-                                 formulation=c("Dyer_1970","Businger_1971"),constants=bigleaf.constants()){
+#'    
+#' @return                                  
+roughness.parameters <- function(method=c("canopy_height","wind_profile"),zh,
+                                 frac_d=0.7,frac_z0m=0.1,data,Tair="Tair",pressure="pressure",
+                                 wind="wind",ustar="ustar",H="H",zr,d=NULL,z0m=NULL,
+                                 stab_roughness=T,formulation=c("Dyer_1970","Businger_1971"),
+                                 constants=bigleaf.constants()){
   
   method      <- match.arg(method)
   formulation <- match.arg(formulation)
   
   if (method == "canopy_height"){
   
-    if (is.null(zh)){
-      stop("canopy height (zh) must be provided for method = 'canopy_height'!") # also for the other one!!
-    }
     d   <- frac_d*zh
     z0m <- frac_z0m*zh
   
@@ -921,29 +978,19 @@ roughness.parameters <- function(method=c("canopy_height","wind_profile"),zh=NUL
     ustar    <- check.columns(data,ustar)
     H        <- check.columns(data,H)
     
-    if (is.null(d) & is.null(z0m)){
-      
-      d   <- frac_d*zh
-      psi_h <- stability.correction(Tair,pressure,ustar,H,zr,d,
-                                    formulation=formulation,constants)[,"psi_h"]
-      
-      z0m <- median((zr - d) * exp(-constants$k*wind / ustar - psi_h),na.rm=T)
+    if (is.null(d) & is.null(z0m)){d <- frac_d*zh}
     
-    } else if (is.null(d) & !is.null(z0m)){
+    if (stab_roughness){
       
-      d1    <-  frac_d*zh
-      psi_h <- stability.correction(Tair,pressure,ustar,H,zr,d=d1,
-                                      formulation=formulation,constants)[,"psi_h"]
+      psi_m <- stability.correction(data,zr=zr,d=d,
+                                    formulation=formulation,constants=constants)[,"psi_m"]
+
+      z0m <- median((zr - d) * exp(-constants$k*wind / ustar - psi_m),na.rm=T)
       
-      d <- median(zr - exp( (wind * constants$k) / ustar  - psi_h) * z0m,na.rm=T)
+    } else {
       
-    } else if (!is.null(d) & is.null(z0m)){
+      z0m <- median((zr - d) * exp(-constants$k*wind / ustar),na.rm=T)
       
-      psi_h <- stability.correction(Tair,pressure,ustar,H,zr,d=frac_d*zh,
-                                    formulation=formulation,constants)[,"psi_h"]
-                                        
-      z0m <- median((zr - d) * exp(-constants$k*wind / ustar - psi_h),na.rm=T)
-    
     }
     
   }
@@ -951,6 +998,15 @@ roughness.parameters <- function(method=c("canopy_height","wind_profile"),zh=NUL
   return(data.frame(d,z0m))
 }
 
+# psi_h <- stability.correction(Tair=testdk2[,"Tair"],pressure=testdk2[,"pressure"],ustar=testdk2[,"ustar"],
+#                               H=testdk2[,"H"],zr=43,d=0.7*25,)[,"psi_m"]
+# 
+# 
+# ram1 <- wind/ustar^2
+# ram2 <- log((43-17.5)/1.65)/(k*ustar)
+# 
+# ram3 <- log((43-17.5)/1.07 - psi_h)/(k*ustar)
+# ram4 <- log((43-17.5)/2.5 - psi_h)/(k*ustar)
 
 ############################
 ### air pressure, density ## --------------------------------------------------------------------------
@@ -1061,12 +1117,14 @@ pressure.from.elevation <- function(elev,Tair,q=NULL,constants=bigleaf.constants
 #' 
 #' @return Monin-Obukhov length (m)
 #' 
+#' @note Note that L gets very small for very low ustar values with implications
+#'       for subsequent functions using L as input. It is recommended to filter
+#'       data and exclude low ustar values (ustar < ~0.2) beforehand. 
+#' 
 #' @references Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany. 
 #' 
 #' @export
 MoninObukhov.length <- function(Tair,pressure,ustar,H,constants=bigleaf.constants()){
-  
-  ustar[ustar < 0.1] <- NA
     
   rho  <- air.density(Tair,pressure,constants=bigleaf.constants())
   Tair <- Tair + constants$Kelvin
@@ -1110,7 +1168,9 @@ stability.parameter <- function(Tair,pressure,ustar,H,zr,d,constants=bigleaf.con
 }
 
 
-#' stability correction functions for heat, water vapor, and momentum
+#' stability correction functions for heat and momentum
+#' 
+#' gives the integrated form of the universal functions.
 #' 
 #' @description dimensionless stability functions needed to correct deviations
 #'              from the exponential wind profile under non-neutral conditions.
@@ -1162,10 +1222,16 @@ stability.parameter <- function(Tair,pressure,ustar,H,zr,d,constants=bigleaf.con
 #' 
 #'             Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 #'   
-stability.correction <- function(Tair,pressure,ustar,H,zr,d,
+stability.correction <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",H="H",zr,d,
                                  formulation=c("Dyer_1970","Businger_1971"),
                                  constants=bigleaf.constants()){
   
+  Tair     <- check.columns(data,Tair)
+  pressure <- check.columns(data,pressure)
+  ustar    <- check.columns(data,ustar)
+  H        <- check.columns(data,H)
+  
+
   formulation  <- match.arg(formulation)
   
   zeta <- stability.parameter(Tair,pressure,ustar,H,zr,d,constants)
@@ -1293,10 +1359,14 @@ stability.correction <- function(Tair,pressure,ustar,H,zr,d,
 Ga <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H="H",zr,zh,d,z0m,
                frac_d=0.7,frac_z0m=0.1,Dl,N,LAI,fc=NULL,Cd=0.2,hs=0.01,
                stab_correction=c("Dyer_1970","Businger_1971","none"),
-               method_roughness=c("canopy_height","wind_profile"),
+               method_roughness=c("canopy_height","wind_profile"),stab_roughness=T,
                Rb_model=c("Thom_1972","Choudhury_1988","Su_2001","constant_kB"),
-               kB=NULL,constants=bigleaf.constants()) 
-      {
+               kB=NULL,constants=bigleaf.constants()){
+  
+  Rb_model         <- match.arg(Rb_model)
+  stab_correction  <- match.arg(stab_correction)
+  method_roughness <- match.arg(method_roughness)
+  
   
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
@@ -1304,11 +1374,20 @@ Ga <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H=
   ustar    <- check.columns(data,ustar)
   H        <- check.columns(data,H)
   
-  Rb_model         <- match.arg(Rb_model)
-  stab_correction  <- match.arg(stab_correction)
-  method_roughness <- match.arg(method_roughness)
+  
+  ## if not provided, estimate roughness parameters d and z0m
+  if (is.null(d) | is.null(z0m)){
+    
+    rp <- roughness.parameters(method=method_roughness,zh=zh,frac_d=frac_d,frac_z0m=frac_z0m,
+                               data=data,zr=zr,d=d,z0m=z0m,stab_correction_roughness=stab_roughness,
+                               formulation=stab_correction,constants=constants)
+    
+    d   <- rp[,"d"]
+    z0m <- rp[,"z0m"]
+  }
   
   
+  ## calculate boundary layer conductance
   if (Rb_model != "constant_kB"){
     
     if (Rb_model == "Thom_1972"){
@@ -1317,11 +1396,13 @@ Ga <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H=
       
     } else if (Rb_model == "Choudhury_1988"){
       
-      Gb_mod <- Gb.Choudhury(wind,ustar,Dl,LAI,zh,zr,constants)
+      Gb_mod <- Gb.Choudhury(data,leafwidth=Dl,LAI=LAI,zh=zh,zr=zr,d=d,z0m=z0m,
+                             formulation=formulation,constants=constants)
       
     } else if (Rb_model == "Su_2001"){
       
-      Gb_mod <- Gb.Su(ustar,wind,pressure,Tair,Dl,N,fc=fc,LAI,Cd=Cd,hs=hs,constants)
+      Gb_mod <- Gb.Su(data=data,zh=zh,zr=zr,d=d,z0m=z0m,Dl=Dl,N=N,fc=fc,LAI=LAI,
+                      Cd=Cd,hs=hs,formulation=stab_correction,constants=constants)  # Pr! evtl change 'formulation' in the methods above
       
     }
  
@@ -1344,23 +1425,17 @@ Ga <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H=
   
   
   if (stab_correction != "none"){
-      
-    rp <- roughness.parameters(method=method_roughness,zh,frac_d,frac_z0m,data,zr=zr,
-                               d=d,z0m=z0m,formulation=stab_correction,constants)
-    d   <- rp[,"d"]
-    z0m <- rp[,"z0m"]
-    
     
     zeta  <-  stability.parameter(Tair,pressure,ustar,H,zr,d,constants)
     
     
     if (stab_correction == "Dyer_1970"){
       
-      psi_h <- stability.correction.H(Tair,pressure,ustar,H,zr,d,formulation="Dyer_1970")
+      psi_h <- stability.correction(data,zr=zr,d=d,formulation="Dyer_1970",constants=constants)[,"psi_h"]
       
     } else if (stab_correction == "Businger_1971"){
       
-      psi_h <- stability.correction.H(Tair,pressure,ustar,H,zr,d,formulation="Businger_1971")
+      psi_h <- stability.correction(data,zr=zr,d=d,formulation="Businger_1971",constants=constants)[,"psi_h"]
       
     }  
     

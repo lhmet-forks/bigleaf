@@ -4,9 +4,9 @@
 \alias{ET.pot}
 \title{Potential evapotranspiration from the Priestley-Taylor equation}
 \usage{
-\method{ET}{pot}(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
-  G = NULL, S = NULL, alpha = 1.26, missing.G.as.NA = F,
-  missing.S.as.NA = F, constants = bigleaf.constants())
+ET.pot(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
+  S = NULL, alpha = 1.26, missing.G.as.NA = F, missing.S.as.NA = F,
+  constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{data.frame or matrix containing all required columns}

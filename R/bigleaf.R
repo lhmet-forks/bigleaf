@@ -45,6 +45,8 @@ library(roxygen2)
 # ETpot - add other formulations: see Donahue 2010!
 # ET_imp, ET_equ
 # Ci
+# Ga in mol and Ga for CO2!!
+# assume that Ga is the same for heat and water?
 # inst. energy balance closure + correction
 # Uncertainty!!
 
@@ -80,9 +82,10 @@ library(roxygen2)
 
 
 ## real data
-# load(paste0(path.pkg,"DK-Sor_",years_selection,"_processed.rda"))
+# path.pkg <- "C:/Profiles/jknauer/Documents/RPackage_BigLeaf/"
+# load(paste0(path.pkg,"DK-Sor_2010_processed.rda"))
 # testdk <- DK_Sor_2010_processed
-
+# colnames(testdk)[10] <- "VPD"
 
 
 #' checks columns in a data frame 
@@ -426,9 +429,7 @@ filter.growseas <- function(GPPd,tGPP,min_int,ws){  # ws = window size
 #'             
 #'             Zhou, S., et al., 2014: The effect of vapor pressure deficit on water
 #'             use efficiency at the subdaily time scale. Geophysical Research Letters 41.
-#'                    
-#'                  
-#'                            
+#'                                      
 #' @export
 WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
                         constants=bigleaf.constants()){
@@ -1044,7 +1045,7 @@ air.density <- function(Tair,pressure,constants=bigleaf.constants()){
 #'              hypsometric equation.
 #'              
 #' @param elev elevation a.s.l. (m)
-#' @param Tair air temperature (degC)
+#' @param Tair air temperature (deg C)
 #' @param q    specific humidity (kg kg-1); optional
 #' @param constants Kelvin- conversion degC to Kelvin \cr
 #'                  pressure0 - reference atmospheric pressure at sea level (Pa) \cr
@@ -1055,14 +1056,20 @@ air.density <- function(Tair,pressure,constants=bigleaf.constants()){
 #' @details 
 #' 
 #' @note the hypsometric equation gives a rough estimate of the standard pressure
-#'       at a given altitude. If specific humidity q is provided, humidity correction
+#'       at a given altitude. 
+#'       If specific humidity q is provided, humidity correction
 #'       is applied and the virtual temperature instead of air temperature is used.
 #'
 #' @return air pressure (kPa)
 #'                            
 #' @references Stull B., 1988: An Introduction to Boundary Layer Meteorology.
 #'             Kluwer Academic Publishers, Dordrecht, Netherlands.
-#'             
+#' 
+#' @examples
+#' # mean pressure at 500m altitude at 25 deg C and specific humidity of 0.01 kg kg-1
+#' pressure.from.elevation(500,Tair=25,q=0.01)
+#' 
+#' @export                           
 pressure.from.elevation <- function(elev,Tair,q=NULL,constants=bigleaf.constants()){
   if(is.null(q)){
     Temp <- Tair + constants$Kelvin
@@ -1532,7 +1539,7 @@ Ga <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H=
 #'  \item{Gs_mol}{Surface conductance in mol m-2 s-1}
 #' 
 #' @export
-GsPM <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,VPD="VPD",LE="LE",Ga="Ga",
+GsPM <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,VPD="VPD",LE="LE",Ga,
                  constants=bigleaf.constants(),missing.G.as.NA=FALSE,missing.S.as.NA=FALSE){
    
    Tair     <- check.columns(data,Tair)
@@ -1540,7 +1547,6 @@ GsPM <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,VPD=
    Rn       <- check.columns(data,Rn)
    VPD      <- check.columns(data,VPD)
    LE       <- check.columns(data,LE)
-   Ga       <- check.columns(data,Ga)
   
    if(!is.null(G)){
      G <- check.columns(data,G)
@@ -1606,6 +1612,7 @@ GsPM <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,VPD=
 # - check Ga
 # - recalculate Ga for Ca surface
 # e too high
+# make NEE and evtl other arguments optional!
 bigleaf.surface <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",Ca="Ca",
                             VPD="VPD",Ga="Ga",NEE="NEE",constants=bigleaf.constants()){
 
@@ -1636,6 +1643,16 @@ bigleaf.surface <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",C
   Ca_surf <- Ca + NEE/Ga
 
   return(data.frame(Tsurf,esat_surf,esurf,VPD_surf,qsurf,Ca_surf))
+}
+
+
+
+Ca.surface <- function(Ca,NEE,Ga_CO2){
+  
+  Ca_surf <- Ca + NEE/Ga_CO2
+  
+  return(Ca_surf)
+  
 }
 
 
@@ -1714,14 +1731,12 @@ bigleaf.surface <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",C
 #'             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
 #' 
 #' @export
-decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
+decoupling <- function(data,Tair="Tair",pressure="pressure",Ga,Gs,
                        approach=c("JarvisMcNaughton_1986","Smith_1998","Daudet_1999","Martin_1989"),
                        constants=bigleaf.constants(),LAI=NULL){
 
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
-  Ga       <- check.columns(data,Ga)
-  Gs       <- check.columns(data,Gs)
 
   delta   <- Esat(Tair)[,"delta"]
   gamma   <- psychrometric.constant(Tair,pressure,constants=constants)
@@ -1885,7 +1900,8 @@ Esat <- function(Tair,formula=c("Alduchov_1996","Sonntag_1990")){
 #'  
 #' @return the psychrometric constant (kPa K-1)
 #'  
-#' @references Bonan_2008 or Monteith_2010
+#' @references Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
+#'             3rd edition. Academic Press, London. 
 #' 
 psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
   
@@ -2096,12 +2112,12 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 #'
 #'
 #'
-moltoWatt <- function(PPFD,conv.factor){
-  PAR <- PPFD * conv.factor
+moltoWatt <- function(PPFD,conversion){
+  PAR <- PPFD * conversion
   return(PAR)
 }
 
-Watttomol <- function(PAR,conv.factor){
+Watttomol <- function(PAR,conversion){
   PPFD <- PAR
   return(PPFD)
 }
@@ -2259,17 +2275,6 @@ Watttomol <- function(PAR,conv.factor){
 # 
 # 
 # 
-# # u     <- rnorm(1,2,0.2)
-# # ustar <- rnorm(1,0.5,0.05)
-# # Dl    <- 0.06
-# # Tair  <- 20
-# # LAI   <- 4
-# # hs    <- 0.005
-# 
-# # kB_Su_2001(rk=0.41,Cd=0.2,ustar,u,LAI=1,hs=0.005,100000,101325,Tair=293,Tair0=273,Dl=0.05)
-# 
-# 
-# 
 # ### compare stability functions
 # # zeta <- seq(-4,1,0.01)
 # # zeta0h <- 0.2*zeta
@@ -2348,52 +2353,127 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 
 #' Imposed and Equilibrium Evapotranspiration
 #' 
-#' @details Evapotranspiration (ET) split up in imposed ET and equilibrium ET.
+#' @description Evapotranspiration (ET) split up in imposed ET and equilibrium ET.
 #' 
 #' @param data      data.frame or matrix containing all required input variables
 #' @param Tair      air temperature (deg C)
 #' @param pressure  air pressure (kPa)
 #' @param Gs        surface conductance (m s-1)
 #' @param VPD       air vapor pressure deficit (kPa)
-#' @param Rn        net radiation
-#' @param constants 
+#' @param Rn        net radiation (W m-2)
+#' @param G         ground heat flux (W m-2)
+#' @param S         sum of all storage fluxes (W m-2)
+#' @param Ga        aerodynamic conductance (m s-1)
+#' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+#'                  eps - ratio of the molecular weight of water vapor to dry air (-)
+#'                  
 #' 
-#' @return 
+#' @return a data.frame with the following columns:
+#'         \item{ET_eq}{equilibrium ET (kg m-2 s-1)}
+#'         \item{ET_imp}{imposed ET (kg m-2 s-1)}
+#' 
+#' @details Total evapotranspiration can be written in the the form:
+#' 
+#'          \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
+#'          
+#'          where ET_eq is the equilibrium evapotranspiration rate, the ET rate 
+#'          that would occur under uncoupled conditions, where the heat budget
+#'          is dominated by radiation.
+#'          
+#'          \deqn{ET_eq = \delta (Rn - G - S) / (\delta + \gamma)}
+#'          
+#'          and ET_imp is the imposed evapotranspiration rate, the ET rate
+#'          that would occur under fully coupled conditions:
+#'          
+#'          \deqn{ET_imp = \rho * cp * VPD * Gs / \gamma}
+#' 
+#' @note Surface conductance (Gs) is calculated with \code{\link{GsPM}}.
+#'       Aerodynamic conductance (Ga) can be calculated using \code{\link{Ga}}.
 #' 
 #' @references Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
 #'             scaling up from leaf to region. Advances in Ecological Research 15, 1-49.
 #'             
-#'             Monteith J.L., Unsworth M.H., 2008: Principles of environmental physics.
+#'             Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
 #'             3rd edition. Academic Press, London. 
-
-## should Rn be available energy????
-## double check this function again!
-ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
-                          Rn="Rn",constants=bigleaf.constants()){
+#'             
+#' @return
+ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",LE="LE",
+                          Rn="Rn",G=NULL,S=NULL,Ga,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
+                          constants=bigleaf.constants()){
   
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
-  Rn       <- check.columns(data,Rn)
   VPD      <- check.columns(data,VPD)
+  Rn       <- check.columns(data,Rn)
+  
+  Gs     <- GsPM(data,G=G,S=S,Ga=Ga,missing.G.as.NA=missing.G.as.NA,
+                 missing.S.as.NA=missing.S.as.NA,constants=constants)[,"Gs_ms"]
   
   rho    <- air.density(Tair,pressure)
-  lambda <- LE.vaporization(Tair)
   gamma  <- psychrometric.constant(Tair,pressure,constants)
   delta  <- Esat(Tair)[,"delta"]
   
-  ET_imp <- (rho * constants$cp * Gs * VPD) / gamma
-  ET_equ <- (delta * Rn) / (gamma + delta)
+  LE_eq  <- (delta * Rn) / (gamma + delta)
+  LE_imp <- (rho * constants$cp * Gs * VPD) / gamma
   
-  return(data.frame(ET_imp,ET_equ))
+  ET_imp <- LEtoET(LE_imp,Tair)
+  ET_eq  <- LEtoET(LE_eq,Tair)
+  
+  return(data.frame(ET_eq,ET_imp))
+}
+
+
+#' Bulk intercellular CO2 concentration
+#' 
+#' @description Bulk canopy intercellular CO2 concentration (Ci) calculated based on Fick's law
+#'              given surface conductance (Gs), gross primary productivity (GPP) and 
+#'              atmospheric CO2 concentration (Ca).
+#'              
+#' @param Ca  atmospheric CO2 concentration (umol mol-1)              
+#' @param GPP gross primary productivity (umol CO2 m-2 s-1)              
+#' @param Gs  surface conductance to water (mol m-2 s-1)
+#' @param surface.Ca should the derived surface CO2 concentration be used instead of 
+#'                   measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.
+#' @param Ga  aerodynamic conductance to CO2 (mol m-2 s-1) 
+#' @param NEE net ecosystem exchange (umol CO2 m-2 s-1)
+#' 
+#' @details Bulk intercellular CO2 concentration (Ci) is given as:
+#' 
+#'          \deqn{Ci = Ca - GPP/(Gs/1.6)}
+#'          
+#'          where Gs/1.6 represents the surface conductance to CO2.
+#'          
+#' @note The equation is based on Fick's law of diffusion and is equivalent to the
+#'       often used equation at leaf level (ci = ca - An/gs).
+#'       Note that GPP and Gs have a different interpretation than An and gs.
+#'       Gs comprises non-pyhsiological contributions (i.e. physical evaporation)
+#'       and is confounded by physical factors (e.g. energy balance non-closure).
+#'       GPP does not account for dark respiration and is further subject to uncertainties
+#'       in the NEE partitioning algorithm used.
+#'       This equation should be used with care and the resulting Ci might not be
+#'       readily comparable to its leaf-level analogue.          
+#' 
+#' @return Ci intercellular CO2 concentration (umol mol-1)
+#' 
+#' 
+#' @export
+intercellular.CO2 <- function(Ca,GPP,Gs,surface.Ca=F,Ga=NULL,NEE=NULL){
+  
+  if (surface.Ca){
+    Ca <- Ca.surface(Ca,NEE,Ga)
+  }
+  
+  Ci <- Ca - GPP/(Gs/1.6)
+  
+  return(Ci)
+  
 }
 
 
 
-## ET from Penman-Monteith and Priestley-Taylor
 
 
 
-  
 
 ########################
 #### Energy balance ####-------------------------------------------------------------------------------
@@ -2413,7 +2493,7 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
 #'          The value of alpha is taken from Nobel 1974 (see Meyers & Hollinger 2004), but other values
 #'          have been used (e.g. Blanken et al., 1997)
 #' 
-#' @return biochemical energy Sp (W m-2)
+#' @return Sp biochemical energy (W m-2)
 #' 
 #' @references Meyers, T.P., Hollinger, S.E. 2004: An assessment of storage terms in the surface energy
 #'             balance of maize and soybean. Agricultural and Forest Meteorology 125, 105-115.

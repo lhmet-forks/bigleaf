@@ -10,7 +10,7 @@ pressure.from.elevation(elev, Tair, q = NULL,
 \arguments{
 \item{elev}{elevation a.s.l. (m)}
 
-\item{Tair}{air temperature (degC)}
+\item{Tair}{air temperature (deg C)}
 
 \item{q}{specific humidity (kg kg-1); optional}
 
@@ -31,8 +31,14 @@ An estimate of mean pressure at a given elevation as predicted by the
 }
 \note{
 the hypsometric equation gives a rough estimate of the standard pressure
-      at a given altitude. If specific humidity q is provided, humidity correction
+      at a given altitude. 
+      If specific humidity q is provided, humidity correction
       is applied and the virtual temperature instead of air temperature is used.
+}
+\examples{
+# pressure at 500m altitude
+pressure.from.elevation(500,Tair=25,q=0.01)
+
 }
 \references{
 Stull B., 1988: An Introduction to Boundary Layer Meteorology.

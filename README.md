@@ -6,7 +6,7 @@ It's supposed to develop into an R-package to be put on CRAN.
 
 
 an (incomplete) list of what should be in the package:
-# atmospheric variables:
+# meteorological variables:
 - air density
 - virtual temperature
 - pressure from altitude

@@ -4,58 +4,60 @@
 \alias{roughness.parameters}
 \title{Roughness parameters}
 \usage{
-roughness.parameters(method = c("canopy_height", "wind_profile"), zh,
+roughness.parameters(method = c("wind_profile", "canopy_height"), zh,
   frac_d = 0.7, frac_z0m = 0.1, data, Tair = "Tair",
   pressure = "pressure", wind = "wind", ustar = "ustar", H = "H", zr,
-  d = NULL, z0m = NULL, stab_roughness = T, formulation = c("Dyer_1970",
-  "Businger_1971"), constants = bigleaf.constants())
+  d = NULL, z0m = NULL, stab_roughness = TRUE,
+  stab_formulation = c("Dyer_1970", "Businger_1971"),
+  constants = bigleaf.constants())
 }
 \arguments{
-\item{method}{method used, either "canopy_height", or "wind_profile" \cr
+\item{method}{Method used, either "canopy_height", or "wind_profile" \cr
 NOTE: if method is "canopy_height", only the following three arguments
 are used.}
 
-\item{frac_d}{fraction of displacement height on canopy height (-)}
+\item{frac_d}{Fraction of displacement height on canopy height (-)}
 
-\item{frac_z0m}{fraction of roughness length on canopy height (-)
+\item{frac_z0m}{Fraction of roughness length on canopy height (-)
 The following arguments are only needed if method = "wind_profile"!}
 
-\item{data}{a matrix or data.frame containing all required variables}
+\item{data}{Data.frame or matrix containing all required variables}
 
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{air pressure (kPa)}
+\item{pressure}{Air pressure (kPa)}
 
-\item{wind}{wind speed at height zr (m s-1)}
+\item{wind}{Wind speed at height zr (m s-1)}
 
-\item{ustar}{friction velocity (m s-1)}
+\item{ustar}{Friction velocity (m s-1)}
 
-\item{H}{sensible heat flux (W m-2)}
+\item{H}{Sensible heat flux (W m-2)}
 
-\item{zr}{instrument height (m)}
+\item{zr}{Instrument (reference) height (m)}
 
-\item{d}{optional; displacement height (m)}
+\item{d}{Zero-plane displacement height (m); optional}
 
-\item{z0m}{optional; roughness length for momentum (m)}
+\item{z0m}{Roughness length for momentum (m); optional}
 
-\item{stab_roughness}{should stability correction be considered? Default is TRUE}
+\item{stab_roughness}{Should stability correction be considered? Default is TRUE}
 
-\item{formulation}{}
+\item{stab_formulation}{Stability correction function used (If stab_correction is TRUE).
+Either "Dyer_1970" or "Businger_1971".}
 
-\item{constants}{k - von-Karman constant (-)
-Kelvin - conversion degree Celsius to Kelvin
-cp - specific heat of air for constant pressure (J K-1 kg-1)
-g - gravitational acceleration (m s-2)}
+\item{constants}{k - von-Karman constant (-) \cr
+Kelvin - conversion degree Celsius to Kelvin \cr
+cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+g - gravitational acceleration (m s-2) \cr}
 }
 \value{
 a data.frame with the following columns:
-        \item{d}{zero-plane displacement height (m)}
-        \item{z0m}{roughness length for momentum (m)}
+        \item{d}{Zero-plane displacement height (m)}
+        \item{z0m}{Roughness length for momentum (m)}
 
 
 }
 \description{
-a simple approximation of the two roughness parameters displacement height (d)
+A simple approximation of the two roughness parameters displacement height (d)
              and roughness length for momentum (z0m).
 }
 \details{

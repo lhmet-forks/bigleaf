@@ -7,13 +7,13 @@
 Reynolds.Number(Tair, pressure, ustar, hs, constants = bigleaf.constants())
 }
 \arguments{
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{air pressure (kPa)}
+\item{pressure}{Air pressure (kPa)}
 
-\item{ustar}{friction velocity (m s-1)}
+\item{ustar}{Friction velocity (m s-1)}
 
-\item{hs}{roughness length of the soil (m)}
+\item{hs}{Roughness length of the soil (m)}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 pressure0 - reference atmospheric pressure at sea level (Pa) \cr
@@ -28,7 +28,7 @@ a data.frame with the following columns:
 
 }
 \details{
-The roughness Reynolds Number is calculated as (Massman 1999a):
+The roughness Reynolds Number is calculated as in Massman 1999a:
          
          \deqn{Re = hs * ustar / v}
          

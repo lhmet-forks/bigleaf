@@ -5,37 +5,59 @@
 \title{Imposed and Equilibrium Evapotranspiration}
 \usage{
 ET.components(data, Tair = "Tair", pressure = "pressure", VPD = "VPD",
-  Rn = "Rn", constants = bigleaf.constants())
+  Rn = "Rn", Gs = "Gs", constants = bigleaf.constants())
 }
 \arguments{
-\item{data}{data.frame or matrix containing all required input variables}
+\item{data}{Data.frame or matrix containing all required input variables}
 
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{air pressure (kPa)}
+\item{pressure}{Air pressure (kPa)}
 
-\item{VPD}{air vapor pressure deficit (kPa)}
+\item{VPD}{Air vapor pressure deficit (kPa)}
 
-\item{Rn}{net radiation}
-
-\item{constants}{}
+\item{Rn}{Net radiation (W m-2)}
 
 \item{Gs}{surface conductance (m s-1)}
+
+\item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+eps - ratio of the molecular weight of water vapor to dry air (-)}
 }
 \value{
-
+a data.frame with the following columns:
+        \item{ET_eq}{equilibrium ET (kg m-2 s-1)}
+        \item{ET_imp}{imposed ET (kg m-2 s-1)}
+        \item{LE_eq}{equilibrium LE (W m-2)}
+        \item{LE_imp}{imposed LE (W m-2)}
 }
 \description{
-Imposed and Equilibrium Evapotranspiration
+Evapotranspiration (ET) split up in imposed ET and equilibrium ET.
 }
 \details{
-Evapotranspiration (ET) split up in imposed ET and equilibrium ET.
+Total evapotranspiration can be written in the the form:
+
+         \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
+         
+         where ET_eq is the equilibrium evapotranspiration rate, the ET rate 
+         that would occur under uncoupled conditions, where the heat budget
+         is dominated by radiation.
+         
+         \deqn{ET_eq = \delta * (Rn - G - S) * \lambda / (\delta + \gamma)}
+         
+         and ET_imp is the imposed evapotranspiration rate, the ET rate
+         that would occur under fully coupled conditions:
+         
+         \deqn{ET_imp = \rho * cp * VPD * Gs * \lambda / \gamma}
+}
+\note{
+Surface conductance (Gs) is calculated with \code{\link{surface.conductance}}.
+      Aerodynamic conductance (Ga) can be calculated using \code{\link{Ga}}.
 }
 \references{
 Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
             scaling up from leaf to region. Advances in Ecological Research 15, 1-49.
             
-            Monteith J.L., Unsworth M.H., 2008: Principles of environmental physics.
+            Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
             3rd edition. Academic Press, London.
 }
 

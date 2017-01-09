@@ -9,17 +9,17 @@ ET.pot(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
   constants = bigleaf.constants())
 }
 \arguments{
-\item{data}{data.frame or matrix containing all required columns}
+\item{data}{Data.frame or matrix containing all required variables}
 
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{air pressure (kPa)}
+\item{pressure}{Air pressure (kPa)}
 
-\item{Rn}{net radiation (W m-2)}
+\item{Rn}{Net radiation (W m-2)}
 
-\item{G}{ground heat flux (W m-2)}
+\item{G}{Ground heat flux (W m-2)}
 
-\item{S}{sum of all storage fluxes (W m-2)}
+\item{S}{Sum of all storage fluxes (W m-2)}
 
 \item{alpha}{Priestley-Taylor coefficient (-)}
 
@@ -27,7 +27,9 @@ ET.pot(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
 eps - ratio of the molecular weight of water vapor to dry air (-)}
 }
 \value{
-ET_pot potential evapotranspiration (kg m-2 s-1)
+a data.frame with the following columns:
+        \item{ET_pot}{potential evapotranspiration (kg m-2 s-1)}
+        \item{LE_pot}{potential latent heat flux (W m-2)}
 }
 \description{
 Potential evapotranspiration from the Priestley-Taylor equation
@@ -35,7 +37,7 @@ Potential evapotranspiration from the Priestley-Taylor equation
 \details{
 
 
-potential Evapotranspiration is calculated according to Priestley & Taylor, 1972:
+Potential evapotranspiration is calculated according to Priestley & Taylor, 1972:
 
          \deqn{(\alpha * \delta * (Rn - G - S)) / (\delta + \gamma)}
 }

@@ -5,33 +5,39 @@
 \title{Wind speed at given levels in the surface layer}
 \usage{
 wind.profile(heights, data, Tair = "Tair", pressure = "pressure",
-  ustar = "ustar", H = "H", zr, d, z0m, formulation = c("Dyer_1970",
-  "Businger_1971"), constants = bigleaf.constants())
+  ustar = "ustar", H = "H", zr, d, z0m, stab_correction = TRUE,
+  stab_formulation = c("Dyer_1970", "Businger_1971"),
+  constants = bigleaf.constants())
 }
 \arguments{
 \item{heights}{vector with heights for which wind speed is to be 
 calculated.}
 
-\item{data}{a matrix or data.frame containing all required variables}
+\item{data}{Data.frame or matrix containing all required variables}
 
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{air pressure (kPa)}
+\item{pressure}{Air pressure (kPa)}
 
-\item{ustar}{friction velocity (m s-1)}
+\item{ustar}{Friction velocity (m s-1)}
 
-\item{H}{sensible heat flux (W m-2)}
+\item{H}{Sensible heat flux (W m-2)}
 
-\item{zr}{sensor (instrument) height (m)}
+\item{zr}{Instrument (reference) height (m)}
 
-\item{d}{displacement height (m)}
+\item{d}{Zero-plane displacement height (m)}
 
-\item{z0m}{roughness length for momentum (m)}
+\item{z0m}{Roughness length for momentum (m)}
 
-\item{constants}{k - von-Karman constant (-)
-Kelvin - conversion degree Celsius to Kelvin
-cp - specific heat of air for constant pressure (J K-1 kg-1)
-g - gravitational acceleration (m s-2)}
+\item{stab_correction}{Should stability correction be applied? Defaults to TRUE}
+
+\item{stab_formulation}{Stability correction function used (If stab_correction is TRUE).
+Either "Dyer_1970" or "Businger_1971".}
+
+\item{constants}{k - von-Karman constant (-) \cr
+Kelvin - conversion degree Celsius to Kelvin \cr
+cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+g - gravitational acceleration (m s-2) \cr}
 }
 \value{
 a data.frame with rows representing time and columns representing heights.

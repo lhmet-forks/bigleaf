@@ -11,17 +11,17 @@ energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
   H = "H", missing.G.as.NA = F, missing.S.as.NA = F)
 }
 \arguments{
-\item{data}{data.frame or matrix containing all required columns}
+\item{data}{Data.frame or matrix containing all required variables}
 
-\item{Rn}{net radiation (W m-2)}
+\item{Rn}{Net radiation (W m-2)}
 
-\item{G}{ground heat flux (W m-2)}
+\item{G}{Ground heat flux (W m-2); optional}
 
-\item{S}{sum of all storage fluxes (W m-2)}
+\item{S}{Sum of all storage fluxes (W m-2); optional}
 
-\item{LE}{latent heat flux (W m-2)}
+\item{LE}{Latent heat flux (W m-2)}
 
-\item{H}{sensible heat flux (W m-2)}
+\item{H}{Sensible heat flux (W m-2)}
 
 \item{data}{data.frame or matrix containing all required columns}
 

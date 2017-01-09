@@ -7,13 +7,13 @@
 MoninObukhov.length(Tair, pressure, ustar, H, constants = bigleaf.constants())
 }
 \arguments{
-\item{Tair}{air temperature (degC)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{air pressure (kPa)}
+\item{pressure}{Air pressure (kPa)}
 
-\item{ustar}{friction velocity (m s-1)}
+\item{ustar}{Friction velocity (m s-1)}
 
-\item{H}{sensible heat flux (W m-2)}
+\item{H}{Sensible heat flux (W m-2)}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 cp - specific heat of air for constant pressure (J K-1 kg-1) \cr

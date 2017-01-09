@@ -7,19 +7,19 @@
 biochemical.energy(alpha = 0.422, NEE)
 }
 \arguments{
-\item{alpha}{energy taken up/released by photosynthesis/respiration (J umol-1)}
+\item{alpha}{Energy taken up/released by photosynthesis/respiration (J umol-1)}
 
-\item{NEE}{net ecosystem exchange (umol CO2 m-2 s-1)}
+\item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1)}
 }
 \value{
-biochemical energy Sp (W m-2)
+Sp - biochemical energy (W m-2)
 }
 \description{
 Radiant energy absorbed in photosynthesis or heat release by respiration calculated
              from net ecosystem exchange of CO2 (NEE).
 }
 \details{
-the following sign convention is employed: NEE is negative when carbon is taken up by the ecosystem.
+The following sign convention is employed: NEE is negative when carbon is taken up by the ecosystem.
          Positive values of the resulting biochemical energy mean that energy is taken up by the ecosystem, 
          negative ones that heat is released.
          The value of alpha is taken from Nobel 1974 (see Meyers & Hollinger 2004), but other values

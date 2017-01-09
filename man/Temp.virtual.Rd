@@ -2,25 +2,37 @@
 % Please edit documentation in R/bigleaf.R
 \name{Temp.virtual}
 \alias{Temp.virtual}
-\title{virtual temperature}
+\title{Dew point temperature}
 \usage{
 Temp.virtual(Tair, q, constants = bigleaf.constants())
 }
 \arguments{
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{q}{specific humidity (kg kg-1)}
+\item{q}{Specific humidity (kg kg-1)}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin}
+
+\item{VPD}{Vapor pressure deficit (kPa)
+Potential temperature
+
+
+
+Virtual temperature}
 }
 \value{
 virtual temperature (deg C)
 }
 \description{
-virtual temperature
+calculates the dew point, the temperature to which air must be 
+             cooled to become saturated (i.e. e = esat(Td))
+
+Virtual temperature, defined as the temperature at which dry air would have the same
+             density as moist air at its actual temperature.
 }
 \details{
 the virtual temperature is given by:
+ 
  \deqn{Tv = (Tair+273.15)(1 + 0.61*q)}
 }
 \note{

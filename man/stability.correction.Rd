@@ -9,25 +9,25 @@ stability.correction(data, Tair = "Tair", pressure = "pressure",
   "Businger_1971"), constants = bigleaf.constants())
 }
 \arguments{
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{air pressure (kPa)}
+\item{pressure}{Air pressure (kPa)}
 
-\item{ustar}{friction velocity (m s-1)}
+\item{ustar}{Friction velocity (m s-1)}
 
-\item{H}{sensible heat flux (W m-2)}
+\item{H}{Sensible heat flux (W m-2)}
 
-\item{zr}{reference height (m)}
+\item{zr}{instrument (reference) height (m)}
 
-\item{d}{zero-plane displacement height (m)}
+\item{d}{Zero-plane displacement height (m)}
 
-\item{formulation}{formulation for the stability function. Either "Dyer_1970", or "Businger_1971"}
+\item{formulation}{Formulation for the stability function. Either "Dyer_1970", or "Businger_1971"}
 
-\item{constants}{Kelvin -
-Rd -
-cp -
-k -
-g -}
+\item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
+Rd - gas constant of dry air (J kg-1 K-1) \cr
+cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+k - von Karman constant (-) \cr
+g - gravitational acceleration (m s-2)}
 }
 \value{
 a data.frame with the following columns:

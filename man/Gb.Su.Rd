@@ -6,11 +6,12 @@
 \usage{
 Gb.Su(data, Tair = "Tair", pressure = "pressure", ustar = "ustar",
   wind = "wind", H = "H", zh, zr, d, z0m, Dl, N, fc = NULL, LAI,
-  Cd = 0.2, hs = 0.01, Pr = 0.71, formulation = c("Dyer_1970",
-  "Businger_1971"), constants = bigleaf.constants())
+  Cd = 0.2, hs = 0.01, stab_correction = TRUE,
+  stab_formulation = c("Dyer_1970", "Businger_1971"),
+  constants = bigleaf.constants())
 }
 \arguments{
-\item{data}{a matrix or data.frame containing all required variables}
+\item{data}{Data.frame or matrix containing all required variables}
 
 \item{Tair}{air temperature (degC)}
 
@@ -40,17 +41,22 @@ Gb.Su(data, Tair = "Tair", pressure = "pressure", ustar = "ustar",
 
 \item{hs}{roughness height of the soil (m)}
 
-\item{Pr}{Prandtl number (-), defaults to 0.71}
+\item{stab_correction}{should stability correction be applied? Defaults to TRUE}
+
+\item{stab_formulation}{stability correction function used (If stab_correction is TRUE).
+Either "Dyer_1970" or "Businger_1971".}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 pressure0 - reference atmospheric pressure at sea level (Pa) \cr
-Tair0 - reference air temperature (K)}
+Tair0 - reference air temperature (K) \cr
+Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
 
 \item{presssure}{atmospheric pressure (Pa)}
 }
 \value{
 a data.frame with the following columns:
-    \item{Rb}{Boundary layer resistance (s m-1)}
+    \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+    \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
     \item{Gb}{Boundary layer conductance (m s-1)}
     \item{kB}{kB-1 parameter (-)}
 }
@@ -74,7 +80,7 @@ The formulation is based on the kB-1 model developed by Massman 1999.
          
          \deqn{Ct = Pr^-2/3 Reh^-1/2 N}
          
-         where Pr is the Prandtl number, and Reh is the Reynolds number for leaves:
+         where Pr is the Prandtl number (set to 0.71), and Reh is the Reynolds number for leaves:
          
          \deqn{Dl wind(zh) / v}
           
@@ -82,6 +88,15 @@ The formulation is based on the kB-1 model developed by Massman 1999.
          to Su et al. 2001:
          
          \deqn{kBs^-1 = 2.46(Re)^0.25 - ln(7.4)}
+         
+         Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
+ 
+         \deqn{Rb_CO2 = 1.4 * Rb}
+ 
+         The factor 1.4 arises due the lower molecular diffusivity of CO2 compared to water.
+         It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
+         across the boundary layer is assumed to be partly by diffusion and partly by turbulent
+         mixing (Nobel 2005).
 }
 \references{
 Su, Z., Schmugge, T., Kustas, W. & Massman, W., 2001: An evaluation of
@@ -90,6 +105,9 @@ Su, Z., Schmugge, T., Kustas, W. & Massman, W., 2001: An evaluation of
 
             Massman, W., 1999: A model study of kB H- 1 for vegetated surfaces using
            'localized near-field' Lagrangian theory. Journal of Hydrology 223, 27-43.
+           
+            Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
+            Edition. Elsevier Academic Press, Burlington, USA.
 }
 \seealso{
 \code{\link{Gb.Thom}}, \code{\link{Gb.Choudhury}}

@@ -6,27 +6,34 @@
 \usage{
 Gb.Choudhury(data, Tair = "Tair", pressure = "pressure", wind = "wind",
   ustar = "ustar", H = "H", leafwidth, LAI, zh, zr, d, z0m,
-  formulation = c("Dyer_1970", "Businger_1971"),
-  constants = bigleaf.constants())
+  stab_correction = TRUE, stab_formulation = c("Dyer_1970",
+  "Businger_1971"), constants = bigleaf.constants())
 }
 \arguments{
-\item{wind}{wind speed at sensor height (m s-1)}
+\item{wind}{Wind speed at sensor height (m s-1)}
 
-\item{ustar}{friction velocity (m s-1)}
+\item{ustar}{Friction velocity (m s-1)}
 
-\item{leafwidth}{leaf width (m)}
+\item{leafwidth}{Leaf width (m)}
 
-\item{LAI}{one-sided leaf area index}
+\item{LAI}{One-sided leaf area index}
 
-\item{zh}{canopy height (m)}
+\item{zh}{Canopy height (m)}
 
-\item{zr}{sensor (instrument) height (m)}
+\item{zr}{Instrument (reference) height (m)}
 
-\item{constants}{k - von-Karman constant (-)}
+\item{stab_correction}{Should stability correction be applied? Defaults to TRUE}
+
+\item{stab_formulation}{Stability correction function used (If stab_correction is TRUE).
+Either "Dyer_1970" or "Businger_1971".}
+
+\item{constants}{k - von-Karman constant (-) \cr
+Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
 }
 \value{
 a data frame with the following columns:
-    \item{Rb}{Boundary layer resistance (s m-1)}
+    \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+    \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
     \item{Gb}{Boundary layer conductance (m s-1)}
     \item{kB}{kB-1 parameter (-)}
 }
@@ -47,6 +54,15 @@ Boundary layer conductance according to Choudhury & Monteith 1988 is
          \eqn{\alpha} is modeled as an empirical relation to LAI (McNaughton & van den Hurk 1995):
          
          \deqn{\alpha = 4.39 - 3.97*exp(-0.258*LAI)}
+         
+         Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
+ 
+         \deqn{Rb_CO2 = 1.4 * Rb}
+ 
+         The factor 1.4 arises due the lower molecular diffusivity of CO2 compared to water.
+         It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
+         across the boundary layer is assumed to be partly by diffusion and partly by turbulent
+         mixing (Nobel 2005).
 }
 \references{
 Choudhury, B. J., Monteith J.L., 1988: A four-layer model for the heat
@@ -55,6 +71,9 @@ Choudhury, B. J., Monteith J.L., 1988: A four-layer model for the heat
             McNaughton, K. G., Van den Hurk, B.J.J.M., 1995: A 'Lagrangian' revision of
             the resistors in the two-layer model for calculating the energy budget of a
             plant canopy. Boundary-Layer Meteorology 74, 261-288.
+            
+            Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
+            Edition. Elsevier Academic Press, Burlington, USA.
 }
 \seealso{
 \code{\link{Gb.Thom}}, \code{\link{Gb.Su}}

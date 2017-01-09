@@ -7,18 +7,18 @@
 air.density(Tair, pressure, constants = bigleaf.constants())
 }
 \arguments{
-\item{Tair}{air temperature (degC)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{air pressure (kPa)}
+\item{pressure}{Air pressure (kPa)}
 
 \item{constants}{Kelvin - conversion degC to Kelvin \cr
 Rd - gas constant of dry air (J kg-1 K-1)}
 }
 \value{
-air density (kg m-3)
+rho air density (kg m-3)
 }
 \description{
-Air density of moist air from air temperature and pressure
+Air density of moist air from air temperature and pressure.
 }
 \details{
 Air density (\eqn{\rho}) is calculated as:

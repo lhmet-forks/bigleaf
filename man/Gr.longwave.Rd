@@ -7,9 +7,9 @@
 Gr.longwave(Tair, LAI, constants = bigleaf.constants())
 }
 \arguments{
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{LAI}{leaf area index (m2 m-2)}
+\item{LAI}{Leaf area index (m2 m-2)}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 sigma - Stefan-Boltzmann constant (W m-2 K-4) \cr

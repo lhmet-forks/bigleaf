@@ -10,7 +10,7 @@ LE.vaporization(Tair)
 \item{Tair}{Air temperature (deg C)}
 }
 \value{
-\eqn{\lambda} latent heat of vaporization (J kg-1)
+Latent heat of vaporization \eqn{\lambda} (J kg-1)
 }
 \description{
 Latent heat of vaporization as a function of air temperature.

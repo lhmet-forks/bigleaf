@@ -7,15 +7,15 @@
 psychrometric.constant(Tair, pressure, constants = bigleaf.constants())
 }
 \arguments{
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{air pressure (kPa)}
+\item{pressure}{Air pressure (kPa)}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-)}
 }
 \value{
-the psychrometric constant (kPa K-1)
+the psychrometric constant \eqn{\gamma} (kPa K-1)
 }
 \description{
 Calculates the psychrometric 'constant'.
@@ -29,6 +29,7 @@ The psychrometric constant (\eqn{\gamma}) is given as:
  as calculated with \code{\link{LE.vaporization}}.
 }
 \references{
-Bonan_2008 or Monteith_2010
+Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
+            3rd edition. Academic Press, London.
 }
 

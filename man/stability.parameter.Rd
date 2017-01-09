@@ -8,22 +8,22 @@ stability.parameter(Tair, pressure, ustar, H, zr, d,
   constants = bigleaf.constants())
 }
 \arguments{
-\item{Tair}{air temperature (degC)}
+\item{Tair}{Air temperature (degC)}
 
-\item{pressure}{air pressure (kPa)}
+\item{pressure}{Air pressure (kPa)}
 
-\item{ustar}{friction velocity (m s-1)}
+\item{ustar}{Friction velocity (m s-1)}
 
-\item{H}{sensible heat flux (W m-2)}
+\item{H}{Sensible heat flux (W m-2)}
 
-\item{zr}{instrument height (m)}
+\item{zr}{Instrument (reference) height (m)}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 k - von Karman constant (-) \cr
 g - gravitational acceleration (m s-2)}
 
-\item{disp}{displacement height (m)}
+\item{disp}{Zero-plane displacement height (m)}
 }
 \value{
 the stability parameter \eqn{\zeta}

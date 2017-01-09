@@ -2,17 +2,13 @@ Package: bigleaf
 Version: 0.1
 Date: 2017-01-09
 Title: 
-Authors@R: c( person("Juergen", "Knauer", role=c("aut","cre"), email="jknauer@bgc-jena.mpg.de")
-              ,person("Soenke", "Zaehle", role=c("aut"), email="szaehle@bgc.mpg.de") 
+Authors@R: c( person("Juergen", "Knauer", role=c("aut","cre"), email="jknauer@bgc-jena.mpg.de"),
+              person("Soenke", "Zaehle", role=c("aut"), email="szaehle@bgc.mpg.de") 
 			 )
-Description: R eddy processing package with MDS gap filling algorithm, adopted
-    after PV-Wave source code from Markus Reichstein.
+Description: Calculation of meteorological, aerodynamic, and physiological ecosystem properties based on
+             measured fluxes with the eddy-covariance technique and meteorological data. Calculations
+			 assume the surface to behave like a 'big leaf'.
 License: GPL (>= 2)
 LazyData: no
-VignetteBuilder: knitr
 Built: R 3.1.0; x86_64-w64-mingw32; 2016-12-21 10:28:22 UTC; windows
-Archs: i386, x64
-RemoteType: github
-RemoteHost: api.github.com
-RemoteRepo: REddyProc
 RoxygenNote: 5.0.1

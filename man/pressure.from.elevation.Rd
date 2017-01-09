@@ -8,11 +8,11 @@ pressure.from.elevation(elev, Tair, q = NULL,
   constants = bigleaf.constants())
 }
 \arguments{
-\item{elev}{elevation a.s.l. (m)}
+\item{elev}{Elevation a.s.l. (m)}
 
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{q}{specific humidity (kg kg-1); optional}
+\item{q}{Specific humidity (kg kg-1); optional}
 
 \item{constants}{Kelvin- conversion degC to Kelvin \cr
 pressure0 - reference atmospheric pressure at sea level (Pa) \cr
@@ -20,7 +20,7 @@ Rd - gas constant of dry air (J kg-1 K-1) \cr
 g -  gravitational acceleration (m s-2) \cr}
 }
 \value{
-air pressure (kPa)
+pressure air pressure (kPa)
 }
 \description{
 An estimate of mean pressure at a given elevation as predicted by the
@@ -30,13 +30,13 @@ An estimate of mean pressure at a given elevation as predicted by the
 
 }
 \note{
-the hypsometric equation gives a rough estimate of the standard pressure
+The hypsometric equation gives an estimate of the standard pressure
       at a given altitude. 
       If specific humidity q is provided, humidity correction
       is applied and the virtual temperature instead of air temperature is used.
 }
 \examples{
-# pressure at 500m altitude
+# mean pressure at 500m altitude at 25 deg C and specific humidity of 0.01 kg kg-1
 pressure.from.elevation(500,Tair=25,q=0.01)
 
 }

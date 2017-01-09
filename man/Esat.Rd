@@ -7,9 +7,9 @@
 Esat(Tair, formula = c("Alduchov_1996", "Sonntag_1990"))
 }
 \arguments{
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{formula}{formula to be used. Either "Alduchov_1996" or "Sonntag_1990"}
+\item{formula}{Formula to be used. Either "Alduchov_1996" or "Sonntag_1990"}
 }
 \value{
 A dataframe with the following columns: 
@@ -26,7 +26,7 @@ Esat (kPa) is calculated based on the Magnus equation:
  \deqn{Esat = a * exp((b * Tair) / (c + Tair)) / 1000}
  
  where the coefficients a, b, c take different values depending on the formula used.
- The slope of the Esat curve is calculated as the first derivative of the function:
+ The slope of the Esat curve (\eqn{\delta}) is calculated as the first derivative of the function:
  
  formula
 }

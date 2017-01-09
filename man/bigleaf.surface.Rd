@@ -5,11 +5,11 @@
 \title{Big-leaf surface conditions}
 \usage{
 bigleaf.surface(data, Tair = "Tair", pressure = "pressure", LE = "LE",
-  H = "H", Ca = "Ca", VPD = "VPD", Ga = "Ga", NEE = "NEE",
-  constants = bigleaf.constants())
+  H = "H", Ca = "Ca", VPD = "VPD", Ga = "Ga", calc.Ca = F,
+  Ga_CO2 = "Ga_CO2", NEE = "NEE", constants = bigleaf.constants())
 }
 \arguments{
-\item{data}{data.frame or matrix containing all required input variables}
+\item{data}{Data.frame or matrix containing all required input variables}
 
 \item{Tair}{Air temperature (deg C)}
 
@@ -19,13 +19,17 @@ bigleaf.surface(data, Tair = "Tair", pressure = "pressure", LE = "LE",
 
 \item{H}{Sensible heat flux (W m-2)}
 
-\item{Ca}{Atmospheric CO2 concentration (mol mol-1)}
+\item{Ca}{Atmospheric CO2 concentration (mol mol-1). Required if calc.Ca = TRUE}
 
 \item{VPD}{Vapor pressure deficit (kPa)}
 
-\item{Ga}{Aerodynamic conductance (m s-1)}
+\item{Ga}{Aerodynamic conductance for heat and water vapor (m s-1)}
 
-\item{NEE}{Net ecosystem exchange (umol m-2 s-1)}
+\item{calc.Ca}{calculate surface CO2 concentration?}
+
+\item{Ga_CO2}{Aerodynamic conductance for CO2 (mol m-2 s-1). Required if calc.Ca = TRUE}
+
+\item{NEE}{Net ecosystem exchange (umol m-2 s-1). Required if calc.Ca = TRUE}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
 eps - ratio of the molecular weight of water vapor to dry air (-) \cr}
@@ -38,8 +42,9 @@ a data.frame with the following columns:
         \item{esat_surf}{Saturation vapor pressure at the surface (kPa)} \cr
         \item{esurf}{vapor pressure at the surface (kPa)} \cr
         \item{VPD_surf}{vapor pressure deficit at the surface (kPa)} \cr
-        \item{qsurf}{specific humidity at the surface} \cr
-        \item{Ca_surf}{CO2 concentration at the surface}
+        \item{qsurf}{specific humidity at the surface (kg kg-1)} \cr
+        \item{rH_surf}{relative humidity at the surface (-)} \cr
+        \item{Ca_surf}{CO2 concentration at the surface (umol mol-1)}
 }
 \description{
 Calculates meteorological conditions at the big-leaf surface
@@ -47,6 +52,26 @@ Calculates meteorological conditions at the big-leaf surface
              fluxes.
 }
 \details{
-
+Canopy surface temperature and humidity are calculated by inverting bulk transfer equations of
+         sensible and latent heat, respectively. 'Canopy surface' in this case refers to 
+         the surface of the big-leaf (i.e. at height d + z0h; the apparent sink of sensible heat and water vapor).
+         Aerodynamic canopy surface temperature is given by:
+         
+         \deqn{Tsurf = Tair + H / (\rho * cp * Ga)}
+         
+         Vapor pressure at the canopy surface is:
+         
+         \deqn{esurf = e + (LE * \gamma)/(Ga * \rho * cp)}
+         
+         Vapor pressure deficit (VPD) at the canopy surface is calculated as:
+         
+         \deqn{VPD_surf = Esat_surf - esurf}
+         
+         Note that Ga is assumed to be equal for water vapor and sensible heat.
+         Ga is further assumed to be the inverse of the sum of the turbulent part
+         and the canopy boundary layer conductance (1/Ga = 1/Ga_m + 1/Gb; 
+         see \link{\code{aerodynamic.conductance}}). If Ga is replaced by Ga_m (i.e.
+         only the turbulent conductance part), the results of the functions represent
+         conditions outside the canopy boundary layer, i.e. in the canopy airspace.
 }
 

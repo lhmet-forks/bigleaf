@@ -40,7 +40,7 @@ cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 g - gravitational acceleration (m s-2) \cr}
 }
 \value{
-a data.frame with rows representing time and columns representing heights.
+a data.frame with rows representing time and columns representing heights as specified in \code{heights}.
 }
 \description{
 wind speed at a given height above the canopy estimated from single-level

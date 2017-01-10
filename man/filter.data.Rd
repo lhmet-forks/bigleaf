@@ -6,10 +6,11 @@
 \usage{
 filter.data(data, precip = "precip", PPFD = "PPFD", Tair = "Tair",
   ustar = "ustar", VPD = "VPD", GPP = "GPP_nt", Ca = "Ca",
-  day = "day", month = "month", year = "year", quality_ext = "_qc",
-  good_quality = c(0, 1), excl_vars_qc = c("PPFD", "Ca"), tprecip = 0.01,
-  precip_hours = 24, trad = 200, ttemp = 5, tustar = 0.2, tGPP = 0.5,
-  trH = 0.95, NA.as.precip = F)
+  day = "day", year = "year", quality.ext = "_qc", good.quality = c(0,
+  1), vars.qc = c("precip", "Tair", "VPD", "GPP_nt", "H", "LE"),
+  tprecip = 0.01, precip.hours = 24, trad = 200, ttemp = 5,
+  tustar = 0.2, tGPP = 0.5, ws = 15, min.int = 5, trH = 0.95,
+  NA.as.precip = F)
 }
 \arguments{
 \item{data}{data.frame or matrix containing all required input variables in 
@@ -31,19 +32,18 @@ half-hourly or hourly resolution. Including year, month, day information}
 
 \item{day}{day of year}
 
-\item{month}{month}
-
 \item{year}{year}
 
-\item{quality_ext}{}
+\item{quality.ext}{the extension to the variables' names that marks them as quality control variables}
 
-\item{good_quality}{}
+\item{good.quality}{which values indicate good quality in the quality control (qc) variables?}
 
-\item{excl_vars_qc}{}
+\item{vars.qc}{character vector indicating the variables for which quality filter should 
+be applied. Leave empty if no quality filter should be applied.}
 
 \item{tprecip}{precipitation threshold used to demark a precipitation event (mm)}
 
-\item{precip_hours}{number of hours removed following a precipitation event (h)}
+\item{precip.hours}{number of hours removed following a precipitation event (h)}
 
 \item{trad}{radiation threshold (umol m-2 s-1)}
 
@@ -51,7 +51,12 @@ half-hourly or hourly resolution. Including year, month, day information}
 
 \item{tustar}{friction velocity threshold (m s-1)}
 
-\item{tGPP}{GPP threshold (???)}
+\item{tGPP}{GPP threshold (fraction of 95% quantile of the GPP time series).
+Takes values between 0 and 1.}
+
+\item{ws}{window size used for GPP time series smoothing}
+
+\item{min.int}{minimum time interval in days for a given state of growing season}
 
 \item{trH}{relative humidity threshold (-)}
 
@@ -71,8 +76,22 @@ Filters timeseries in which Gs describes physiologically meaningful
              quantity
 }
 \details{
-growing season:
-         growing season is filtered based on daily GPP (aggregated from halfhourly values).
+This routine consists of two parts:
+         1) Quality control: All variables included in \code{vars.qc} are filtered for 
+            good quality data. For these variables a corresponding quality variable with 
+            the same name as the variable plus the extension as specified in \code{quality.ext}
+            must be provided. For timesteps where the value of the quality indicator variables is not included
+            in the argument \code{good.quality}, i.e. the quality is not considered as 'good', 
+            its value is set to NA.
+            
+         2) Meteorological filtering. Under certain conditions (e.g. low ustar), the assumptions
+            of the EC method are not fulfilled. Further, some data analysis require certain meteorological
+            conditions, such as precipitation free periods, or active vegetation (growing season, daytime).
+            The filter applied in this second step serves to exclude time periods that do not fulfill the criteria
+            specified in the arguments. More specifically, timeperiods where one of the variables is lower than the 
+            specified threshold are set to NA for all variables. E.g. when radiation is below 'trad', all variables 
+            are set to NA.
+            Set a threshold to 0 (or the minimum of the variable) if the dataset should not be filtered for a specific variable.
 }
 \references{
 Knauer 2017

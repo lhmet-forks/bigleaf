@@ -6,9 +6,6 @@
 \usage{
 energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
   H = "H", missing.G.as.NA = F, missing.S.as.NA = F)
-
-energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
-  H = "H", missing.G.as.NA = F, missing.S.as.NA = F)
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
@@ -22,18 +19,6 @@ energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
 \item{LE}{Latent heat flux (W m-2)}
 
 \item{H}{Sensible heat flux (W m-2)}
-
-\item{data}{data.frame or matrix containing all required columns}
-
-\item{Rn}{net radiation (W m-2)}
-
-\item{G}{ground heat flux (W m-2)}
-
-\item{S}{sum of all storage fluxes (W m-2)}
-
-\item{LE}{latent heat flux (W m-2)}
-
-\item{H}{sensible heat flux (W m-2)}
 }
 \value{
 a named vector containing:
@@ -44,12 +29,8 @@ a named vector containing:
         \item{EBR}{energy balance ratio}
 }
 \description{
-Calculates the degree of the energy balance non-closure based on the ratio
-             of two sums (energy balance ratio), or ordinary least squares (OLS).
-
-Characterization and correction of instantaneous energy balance
-             non-closure. Fluxes are adjusted based on two common methods: 
-             Bowen ratio and ...
+Calculates the degree of the energy balance non-closure for the entire timespan
+             based on the ratio of two sums (energy balance ratio), and ordinary least squares (OLS).
 }
 \details{
 The energy balance ratio (EBR) is calculated as:

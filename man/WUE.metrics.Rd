@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf.R
 \name{WUE.metrics}
 \alias{WUE.metrics}
-\title{Water Use Efficiency metrics}
+\title{Water-Use Efficiency metrics}
 \usage{
 WUE.metrics(data, GPP = "GPP_nt", NEE = "NEE", LE = "LE", VPD = "VPD",
   Tair = "Tair", constants = bigleaf.constants())
@@ -24,13 +24,13 @@ WUE.metrics(data, GPP = "GPP_nt", NEE = "NEE", LE = "LE", VPD = "VPD",
 }
 \value{
 a named vector with the following elements:
-        \item{WUE}{Water-use efficiency ()}
-        \item{WUE_NEE}{Water-use efficiency based on NEE ()}
-        \item{IWUE}{Inherent water-use efficiency ()}
-        \item{uWUE}{Underlying water-use efficiency ()}
+        \item{WUE}{Water-use efficiency (gC (kg H20)-1)}
+        \item{WUE_NEE}{Water-use efficiency based on NEE (gC (kg H20)-1)}
+        \item{IWUE}{Inherent water-use efficiency (gC kPa (kg H20)-1)}
+        \item{uWUE}{Underlying water-use efficiency (gC kPa (kg H20)-1)}
 }
 \description{
-Calculation of various water use efficiency metrics
+Calculation of various water use efficiency (WUE) metrics.
 }
 \details{
 the following metrics are calculated:

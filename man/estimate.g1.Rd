@@ -4,34 +4,80 @@
 \alias{estimate.g1}
 \title{Estimation of g1}
 \usage{
-estimate.g1(data, GPP = "GPP", Gs = "Gs", VPD = "VPD", Ca = "Ca",
-  fitg0 = FALSE, nmin = 40, g0 = 0)
+estimate.g1(data, Tair = "Tair", pressure = "pressure", GPP = "GPP",
+  Gs = "Gs", VPD = "VPD", Ca = "Ca", model = c("USO", "Ball&Berry",
+  "Leuning"), nmin = 40, fitg0 = FALSE, g0 = 0, fitD0 = FALSE,
+  D0 = 1.5, Gamma = 50, constants = bigleaf.constants())
 }
 \arguments{
-\item{data}{a data.frame or matrix containing all required columns}
+\item{data}{Data.frame or matrix containing all required columns}
 
-\item{GPP}{gross primary productivity (umol m-2 s-1)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{Gs}{surface conductance (mol m-2 s-1)}
+\item{pressure}{Air pressure (kPa)}
 
-\item{VPD}{vapor pressure deficit (kPa)}
+\item{GPP}{Gross primary productivity (umol CO2 m-2 s-1)}
 
-\item{Ca}{atmospheric CO2 concentration (ppm)}
+\item{Gs}{Surface conductance to water vapor (m s-1); converted to mol m-2 s-1
+internally.}
 
-\item{fitg0}{logical, if TRUE g0 and g1 are fitted simultaneously}
+\item{VPD}{Vapor pressure deficit (kPa)}
 
-\item{nmin}{minimum number of data required to perform the fit}
+\item{Ca}{Atmospheric CO2 concentration (umol mol-1)}
 
-\item{g0}{ignored if fitg0 is FALSE, minimum stomatal conductance (mol m-2 s-1)}
+\item{model}{Stomatal model used. One of c("USO","Ball&Berry","Leuning")}
+
+\item{nmin}{Minimum number of data required to perform the fit; defaults to 40.}
+
+\item{fitg0}{Should g0 and g1 be fitted simultaneously?}
+
+\item{g0}{Minimum stomatal conductance (mol m-2 s-1); ignored if \code{fitg0} is TRUE.}
+
+\item{fitD0}{Should D0 be fitted along with g1 (and g0 if fitg0 = TRUE)?; only used if \code{model} is "Leuning"}
+
+\item{D0}{Stomatal sensitivity parameter to VPD; only used if \code{model} is "Leuning" and fitD0 is FALSE}
+
+\item{Gamma}{Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning", defaults to 50 umol mol-1.}
 }
 \value{
-an nls model object
+an nls model object, containing information on the fitted parameters, their uncertainty range,
+        model fit, etc.
 }
 \description{
 Estimation of the WUE metric "g1" from non-linear regression
 }
+\details{
+All stomatal models were developed at leaf-level, but its parameters 
+         can also be estimated at ecosystem level (but be aware of caveats, see Knauer et al. 2017).
+         
+         The unified stomatal optimization (USO) model is given as (Medlyn et al. 2011):
+     
+         \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
+         
+         The empirical model by Ball et al. 1987 is defined as:
+         
+         \deqn{gs = g0 + g1* ((An * rH) / Ca)}
+         
+         Leuning 1995 suggested a revised version of the Ball&Berry model:
+         
+         \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
+         
+         The parameters in the models are estimated using non-linear regression (\code{nls()}).
+         Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
+         the big leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
+}
 \references{
-Medlyn 2011
-            Knauer 2017
+Knauer 2017
+            
+            Medlyn, B.E., et al., 2011: Reconciling the optimal and empirical approaches to
+            modelling stomatal conductance. Global Change Biology 17, 2134-2144.
+            
+            Ball, T.J., Woodrow, I.E., Berry, J.A. 1987: A model predicting stomatal conductance
+            and its contribution to the control of photosynthesis under different environmental conditions.
+            In: Progress in Photosynthesis Research, edited by J.Biggins, pp. 221-224, Martinus Nijhoff Publishers,
+            Dordrecht, Netherlands.
+            
+            Leuning, R., 1995: A critical appraisal of a combined stomatal-photosynthesis
+            model for C3 plants. Plant, Cell and Environment 18, 339-355.
 }
 

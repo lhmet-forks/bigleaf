@@ -21,7 +21,7 @@ measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.}
 
 \item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1)}
 
-\item{constants}{DwDc Ratio of the molecular diffusivities for water vapor and CO2 (-)}
+\item{constants}{DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)}
 }
 \value{
 Ci - Bulk canopy intercellular CO2 concentration (umol mol-1)
@@ -36,7 +36,8 @@ Bulk intercellular CO2 concentration (Ci) is given as:
 
          \deqn{Ci = Ca - GPP/(Gs/1.6)}
          
-         where Gs/1.6 represents the surface conductance to CO2.
+         where Gs/1.6 (mol m-2 s-1) represents the surface conductance to CO2.
+         Note that Gs is required in mol m-2 s-1.
 }
 \note{
 The equation is based on Fick's law of diffusion and is equivalent to the

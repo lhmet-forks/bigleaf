@@ -53,6 +53,7 @@ g - gravitational acceleration (m s-2) \cr}
 a data.frame with the following columns:
         \item{d}{Zero-plane displacement height (m)}
         \item{z0m}{Roughness length for momentum (m)}
+        \item{z0m_se}{Standard Error of the median for z0m (m)}
 
 
 }

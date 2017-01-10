@@ -4,19 +4,45 @@
 \alias{filter.growseas}
 \title{GPP-based growing season filter}
 \usage{
-filter.growseas(GPPd, tGPP, min_int, ws)
+filter.growseas(GPPd, tGPP, ws = 15, min.int = 5)
 }
 \arguments{
-\item{GPPd}{daily GPP}
+\item{GPPd}{daily GPP (any unit)}
 
-\item{tGPP}{GPP threshold (fraction of 95% quantile)}
+\item{tGPP}{GPP threshold (fraction of 95% quantile of the GPP time series).
+Takes values between 0 and 1.}
 
-\item{ws}{window size used for smoothing}
+\item{ws}{window size used for GPP time series smoothing}
+
+\item{min.int}{minimum time interval in days for a given state of growing season}
+}
+\value{
+a vector of type integer of the same length as the input GPPd in which 0 indicate
+        no growing season (dormant season) and 1 indicate growing season.
 }
 \description{
-filters annual time series for growing season based on smoothed daily GPP time series
+Filters annual time series for growing season based on smoothed daily GPP data.
 }
 \details{
-none
+The basic idea behind the growing season filter is that vegetation is 
+         considered to be active when its carbon uptake (GPP) is above a specified 
+         threshold, which is defined relative to the peak GPP (95th-percentile) 
+         observed in the year. 
+         The GPP-threshold is calculated as:
+         
+         \deqn{GPP_threshold = quantile(GPPd,0.95)*tGPP}
+         
+         GPPd time series are smoothed with a moving average to avoid fluctuations 
+         in the delineation of the growing season. The window size defaults to 15 
+         days, but depending on the ecosystem, other values can be appropriate. 
+         
+         The argument \code{min.int} serves to avoid short fluctuations in the 
+         status growing season vs. no growing season by defining a minimum length
+         of the status. If a time interval shorter than \code{min.int} is labelled
+         as growing season or non-growing season, it is changed to the status of 
+         the neighbouring values.
+}
+\references{
+Knauer 2017
 }
 

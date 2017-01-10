@@ -1,58 +1,13 @@
-#### CanopyPhysics Routine ------------------------------------------------------------
-##
-## Written by S. Zaehle and J. Knauer
-## Date: 21.1.2016
-## Version:  beta release candidate
-## History: none
-## Known issues: PET_Penman gives wrong results
-##
-####-----------------------------------------------------------------------------------
+#### Functions for R-package 'bigleaf' ------------------------------------------------------------
 
-library(devtools)
-library(roxygen2)
+
+# library(devtools)
+# library(roxygen2)
 
 
 ## Lookup/Test:
 # - how to create examples
 # - how to define "families"
-# - how to write bold/italics
-# - PET and typical values / how to do it right?
-# - derive Ci? 
-# - include extrapolation of Gs?
-# - would it be better to convert data.frame right at the beginning and then 
-#   save a few lines of code where columns are checked and converted to vectors?
-#   or alternatively: combine to a smaller number of functions, so that this
-#   check does not have to be performed so many times? See how Twutz did it!
-
-### Issues/check:
-# MOL independent of temperature?
-# more efficient way to provide data.frames? rather than specifiyng each column separately?
-# check if Martin 1989, Daudet 1999 etc. really need Gb only or Ga?
-# read + understand the differences of the omega formulations, starting with appendix of Jarvis & McNaughton 1986!
-
-## TODO:
-# Esat <- provide only one option? Else this option has to be inlcuded in all functions where Esat is used!!
-#         not really, if it was  to be changed, do it in the function directly, not where it is a sub-function!
-#        options that are not often used may not be indicated: rather changed in the subfunction directly --> ensures consistency! 
-# check e to q conversions again!
-# References for EVERY function!!!
-# check for more functions in Jarvis,McNaughton and the Monteith textbook!!!
-# doublecheck Choudhury!
-# write examples!
-# think about combining Gb functions into one function!!!!!
-# virtual temperature. replace q with VPD!
-# include option that variables can also be a vector? but not necessarily...maybe in "check.columns"
-
-### still missing:
-# ETpot - add other formulations: see Donahue 2010!
-# Ga in mol and Ga for CO2!!
-# inst. energy balance closure + correction
-# Uncertainty!!
-# decoupling: Martin_1989 hypostomatous
-# dew point temperature
-# potential temperature
-
-
 
 # Notes:
 # other estimates for d and z0m: Shaw and Pereira 1982 (see also Yang_2003)
@@ -90,6 +45,10 @@ library(roxygen2)
 # colnames(testdk)[10] <- "VPD"
 # testdk[,"VPD"] <- testdk[,"VPD"]/10
 # save(testdk,file="C:/Profiles/jknauer/Desktop/testdk.RData")
+
+########################
+### helper functions ###
+########################
 
 
 #' checks columns in a data frame 
@@ -149,7 +108,6 @@ bigleaf.constants <- function(){
 ## TODO:
 # possibility to provide time information as POSIX or similar
 # warning if neither daily nor hourly
-# include option: number of NEW data excluded!
 
 #' Filter data
 #'
@@ -167,23 +125,40 @@ bigleaf.constants <- function(){
 #' @param GPP           gross primary productivity (umol m-2 s-1)
 #' @param Ca            atmospheric CO2 concentration (umol mol-1)
 #' @param day           day of year
-#' @param month         month
 #' @param year          year
-#' @param quality_ext   
-#' @param good_quality 
-#' @param excl_vars_qc  
+#' @param quality.ext   the extension to the variables' names that marks them as quality control variables
+#' @param good.quality  which values indicate good quality in the quality control (qc) variables?
+#' @param vars.qc       character vector indicating the variables for which quality filter should 
+#'                      be applied. Leave empty if no quality filter should be applied.  
 #' @param tprecip       precipitation threshold used to demark a precipitation event (mm)
-#' @param precip_hours  number of hours removed following a precipitation event (h)
+#' @param precip.hours  number of hours removed following a precipitation event (h)
 #' @param trad          radiation threshold (umol m-2 s-1)
 #' @param ttemp         temperature threshold (deg C)
 #' @param tustar        friction velocity threshold (m s-1)
-#' @param tGPP          GPP threshold (???)
+#' @param tGPP          GPP threshold (fraction of 95% quantile of the GPP time series).
+#'                      Takes values between 0 and 1. 
+#' @param ws            window size used for GPP time series smoothing
+#' @param min.int       minimum time interval in days for a given state of growing season
 #' @param trH           relative humidity threshold (-)
 #' @param NA.as.precip  if TRUE missing precipitation data are treated as precipitation events
 #' 
 #' 
-#' @details growing season:
-#'          growing season is filtered based on daily GPP (aggregated from halfhourly values).
+#' @details This routine consists of two parts:
+#'          1) Quality control: All variables included in \code{vars.qc} are filtered for 
+#'             good quality data. For these variables a corresponding quality variable with 
+#'             the same name as the variable plus the extension as specified in \code{quality.ext}
+#'             must be provided. For timesteps where the value of the quality indicator variables is not included
+#'             in the argument \code{good.quality}, i.e. the quality is not considered as 'good', 
+#'             its value is set to NA.
+#'             
+#'          2) Meteorological filtering. Under certain conditions (e.g. low ustar), the assumptions
+#'             of the EC method are not fulfilled. Further, some data analysis require certain meteorological
+#'             conditions, such as precipitation free periods, or active vegetation (growing season, daytime).
+#'             The filter applied in this second step serves to exclude time periods that do not fulfill the criteria
+#'             specified in the arguments. More specifically, timeperiods where one of the variables is lower than the 
+#'             specified threshold are set to NA for all variables. E.g. when radiation is below 'trad', all variables 
+#'             are set to NA.
+#'             Set a threshold to 0 (or the minimum of the variable) if the dataset should not be filtered for a specific variable.
 #'          
 #' @return filtered_data the same data frame as provided as argument to the function
 #'                       but with filtered timeperiods set to NA in all columns except
@@ -196,14 +171,30 @@ bigleaf.constants <- function(){
 #' @export                     
 
 filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="ustar",
-                        VPD="VPD",GPP="GPP_nt",Ca="Ca",day="day",month="month",year="year",
-                        quality_ext="_qc",good_quality=c(0,1),excl_vars_qc=c("PPFD","Ca"),
-                        tprecip=0.01,precip_hours=24,trad=200,ttemp=5,tustar=0.2,tGPP=0.5,
+                        VPD="VPD",GPP="GPP_nt",Ca="Ca",day="day",year="year",
+                        quality.ext="_qc",good.quality=c(0,1),vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+                        tprecip=0.01,precip.hours=24,trad=200,ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,
                         trH=0.95,NA.as.precip=F){
   
-  vars    <- c(precip,PPFD,Tair,ustar,VPD,GPP,Ca)
-  vars_qc <- setdiff(vars,excl_vars_qc)
   
+  ### I) Quality control filter
+  if (any(!vars.qc %in% colnames(data))){
+    
+    missing_vars <- vars_qc[which(!vars.qc %in% colnames(data))]
+    stop(paste("Variable ",missing_vars," is included in 'vars_qc', but does not exist in the input data!"))
+    
+  }
+  
+  vars.qc_qc <- paste0(vars.qc,quality.ext)
+  if (any(!vars.qc_qc %in% colnames(data))){
+    
+    missing_vars_qc <- vars.qc_qc[which(!vars.qc_qc %in% colnames(data))]
+    missing_vars2   <- substr(missing_vars_qc,1,nchar(missing_vars_qc) - nchar(quality.ext))
+    stop(paste("Quality control for variable ",missing_vars2,"(",missing_vars_qc,") does not exist in the input data!"))
+    
+  }
+  
+
   ## test data availability
   precip <- check.columns(data,precip)
   PPFD   <- check.columns(data,PPFD)
@@ -212,31 +203,27 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   VPD    <- check.columns(data,VPD)
   GPP    <- check.columns(data,GPP)
   day    <- check.columns(data,day)
-  month  <- check.columns(data,month)
   year   <- check.columns(data,year)
   
-  if (Ca %in% vars_qc){
-    Ca   <- check.columns(data,Ca) 
-  }
   
   ## data quality
   cat("Quality control:",fill=TRUE)
-  for(var in vars_qc){
-    if (paste0(var,quality_ext) %in% colnames(data)){                             # does column exist?
-      assign(paste0(var,quality_ext),check.columns(data,paste0(var,quality_ext))) # create variable "*_qc", make quality check before
-      data[get(paste0(var,quality_ext)) > max(good_quality),var] <- NA            # exclude bad quality data
+  for (var in vars.qc){
+    assign(var,check.columns(data,var))
+    assign(paste0(var,quality.ext),check.columns(data,paste0(var,quality.ext))) # create variable "*_qc", make quality check before
+    data[get(paste0(var,quality.ext)) > max(good.quality),var] <- NA            # exclude bad quality data
       
-      qc_invalid      <- sum(get(paste0(var,quality_ext)) > max(good_quality)) # count & report
-      qc_invalid_perc <- round((qc_invalid/nrow(data))*100,2)
+    qc_invalid      <- sum(get(paste0(var,quality.ext)) > max(good.quality)) # count & report
+    qc_invalid_perc <- round((qc_invalid/nrow(data))*100,2)
       
-      cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) excluded",fill=T,sep="")
-    } 
+    cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) excluded",fill=T,sep="")
   }
   cat("-------------------------------------",fill=T)
   
+
+  #### II) filtering based on meteorology
   rH <- VPD.to.rH(VPD,Tair)
   
-
   ## hourly or halfhourly data?
   tstep_day <- as.integer(nrow(data) / length(unique(day)))
   thour     <- ifelse(tstep_day == 24,1,2)
@@ -246,8 +233,8 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   ## start filtering
   # 1) GPP
   GPP_daily <- aggregate(GPP,by=list(day),mean,na.rm=T)[,2]
-  growseas_invalid <- filter.growseas(GPP_daily,tGPP=tGPP,ws=12,min_int=3)
-  growseas_invalid <- which(day %in% growseas_invalid)
+  growing_season   <- filter.growseas(GPP_daily,tGPP=tGPP,ws=ws,min.int=min.int)
+  growseas_invalid <- which(sapply(growing_season,rep,48) == 0)
   
   # 2) precipitation
   if (NA.as.precip){
@@ -255,7 +242,7 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   } else {
     precip_events <- which(precip > tprecip)
   }
-  precip_invalid <- unique(as.numeric(unlist(sapply(precip_events, function(x) x:(min(x+precip_hours*thour,nrow(data),na.rm=T))))))
+  precip_invalid <- unique(as.numeric(unlist(sapply(precip_events, function(x) x:(min(x+precip.hours*thour,nrow(data),na.rm=T))))))
   
   # 3) meteorological variables (PPFD, Tair, ustar, rH) 
   PPFD_invalid  <- which(PPFD <= trad)
@@ -301,7 +288,7 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   
   # 5) set all other columns to NA
   data_filtered <- data.frame(data,valid)
-  data_filtered[valid==0,!colnames(data) %in% c("day","month","year")] <- NA
+  data_filtered[valid==0,!colnames(data) %in% c("day","year")] <- NA
   
   return(data_filtered)
 }
@@ -311,34 +298,57 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
 
 #' GPP-based growing season filter
 #' 
-#' @description filters annual time series for growing season based on smoothed daily GPP time series
+#' @description Filters annual time series for growing season based on smoothed daily GPP data.
 #' 
-#' @param GPPd   daily GPP
-#' @param tGPP   GPP threshold (fraction of 95% quantile) 
-#' @param ws     window size used for smoothing
+#' @param GPPd    daily GPP (any unit) 
+#' @param tGPP    GPP threshold (fraction of 95% quantile of the GPP time series).
+#'                Takes values between 0 and 1. 
+#' @param ws      window size used for GPP time series smoothing
+#' @param min.int minimum time interval in days for a given state of growing season
 #' 
+#' @details The basic idea behind the growing season filter is that vegetation is 
+#'          considered to be active when its carbon uptake (GPP) is above a specified 
+#'          threshold, which is defined relative to the peak GPP (95th-percentile) 
+#'          observed in the year. 
+#'          The GPP-threshold is calculated as:
+#'          
+#'          \deqn{GPP_threshold = quantile(GPPd,0.95)*tGPP}
+#'          
+#'          GPPd time series are smoothed with a moving average to avoid fluctuations 
+#'          in the delineation of the growing season. The window size defaults to 15 
+#'          days, but depending on the ecosystem, other values can be appropriate. 
+#'          
+#'          The argument \code{min.int} serves to avoid short fluctuations in the 
+#'          status growing season vs. no growing season by defining a minimum length
+#'          of the status. If a time interval shorter than \code{min.int} is labelled
+#'          as growing season or non-growing season, it is changed to the status of 
+#'          the neighbouring values.
+#'          
+#' @return a vector of type integer of the same length as the input GPPd in which 0 indicate
+#'         no growing season (dormant season) and 1 indicate growing season.
 #' 
-#' @details none 
-
-
-
-filter.growseas <- function(GPPd,tGPP,min_int,ws){  # ws = window size
+#' @references Knauer 2017         
+#'                         
+#' @export  
+filter.growseas <- function(GPPd,tGPP,ws=15,min.int=5){
+  
   if(sum(is.na(GPPd)) < 0.5*length(GPPd)){
-    growseas       <- rep(1,length(GPPd))
-    GPP_threshold  <- quantile(GPPd,probs=0.95,na.rm=TRUE)*tGPP
+  
+    growseas      <- rep(1,length(GPPd))
+    GPP_threshold <- quantile(GPPd,probs=0.95,na.rm=TRUE)*tGPP
     
     ## smooth GPP
-    GPPd_smoothed      <- filter(GPPd,method="convolution",filter=rep(1/ws,ws))
+    GPPd_smoothed <- filter(GPPd,method="convolution",filter=rep(1/ws,ws))
     
-    ## set edges to the mean of the original values
+    ## set values at the beginning and end of the time series to the mean of the original values
     wsd <- floor(ws/2)
     GPPd_smoothed[1:wsd] <- mean(GPPd[1:(2*wsd)],na.rm=T)
     GPPd_smoothed[(length(GPPd)-(wsd-1)):length(GPPd)] <- mean(GPPd[(length(GPPd)-(2*wsd-1)):length(GPPd)],na.rm=T)
     
-    # check for occurence of missing values and set them to mean of values surrounding them
+    # check for occurence of missing values and set them to mean of the values surrounding them
     missing <- which(is.na(GPPd_smoothed))
     if (length(missing) > 0){
-      if (length(missing) > 10){warning("Attention, there is a gap in GPPd of length n = ",length(missing))}
+      if (length(missing) > 10){warning("Attention, there is a gap in 'GPPd' of length n = ",length(missing))}
       replace_val <- mean(GPPd_smoothed[max(1,missing[1] - 4):min((missing[length(missing)] + 4),length(GPPd_smoothed))],na.rm=T)
       GPPd_smoothed[missing] <- replace_val
     }
@@ -346,42 +356,39 @@ filter.growseas <- function(GPPd,tGPP,min_int,ws){  # ws = window size
     # filter daily GPP
     growseas[GPPd_smoothed < GPP_threshold] <- 0
     
-    ## exclude short time periods
+    ## change short intervals to the surrounding values to avoid 'wrong' fluctuations
     intervals <- rle(growseas)
-    short     <- which(intervals$lengths <= min_int)
+    short_int <- which(intervals$lengths <= min.int)
     
-    if (length(short) > 0){
+    if (length(short_int) > 0){
       start <- numeric()
       end   <- numeric()
-      for (i in 1:length(short)){
-        start[i] <- sum(intervals$lengths[1:short[i]-1]) + 1
-        end[i] <- start[i]+intervals$lengths[short[i]] - 1
-        ## exclude
+      
+      for (i in 1:length(short_int)){
+        
+        start[i] <- sum(intervals$lengths[1:short_int[i]-1]) + 1
+        end[i]   <- start[i]+intervals$lengths[short_int[i]] - 1
+
         val <- unique(growseas[start[i]:end[i]])
-        if(length(val) > 1){
-          stop("something went wrong when filtering growing season!")
-          #       } else if (short[i] == 1){                          # only if first datapoints are concerned (use end instead of start!)
-          #         if (val == 0 & growseas[end[1]+1] == 1){     
-          #           growseas[start[1]:end[1]] <- growseas[start[1]:end[1]]+1
-          #         } else if (val == 1 & growseas[end[1]+1] == 0){         
-          #           growseas[start[1]:end[1]] <- growseas[start[1]:end[1]]-1
-          #         } 
-        } else {
-          if (val == 0 & growseas[start[i]-1] == 1){              # second condition to avoid wrong fluctuations
-            growseas[start[i]:end[i]] <- growseas[start[i]:end[i]]+1    # set to 1 (growing season)
-          } else if (val == 1 & growseas[start[i]-1] == 0){
-            growseas[start[i]:end[i]] <- growseas[start[i]:end[i]]-1    # set to 0 (no growing season)
-          }
+        
+        if (val == 0 & growseas[start[i]-1] == 1){
+          growseas[start[i]:end[i]] <- 1   
+        } else if (val == 1 & growseas[start[i]-1] == 0){
+          growseas[start[i]:end[i]] <- 0
         }
       }
     }
+
     growseas <- as.integer(growseas)
+  
   } else {
-    warning("number of available GPPd data is less than half of total number of days per year. Filter is not applied!")
+    
+    warning("number of available GPPd data is less than half the total number of days per year. Filter is not applied!")
     growseas <- as.integer(rep(1,length(GPPd)))
+  
   }
-  growseas_invalid <- which(growseas==0)
-  return(growseas_invalid)
+  
+  return(growseas)
 }
 
 
@@ -392,9 +399,9 @@ filter.growseas <- function(GPPd,tGPP,min_int,ws){  # ws = window size
 ###############################
 
 
-#' Water Use Efficiency metrics
+#' Water-Use Efficiency metrics
 #' 
-#' @description Calculation of various water use efficiency metrics
+#' @description Calculation of various water use efficiency (WUE) metrics.
 #' 
 #' @param data      data.frame or matrix containing all required variables
 #' @param GPP       Gross primary productivity (umol CO2 m-2 s-1)
@@ -423,10 +430,10 @@ filter.growseas <- function(GPPd,tGPP,min_int,ws){  # ws = window size
 #'          \deqn{uWUE= (GPP * sqrt(VPD)) / ET}
 #' 
 #' @return a named vector with the following elements:
-#'         \item{WUE}{Water-use efficiency ()}
-#'         \item{WUE_NEE}{Water-use efficiency based on NEE ()}
-#'         \item{IWUE}{Inherent water-use efficiency ()}
-#'         \item{uWUE}{Underlying water-use efficiency ()}
+#'         \item{WUE}{Water-use efficiency (gC (kg H20)-1)}
+#'         \item{WUE_NEE}{Water-use efficiency based on NEE (gC (kg H20)-1)}
+#'         \item{IWUE}{Inherent water-use efficiency (gC kPa (kg H20)-1)}
+#'         \item{uWUE}{Underlying water-use efficiency (gC kPa (kg H20)-1)}
 #' 
 #' @note Units for VPD can also be hPa. Units change accordingly.
 #' 
@@ -447,7 +454,7 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
   Tair <- check.columns(data,Tair)
   
   
-  ET  <- LE.to.ET(LE,Tair)                   # kg H2O s-1
+  ET  <- LE.to.ET(LE,Tair)                 # kg H2O s-1
   GPP <- (GPP/1e06 * constants$Cmol)*1000  # gC m-2 s-1
   NEE <- (NEE/1e06 * constants$Cmol)*1000  # gC m-2 s-1
   
@@ -469,29 +476,73 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
 #' 
 #' @description Estimation of the WUE metric "g1" from non-linear regression
 #' 
-#' @param data  a data.frame or matrix containing all required columns
-#' @param GPP   gross primary productivity (umol m-2 s-1)
-#' @param Gs    surface conductance (mol m-2 s-1)
-#' @param VPD   vapor pressure deficit (kPa)
-#' @param Ca    atmospheric CO2 concentration (ppm)
-#' @param nmin  minimum number of data required to perform the fit
-#' @param fitg0 logical, if TRUE g0 and g1 are fitted simultaneously
-#' @param g0    ignored if fitg0 is FALSE, minimum stomatal conductance (mol m-2 s-1)
+#' @param data     Data.frame or matrix containing all required columns
+#' @param Tair     Air temperature (deg C)
+#' @param pressure Air pressure (kPa)
+#' @param GPP      Gross primary productivity (umol CO2 m-2 s-1)
+#' @param Gs       Surface conductance to water vapor (m s-1); converted to mol m-2 s-1
+#'                 internally.
+#' @param VPD      Vapor pressure deficit (kPa)
+#' @param Ca       Atmospheric CO2 concentration (umol mol-1)
+#' @param model    Stomatal model used. One of c("USO","Ball&Berry","Leuning")
+#' @param nmin     Minimum number of data required to perform the fit; defaults to 40.
+#' @param fitg0    Should g0 and g1 be fitted simultaneously? 
+#' @param g0       Minimum stomatal conductance (mol m-2 s-1); ignored if \code{fitg0} is TRUE.
+#' @param fitD0    Should D0 be fitted along with g1 (and g0 if fitg0 = TRUE)?; only used if \code{model} is "Leuning"
+#' @param D0       Stomatal sensitivity parameter to VPD; only used if \code{model} is "Leuning" and fitD0 is FALSE
+#' @param Gamma    Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning", defaults to 50 umol mol-1.
 #' 
+#' @details All stomatal models were developed at leaf-level, but its parameters 
+#'          can also be estimated at ecosystem level (but be aware of caveats, see Knauer et al. 2017).
+#'          
+#'          The unified stomatal optimization (USO) model is given as (Medlyn et al. 2011):
+#'      
+#'          \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
+#'          
+#'          The empirical model by Ball et al. 1987 is defined as:
+#'          
+#'          \deqn{gs = g0 + g1* ((An * rH) / Ca)}
+#'          
+#'          Leuning 1995 suggested a revised version of the Ball&Berry model:
+#'          
+#'          \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
+#'          
+#'          The parameters in the models are estimated using non-linear regression (\code{nls()}).
+#'          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
+#'          the big leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
+#'          
 #' 
-#' @return an nls model object
+#' @return an nls model object, containing information on the fitted parameters, their uncertainty range,
+#'         model fit, etc.
 #' 
-#' @references Medlyn 2011
-#'             Knauer 2017
+#' @references Knauer 2017
+#'             
+#'             Medlyn, B.E., et al., 2011: Reconciling the optimal and empirical approaches to
+#'             modelling stomatal conductance. Global Change Biology 17, 2134-2144.
+#'             
+#'             Ball, T.J., Woodrow, I.E., Berry, J.A. 1987: A model predicting stomatal conductance
+#'             and its contribution to the control of photosynthesis under different environmental conditions.
+#'             In: Progress in Photosynthesis Research, edited by J.Biggins, pp. 221-224, Martinus Nijhoff Publishers,
+#'             Dordrecht, Netherlands.
+#'             
+#'             Leuning, R., 1995: A critical appraisal of a combined stomatal-photosynthesis
+#'             model for C3 plants. Plant, Cell and Environment 18, 339-355.
 #' 
 #' @export 
-
-# basic tests on variable range?
-estimate.g1 <- function(data,GPP="GPP",Gs="Gs",VPD="VPD",Ca="Ca",fitg0=FALSE,nmin=40,g0=0){
-  GPP  <- check.columns(data,GPP)
-  Gs   <- check.columns(data,Gs)
-  VPD  <- check.columns(data,VPD)
-  Ca   <- check.columns(data,Ca)
+estimate.g1 <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs",VPD="VPD",Ca="Ca",
+                        model=c("USO","Ball&Berry","Leuning"),nmin=40,fitg0=FALSE,g0=0,fitD0=FALSE,
+                        D0=1.5,Gamma=50,constants=bigleaf.constants()){
+  
+  model <- match.arg(model)
+  
+  Tair     <- check.columns(data,Tair)
+  pressure <- check.columns(data,pressure)
+  GPP      <- check.columns(data,GPP)
+  Gs       <- check.columns(data,Gs)
+  VPD      <- check.columns(data,VPD)
+  Ca       <- check.columns(data,Ca)
+  
+  Gs <- ms.to.mol(Gs,Tair,pressure,constants)
   
   nr_data <- sum(!is.na(GPP) & !is.na(Gs) & !is.na(VPD) & !is.na(Ca))
   
@@ -499,12 +550,44 @@ estimate.g1 <- function(data,GPP="GPP",Gs="Gs",VPD="VPD",Ca="Ca",fitg0=FALSE,nmi
   if (nr_data < nmin){
     stop("number of data is less than 'nmin'. g1 is not fitted.")
   } else {
-    if (fitg0){
-      mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3))
-    } else {
-      mod <- nls(Gs ~ 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3))
+    
+    if (model == "USO"){
+     
+      if (fitg0){
+        mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3))
+      } else {
+        mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3))
+      }
+    
+    } else if (model == "Leuning"){
+      
+      if (fitg0){
+        if (fitD0){
+          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9,D0=1.5))
+        } else {
+          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9))
+        }
+      } else {
+        if (fitD0){
+          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9,D0=1.5))
+        } else {
+          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9))
+        }
+      }
+      
+    } else if (model == "Ball&Berry"){
+      
+      rH <- VPD.to.rH(VPD,Tair)
+
+      if (fitg0){
+        mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9))
+      } else {
+        mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9))
+      }
+      
     }
-  } 
+  
+  }
   
   return(mod)
     
@@ -596,8 +679,7 @@ Gb.Thom <- function(ustar,constants=bigleaf.constants()){
 #' 
 #'             Massman, W.J., 1999b: Molecular diffusivities of Hg vapor in air, 
 #'             O2 and N2 near STP and the kinematic viscosity and thermal diffusivity
-#'             of air near STP. Atmospheric Environment 33, 453-457.      
-#'                 
+#'             of air near STP. Atmospheric Environment 33, 453-457.              
 #' 
 #' @export
 Reynolds.Number <- function(Tair,pressure,ustar,hs,constants=bigleaf.constants()){
@@ -713,8 +795,11 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
     fc  <- (1-exp(-LAI/2)) 
   } 
   
-  wind_zh <- wind.profile(zh,data,zr=zr,d=d,z0m=z0m,stab_correction=stab_correction,
+  wind_zh <- wind.profile(heights=zh,data=data,zr=zr,d=d,z0m=z0m,stab_correction=stab_correction,
                           stab_formulation=stab_formulation)[,1]
+  
+  ## avoid zero windspeed
+  wind_zh <- pmax(0.01,wind_zh)
   
   v   <- Reynolds.Number(Tair,pressure,ustar,hs,constants)[,"v"]
   Re  <- Reynolds.Number(Tair,pressure,ustar,hs,constants)[,"Re"]
@@ -724,38 +809,15 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
 
   kB     <- (constants$k*Cd)/(4*Ct*ustar/wind_zh)*fc^2 + kBs*(1 - fc)^2
   Rb     <- kB/(constants$k*ustar) 
-  Gb     <- 1/Rb
   Rb_CO2 <- constants$Rbwc * Rb
-  
+  Gb     <- 1/Rb
+
   
   return(data.frame(Rb,Rb_CO2,Gb,kB))
 }
 
-## typical values for hs: Shuttleworth and Wallace 1985 from van Bavel and Hillel 1976 -> 0.01m
 
-# Ct = heat transfer coefficient of the leaf (Massman_1999 p.31)
 
-# #' Boundary layer conductance according to McNaughton and van den Hurk 1995
-# #' 
-# #' @param ustar     friction velocity (m s-1)
-# #' @param leafwidth leaf width (m)
-# #' @param LAI       one-sided leaf area index
-# #' @param constants k - von-Karman constant (-)
-# #' 
-# #' @seealso \code{\link{Gb.Thom}}, \code{\link{Gb.Su}}
-# 
-# ## check: kB supposed to be so low??
-# Gb.McNaughton <- function(ustar,leafwidth,LAI,constants=bigleaf.constants()){
-#   Rb <- 130*(sqrt(leafwidth*ustar))/LAI - 1.7
-#   
-#   #kB <- k*(120/LAI*sqrt(leafwidth*ustar) - 2.5)
-#   
-#   kB  <- Rb*constants$k*ustar
-#   Gb  <- 1/Rb
-#   
-#   
-#   return(data.frame(Rb,Gb,kB))
-# }
 
 
 
@@ -822,12 +884,19 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
   
   stab_formulation <- match.arg(stab_formulation)
   
-  ustar    <- check.columns(data,ustar)
+  Tair     <- check.columns(data,Tair)
+  pressure <- check.columns(data,pressure)
   wind     <- check.columns(data,wind)
-  
+  ustar    <- check.columns(data,ustar)
+  H        <- check.columns(data,H)
+
   alpha   <- 4.39 - 3.97*exp(-0.258*LAI)
-  wind_zh <- wind.profile(zh,data,zr=zr,d=d,z0m=z0m,stab_correction=stab_correction,
+  wind_zh <- wind.profile(heights=zh,data=data,zr=zr,d=d,z0m=z0m,stab_correction=stab_correction,
                           stab_formulation=stab_formulation)[,1]
+  
+  ## avoid zero windspeed
+  wind_zh <- pmax(0.01,wind_zh)
+  
   Gb      <- LAI*((0.02/alpha)*sqrt(wind_zh/leafwidth)*(1-exp(-alpha/2)))
   Rb      <- 1/Gb
   kB      <- Rb*constants$k*ustar
@@ -873,7 +942,7 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #' @note Note that this equation is only valid for z >= d + z0m. All values in \code{heights}
 #'       smaller than d + z0m will return 0.                                 
 #'                                  
-#' @return a data.frame with rows representing time and columns representing heights.     
+#' @return a data.frame with rows representing time and columns representing heights as specified in \code{heights}.     
 #'                                            
 #' @references
 #' 
@@ -966,6 +1035,7 @@ wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ust
 #' @return a data.frame with the following columns:
 #'         \item{d}{Zero-plane displacement height (m)}
 #'         \item{z0m}{Roughness length for momentum (m)}
+#'         \item{z0m_se}{Standard Error of the median for z0m (m)}
 #'
 #'    
 #' @return                                  
@@ -1012,7 +1082,7 @@ roughness.parameters <- function(method=c("wind_profile","canopy_height"),zh,
       
     }
     
-    z0m_all[z0m_all > 1000] <- NA
+    z0m_all[z0m_all > zh] <- NA
     
     z0m    <- median(z0m_all,na.rm=T)
     z0m_se <- 1.253 * (sd(z0m_all,na.rm=T) / sqrt(sum(!is.na(z0m_all))))
@@ -1022,15 +1092,6 @@ roughness.parameters <- function(method=c("wind_profile","canopy_height"),zh,
   return(data.frame(d,z0m,z0m_se))
 }
 
-# psi_h <- stability.correction(data,Tair=testdk2[,"Tair"],pressure=testdk2[,"pressure"],ustar=testdk2[,"ustar"],
-#                               H=testdk2[,"H"],zr=43,d=0.7*25,)[,"psi_m"]
-# 
-# 
-# ram1 <- wind/ustar^2
-# ram2 <- log((43-17.5)/1.65)/(k*ustar)
-# 
-# ram3 <- log((43-17.5)/1.07 - psi_h)/(k*ustar)
-# ram4 <- log((43-17.5)/2.5 - psi_h)/(k*ustar)
 
 ############################
 ### air pressure, density ## --------------------------------------------------------------------------
@@ -1060,6 +1121,7 @@ air.density <- function(Tair,pressure,constants=bigleaf.constants()){
   
   return(rho)
 }
+
 
 
 #' Air pressure from hypsometric equation
@@ -1105,12 +1167,6 @@ pressure.from.elevation <- function(elev,Tair,q=NULL,constants=bigleaf.constants
   
   return(pressure)
 } 
-
-
-
-
-
-
 
 
 
@@ -1251,7 +1307,7 @@ stability.parameter <- function(Tair,pressure,ustar,H,zr,d,constants=bigleaf.con
 #'             Journal of Applied Meteorology 9, 857-861.
 #' 
 #'             Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
-#'   
+#' @export   
 stability.correction <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",H="H",zr,d,
                                  formulation=c("Dyer_1970","Businger_1971"),
                                  constants=bigleaf.constants()){
@@ -1294,23 +1350,13 @@ stability.correction <- function(data,Tair="Tair",pressure="pressure",ustar="ust
   return(data.frame(psi_h,psi_m))
 } 
 
-# zeta <- seq(-5,-0.5,0.5)
-# x1<- 2*log(( 1 + (1 - 16 * zeta)^0.5) / 2)
-# x2<- 2*log(( 1 + 1/(1 - 16 * zeta)^-0.5) / 2)
-# 
-# y1 <- 2 * log( 1 +   (0.95*(1 - 11.6*zeta)^0.5) / 2)
-# y2 <- 2 * log( 1 + 1/(0.95*(1 - 11.6*zeta)^-0.5) / 2)
-# 
-# xx1 <- 0.74*(1 - 9*zeta)^-0.5
-# xx2 <- 0.74 + 4.7*zeta
-### Dyer_1970; Dyer_1974 (similar:Paulson 1970)
-### Businger_1971: from Foken_2008; p.65 (suggested by Businger_1971), in the form of Högstrom 1988
+
 
 
 
 #' Aerodynamic conductance
 #' 
-#' @description Aerodynamic conductance, including options for the boundary layer conductance
+#' @description Bulk aerodynamic conductance, including options for the boundary layer conductance
 #'              formulation and stability correction functions.
 #' 
 #' @param data              Data.frame or matrix containing all required variables
@@ -1351,40 +1397,31 @@ stability.correction <- function(data,Tair="Tair",pressure="pressure",ustar="ust
 #'  where Ra_m is the aerodynamic resistance for momentum and Rb the canopy boundary
 #'  layer resistance.
 #'  
-#'  The argument \code{stab_formulation} determines the stability correction function used 
-#'  to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
-#'  and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
-#'  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
-#'  calculated with \code{\link{MoninObukhov.length}}
-#'  Stability correction functions calculate the correction based on the formulations by Businger 1971 
-#'  Dyer 1970, based on zeta.
-#'  If \code{stab_correction} is set to FALSE, the effects of atmospheric stability on Ga are neglected,
-#'  and the Monin-Obukhov length, the stability parameter zeta, as well as the stability correction functions
-#'  are not calculated.
+#'  Several models can be used to determine the canopy boundary layer resistance ("excess resistance")
 #' 
-#'  The argument \code{Rb_model} determines the canopy boundary layer resistance ("excess resistance") model that is used. "Thom_1972" is an 
-#'  empirical formulation based on the friction velocity (ustar) (Thom 1972):
+#'  The model used to determine the canopy boundary layer resistance ("excess resistance") is specified by the argument \code{Rb_model}
+#'  "Thom_1972" is an empirical formulation based on the friction velocity (ustar) (Thom 1972):
 #'  
-#'    \deqn{Rb = 0.667u*^0.667}
+#'    \deqn{Rb = 0.67ustar^0.67}
 #'    
 #'  The model by Choudhury 1988 ("Choudhury_1988"), calculates Rb
 #'  based on leaf width, LAI and ustar (Note that in the original formulation leaf width
 #'  instead of the characteristic leaf dimension (Dl) is taken):
 #'   
-#'     formula
+#'     \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
 #'     
 #'  The option "Su_2001" calculates Rb based on the physically-based Rb model by Su et tal. 2001,
 #'  a simplification of the model developed by Massmann 1999:
 #'  
-#'     formula
+#'     \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2}
 #'  
-#'  The models calculate the ... parameter kB-1, which related to Rb:
+#'  The models calculate the parameter kB-1, which related to Rb:
 #'  
-#'     formula
+#'     \deqn{kB-1 = Rb * (k * ustar)}
 #'  
-#'  Both kB and Rb are given in the output.
+#'  Both kB and Rb, as well as Gb are given in the output.
 #'  
-#'  Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
+#'  Rb (and Gb) for water vapor and heat are assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
 #'  
 #'  \deqn{Rb_CO2 = 1.4 * Rb}
 #'  
@@ -1395,6 +1432,17 @@ stability.correction <- function(data,Tair="Tair",pressure="pressure",ustar="ust
 #'  
 #'  If the roughness parameters z0m and d are not available, they can be estimated using
 #'  \link{\code{roughness.parameters}}.
+#'  
+#'  The argument \code{stab_formulation} determines the stability correction function used 
+#'  to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
+#'  and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
+#'  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
+#'  calculated with \code{\link{MoninObukhov.length}}
+#'  Stability correction functions calculate the correction based on the formulations by Businger 1971 
+#'  Dyer 1970, based on zeta.
+#'  If \code{stab_correction} is set to FALSE, the effects of atmospheric stability on Ga are neglected,
+#'  and the Monin-Obukhov length, the stability parameter zeta, as well as the stability correction functions
+#'  are not calculated.
 #'  
 #' @return a dataframe with the following columns:
 #'         \item{Ga_m}{Aerodynamic conductance for momentum (m s-1)}
@@ -1414,14 +1462,6 @@ stability.correction <- function(data,Tair="Tair",pressure="pressure",ustar="ust
 #' @references 
 #'  
 #' @export
-#'    
-
-
-# TO DO:
-# - find out what "." means in front of a function!)
-# - think about how to deal with uncertainty!
-# - think about testing for missing arguments in the subfunctions separately, but most likely doesn't make sense
-# - better delineate the optionality of the arguments!
 aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H="H",
                                     zr,zh,d,z0m,Dl,N,fc=NULL,LAI,Cd=0.2,hs=0.01,
                                     stab_correction=TRUE,stab_formulation=c("Dyer_1970","Businger_1971"),
@@ -1512,32 +1552,6 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
   
 
 
-### alternative approaches for estimating d and z0m
-#     diff <- numeric(); ustar1 <- ustar; z0m <- numeric()
-#     for (i in 1:95){
-#       ustar1[ustar < quantile(ustar,i/100,na.rm=T)] <- NA
-#       z0m[i]          <- summary(nls(Ra_m ~ (log((zr - disp)/z0m)/(constants$k*ustar1)),
-#                                 start=c(z0m=z0m_start),na.action=na.omit,
-#                                 data=environment()))$par[1]
-#       
-#       diff[i] <- sum((Ra_m - (log((zr - disp)/z0m[i])/(constants$k*ustar1)))^2,na.rm=T)
-#     }
-
-#     optim(tustar,find_z0m,)
-#     
-#     find_z0m(tustar,Ra_m=Ra_m,zr=20,disp=15,ustar=ustar,wind=wind)
-#     
-#     find_z0m <- function(tustar,Ra_m,zr,disp,k=0.41,ustar,wind){
-# 
-#       ustar1[ustar < quantile(ustar,tustar,na.rm=T)] <- NA
-#       z0m <- summary(nls(Ra_m ~ (log((zr - disp)/z0m)/(k*ustar1)),
-#                      start=c(z0m=z0m_start),na.action=na.omit,
-#                      data=environment()))$par[1]
-#       
-#       diff <- sum((Ra_m - (log((zr - disp)/z0m[i])/(k*ustar1)))^2,na.rm=T)
-#       
-#       return(diff)
-#     }
 
 
 
@@ -1594,6 +1608,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
    Rn       <- check.columns(data,Rn)
    VPD      <- check.columns(data,VPD)
    LE       <- check.columns(data,LE)
+   Ga       <- check.columns(data,Ga)
   
    if(!is.null(G)){
      G <- check.columns(data,G)
@@ -1679,9 +1694,6 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #'         
 #'                                       
 #' @export 
-#' 
-
-# - add Ga and Ga to data.frame??
 bigleaf.surface <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",Ca="Ca",
                             VPD="VPD",Ga="Ga",calc.Ca=F,Ga_CO2="Ga_CO2",NEE="NEE",
                             constants=bigleaf.constants()){
@@ -1692,11 +1704,11 @@ bigleaf.surface <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",C
   H        <- check.columns(data,H)
   VPD      <- check.columns(data,VPD)
   Ga       <- check.columns(data,Ga)
-  Ga_CO2   <- check.columns(data,Ga_CO2)
   
   if (calc.Ca){
     Ca       <- check.columns(data,Ca)
     NEE      <- check.columns(data,NEE)
+    Ga_CO2   <- check.columns(data,Ga_CO2)
   }
   
   rho   <- air.density(Tair,pressure)
@@ -1900,19 +1912,50 @@ Gr.longwave <- function(Tair,LAI,constants=bigleaf.constants()){
 
 
 ### relate more to surface temperature?
+### actually it's the wrong Esat here....
+
 #' Dew point temperature
 #' 
 #' @description calculates the dew point, the temperature to which air must be 
 #'              cooled to become saturated (i.e. e = esat(Td))
 #'              
-#' @param VPD Vapor pressure deficit (kPa)              
-
-
-
-#' Potential temperature
+#' @param Tair      Air temperature (deg C)             
+#' @param pressure  Air pressure (kPa)
+#' @param VPD       Vapor pressure deficit (kPa)
+#' @param constants Kelvin - 
+#'                  Mw - 
+#'                  Rgas - 
 #' 
 #' 
+#' @details Dew point is given by:
 #' 
+#'         \deqn{Td = T* / (1 - log(e/esat(T*) / A))}
+#'    
+#'          where T* is 0 deg C. A is given by:
+#'          
+#'          \deqn{A = \lambda * Mw / (R*Tair)}
+#'          
+#'          where \eqn{\lambda} is the latent heat of vaporization and Mw the 
+#'          molecular weight of water.
+#' 
+#' @return dew point Td (deg C)
+#' 
+#' @references Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
+#'             3rd edition. Academic Press, London. 
+#' 
+#' @export              
+dew.point <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
+  
+  e      <- VPD.to.e(VPD,pressure,Tair)
+  esat0  <- Esat(0)[,"Esat"]
+  lambda <- LE.vaporization(Tair)
+  A      <- lambda * constants$Mw / (constants$Rgas * constants$Kelvin)
+  
+  Td <- constants$Kelvin / (1 - log(e/esat0) / A) - constants$Kelvin
+  
+  return(Td)
+}
+
 
 ### evtl replace q with VPD!
 #' Virtual temperature
@@ -2224,62 +2267,22 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 
 
 
-#' Conversions between radiation measures
-#'
-#'
-#'
-mol.to.Watt <- function(PPFD,conversion){
-  PAR <- PPFD * conversion
-  return(PAR)
-}
-
-Watt.to.mol <- function(PAR,conversion){
-  PPFD <- PAR
-  return(PPFD)
-}
-
-
-# 
-# 
-# petPenmanMethod <- function(temperature, pressure, rnet, vpd, ga) {
-#   # function to calculate PET given Ga
-#   # source: Monteith & Unsworth, 2008, eq 13.28
-#   # input:  temperature [K]
-#   #         pressure [Pa]
-#   #         rnet: net radiation [W m-2]
-#   #         vpd: vapour pressure deficit [Pa]
-#   #         ga: aerodynamic conductance for water [m s-1]  
-#   # output  pet: instantaneous potential evapotranpiration [mm s-1] 
-#   delta <- esatFromTemperature(temperature)[,"desatdT"] # [Pa K-1]
-#   gamma <- psychrometricConstant(temperature, pressure) # [Pa K-1]
-#   lambda <- latentHeatOfVapourisation(temperature)      # [J kg-1]
-#   rho <- airDensity(temperature, pressure)              # [kg m-3]
-#   pet <- ( delta * rnet + rho * cp * vpd * ga ) / (( delta + 0.93 * gamma ) *  lambda )
-#   return(pet)
+# #' Conversions between radiation measures
+# #'
+# #'
+# #'
+# mol.to.Watt <- function(PPFD,conversion){
+#   PAR <- PPFD * conversion
+#   return(PAR)
 # }
 # 
-# petPriestleyTaylorMethod <- function(temperature, pressure, rnet) {
-#   # function to calculate PET given Ga
-#   # source: Monteith & Unsworth, 2008, eq 13.38
-#   # input:  temperature [K]
-#   #         pressure [Pa]
-#   #         rnet: net radiation [W m-2]
-#   # output  pet: instantaneous potential evapotranpiration [mm s-1] 
-#   # local constant:
-#   k_pt = 1.26
-#   # derived parameters:
-#   delta <- esatFromTemperature(temperature)[,"desatdT"] # [Pa K-1]
-#   gamma <- psychrometricConstant(temperature, pressure) # [Pa K-1]
-#   lambda <- latentHeatOfVapourisation(temperature)      # [J kg-1]
-# 
-#   # Priestly Taylor equation
-#   pet <- k_pt * delta * rnet / (delta + gamma) / lambda 
-#   return(pet)
+# Watt.to.mol <- function(PAR,conversion){
+#   PPFD <- PAR
+#   return(PPFD)
 # }
-# 
-# 
-# 
-# 
+
+
+
 
 
 
@@ -2391,7 +2394,7 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #'             Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
 #'             3rd edition. Academic Press, London. 
 #'             
-#' @return
+#' @export
 ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
                           Rn="Rn",Gs="Gs",constants=bigleaf.constants()){
   
@@ -2415,12 +2418,14 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
 }
 
 
+
+
 #' Bulk intercellular CO2 concentration
 #' 
 #' @description Bulk canopy intercellular CO2 concentration (Ci) calculated based on Fick's law
 #'              given surface conductance (Gs), gross primary productivity (GPP) and 
 #'              atmospheric CO2 concentration (Ca).
-#'              
+#'                            
 #' @param Ca         Atmospheric CO2 concentration (umol mol-1)              
 #' @param GPP        Gross primary productivity (umol CO2 m-2 s-1)              
 #' @param Gs         Surface conductance to water (mol m-2 s-1)
@@ -2428,13 +2433,14 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
 #'                   measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.
 #' @param Ga         Aerodynamic conductance to CO2 (mol m-2 s-1) 
 #' @param NEE        Net ecosystem exchange (umol CO2 m-2 s-1)
-#' @param constants  DwDc Ratio of the molecular diffusivities for water vapor and CO2 (-)
+#' @param constants  DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
 #' 
 #' @details Bulk intercellular CO2 concentration (Ci) is given as:
 #' 
 #'          \deqn{Ci = Ca - GPP/(Gs/1.6)}
 #'          
-#'          where Gs/1.6 represents the surface conductance to CO2.
+#'          where Gs/1.6 (mol m-2 s-1) represents the surface conductance to CO2.
+#'          Note that Gs is required in mol m-2 s-1.
 #'          
 #' @note The equation is based on Fick's law of diffusion and is equivalent to the
 #'       often used equation at leaf level (ci = ca - An/gs).
@@ -2452,6 +2458,7 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
 #' @export
 intercellular.CO2 <- function(Ca,GPP,Gs,surface.Ca=F,Ga=NULL,NEE=NULL,
                               constants=bigleaf.constants()){
+  
   
   if (surface.Ca){
     Ca <- Ca.surface(Ca,NEE,Ga)
@@ -2509,8 +2516,8 @@ biochemical.energy <- function(alpha=0.422,NEE){
 
 #' Energy balance closure
 #' 
-#' @description Calculates the degree of the energy balance non-closure based on the ratio
-#'              of two sums (energy balance ratio), or ordinary least squares (OLS).
+#' @description Calculates the degree of the energy balance non-closure for the entire timespan
+#'              based on the ratio of two sums (energy balance ratio), and ordinary least squares (OLS).
 #' 
 #' @param data Data.frame or matrix containing all required variables
 #' @param Rn   Net radiation (W m-2)
@@ -2534,13 +2541,10 @@ biochemical.energy <- function(alpha=0.422,NEE){
 #'         \item{r_squared}{r^2 of the OLS regression}
 #'         \item{EBR}{energy balance ratio}
 #' 
-#' 
 #' @references Wilson K., et al. 2002: Energy balance closure at FLUXNET sites.
 #'             Agricultural and Forest Meteorology 113, 223–243.
-
-# include second method: regression (see Wilson 2002) (evtl RMA)
-# include case: S not in the dataframe, but not set to NULL in the arguments.
-
+#'
+#' @export
 energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",
                            missing.G.as.NA=F,missing.S.as.NA=F){
   
@@ -2582,60 +2586,5 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",
 
 
 
-## is instanteneous even the right approach here?
 
-#' instanteneous energy balance closure and flux adjustment
-#' 
-#' @description Characterization and correction of instantaneous energy balance
-#'              non-closure. Fluxes are adjusted based on two common methods: 
-#'              Bowen ratio and ...
-#' 
-#' @param data data.frame or matrix containing all required columns
-#' @param Rn   net radiation (W m-2)
-#' @param G    ground heat flux (W m-2)
-#' @param S    sum of all storage fluxes (W m-2)
-#' @param LE   latent heat flux (W m-2)
-#' @param H    sensible heat flux (W m-2)
-#' 
-#' 
-
-energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",
-                           missing.G.as.NA=F,missing.S.as.NA=F){
-  
-  Rn <- check.columns(data,Rn)
-  LE <- check.columns(data,LE)
-  H  <- check.columns(data,H)
-  
-  if(!is.null(G)){
-    G <- check.columns(data,G)
-    if (!missing.G.as.NA){G[is.na(G)] <- 0}
-  } else {
-    warning("ground heat flux G is not provided and set to 0.")
-    G <- rep(0,nrow(data))
-  }
-  
-  if(!is.null(S)){
-    S <- check.columns(data,S)
-    if(!missing.S.as.NA){S[is.na(S)] <- 0 }
-  } else {
-    warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,nrow(data))
-  }
-  
-
-  comp <- complete.cases(Rn,G,S,LE,H)
-  
-  energy.gap <- (Rn[comp] - G[comp] - S[comp]) - (LE[comp] + H[comp])
-  
-  bowen.ratio <- H/LE
-  
-  H.adjust  <- energy.gap * bowen.ratio
-
-  
-}
-
-
-
-## General literature
-## Gb: Hong_2012
 

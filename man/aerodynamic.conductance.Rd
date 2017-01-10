@@ -77,7 +77,7 @@ a dataframe with the following columns:
         \item{psi_h}{Integrated stability correction function (-)}
 }
 \description{
-Aerodynamic conductance, including options for the boundary layer conductance
+Bulk aerodynamic conductance, including options for the boundary layer conductance
              formulation and stability correction functions.
 }
 \details{
@@ -87,6 +87,42 @@ Aerodynamic conductance (Ga) is calculated as:
  
  where Ra_m is the aerodynamic resistance for momentum and Rb the canopy boundary
  layer resistance.
+ 
+ Several models can be used to determine the canopy boundary layer resistance ("excess resistance")
+
+ The model used to determine the canopy boundary layer resistance ("excess resistance") is specified by the argument \code{Rb_model}
+ "Thom_1972" is an empirical formulation based on the friction velocity (ustar) (Thom 1972):
+ 
+   \deqn{Rb = 0.67ustar^0.67}
+   
+ The model by Choudhury 1988 ("Choudhury_1988"), calculates Rb
+ based on leaf width, LAI and ustar (Note that in the original formulation leaf width
+ instead of the characteristic leaf dimension (Dl) is taken):
+  
+    \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
+    
+ The option "Su_2001" calculates Rb based on the physically-based Rb model by Su et tal. 2001,
+ a simplification of the model developed by Massmann 1999:
+ 
+    \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2}
+ 
+ The models calculate the parameter kB-1, which related to Rb:
+ 
+    \deqn{kB-1 = Rb * (k * ustar)}
+ 
+ Both kB and Rb, as well as Gb are given in the output.
+ 
+ Rb (and Gb) for water vapor and heat are assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
+ 
+ \deqn{Rb_CO2 = 1.4 * Rb}
+ 
+ The factor 1.4 arises due the lower molecular diffusivity of CO2 compared to water.
+ It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
+ across the boundary layer is assumed to be partly by diffusion and partly by turbulent
+ mixing (Nobel 2005).
+ 
+ If the roughness parameters z0m and d are not available, they can be estimated using
+ \link{\code{roughness.parameters}}.
  
  The argument \code{stab_formulation} determines the stability correction function used 
  to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
@@ -98,40 +134,6 @@ Aerodynamic conductance (Ga) is calculated as:
  If \code{stab_correction} is set to FALSE, the effects of atmospheric stability on Ga are neglected,
  and the Monin-Obukhov length, the stability parameter zeta, as well as the stability correction functions
  are not calculated.
-
- The argument \code{Rb_model} determines the canopy boundary layer resistance ("excess resistance") model that is used. "Thom_1972" is an 
- empirical formulation based on the friction velocity (ustar) (Thom 1972):
- 
-   \deqn{Rb = 0.667u*^0.667}
-   
- The model by Choudhury 1988 ("Choudhury_1988"), calculates Rb
- based on leaf width, LAI and ustar (Note that in the original formulation leaf width
- instead of the characteristic leaf dimension (Dl) is taken):
-  
-    formula
-    
- The option "Su_2001" calculates Rb based on the physically-based Rb model by Su et tal. 2001,
- a simplification of the model developed by Massmann 1999:
- 
-    formula
- 
- The models calculate the ... parameter kB-1, which related to Rb:
- 
-    formula
- 
- Both kB and Rb are given in the output.
- 
- Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
- 
- \deqn{Rb_CO2 = 1.4 * Rb}
- 
- The factor 1.4 arises due the lower molecular diffusivity of CO2 compared to water.
- It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
- across the boundary layer is assumed to be partly by diffusion and partly by turbulent
- mixing (Nobel 2005).
- 
- If the roughness parameters z0m and d are not available, they can be estimated using
- \link{\code{roughness.parameters}}.
 }
 \references{
 

@@ -1,46 +1,60 @@
 # README #
 
-This repository serves as comprehensive collection of functions that can be used to calculate additional variables from EC flux data and accompanying meteorological data. The functions assume that the vegetation behaves like a "big leaf", i.e. vertical variations within the canopy are ignored.
+This repository serves as comprehensive collection of functions that can be used to calculate additional variables from EC flux data and accompanying meteorological measurements. All calculations are based on a 'big-leaf' representation of the the vegetation, i.e. vertical meteorological variations within the canopy are ignored and all fluxes are assumed to come from a single plane at a certain height in the canopy.
 
 It's supposed to develop into an R-package to be put on CRAN.
 
 
-an (incomplete) list of what should be in the package:
+a list of functions that can be found in the package
+
+# data filtering
+- data quality filter
+- filter based on meteorological variables (radiation, precipitation, ustar, temperature, etc.)
+- growing season filter (based on daily GPP)
+
 # meteorological variables:
 - air density
 - virtual temperature
 - pressure from altitude
 - psychrometric constant
 - latent heat of vaporization
-- slope of saturation vapor pressure curve
 - saturation vapor pressure
-- humidity conversions 
+- slope of saturation vapor pressure curve
+
+
+# unit conversions
+- conductance conversion from ms-1 to mol m-2 s-1
+- conversions between humidity measures vapor pressure, specific humidity, relative humidity, and VPD
+- conversion between laten heat flux and evapotranspiration
 
 # physiological variables:
-- Canopy conductance (PM, diffusion equation)
-- Ci
-- Gc conversion ms-1 to mol m-2 s-1
+- Canopy conductance (inverted PM)
+- Bulk intercellulary CO2 concentrtation (Ci)
+
 
 # ET and WUE
-- PET, Priestley-Taylor
-- WUE, IWUE, uWUE
-- g1
+- Potential ET (Priestley-Taylor)
+- imposed and equilibrum ET
+- WUE, inherent WUE, underlying WUE
+- g1 (USO, Ball&Berry, Leuning)
 
 
 # aerodynamic properties:
-- aerodynamic conductance (different versions)
-- quasi-laminar boundary layer conductance (kB)
+- aerodynamic conductance (different versions) for water, heat, momentum, and CO2
+- Canopy boundary-layer conductance (Rb and kB-1 parameter; different models)
 - Monin-Obhukov length
 - stability parameter zeta
-- omega (different versions)
-- Reynolds number
 - stability correction functions (different versions)
+- roughness length for momentum (z0m) estimation
+- omega (amphi- and hypostomatous formulation)
+- Reynolds number
+- wind speed at given height from wind profile equation
+
 
 # surface conditions
-- D0, T0, C0
+- VPD, Ca, Temperature, e, q at the big-leaf surface
 
 # energy balance
-- Bowen ratio
+- biochemical energy
 - energy balance ratio (EBR)
 - "missing" energy
-- Gc uncertainty based on EBR

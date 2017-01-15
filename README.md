@@ -1,11 +1,11 @@
 # README #
 
-This repository serves as comprehensive collection of functions that can be used to calculate additional variables from EC flux data and accompanying meteorological measurements. All calculations are based on a 'big-leaf' representation of the the vegetation, i.e. vertical meteorological variations within the canopy are ignored and all fluxes are assumed to come from a single plane at a certain height in the canopy.
+This repository serves as comprehensive collection of functions that can be used to calculate additional variables from EC flux data and accompanying meteorological measurements. All calculations are based on a 'big-leaf' representation of the the vegetation, i.e. vertical meteorological variations within the canopy are ignored and all fluxes are assumed to originate from a single plane at a certain height in the canopy.
 
 It's supposed to develop into an R-package to be put on CRAN.
 
 
-a list of functions that can be found in the package
+a list of functions that can be found in the package:
 
 # data filtering
 - data quality filter

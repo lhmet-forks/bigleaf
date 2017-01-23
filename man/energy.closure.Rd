@@ -5,7 +5,7 @@
 \title{Energy balance closure}
 \usage{
 energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
-  H = "H", missing.G.as.NA = F, missing.S.as.NA = F)
+  H = "H", instantaneous = F, missing.G.as.NA = F, missing.S.as.NA = F)
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}

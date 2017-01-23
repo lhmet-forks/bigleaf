@@ -6,8 +6,8 @@
 \usage{
 surface.conductance(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
   G = NULL, S = NULL, VPD = "VPD", LE = "LE", Ga = "Ga",
-  missing.G.as.NA = FALSE, missing.S.as.NA = FALSE,
-  constants = bigleaf.constants())
+  missing.G.as.NA = FALSE, missing.S.as.NA = FALSE, PM = T,
+  validity.check = T, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required input variables}
@@ -32,11 +32,15 @@ surface.conductance(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
 
 \item{missing.S.as.NA}{if TRUE, missing S are treated as NA,otherwise set to 0.}
 
+\item{PM}{Calculate Gs based on the inverted Penman-Monteith (PM) equation? 
+Defaults to TRUE. If FALSE, a simple gradient-conductance approach is used.}
+
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 Rd - gas constant of dry air (J kg-1 K-1) \cr
 Rgas - universal gas constant (J mol-1 K-1) \cr
-Kelvin - conversion degree Celsius to Kelvin}
+Kelvin - conversion degree Celsius to Kelvin \cr
+Mw - molar mass of water vapor (kg mol-1)}
 }
 \value{
 a dataframe with the following columns: 
@@ -61,5 +65,11 @@ Surface conductance (Gs) is calculated from the inverted Penman-Monteith equatio
  
  If pressure is not available, it can be approximated by elevation using the 
  function \code{\link{pressure.from.elevation}}
+ 
+ If PM is set to false, Gs is calculated from VPD and ET only:
+ 
+ \deqn{Gs = ET/pressure * VPD}
+ 
+ Note that this approach assumes fully coupled conditions (Ga = inf).
 }
 

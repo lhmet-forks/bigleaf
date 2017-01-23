@@ -5,10 +5,10 @@
 \title{Filter data}
 \usage{
 filter.data(data, precip = "precip", PPFD = "PPFD", Tair = "Tair",
-  ustar = "ustar", VPD = "VPD", GPP = "GPP_nt", Ca = "Ca",
-  day = "day", year = "year", quality.ext = "_qc", good.quality = c(0,
-  1), vars.qc = c("precip", "Tair", "VPD", "GPP_nt", "H", "LE"),
-  tprecip = 0.01, precip.hours = 24, trad = 200, ttemp = 5,
+  ustar = "ustar", VPD = "VPD", GPP = "GPP", Ca = "Ca", day = "day",
+  year = "year", quality.control = T, quality.ext = "_qc",
+  good.quality = c(0, 1), vars.qc = c("precip", "Tair", "VPD", "GPP", "H",
+  "LE"), tprecip = 0.01, precip.hours = 24, trad = 200, ttemp = 5,
   tustar = 0.2, tGPP = 0.5, ws = 15, min.int = 5, trH = 0.95,
   NA.as.precip = F)
 }
@@ -33,6 +33,8 @@ half-hourly or hourly resolution. Including year, month, day information}
 \item{day}{day of year}
 
 \item{year}{year}
+
+\item{quality.control}{should quality control be applied?}
 
 \item{quality.ext}{the extension to the variables' names that marks them as quality control variables}
 

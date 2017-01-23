@@ -5,9 +5,15 @@
 # library(roxygen2)
 
 
-## Lookup/Test:
-# - how to create examples
+## Todo
+# - provide 3 test datasets (FI-Hyy, GF-Guy, one grassland)
+# - create examples for the 3 datasets for the main functions!
+# - easier examples for the minor functions
+# - makes sense to build wrapper?
+# - column names as in Berkely? What about units?
 # - how to define "families"
+# - evtl new function for quality control
+# - function for simple Gs calculation
 
 # Notes:
 # other estimates for d and z0m: Shaw and Pereira 1982 (see also Yang_2003)
@@ -62,15 +68,29 @@
 #' 
 #' 
 check.columns <- function(data,column_name){
+  
+  if (!is.character(column_name)){
+    column_name <- deparse(substitute(column_name))
+  }
+
   if (column_name %in% colnames(data)){
     var <- data[,column_name]
     if (is.numeric(var)){
-      return(var)
+      return(unname(var))
     } else {
       stop("variable '",column_name,"' has to be numeric")
     }
   } else {
-    stop("column '",column_name,"' does not exist")
+    if (exists(column_name)){
+      var <- get(column_name)
+      if (is.numeric(var) & length(var) == nrow(data)){
+        return(unname(var))
+      } else {
+        stop("variable '",column_name,"' has to be numeric and of the same length as number of rows in 'data'")
+      }
+    } else {
+    stop("'",column_name,"' does not exist as column or vector")
+    }
   }
 }
 
@@ -126,6 +146,7 @@ bigleaf.constants <- function(){
 #' @param Ca            atmospheric CO2 concentration (umol mol-1)
 #' @param day           day of year
 #' @param year          year
+#' @param quality.control should quality control be applied?
 #' @param quality.ext   the extension to the variables' names that marks them as quality control variables
 #' @param good.quality  which values indicate good quality in the quality control (qc) variables?
 #' @param vars.qc       character vector indicating the variables for which quality filter should 
@@ -171,30 +192,44 @@ bigleaf.constants <- function(){
 #' @export                     
 
 filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="ustar",
-                        VPD="VPD",GPP="GPP_nt",Ca="Ca",day="day",year="year",
-                        quality.ext="_qc",good.quality=c(0,1),vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+                        VPD="VPD",GPP="GPP",Ca="Ca",day="day",year="year",quality.control=T,
+                        quality.ext="_qc",good.quality=c(0,1),vars.qc=c("precip","Tair","VPD","GPP","H","LE"),
                         tprecip=0.01,precip.hours=24,trad=200,ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,
                         trH=0.95,NA.as.precip=F){
   
   
   ### I) Quality control filter
-  if (any(!vars.qc %in% colnames(data))){
+  if (quality.control){
+    if (any(!vars.qc %in% colnames(data))){
+      
+      missing_vars <- vars.qc[which(!vars.qc %in% colnames(data))]
+      stop(paste("Variable ",missing_vars," is included in 'vars.qc', but does not exist in the input data!"))
+      
+    }
     
-    missing_vars <- vars_qc[which(!vars.qc %in% colnames(data))]
-    stop(paste("Variable ",missing_vars," is included in 'vars_qc', but does not exist in the input data!"))
-    
-  }
-  
-  vars.qc_qc <- paste0(vars.qc,quality.ext)
-  if (any(!vars.qc_qc %in% colnames(data))){
-    
-    missing_vars_qc <- vars.qc_qc[which(!vars.qc_qc %in% colnames(data))]
-    missing_vars2   <- substr(missing_vars_qc,1,nchar(missing_vars_qc) - nchar(quality.ext))
-    stop(paste("Quality control for variable ",missing_vars2,"(",missing_vars_qc,") does not exist in the input data!"))
-    
-  }
-  
+    vars.qc_qc <- paste0(vars.qc,quality.ext)
+    if (any(!vars.qc_qc %in% colnames(data))){
+      
+      missing_vars_qc <- vars.qc_qc[which(!vars.qc_qc %in% colnames(data))]
+      missing_vars2   <- substr(missing_vars_qc,1,nchar(missing_vars_qc) - nchar(quality.ext))
+      stop(paste("Quality control for variable ",missing_vars2,"(",missing_vars_qc,") does not exist in the input data!")) 
+    }
 
+    ## data quality
+    cat("Quality control:",fill=TRUE)
+    for (var in vars.qc){
+      assign(var,check.columns(data,var))
+      assign(paste0(var,quality.ext),check.columns(data,paste0(var,quality.ext))) # create variable "*_qc", make quality check before
+      data[get(paste0(var,quality.ext)) > max(good.quality),var] <- NA            # exclude bad quality data
+        
+      qc_invalid      <- sum(get(paste0(var,quality.ext)) > max(good.quality)) # count & report
+      qc_invalid_perc <- round((qc_invalid/nrow(data))*100,2)
+        
+      cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) excluded",fill=T,sep="")
+    }
+    cat("-------------------------------------",fill=T)
+  }
+  
   ## test data availability
   precip <- check.columns(data,precip)
   PPFD   <- check.columns(data,PPFD)
@@ -205,22 +240,6 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   day    <- check.columns(data,day)
   year   <- check.columns(data,year)
   
-  
-  ## data quality
-  cat("Quality control:",fill=TRUE)
-  for (var in vars.qc){
-    assign(var,check.columns(data,var))
-    assign(paste0(var,quality.ext),check.columns(data,paste0(var,quality.ext))) # create variable "*_qc", make quality check before
-    data[get(paste0(var,quality.ext)) > max(good.quality),var] <- NA            # exclude bad quality data
-      
-    qc_invalid      <- sum(get(paste0(var,quality.ext)) > max(good.quality)) # count & report
-    qc_invalid_perc <- round((qc_invalid/nrow(data))*100,2)
-      
-    cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) excluded",fill=T,sep="")
-  }
-  cat("-------------------------------------",fill=T)
-  
-
   #### II) filtering based on meteorology
   rH <- VPD.to.rH(VPD,Tair)
   
@@ -951,7 +970,7 @@ wind.profile <- function(heights,data,Tair="Tair",pressure="pressure",ustar="ust
                          H="H",zr,d,z0m,stab_correction=TRUE,stab_formulation=c("Dyer_1970","Businger_1971"),
                          constants=bigleaf.constants()){
   
-  if( any(heights < d + z0m) ) warning("function is only valid for heights above d + z0m! Wind speed for heights below d + z0m will return 0!") 
+  if( any(heights < (d + z0m) & !is.na(d + z0m)) ) warning("function is only valid for heights above d + z0m! Wind speed for heights below d + z0m will return 0!") 
   
   stab_formulation <- match.arg(stab_formulation)
   
@@ -1571,11 +1590,14 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #' @param Ga        Aerodynamic conductance (m s-1)
 #' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
 #' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0. 
+#' @param PM        Calculate Gs based on the inverted Penman-Monteith (PM) equation? 
+#'                  Defaults to TRUE. If FALSE, a simple gradient-conductance approach is used.
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 #'                  Rd - gas constant of dry air (J kg-1 K-1) \cr
 #'                  Rgas - universal gas constant (J mol-1 K-1) \cr
-#'                  Kelvin - conversion degree Celsius to Kelvin
+#'                  Kelvin - conversion degree Celsius to Kelvin \cr
+#'                  Mw - molar mass of water vapor (kg mol-1)
 #' 
 
 #' 
@@ -1593,6 +1615,12 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #'  If pressure is not available, it can be approximated by elevation using the 
 #'  function \code{\link{pressure.from.elevation}}
 #'  
+#'  If PM is set to false, Gs is calculated from VPD and ET only:
+#'  
+#'  \deqn{Gs = ET/pressure * VPD}
+#'  
+#'  Note that this approach assumes fully coupled conditions (Ga = inf).
+#'  
 #' 
 #' @return a dataframe with the following columns: 
 #'  \item{Gs_ms}{Surface conductance in m s-1}
@@ -1601,42 +1629,57 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #' @export
 surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,
                                 VPD="VPD",LE="LE",Ga="Ga",missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
-                                constants=bigleaf.constants()){
-   
+                                PM=T,validity.check=T,constants=bigleaf.constants()){ 
+  
    Tair     <- check.columns(data,Tair)
    pressure <- check.columns(data,pressure)
-   Rn       <- check.columns(data,Rn)
    VPD      <- check.columns(data,VPD)
    LE       <- check.columns(data,LE)
-   Ga       <- check.columns(data,Ga)
-  
-   if(!is.null(G)){
-     G <- check.columns(data,G)
-     if (!missing.G.as.NA){G[is.na(G)] <- 0}
-   } else {
-     warning("Ground heat flux G is not provided and set to 0.")
-     G <- rep(0,nrow(data))
-   }
+     
+   if (!PM){
    
-   if(!is.null(S)){
-     S <- check.columns(data,S)
-     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
-   } else {
-     warning("Energy storage fluxes S are not provided and set to 0.")
-     S <- rep(0,nrow(data))
-   }
+    Gs_simple_mol <- (LE.to.ET(LE,Tair)/constants$Mw) * pressure / VPD
+    Gs_simple_ms  <- mol.to.ms(Gs_simple_mol,Tair,pressure)
+     
+    return(data.frame(Gs_ms=Gs_simple_ms,Gs_mol=Gs_simple_mol))
    
+   } else {
   
-   delta <- Esat(Tair)[,"delta"]
-   gamma <- psychrometric.constant(Tair,pressure)
-   rho   <- air.density(Tair,pressure)
- 
-   Gs_ms  <- ( LE * Ga * gamma ) / ( delta * (Rn-G-S) + rho * constants$cp * Ga * VPD - LE * ( delta + gamma ) )
-   Gs_mol <- ms.to.mol(Gs_ms,Tair,pressure) 
-
-   return(data.frame(Gs_ms,Gs_mol))
+     Rn       <- check.columns(data,Rn)
+     Ga       <- check.columns(data,Ga)
+  
+     if(!is.null(G)){
+       G <- check.columns(data,G)
+       if (!missing.G.as.NA){G[is.na(G)] <- 0}
+     } else {
+       warning("Ground heat flux G is not provided and set to 0.")
+       G <- rep(0,nrow(data))
+     }
+     
+     if(!is.null(S)){
+       S <- check.columns(data,S)
+       if(!missing.S.as.NA){S[is.na(S)] <- 0 }
+     } else {
+       warning("Energy storage fluxes S are not provided and set to 0.")
+       S <- rep(0,nrow(data))
+     }
+     
+    
+     delta <- Esat(Tair)[,"delta"]
+     gamma <- psychrometric.constant(Tair,pressure)
+     rho   <- air.density(Tair,pressure)
+   
+     Gs_ms  <- ( LE * Ga * gamma ) / ( delta * (Rn-G-S) + rho * constants$cp * Ga * VPD - LE * ( delta + gamma ) )
+     Gs_mol <- ms.to.mol(Gs_ms,Tair,pressure)
+     
+     return(data.frame(Gs_ms,Gs_mol))
+   
+   } 
 
 }
+
+
+
 
 
 
@@ -2545,7 +2588,7 @@ biochemical.energy <- function(alpha=0.422,NEE){
 #'             Agricultural and Forest Meteorology 113, 223–243.
 #'
 #' @export
-energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",
+energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneous=F,
                            missing.G.as.NA=F,missing.S.as.NA=F){
   
   Rn <- check.columns(data,Rn)
@@ -2568,23 +2611,24 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",
     S <- rep(0,nrow(data))
   }
 
-
-  comp <- complete.cases(Rn,G,S,LE,H)
-  n    <- sum(comp)
+  if (!instantaneous){
+    comp <- complete.cases(Rn,G,S,LE,H)
+    n    <- sum(comp)
   
-  EBR <- sum(LE[comp] + H[comp]) / sum(Rn[comp] - G[comp] - S[comp])
+    EBR <- sum(LE[comp] + H[comp]) / sum(Rn[comp] - G[comp] - S[comp])
   
-  emod <- lm((LE + H) ~ (Rn - G - S))
-  intercept <- summary(emod)$coef[1,1]  
-  slope     <- summary(emod)$coef[2,1] 
-  r_squared <- summary(emod)$r.squared
+    emod <- lm((LE + H) ~ (Rn - G - S))
+    intercept <- summary(emod)$coef[1,1]  
+    slope     <- summary(emod)$coef[2,1] 
+    r_squared <- summary(emod)$r.squared
+    
+    return(c("n"=n,"intercept"=intercept,"slope"=slope,"r^2"=r_squared,"EBR"=EBR))
   
-  return(c("n"=n,"intercept"=intercept,"slope"=slope,"r^2"=r_squared,"EBR"=EBR))
-  
-}
-
-
-
-
-
+  } else {
+    
+    EBR <- (LE + H) /(Rn - G - S)
+    
+    return(EBR)
+  }
+}   
 

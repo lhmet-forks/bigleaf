@@ -5,7 +5,7 @@
 \title{Filter data}
 \usage{
 filter.data(data, precip = "precip", PPFD = "PPFD", Tair = "Tair",
-  ustar = "ustar", VPD = "VPD", GPP = "GPP", Ca = "Ca", day = "day",
+  ustar = "ustar", VPD = "VPD", GPP = "GPP", Ca = "Ca", doy = "doy",
   year = "year", quality.control = T, quality.ext = "_qc",
   good.quality = c(0, 1), vars.qc = c("precip", "Tair", "VPD", "GPP", "H",
   "LE"), tprecip = 0.01, precip.hours = 24, trad = 200, ttemp = 5,
@@ -30,7 +30,7 @@ half-hourly or hourly resolution. Including year, month, day information}
 
 \item{Ca}{atmospheric CO2 concentration (umol mol-1)}
 
-\item{day}{day of year}
+\item{doy}{day of year}
 
 \item{year}{year}
 

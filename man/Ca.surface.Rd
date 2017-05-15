@@ -20,6 +20,9 @@ Ca_surf CO2 concentration at the canopy surface (umol mol-1)
 the CO2 concentration at the canopy surface derived from net ecosystem
              CO2 exchange and measured atmospheric CO2 concentration.
 }
+\details{
+
+}
 \note{
 the following sign convention is employed: negative values of NEE denote
       net CO2 uptake by the ecosystem.

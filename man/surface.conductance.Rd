@@ -54,7 +54,7 @@ Calculates surface conductance to water vapor from the inverted Penman-Monteith
 \details{
 Surface conductance (Gs) is calculated from the inverted Penman-Monteith equation:
 
- \deqn{Gs = ( LE * Ga * \gamma ) / ( \delta * (Rn-G-S) + \rho * cp * Ga * VPD - LE * ( \delta + \gamma ) )}
+ \deqn{Gs = ( LE * Ga * \gamma ) / ( \Delta * (Rn-G-S) + \rho * cp * Ga * VPD - LE * ( \Delta + \gamma ) )}
  
  Note that Gs > Gc (canopy conductance) under conditions when a significant fraction of 
  ET comes from interception or soil evaporation. 
@@ -66,7 +66,7 @@ Surface conductance (Gs) is calculated from the inverted Penman-Monteith equatio
  If pressure is not available, it can be approximated by elevation using the 
  function \code{\link{pressure.from.elevation}}
  
- If PM is set to false, Gs is calculated from VPD and ET only:
+ If PM is set to FALSE, Gs is calculated from VPD and ET only:
  
  \deqn{Gs = ET/pressure * VPD}
  
@@ -81,7 +81,7 @@ DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
                            ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
 
-# select data only that were filtered in the previous function and in June 
+# select data that were filtered as in the previous function and in June 
 DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month"] == 6,]
 
 # calculate Gs based on a simple gradient approach
@@ -89,7 +89,6 @@ Gs_gradient <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressu
 summary(Gs_gradient)
 
 # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed)
-
 # calculate a simple estimate of Ga based on Thom 1972
 Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
 

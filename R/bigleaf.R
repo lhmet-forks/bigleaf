@@ -68,28 +68,35 @@
 #' 
 check.columns <- function(data,column_name){
   
-  if (!is.character(column_name)){
-    column_name <- deparse(substitute(column_name))
-  }
-
-  if (column_name %in% colnames(data)){
-    var <- data[,column_name]
-    if (is.numeric(var)){
-      return(unname(var))
-    } else {
-      stop("variable '",column_name,"' has to be numeric")
-    }
-  } else {
-    if (exists(column_name)){
-      var <- get(column_name)
-      if (is.numeric(var) & length(var) == nrow(data)){
-        return(unname(var))
+  if (is.character(column_name)){
+    if (!missing(data)){
+      if (column_name %in% colnames(data)){
+        var <- data[,column_name]
+        if (is.numeric(var)){
+          return(unname(var))
+        } else {
+          stop("variable '",column_name,"' must be numeric")
+        }
       } else {
-        stop("variable '",column_name,"' has to be numeric and of the same length as number of rows in 'data'")
+        stop ("variable '",column_name,"' does not exist in the input matrix/data.frame")
       }
     } else {
-    stop("'",column_name,"' does not exist as column or vector")
+      stop("variable '",column_name,"' is of type character and interpreted as a column name, but no input matrix/data.frame is provided. Provide '",column_name,"' as a numeric vector, or an input matrix/data.frame with a column named '",column_name,"'")
     }
+  } else {
+    if (!missing(data)){
+      if (is.numeric(column_name) & length(column_name) == nrow(data)){
+        return(unname(column_name))
+      } else {
+        stop("variable '",column_name,"' must be numeric and must have the same number of observations as the input matrix/data.frame")
+      } 
+    } else {
+      if (is.numeric(column_name)){
+        return(unname(column_name))
+      } else {
+        stop("variable '",column_name,"' must be numeric")
+      } 
+    } 
   }
 }
 
@@ -1535,7 +1542,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #' 
 #' @details Surface conductance (Gs) is calculated from the inverted Penman-Monteith equation:
 #' 
-#'  \deqn{Gs = ( LE * Ga * \gamma ) / ( \delta * (Rn-G-S) + \rho * cp * Ga * VPD - LE * ( \delta + \gamma ) )}
+#'  \deqn{Gs = ( LE * Ga * \gamma ) / ( \Delta * (Rn-G-S) + \rho * cp * Ga * VPD - LE * ( \Delta + \gamma ) )}
 #'  
 #'  Note that Gs > Gc (canopy conductance) under conditions when a significant fraction of 
 #'  ET comes from interception or soil evaporation. 
@@ -1547,7 +1554,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #'  If pressure is not available, it can be approximated by elevation using the 
 #'  function \code{\link{pressure.from.elevation}}
 #'  
-#'  If PM is set to false, Gs is calculated from VPD and ET only:
+#'  If PM is set to FALSE, Gs is calculated from VPD and ET only:
 #'  
 #'  \deqn{Gs = ET/pressure * VPD}
 #'  
@@ -1567,7 +1574,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #'                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
 #'                            ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
 #' 
-#' # select data only that were filtered in the previous function and in June 
+#' # select data that were filtered as in the previous function and in June 
 #' DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month"] == 6,]
 #' 
 #' # calculate Gs based on a simple gradient approach
@@ -1575,7 +1582,6 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #' summary(Gs_gradient)
 #' 
 #' # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed)
-#' 
 #' # calculate a simple estimate of Ga based on Thom 1972
 #' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
 #' 
@@ -1600,12 +1606,10 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,
                                 VPD="VPD",LE="LE",Ga="Ga",missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                                 PM=TRUE,constants=bigleaf.constants()){ 
-   if (!missing(data)){
-     Tair     <- check.columns(data,Tair)
-     pressure <- check.columns(data,pressure)
-     VPD      <- check.columns(data,VPD)
-     LE       <- check.columns(data,LE)
-   }   
+    Tair     <- check.columns(data,Tair)
+    pressure <- check.columns(data,pressure)
+    VPD      <- check.columns(data,VPD)
+    LE       <- check.columns(data,LE)
      
    if (!PM){
    
@@ -1616,10 +1620,9 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
    
    } else {
   
-    if (!missing(data)){
-      Rn       <- check.columns(data,Rn)
-      Ga       <- check.columns(data,Ga)
-    }
+    Rn       <- check.columns(data,Rn)
+    Ga       <- check.columns(data,Ga)
+
       
      if(!is.null(G)){
        G <- check.columns(data,G)
@@ -1662,20 +1665,20 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #'              by inverting bulk transfer equations for water, energy, and carbon
 #'              fluxes.
 #' 
-#' @param data      Data.frame or matrix containing all required input variables
-#' @param Tair      Air temperature (deg C)
-#' @param pressure  Atmospheric pressure (kPa)
-#' @param Rn        Net radiation (W m-2)
-#' @param H         Sensible heat flux (W m-2)
-#' @param LE        Latent heat flux (W m-2)
-#' @param VPD       Vapor pressure deficit (kPa)
-#' @param Ga        Aerodynamic conductance for heat and water vapor (m s-1)
-#' @param calc.Ca   calculate surface CO2 concentration?
-#' @param Ca        Atmospheric CO2 concentration (mol mol-1). Required if calc.Ca = TRUE
-#' @param NEE       Net ecosystem exchange (umol m-2 s-1). Required if calc.Ca = TRUE
-#' @param Ga_CO2    Aerodynamic conductance for CO2 (mol m-2 s-1). Required if calc.Ca = TRUE          
-#' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
-#'                  eps - ratio of the molecular weight of water vapor to dry air (-) \cr
+#' @param data       Data.frame or matrix containing all required input variables
+#' @param Tair       Air temperature (deg C)
+#' @param pressure   Atmospheric pressure (kPa)
+#' @param Rn         Net radiation (W m-2)
+#' @param H          Sensible heat flux (W m-2)
+#' @param LE         Latent heat flux (W m-2)
+#' @param VPD        Vapor pressure deficit (kPa)
+#' @param Ga         Aerodynamic conductance for heat and water vapor (m s-1)
+#' @param calc.Csurf Calculate surface CO2 concentration?
+#' @param Ca         Atmospheric CO2 concentration (mol mol-1). Required if calc.Ca = TRUE
+#' @param NEE        Net ecosystem exchange (umol m-2 s-1). Required if calc.Ca = TRUE
+#' @param Ga_CO2     Aerodynamic conductance for CO2 (mol m-2 s-1). Required if calc.Ca = TRUE          
+#' @param constants  cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
+#'                   eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 #' 
 #' @details Canopy surface temperature and humidity are calculated by inverting bulk transfer equations of
 #'          sensible and latent heat, respectively. 'Canopy surface' in this case refers to 
@@ -1708,12 +1711,31 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #'         \item{rH_surf}{relative humidity at the surface (-)} \cr
 #'         \item{Ca_surf}{CO2 concentration at the surface (umol mol-1)}             
 #'         
-#'                                       
+#' @examples 
+#' # load("FR-Pue_2005.rda") # load data for the site FR-Pue  
+#' # select data from July
+#' FR_Pue_2005_July <- FR_Pue_2005[FR_Pue_2005[,"month"] == 7,]
+#'   
+#'       
+#' # calculate a simple estimate of Ga based on Thom 1972
+#' Ga <- aerodynamic.conductance(FR_Pue_2005_July,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
+#'      
+#' # calculate surface conditions (without Ca)      
+#' surf <- surface.conditions(FR_Pue_2005_July,Ga=Ga,calc.Ca=F)           
+#' summary(surf)  # note the outliers in both directions. They are associated with very low values of Ga    
+#' 
+#' # calculate surface conditions including Ca at the surface (NEE and Ga for CO2 are now needed as input)                                                                            
+#' # Ga for CO2 can be calculated with the same function as above:
+#' Ga_CO2_ms <- aerodynamic.conductance(FR_Pue_2005_July,stab_correction=F,Rb_model="Thom_1972")[,"Ga_CO2"]
+#' # note that the function requires Ga for CO2 in mol m-2 s-1, not in ms-1.
+#' Ga_CO2_mol <- ms.to.mol(Ga_CO2_ms,FR_Pue_2005_July[,"Tair"],FR_Pue_2005_July[,"pressure"])
+#' surf <- surface.conditions(FR_Pue_2005_July,Ga=Ga_CO2_mol,NEE="NEE",calc.Ca=T)                                                                                        
+#'                                                                                                                                                                                                                                                                                                            
 #' @export 
 surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",Ca="Ca",
-                               VPD="VPD",Ga="Ga",calc.Ca=F,Ga_CO2="Ga_CO2",NEE="NEE",
+                               VPD="VPD",Ga="Ga",calc.Csurf=F,Ga_CO2="Ga_CO2",NEE="NEE",
                                constants=bigleaf.constants()){
-
+  
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
   LE       <- check.columns(data,LE)
@@ -1721,7 +1743,7 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
   VPD      <- check.columns(data,VPD)
   Ga       <- check.columns(data,Ga)
   
-  if (calc.Ca){
+  if (calc.Csurf){
     Ca       <- check.columns(data,Ca)
     NEE      <- check.columns(data,NEE)
     Ga_CO2   <- check.columns(data,Ga_CO2)
@@ -1743,8 +1765,8 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
   rH_surf   <- VPD.to.rH(VPD_surf,Tsurf)
 
   # 3) CO2 concentration
-  Ca_surf <- as.numeric(rep(NA,length(esat)))
-  if (calc.Ca){
+  Ca_surf <- as.numeric(rep(NA,length(Tsurf)))
+  if (calc.Csurf){
     Ca_surf <- Ca.surface(Ca,NEE,Ga_CO2)
   }
   
@@ -1761,6 +1783,8 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 #' @param Ca     atmospheric CO2 concentration (umol mol-1)
 #' @param NEE    net ecosystem exchange (umol CO2 m-2 s-1)
 #' @param Ga_CO2 aerodynamic conductance for CO2 (mol m-2 s-1)
+#' 
+#' @details 
 #' 
 #' @note the following sign convention is employed: negative values of NEE denote
 #'       net CO2 uptake by the ecosystem.

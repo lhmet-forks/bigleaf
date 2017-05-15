@@ -5,7 +5,7 @@
 \title{Big-leaf surface conditions}
 \usage{
 surface.conditions(data, Tair = "Tair", pressure = "pressure", LE = "LE",
-  H = "H", Ca = "Ca", VPD = "VPD", Ga = "Ga", calc.Ca = F,
+  H = "H", Ca = "Ca", VPD = "VPD", Ga = "Ga", calc.Csurf = F,
   Ga_CO2 = "Ga_CO2", NEE = "NEE", constants = bigleaf.constants())
 }
 \arguments{
@@ -25,7 +25,7 @@ surface.conditions(data, Tair = "Tair", pressure = "pressure", LE = "LE",
 
 \item{Ga}{Aerodynamic conductance for heat and water vapor (m s-1)}
 
-\item{calc.Ca}{calculate surface CO2 concentration?}
+\item{calc.Csurf}{Calculate surface CO2 concentration?}
 
 \item{Ga_CO2}{Aerodynamic conductance for CO2 (mol m-2 s-1). Required if calc.Ca = TRUE}
 
@@ -73,4 +73,25 @@ Canopy surface temperature and humidity are calculated by inverting bulk transfe
          see \link{\code{aerodynamic.conductance}}). If Ga is replaced by Ga_m (i.e.
          only the turbulent conductance part), the results of the functions represent
          conditions outside the canopy boundary layer, i.e. in the canopy airspace.
+}
+\examples{
+# load("FR-Pue_2005.rda") # load data for the site FR-Pue  
+# select data from July
+FR_Pue_2005_July <- FR_Pue_2005[FR_Pue_2005[,"month"] == 7,]
+  
+      
+# calculate a simple estimate of Ga based on Thom 1972
+Ga <- aerodynamic.conductance(FR_Pue_2005_July,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
+     
+# calculate surface conditions (without Ca)      
+surf <- surface.conditions(FR_Pue_2005_July,Ga=Ga,calc.Ca=F)           
+summary(surf)  # note the outliers in both directions. They are associated with very low values of Ga    
+
+# calculate surface conditions including Ca at the surface (NEE and Ga for CO2 are now needed as input)                                                                            
+# Ga for CO2 can be calculated with the same function as above:
+Ga_CO2_ms <- aerodynamic.conductance(FR_Pue_2005_July,stab_correction=F,Rb_model="Thom_1972")[,"Ga_CO2"]
+# note that the function requires Ga for CO2 in mol m-2 s-1, not in ms-1.
+Ga_CO2_mol <- ms.to.mol(Ga_CO2_ms,FR_Pue_2005_July[,"Tair"],FR_Pue_2005_July[,"pressure"])
+surf <- surface.conditions(FR_Pue_2005_July,Ga=Ga_CO2_mol,NEE="NEE",calc.Ca=T)                                                                                        
+                                                                                                                                                                                                                                                                                                           
 }

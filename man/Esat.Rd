@@ -38,4 +38,3 @@ Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of
             pressure formulations based on the ITS-90, and psychrometric formulae 
             (--> as used by WMO 2008!)
 }
-

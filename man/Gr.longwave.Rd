@@ -30,4 +30,3 @@ the following formula is used (Martin, 1989):
 Martin P., 1989: The significance of radiative coupling between
             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
 }
-

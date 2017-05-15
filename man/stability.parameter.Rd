@@ -40,4 +40,3 @@ The stability parameter \eqn{\zeta} is given by:
          \code{\link{MoninObukhov.length}}. The displacement height d can 
          be estimated from the function \code{\link{roughness.parameters}}.
 }
-

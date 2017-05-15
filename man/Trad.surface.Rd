@@ -26,4 +26,3 @@ Radiometric surface temperature (Trad) is calculated as:
 
          \deqn{Trad = LW_up / (\sigma \epsilon)^(1/4)}
 }
-

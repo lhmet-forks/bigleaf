@@ -29,7 +29,7 @@ Gb.Su(data, Tair = "Tair", pressure = "pressure", ustar = "ustar",
 
 \item{z0m}{roughness length for momentum (m)}
 
-\item{Dl}{leaf dimension (m)}
+\item{Dl}{leaf characteristic dimension (m)}
 
 \item{N}{number of leaf sides participating in heat exchange (1 or 2)}
 
@@ -112,4 +112,3 @@ Su, Z., Schmugge, T., Kustas, W. & Massman, W., 2001: An evaluation of
 \seealso{
 \code{\link{Gb.Thom}}, \code{\link{Gb.Choudhury}}
 }
-

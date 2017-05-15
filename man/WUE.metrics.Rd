@@ -61,4 +61,3 @@ Beer, C., et al., 2009: Temporal and among-site variability of inherent
             Zhou, S., et al., 2014: The effect of vapor pressure deficit on water
             use efficiency at the subdaily time scale. Geophysical Research Letters 41.
 }
-

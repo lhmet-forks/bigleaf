@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf.R
 \name{ET.pot}
 \alias{ET.pot}
-\title{Potential evapotranspiration from the Priestley-Taylor equation}
+\title{Conversions between radiation measures}
 \usage{
 ET.pot(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
   S = NULL, alpha = 1.26, missing.G.as.NA = F, missing.S.as.NA = F,
@@ -17,11 +17,15 @@ ET.pot(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
 
 \item{Rn}{Net radiation (W m-2)}
 
-\item{G}{Ground heat flux (W m-2)}
+\item{G}{Ground heat flux (W m-2); optional}
 
-\item{S}{Sum of all storage fluxes (W m-2)}
+\item{S}{Sum of all storage fluxes (W m-2); optional}
 
 \item{alpha}{Priestley-Taylor coefficient (-)}
+
+\item{missing.G.as.NA}{if TRUE, missing G are treated as NA,otherwise set to 0.}
+
+\item{missing.S.as.NA}{if TRUE, missing S are treated as NA,otherwise set to 0.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-)}
@@ -32,17 +36,28 @@ a data.frame with the following columns:
         \item{LE_pot}{potential latent heat flux (W m-2)}
 }
 \description{
-Potential evapotranspiration from the Priestley-Taylor equation
+Converts radiation from umol m-2 s-1 to W m-2 and vice versa.
+
+
+Watt.to.mol <- function(PAR,conversion){
+  PPFD <- PAR
+  return(PPFD)
+}
+Conversion between mass and molar units of carbon
+
+Converts CO2 quantities from umol CO2 m-2 s-1 to gC and vice versa.
+
+
+Potential evapotranspiration
 }
 \details{
-
+Potential evapotranspiration ET_pot according to Priestley & Taylor 1972.
 
 Potential evapotranspiration is calculated according to Priestley & Taylor, 1972:
 
-         \deqn{(\alpha * \delta * (Rn - G - S)) / (\delta + \gamma)}
+         \deqn{LE_pot = (\alpha * \delta * (Rn - G - S)) / (\delta + \gamma)}
 }
 \references{
 Priestley C.H.B., Taylor R.J., 1972: On the assessment of surface heat flux
             and evaporation using large-scale parameters. Monthly Weather Review 100, 81-92.
 }
-

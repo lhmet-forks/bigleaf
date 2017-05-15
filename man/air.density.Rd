@@ -27,4 +27,3 @@ Air density (\eqn{\rho}) is calculated as:
 \references{
 Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 }
-

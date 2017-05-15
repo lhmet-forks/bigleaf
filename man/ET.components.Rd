@@ -5,7 +5,8 @@
 \title{Imposed and Equilibrium Evapotranspiration}
 \usage{
 ET.components(data, Tair = "Tair", pressure = "pressure", VPD = "VPD",
-  Rn = "Rn", Gs = "Gs", constants = bigleaf.constants())
+  Rn = "Rn", G = NULL, S = NULL, Gs = "Gs", missing.G.as.NA = F,
+  missing.S.as.NA = F, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required input variables}
@@ -18,7 +19,15 @@ ET.components(data, Tair = "Tair", pressure = "pressure", VPD = "VPD",
 
 \item{Rn}{Net radiation (W m-2)}
 
+\item{G}{Ground heat flux (W m-2); optional}
+
+\item{S}{Sum of all storage fluxes (W m-2); optional}
+
 \item{Gs}{surface conductance (m s-1)}
+
+\item{missing.G.as.NA}{if TRUE, missing G are treated as NA,otherwise set to 0.}
+
+\item{missing.S.as.NA}{if TRUE, missing S are treated as NA,otherwise set to 0.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-)}
@@ -31,23 +40,23 @@ a data.frame with the following columns:
         \item{LE_imp}{imposed LE (W m-2)}
 }
 \description{
-Evapotranspiration (ET) split up in imposed ET and equilibrium ET.
+Evapotranspiration (ET) split up into imposed ET and equilibrium ET.
 }
 \details{
-Total evapotranspiration can be written in the the form:
+Total evapotranspiration can be written in the form:
 
          \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
          
          where ET_eq is the equilibrium evapotranspiration rate, the ET rate 
          that would occur under uncoupled conditions, where the heat budget
-         is dominated by radiation.
+         is dominated by radiation (when Ga -> 0).
          
-         \deqn{ET_eq = \delta * (Rn - G - S) * \lambda / (\delta + \gamma)}
+         \deqn{ET_eq = (\delta * (Rn - G - S) * \lambda) / (\delta + \gamma)}
          
          and ET_imp is the imposed evapotranspiration rate, the ET rate
-         that would occur under fully coupled conditions:
+         that would occur under fully coupled conditions (when Ga -> inf):
          
-         \deqn{ET_imp = \rho * cp * VPD * Gs * \lambda / \gamma}
+         \deqn{ET_imp = (\rho * cp * VPD * Gs * \lambda) / \gamma}
 }
 \note{
 Surface conductance (Gs) is calculated with \code{\link{surface.conductance}}.
@@ -60,4 +69,3 @@ Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
             Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
             3rd edition. Academic Press, London.
 }
-

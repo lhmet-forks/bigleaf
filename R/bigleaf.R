@@ -10,7 +10,6 @@
 # - create examples for the 3 datasets for the main functions!
 # - easier examples for the minor functions
 # - makes sense to build wrapper?
-# - column names as in Berkely? What about units?
 # - how to define "families"
 # - evtl new function for quality control
 # - function for simple Gs calculation
@@ -20,7 +19,7 @@
 # v = kinematic viscosity of the air (m^2/s); from=Massman_1999b ; compare with http://www.engineeringtoolbox.com/dry-air-properties-d_973.html
 
 
-## artificial test data
+# ## artificial test data
 # wind     <- rnorm(20,3,0.8)
 # ustar    <- rnorm(20,0.5,0.2)
 # Tair     <- rnorm(20,25,2)
@@ -37,9 +36,9 @@
 # GPP      <- rnorm(20,20,3)
 # NEE      <- -GPP
 # day      <- c(rep(1,10),rep(2,10))
-# 
-# 
-# 
+# # 
+# # 
+# # 
 # testdf <- data.frame(wind,ustar,Tair,pressure,Rn,
 #                      H,LE,G,Ga,Gs,VPD,precip,PPFD,GPP,NEE,day)
 
@@ -500,126 +499,7 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
 # do.call(cbind,test) -> test2  # convert to data.frame
 
 
-#' Estimation of g1
-#' 
-#' @description Estimation of the WUE metric "g1" from non-linear regression
-#' 
-#' @param data     Data.frame or matrix containing all required columns
-#' @param Tair     Air temperature (deg C)
-#' @param pressure Air pressure (kPa)
-#' @param GPP      Gross primary productivity (umol CO2 m-2 s-1)
-#' @param Gs       Surface conductance to water vapor (m s-1); converted to mol m-2 s-1
-#'                 internally.
-#' @param VPD      Vapor pressure deficit (kPa)
-#' @param Ca       Atmospheric CO2 concentration (umol mol-1)
-#' @param model    Stomatal model used. One of c("USO","Ball&Berry","Leuning")
-#' @param nmin     Minimum number of data required to perform the fit; defaults to 40.
-#' @param fitg0    Should g0 and g1 be fitted simultaneously? 
-#' @param g0       Minimum stomatal conductance (mol m-2 s-1); ignored if \code{fitg0} is TRUE.
-#' @param fitD0    Should D0 be fitted along with g1 (and g0 if fitg0 = TRUE)?; only used if \code{model} is "Leuning"
-#' @param D0       Stomatal sensitivity parameter to VPD; only used if \code{model} is "Leuning" and fitD0 is FALSE
-#' @param Gamma    Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning", defaults to 50 umol mol-1.
-#' 
-#' @details All stomatal models were developed at leaf-level, but its parameters 
-#'          can also be estimated at ecosystem level (but be aware of caveats, see Knauer et al. 2017).
-#'          
-#'          The unified stomatal optimization (USO) model is given as (Medlyn et al. 2011):
-#'      
-#'          \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
-#'          
-#'          The empirical model by Ball et al. 1987 is defined as:
-#'          
-#'          \deqn{gs = g0 + g1* ((An * rH) / Ca)}
-#'          
-#'          Leuning 1995 suggested a revised version of the Ball&Berry model:
-#'          
-#'          \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
-#'          
-#'          The parameters in the models are estimated using non-linear regression (\code{nls()}).
-#'          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
-#'          the big leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
-#'          
-#' 
-#' @return an nls model object, containing information on the fitted parameters, their uncertainty range,
-#'         model fit, etc.
-#' 
-#' @references Knauer 2017
-#'             
-#'             Medlyn, B.E., et al., 2011: Reconciling the optimal and empirical approaches to
-#'             modelling stomatal conductance. Global Change Biology 17, 2134-2144.
-#'             
-#'             Ball, T.J., Woodrow, I.E., Berry, J.A. 1987: A model predicting stomatal conductance
-#'             and its contribution to the control of photosynthesis under different environmental conditions.
-#'             In: Progress in Photosynthesis Research, edited by J.Biggins, pp. 221-224, Martinus Nijhoff Publishers,
-#'             Dordrecht, Netherlands.
-#'             
-#'             Leuning, R., 1995: A critical appraisal of a combined stomatal-photosynthesis
-#'             model for C3 plants. Plant, Cell and Environment 18, 339-355.
-#' 
-#' @export 
-estimate.g1 <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs",VPD="VPD",Ca="Ca",
-                        model=c("USO","Ball&Berry","Leuning"),nmin=40,fitg0=FALSE,g0=0,fitD0=FALSE,
-                        D0=1.5,Gamma=50,constants=bigleaf.constants()){
-  
-  model <- match.arg(model)
-  
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  GPP      <- check.columns(data,GPP)
-  Gs       <- check.columns(data,Gs)
-  VPD      <- check.columns(data,VPD)
-  Ca       <- check.columns(data,Ca)
-  
-  Gs <- ms.to.mol(Gs,Tair,pressure,constants)
-  
-  nr_data <- sum(!is.na(GPP) & !is.na(Gs) & !is.na(VPD) & !is.na(Ca))
-  
 
-  if (nr_data < nmin){
-    stop("number of data is less than 'nmin'. g1 is not fitted.")
-  } else {
-    
-    if (model == "USO"){
-     
-      if (fitg0){
-        mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3))
-      } else {
-        mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3))
-      }
-    
-    } else if (model == "Leuning"){
-      
-      if (fitg0){
-        if (fitD0){
-          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9,D0=1.5))
-        } else {
-          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9))
-        }
-      } else {
-        if (fitD0){
-          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9,D0=1.5))
-        } else {
-          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9))
-        }
-      }
-      
-    } else if (model == "Ball&Berry"){
-      
-      rH <- VPD.to.rH(VPD,Tair)
-
-      if (fitg0){
-        mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9))
-      } else {
-        mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9))
-      }
-      
-    }
-  
-  }
-  
-  return(mod)
-    
-}
 
 
 ################################################
@@ -1626,9 +1506,9 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 
 
 
-#' Surface conductance for water vapor
+#' Surface conductance to water vapor
 #' 
-#' @description Calculates surface conductance for water vapor from the inverted Penman-Monteith
+#' @description Calculates surface conductance to water vapor from the inverted Penman-Monteith
 #'              equation.
 #' 
 #' @param data      Data.frame or matrix containing all required input variables
@@ -1678,15 +1558,54 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #'  \item{Gs_ms}{Surface conductance in m s-1}
 #'  \item{Gs_mol}{Surface conductance in mol m-2 s-1}
 #' 
+#' @examples 
+#' load("DE-Tha_2010.rda") # load data
+#' 
+#' # filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
+#' DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
+#'                            vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+#'                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                            ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
+#' 
+#' # select data only that were filtered in the previous function and in June 
+#' DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month"] == 6,]
+#' 
+#' # calculate Gs based on a simple gradient approach
+#' Gs_gradient <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",VPD="VPD",PM=FALSE)
+#' summary(Gs_gradient)
+#' 
+#' # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed)
+#' 
+#' # calculate a simple estimate of Ga based on Thom 1972
+#' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
+#' 
+#' # if G and/or S are available, don't forget to indicate (they are ignored by default). Note that
+#' # Ga is not added to the data.frame 'DE_Tha_June_2010'
+#' Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
+#'                              VPD="VPD",Ga=Ga,PM=TRUE)
+#' summary(Gs_PM)
+#' 
+#' 
+#' # compare to an Ga estimate that accounts for stability effects
+#' Ga_stab <- aerodynamic.conductance(DE_Tha_June_2010,zr=42,zh=26.5,d=18.5,z0m=2.6,stab_correction=T,
+#'                               Rb_model="Thom_1972")[,"Ga_h"]
+#'                               
+#' # now add Ga2 to the data.frame 'DE_Tha_June_2010'
+#' DE_Tha_June_2010$Ga_stab <- Ga_stab
+#' Gs_PM2 <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
+#'                              VPD="VPD",Ga="Ga_stab",PM=TRUE)
+#' summary(Gs_PM2)
+#'                              
 #' @export
 surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,
                                 VPD="VPD",LE="LE",Ga="Ga",missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
-                                PM=T,validity.check=T,constants=bigleaf.constants()){ 
-  
-   Tair     <- check.columns(data,Tair)
-   pressure <- check.columns(data,pressure)
-   VPD      <- check.columns(data,VPD)
-   LE       <- check.columns(data,LE)
+                                PM=TRUE,constants=bigleaf.constants()){ 
+   if (!missing(data)){
+     Tair     <- check.columns(data,Tair)
+     pressure <- check.columns(data,pressure)
+     VPD      <- check.columns(data,VPD)
+     LE       <- check.columns(data,LE)
+   }   
      
    if (!PM){
    
@@ -1697,9 +1616,11 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
    
    } else {
   
-     Rn       <- check.columns(data,Rn)
-     Ga       <- check.columns(data,Ga)
-  
+    if (!missing(data)){
+      Rn       <- check.columns(data,Rn)
+      Ga       <- check.columns(data,Ga)
+    }
+      
      if(!is.null(G)){
        G <- check.columns(data,G)
        if (!missing.G.as.NA){G[is.na(G)] <- 0}
@@ -1789,9 +1710,9 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #'         
 #'                                       
 #' @export 
-bigleaf.surface <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",Ca="Ca",
-                            VPD="VPD",Ga="Ga",calc.Ca=F,Ga_CO2="Ga_CO2",NEE="NEE",
-                            constants=bigleaf.constants()){
+surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",Ca="Ca",
+                               VPD="VPD",Ga="Ga",calc.Ca=F,Ga_CO2="Ga_CO2",NEE="NEE",
+                               constants=bigleaf.constants()){
 
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
@@ -1893,7 +1814,6 @@ Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
 #' @param Gs          Surface conductance (m s-1)
 #' @param approach    Approach used to calculate omega. Either "JarvisMcNaughton_1986" (default)
 #'                    or "Martin_1989".
-#' @param canopy.type Either "amphistomatous" (default) or "hypostomatous". See Details. 
 #' @param LAI         Leaf area index (m2 m-2), only used if approach = "Martin_1989"
 #' @param constants   Kelvin - conversion degree Celsius to Kelvin \cr
 #'                    cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
@@ -1909,7 +1829,7 @@ Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
 #'          a low stomatal control on transpiration (Jarvis & McNaughton 1986). \cr
 #'          The "JarvisMcNaughton_1986" approach (default option) is the original
 #'          formulation for the decoupling coefficient, given by (for an amphistomatous 
-#'          canopy (i.e. stomata located on both sides of leaves)):
+#'          canopy):
 #'          
 #'          \deqn{\Omega = \frac{\epsilon + 1}{\epsilon + 1 + \frac{Ga}{Gc}}}{%
 #'          \Omega = (\epsilon + 1) / ( \epsilon + 1 + Ga/Gc)}
@@ -1918,31 +1838,16 @@ Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
 #'          with s being the slope of the saturation vapor pressure curve (Pa K-1), and \eqn{\gamma} the 
 #'          psychrometric constant (Pa K-1).
 #'          
-#'          This formulation can be modified for for hypostomatous (stomata located 
-#'          on only one side of the leaves) vegetation (e.g. Daudet et al. 1999): 
-#'          
-#'          \deqn{\Omega = \frac{\epsilon + 2}{\epsilon + 2 + 2\frac{Ga}{Gc}}}{%
-#'          \Omega = (\epsilon + 2) / (\epsilon + 2 + 2Ga/Gc)}
-#'          
 #'          The approach "Martin_1989" by Martin 1989 additionally takes radiative coupling
-#'          into account. For amphistomatous vegetation:
+#'          into account:
 #'          
 #'          \deqn{\Omega = \frac{\epsilon + 1 + \frac{Gr}{Ga}}{\epsilon + (1 + \frac{Ga}{Gs}) (1 + \frac{Gr}{Ga})}}{%
 #'          \Omega = (\epsilon + 1 + Gr/Ga) / (\epsilon + (1 + Ga/Gs) (1 + Gr/Ga))}
 #' 
 #' @return omega The decoupling coefficient omega (-)
 #' 
-#' @references Goldberg V., Bernhofer C., 2008: Testing different decoupling coefficients
-#'             with measurements and models of contrasting canopies and soil water conditions.
-#'             Annales Geophysicae 26, 1977-1992.
-#' 
-#'             Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
+#' @references Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
 #'             scaling up from leaf to region. Advances in Ecological Research 15, 1-49. 
-#'             
-#'             Daudet F. A., Le Roux X., Sinoquet H., and Adam A., 1999:
-#'             Wind speed and leaf boundary conductance variation within
-#'             tree crown, Consequences on leaf-atmosphere coupling and tree
-#'             functions, Agricultural and Forest Meteorology 97, 171-185.
 #'             
 #'             Martin P., 1989: The significance of radiative coupling between
 #'             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
@@ -1950,7 +1855,6 @@ Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
 #' @export
 decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
                        approach=c("JarvisMcNaughton_1986","Martin_1989"),
-                       canopy.type=c("amphistomatous","hypostomatous"),
                        LAI,constants=bigleaf.constants()){
 
   approach    <- match.arg(approach)
@@ -1967,15 +1871,7 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
   
   if (approach == "JarvisMcNaughton_1986"){
     
-    if (canopy.type == "amphistomatous"){
-      
-      omega <- (epsilon + 1) / (epsilon + 1 + Ga/Gs)
-    
-    } else if (canopy.type == "hypostomatous"){
-    
-      omega <- (epsilon + 2) / (epsilon + 2 + 2*Ga/Gs)
-      
-    }
+    omega <- (epsilon + 1) / (epsilon + 1 + Ga/Gs)
     
   } else if (approach == "Martin_1989") {
   
@@ -1986,16 +1882,8 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
     } else {
       
       Gr    <- Gr.longwave(Tair,LAI,constants=constants)
+      omega <- (epsilon + 1 + Gr/Ga) / (epsilon + 1 + Ga/Gs + Gr/Gs + Gr/Ga)
       
-      if (canopy.type == "amphistomatous"){
-      
-        omega <- (epsilon + 1 + Gr/Ga) / (epsilon + 1 + Ga/Gs + Gr/Gs + Gr/Ga)
-      
-      } else if (canopy.type == "hypostomatous"){
-        
-        stop("option not yet implemented...")
-      
-      }
     }
   }
   
@@ -2388,22 +2276,26 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 
 
 
-# #' Conversions between radiation measures
-# #'
-# #'
-# #'
+#' Conversions between radiation measures
+#'
+#' @description Converts radiation from umol m-2 s-1 to W m-2 and vice versa.
+#'
 # mol.to.Watt <- function(PPFD,conversion){
-#   PAR <- PPFD * conversion
-#   return(PAR)
+#    PAR <- PPFD * conversion
+#    return(PAR)
 # }
-# 
-# Watt.to.mol <- function(PAR,conversion){
-#   PPFD <- PAR
-#   return(PPFD)
-# }
+#' 
+#' Watt.to.mol <- function(PAR,conversion){
+#'   PPFD <- PAR
+#'   return(PPFD)
+#' }
 
 
-
+#' Conversion between mass and molar units of carbon
+#' 
+#' @description Converts CO2 quantities from umol CO2 m-2 s-1 to gC and vice versa.
+#' 
+#' 
 
 
 
@@ -2411,23 +2303,25 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 #### Evapotranspiration ###-------------------------------------------------------------------------------
 ###########################
 
-#' Potential evapotranspiration from the Priestley-Taylor equation
+#' Potential evapotranspiration
 #' 
-#' @details 
+#' @details Potential evapotranspiration ET_pot according to Priestley & Taylor 1972.
 #' 
 #' @param data      Data.frame or matrix containing all required variables
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Air pressure (kPa)
 #' @param Rn        Net radiation (W m-2)
-#' @param G         Ground heat flux (W m-2)
-#' @param S         Sum of all storage fluxes (W m-2)
+#' @param G         Ground heat flux (W m-2); optional
+#' @param S         Sum of all storage fluxes (W m-2); optional
 #' @param alpha     Priestley-Taylor coefficient (-)
+#' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
+#' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-)
 #' 
 #' @details Potential evapotranspiration is calculated according to Priestley & Taylor, 1972:
 #' 
-#'          \deqn{(\alpha * \delta * (Rn - G - S)) / (\delta + \gamma)}
+#'          \deqn{LE_pot = (\alpha * \delta * (Rn - G - S)) / (\delta + \gamma)}
 #'
 #' @return a data.frame with the following columns:
 #'         \item{ET_pot}{potential evapotranspiration (kg m-2 s-1)}
@@ -2471,34 +2365,116 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 
 
 
+
+#' Reference evapotranspiration
+#' 
+#' @details Reference evapotranspiration calculated from the Penman-Monteith
+#'          equation with a pre-defined surface conductance.
+#'          
+#' 
+#' @param data      Data.frame or matrix containing all required variables
+#' @param Gs        Surface conductance (m s-1)
+#' @param Tair      Air temperature (deg C)
+#' @param pressure  Air pressure (kPa)
+#' @param VPD       Vapor pressure deficit (kPa)
+#' @param Ga        Aerodynamic conductance (m s-1)
+#' @param Rn        Net radiation (W m-2)
+#' @param G         Ground heat flux (W m-2); optional
+#' @param S         Sum of all storage fluxes (W m-2); optional
+#' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
+#' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0. 
+#' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+#'                  eps - ratio of the molecular weight of water vapor to dry air (-) \cr
+#'                  Rd - gas constant of dry air (J kg-1 K-1) \cr
+#'                  Rgas - universal gas constant (J mol-1 K-1) \cr
+#'                  Kelvin - conversion degree Celsius to Kelvin \cr
+#'                                
+#' @details Reference evapotranspiration is calculated according to the Penman-Monteith
+#'          equation:
+#' 
+#'          \deqn{LE_0 = (\delta * (Rn - G - S) * \rho * cp * VPD * Ga) / (\delta + \gamma * (1 + Ga/Gs)}
+#'
+#' @return a data.frame with the following columns:
+#'         \item{ET_0}{reference evapotranspiration (kg m-2 s-1)}
+#'         \item{LE_0}{reference latent heat flux (W m-2)}              
+#'                  
+#' @references        
+#' 
+#' @export                 
+ET.ref <- function(data,Gs,Tair="Tair",pressure="pressure",VPD="VPD",Ga="Ga",Rn="Rn",
+                   G=NULL,S=NULL,missing.G.as.NA=F,missing.S.as.NA=F,
+                   constants=bigleaf.constants()){
+  
+  Tair     <- check.columns(data,Tair)
+  pressure <- check.columns(data,pressure)
+  Rn       <- check.columns(data,Rn)
+  VPD      <- check.columns(data,VPD)
+  Ga       <- check.columns(data,Ga)
+  
+  if(!is.null(G)){
+    G <- check.columns(data,G)
+    if (!missing.G.as.NA){G[is.na(G)] <- 0}
+  } else {
+    warning("ground heat flux G is not provided and set to 0.")
+    G <- rep(0,nrow(data))
+  }
+  
+  if(!is.null(S)){
+    S <- check.columns(data,S)
+    if(!missing.S.as.NA){S[is.na(S)] <- 0 }
+  } else {
+    warning("Energy storage fluxes S are not provided and set to 0.")
+    S <- rep(0,nrow(data))
+  }
+  
+  gamma  <- psychrometric.constant(Tair,pressure,constants)
+  delta  <- Esat(Tair)[,"delta"]
+  rho    <- air.density(Tair,pressure)
+  
+  ET_0 <- (delta * (Rn - G - S) + rho * constants$cp * VPD * Ga) / 
+          (delta + gamma * (1 + Ga / Gs))
+  
+  LE_0 <- ET.to.LE(ET_0,Tair)
+  
+  return(data.frame(ET_0,LE_0))
+  
+}
+
+
+
+
+
 #' Imposed and Equilibrium Evapotranspiration
 #' 
-#' @description Evapotranspiration (ET) split up in imposed ET and equilibrium ET.
+#' @description Evapotranspiration (ET) split up into imposed ET and equilibrium ET.
 #' 
 #' @param data      Data.frame or matrix containing all required input variables
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Air pressure (kPa)
 #' @param VPD       Air vapor pressure deficit (kPa)
 #' @param Rn        Net radiation (W m-2)
+#' @param G         Ground heat flux (W m-2); optional
+#' @param S         Sum of all storage fluxes (W m-2); optional
+#' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
+#' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0.
 #' @param Gs        surface conductance (m s-1)
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-)
 #'                  
-#' 
-#' @details Total evapotranspiration can be written in the the form:
+#' @details Total evapotranspiration can be written in the form:
 #' 
 #'          \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
 #'          
 #'          where ET_eq is the equilibrium evapotranspiration rate, the ET rate 
 #'          that would occur under uncoupled conditions, where the heat budget
-#'          is dominated by radiation.
+#'          is dominated by radiation (when Ga -> 0).
 #'          
-#'          \deqn{ET_eq = \delta * (Rn - G - S) * \lambda / (\delta + \gamma)}
+#'          \deqn{ET_eq = (\delta * (Rn - G - S) * \lambda) / (\delta + \gamma)}
 #'          
 #'          and ET_imp is the imposed evapotranspiration rate, the ET rate
-#'          that would occur under fully coupled conditions:
+#'          that would occur under fully coupled conditions (when Ga -> inf):
 #'          
-#'          \deqn{ET_imp = \rho * cp * VPD * Gs * \lambda / \gamma}
+#'          \deqn{ET_imp = (\rho * cp * VPD * Gs * \lambda) / \gamma}
 #' 
 #' @note Surface conductance (Gs) is calculated with \code{\link{surface.conductance}}.
 #'       Aerodynamic conductance (Ga) can be calculated using \code{\link{Ga}}.
@@ -2517,7 +2493,8 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #'             
 #' @export
 ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
-                          Rn="Rn",Gs="Gs",constants=bigleaf.constants()){
+                          Rn="Rn",G=NULL,S=NULL,Gs="Gs",missing.G.as.NA=F,missing.S.as.NA=F,
+                          constants=bigleaf.constants()){
   
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
@@ -2525,11 +2502,27 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
   Rn       <- check.columns(data,Rn)
   Gs       <- check.columns(data,Gs)
   
+  if(!is.null(G)){
+    G <- check.columns(data,G)
+    if (!missing.G.as.NA){G[is.na(G)] <- 0}
+  } else {
+    warning("ground heat flux G is not provided and set to 0.")
+    G <- rep(0,nrow(data))
+  }
+  
+  if(!is.null(S)){
+    S <- check.columns(data,S)
+    if(!missing.S.as.NA){S[is.na(S)] <- 0 }
+  } else {
+    warning("Energy storage fluxes S are not provided and set to 0.")
+    S <- rep(0,nrow(data))
+  }
+  
   rho    <- air.density(Tair,pressure)
   gamma  <- psychrometric.constant(Tair,pressure,constants)
   delta  <- Esat(Tair)[,"delta"]
   
-  LE_eq  <- (delta * Rn) / (gamma + delta)
+  LE_eq  <- (delta * (Rn - G - S)) / (gamma + delta)
   LE_imp <- (rho * constants$cp * Gs * VPD) / gamma
   
   ET_imp <- LE.to.ET(LE_imp,Tair)
@@ -2540,6 +2533,11 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
 
 
 
+
+
+############################
+#### Big-Leaf Physiology ###-------------------------------------------------------------------------------
+############################
 
 #' Bulk intercellular CO2 concentration
 #' 
@@ -2612,8 +2610,8 @@ intercellular.CO2 <- function(Ca,GPP,Gs,surface.Ca=F,Ga=NULL,NEE=NULL,
 #' @param Vcmax_Ha  activation energy for Vcmax (kJ mol-1)
 #' @param Vcmax_Hd  deactivation energy for Vcmax (kJ mol-1)
 #' @param dS        entropy term (J mol-1 K-1)
-#' @param constants Kelvin - 
-
+#' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
+#'                  Rgas -
 
 carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,O2=0.21,Kc25=404.9,Ko25=278.4,
                         Kc_Ha=79.43,Ko_Ha=36.38,Vcmax_Ha=65.33,Vcmax_Hd=200,
@@ -2651,6 +2649,147 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,O2=0.21,Kc25=404.9,Ko25=278.4,
 
 
 
+#' Stomatal slope parameter "g1"
+#' 
+#' @description Estimation of the intrinsic WUE metric "g1" (stomatal slope) 
+#'              from non-linear regression.
+#' 
+#' @param data      Data.frame or matrix containing all required columns
+#' @param Tair      Air temperature (deg C)
+#' @param pressure  Air pressure (kPa)
+#' @param GPP       Gross primary productivity (umol CO2 m-2 s-1)
+#' @param Gs        Surface conductance to water vapor (m s-1); converted to mol m-2 s-1
+#'                  internally.
+#' @param VPD       Vapor pressure deficit (kPa)
+#' @param Ca        Atmospheric CO2 concentration (umol mol-1)
+#' @param model     Stomatal model used. One of c("USO","Ball&Berry","Leuning")
+#' @param nmin      Minimum number of data required to perform the fit; defaults to 40.
+#' @param fitg0     Should g0 and g1 be fitted simultaneously? 
+#' @param g0        Minimum stomatal conductance (mol m-2 s-1); ignored if \code{fitg0} is TRUE.
+#' @param fitD0     Should D0 be fitted along with g1 (and g0 if fitg0 = TRUE)?; only used if \code{model} is "Leuning"
+#' @param D0        Stomatal sensitivity parameter to VPD; only used if \code{model} is "Leuning" and fitD0 is FALSE
+#' @param Gamma     Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning", defaults to 50 umol mol-1.
+#' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
+#'                  Rgas - universal gas constant (J mol-1 K-1)
+#' 
+#' @details All stomatal models were developed at leaf-level, but its parameters 
+#'          can also be estimated at ecosystem level (but be aware of caveats).
+#'          
+#'          The unified stomatal optimization (USO) model is given as (Medlyn et al. 2011):
+#'      
+#'          \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
+#'          
+#'          The empirical model by Ball et al. 1987 is defined as:
+#'          
+#'          \deqn{gs = g0 + g1* ((An * rH) / Ca)}
+#'          
+#'          Leuning 1995 suggested a revised version of the Ball&Berry model:
+#'          
+#'          \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
+#'          
+#'          The parameters in the models are estimated using non-linear regression (\code{nls()}).
+#'          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
+#'          the big leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
+#'          
+#' 
+#' @return an nls model object, containing information on the fitted parameters, their uncertainty range,
+#'         model fit, etc.
+#' 
+#' @references Medlyn, B.E., et al., 2011: Reconciling the optimal and empirical approaches to
+#'             modelling stomatal conductance. Global Change Biology 17, 2134-2144.
+#'             
+#'             Ball, T.J., Woodrow, I.E., Berry, J.A. 1987: A model predicting stomatal conductance
+#'             and its contribution to the control of photosynthesis under different environmental conditions.
+#'             In: Progress in Photosynthesis Research, edited by J.Biggins, pp. 221-224, Martinus Nijhoff Publishers,
+#'             Dordrecht, Netherlands.
+#'             
+#'             Leuning, R., 1995: A critical appraisal of a combined stomatal-photosynthesis
+#'             model for C3 plants. Plant, Cell and Environment 18, 339-355.
+#' 
+#' @examples 
+#' # calculate g1 for the site DE-Tha using data from June 2010
+#' load("DE-Tha_2010.rda") # load data
+#' 
+#' # filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
+#' DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
+#'                            vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+#'                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                            ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
+#' 
+#' # select data only that were filtered in the previous function and in June
+#' DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month"] == 6,]
+#' 
+#' 
+#' 
+#' @export 
+stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs="Gs",VPD="VPD",Ca="Ca",
+                           model=c("USO","Ball&Berry","Leuning"),nmin=40,fitg0=FALSE,g0=0,fitD0=FALSE,
+                           D0=1.5,Gamma=50,constants=bigleaf.constants()){
+  
+  model <- match.arg(model)
+  
+  if (!missing(data)){
+    Tair     <- check.columns(data,Tair)
+    pressure <- check.columns(data,pressure)
+    GPP      <- check.columns(data,GPP)
+    Gs       <- check.columns(data,Gs)
+    VPD      <- check.columns(data,VPD)
+    Ca       <- check.columns(data,Ca)
+  }
+  
+  Gs <- ms.to.mol(Gs,Tair,pressure,constants)
+  
+  nr_data <- sum(!is.na(GPP) & !is.na(Gs) & !is.na(VPD) & !is.na(Ca))
+  
+  
+  if (nr_data < nmin){
+    stop("number of data is less than 'nmin'. g1 is not fitted to the data.")
+  } else {
+    
+    if (model == "USO"){
+      
+      if (fitg0){
+        mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3))
+      } else {
+        mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3))
+      }
+      
+    } else if (model == "Leuning"){
+      
+      if (fitg0){
+        if (fitD0){
+          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9,D0=1.5))
+        } else {
+          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9))
+        }
+      } else {
+        if (fitD0){
+          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9,D0=1.5))
+        } else {
+          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9))
+        }
+      }
+      
+    } else if (model == "Ball&Berry"){
+      
+      rH <- VPD.to.rH(VPD,Tair)
+      
+      if (fitg0){
+        mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9))
+      } else {
+        mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9))
+      }
+      
+    }
+    
+  }
+  
+  return(mod)
+  
+}
+
+
+
 
 ########################
 #### Energy balance ####-------------------------------------------------------------------------------
@@ -2681,12 +2820,17 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,O2=0.21,Kc25=404.9,Ko25=278.4,
 #'             Blanken, P.D. et al., 1997: Energy balance and canopy conductance of a boreal aspen
 #'             forest: Partitioning overstory and understory components. 
 #'             Journal of Geophysical Research 102, 28915-28927. 
+#'             
+#' @example 
+#' # Calculate biochemical energy taken up by the ecosystem with a measured NEE of -30umol CO2 m-2 s-1             
+#' biochemical.energy(NEE=-30)            
 #'            
 #' @export 
 biochemical.energy <- function(alpha=0.422,NEE){
   Sp <- -alpha*NEE
   return(Sp)
 }
+
 
 
 
@@ -2718,7 +2862,7 @@ biochemical.energy <- function(alpha=0.422,NEE){
 #'         \item{EBR}{energy balance ratio}
 #' 
 #' @references Wilson K., et al. 2002: Energy balance closure at FLUXNET sites.
-#'             Agricultural and Forest Meteorology 113, 223–243.
+#'             Agricultural and Forest Meteorology 113, 223-243.
 #'
 #' @export
 energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneous=F,
@@ -2765,3 +2909,54 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
   }
 }   
 
+
+
+
+#' Isothermal net radiation
+#' 
+#' @description Calculates the isothermal net radiation, i.e. the net radiation 
+#'              that the surface would receive if it had the same temperature than
+#'              the air.
+#'              
+#' @param data       Data.frame or matrix containing all required variables
+#' @param Rn         Net radiation (W m-2)
+#' @param Tair       Air temperature (degC)
+#' @param Tsurf      Surface temperature (degC)
+#' @param emissivity Emissivity of the surface (-)
+#' @param constants  sigma - Stefan-Boltzmann constant (W m-2 K-4) \cr
+#'                   Kelvin - conversion degree Celsius to Kelvin 
+#'
+#' @details The isothermal net radiation (Rni) is given by:
+#'          
+#'          \deqn{Rni = Rn + \epsilon * \sigma * (Tsurf^4 - Tair^4)}
+#'          
+#'          with Tsurf and Tair in Kelvin.
+#'          
+#' @return Rni isothermal net radiation (W m-2)
+#' 
+#' @references Jones, H. 2014: Plants and Microclimate. 3rd edition, Cambridge
+#'             University Press.
+#' 
+#' @example 
+#' # calculate isothermal net radiation of a surface that is 2?c warmer than the air.
+#' isothermal.Rn(Rn=400,Tair=25,Tsurf=27,emissivity=0.98)
+#' 
+#' @export
+isothermal.Rn <- function(data,Rn="Rn",Tair="Tair",Tsurf="Tsurf",emissivity,
+                          constants=bigleaf.constants()){
+  
+  if (!missing(data)){
+    Rn    <- check.columns(data,Rn)
+    Tair  <- check.columns(data,Tair)
+    Tsurf <- check.columns(data,Tsurf)
+  }
+  
+  Tair  <- Tair + constants$Kelvin
+  Tsurf <- Tsurf + constants$Kelvin
+  
+  Rni <- Rn + emissivity * constants$sigma * (Tsurf^4 - Tair^4)
+  
+
+  return(Rni)
+  
+}

@@ -45,4 +45,3 @@ The basic idea behind the growing season filter is that vegetation is
 \references{
 Knauer 2017
 }
-

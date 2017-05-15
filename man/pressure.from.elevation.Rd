@@ -44,4 +44,3 @@ pressure.from.elevation(500,Tair=25,q=0.01)
 Stull B., 1988: An Introduction to Boundary Layer Meteorology.
             Kluwer Academic Publishers, Dordrecht, Netherlands.
 }
-

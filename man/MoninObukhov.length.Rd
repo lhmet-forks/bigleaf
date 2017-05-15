@@ -38,4 +38,3 @@ Note that L gets very small for very low ustar values with implications
 \references{
 Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 }
-

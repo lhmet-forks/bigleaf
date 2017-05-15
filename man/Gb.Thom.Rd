@@ -47,4 +47,3 @@ Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
 \seealso{
 \code{\link{Gb.Su}}, \code{\link{Gb.Choudhury}}
 }
-

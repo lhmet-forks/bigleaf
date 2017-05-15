@@ -15,4 +15,3 @@ check.columns(data, column_name)
 check if columns in a data.frame or matrix exist and if they 
              are of the right type (numeric).
 }
-

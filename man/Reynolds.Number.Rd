@@ -44,4 +44,3 @@ Massman, W.J., 1999a: A model study of kB H- 1 for vegetated surfaces using
             O2 and N2 near STP and the kinematic viscosity and thermal diffusivity
             of air near STP. Atmospheric Environment 33, 453-457.
 }
-

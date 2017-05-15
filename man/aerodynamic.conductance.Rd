@@ -81,16 +81,15 @@ Bulk aerodynamic conductance, including options for the boundary layer conductan
              formulation and stability correction functions.
 }
 \details{
-Aerodynamic conductance (Ga) is calculated as:
+Aerodynamic conductance for heat (Ga_h) is calculated as:
 
- Ga = 1 / (Ra_m + Rb)
+ Ga_h = 1 / (Ra_m + Rb)
  
  where Ra_m is the aerodynamic resistance for momentum and Rb the canopy boundary
- layer resistance.
+ layer resistance (or 'excess resistance').
  
- Several models can be used to determine the canopy boundary layer resistance ("excess resistance")
-
- The model used to determine the canopy boundary layer resistance ("excess resistance") is specified by the argument \code{Rb_model}
+ The model used to determine Rb is specified by the argument \code{Rb_model}. The following 
+ options are implemented:
  "Thom_1972" is an empirical formulation based on the friction velocity (ustar) (Thom 1972):
  
    \deqn{Rb = 0.67ustar^0.67}
@@ -101,27 +100,27 @@ Aerodynamic conductance (Ga) is calculated as:
   
     \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
     
- The option "Su_2001" calculates Rb based on the physically-based Rb model by Su et tal. 2001,
+ The option "Su_2001" calculates Rb based on the physically-based Rb model by Su et al. 2001,
  a simplification of the model developed by Massmann 1999:
  
     \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2}
  
- The models calculate the parameter kB-1, which related to Rb:
+ The models calculate the parameter kB-1, which is related to Rb:
  
     \deqn{kB-1 = Rb * (k * ustar)}
  
- Both kB and Rb, as well as Gb are given in the output.
+ Both kB-1 and Rb, as well as Gb are given in the output.
  
  Rb (and Gb) for water vapor and heat are assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
  
- \deqn{Rb_CO2 = 1.4 * Rb}
+ \deqn{Rb_CO2 = 1.37 * Rb}
  
- The factor 1.4 arises due the lower molecular diffusivity of CO2 compared to water.
+ The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
  It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
  across the boundary layer is assumed to be partly by diffusion and partly by turbulent
  mixing (Nobel 2005).
  
- If the roughness parameters z0m and d are not available, they can be estimated using
+ If the roughness parameters z0m and d are unknown, they can be estimated using
  \link{\code{roughness.parameters}}.
  
  The argument \code{stab_formulation} determines the stability correction function used 
@@ -129,13 +128,20 @@ Aerodynamic conductance (Ga) is calculated as:
  and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
  calculated with \code{\link{MoninObukhov.length}}
- Stability correction functions calculate the correction based on the formulations by Businger 1971 
- Dyer 1970, based on zeta.
+ The Stability correction function is chosen by the argument \code{stab_formulation}. Options are 
+ Dyer_1970" and "Businger_1971".  
  If \code{stab_correction} is set to FALSE, the effects of atmospheric stability on Ga are neglected,
  and the Monin-Obukhov length, the stability parameter zeta, as well as the stability correction functions
  are not calculated.
 }
-\references{
-
+\note{
+The roughness length for water and heat (z0h) is not returned by this function, but 
+      it can be calculated from the following relationship (e.g. Verma 1989):
 }
-
+\references{
+Verma, S., 1989: Aerodynamic resistances to transfers of heat, mass and momentum.
+            In: Estimation of areal evapotranspiration, IAHS Pub, 177, 13-20.
+            
+            Verhoef, A., De Bruin, H., Van Den Hurk, B., 1997: Some practical notes on the parameter kB-1
+            for sparse vegetation. Journal of Applied Meteorology, 36, 560-572.
+}

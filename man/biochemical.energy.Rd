@@ -36,4 +36,3 @@ Meyers, T.P., Hollinger, S.E. 2004: An assessment of storage terms in the surfac
             forest: Partitioning overstory and understory components. 
             Journal of Geophysical Research 102, 28915-28927.
 }
-

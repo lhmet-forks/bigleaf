@@ -11,4 +11,4 @@ Description: Calculation of meteorological, aerodynamic, and physiological ecosy
 License: GPL (>= 2)
 LazyData: no
 Built: R 3.1.0; x86_64-w64-mingw32; 2016-12-21 10:28:22 UTC; windows
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

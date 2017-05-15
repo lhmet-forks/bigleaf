@@ -24,4 +24,3 @@ The following formula is used:
 Stull, B., 1988: An Introduction to Boundary Layer Meteorology (p.641)
             Kluwer Academic Publishers, Dordrecht, Netherlands
 }
-

@@ -4,22 +4,30 @@
 \alias{roughness.parameters}
 \title{Roughness parameters}
 \usage{
-roughness.parameters(method = c("wind_profile", "canopy_height"), zh,
-  frac_d = 0.7, frac_z0m = 0.1, data, Tair = "Tair",
-  pressure = "pressure", wind = "wind", ustar = "ustar", H = "H", zr,
-  d = NULL, z0m = NULL, stab_roughness = TRUE,
-  stab_formulation = c("Dyer_1970", "Businger_1971"),
+roughness.parameters(method = c("wind_profile", "canopy_height",
+  "canopy_height+LAI"), zh, frac_d = 0.7, frac_z0m = 0.1, cd = 0.2,
+  hs = 0.01, LAI, data, Tair = "Tair", pressure = "pressure",
+  wind = "wind", ustar = "ustar", H = "H", zr, d = NULL, z0m = NULL,
+  stab_roughness = TRUE, stab_formulation = c("Dyer_1970", "Businger_1971"),
   constants = bigleaf.constants())
 }
 \arguments{
-\item{method}{Method used, either "canopy_height", or "wind_profile" \cr
+\item{method}{Method to use, either "canopy_height", "canopy_height+LAI", or "wind_profile" \cr
 NOTE: if method is "canopy_height", only the following three arguments
-are used.}
+are used. If method is "canopy_height+LAI", only zh, LAI, cd, and hs are required}
+
+\item{zh}{Vegetation height (m)}
 
 \item{frac_d}{Fraction of displacement height on canopy height (-)}
 
 \item{frac_z0m}{Fraction of roughness length on canopy height (-)
 The following arguments are only needed if method = "wind_profile"!}
+
+\item{cd}{Mean drag coefficient for individual leaves. Defaults to 0.2.}
+
+\item{hs}{roughness length of the soil surface (m)}
+
+\item{LAI}{Leaf area index (-)}
 
 \item{data}{Data.frame or matrix containing all required variables}
 
@@ -54,8 +62,6 @@ a data.frame with the following columns:
         \item{d}{Zero-plane displacement height (m)}
         \item{z0m}{Roughness length for momentum (m)}
         \item{z0m_se}{Standard Error of the median for z0m (m)}
-
-
 }
 \description{
 A simple approximation of the two roughness parameters displacement height (d)
@@ -73,6 +79,16 @@ The two main roughness parameters, the displacement height (d)
          
          where frac_d defaults to 0.7 and frac_z0m to 0.1.
          
+         Alternatively, d and z0m can be estimated from both canopy height and LAI
+         (If \code{method} is \code{canopy_height+LAI}).
+         Based on data from Shaw & Pereira 1982, Choudhury & Monteith 1988 proposed 
+         the following semi-empirical relations:
+         
+         X = cd * L
+         d = 1.1 * zh * ln(1 + X^(1/4)) 
+         z0m = hs + 0.3 * zh * X^(1/2)  for 0 <= X <= 0.2
+         z0m = hs * zh * (1 - d/zh)     for 0.2 < X 
+         
          If \code{method} is \code{wind_profile}, z0m is estimated by solving
          the windspeed profile for z0m:
          
@@ -81,4 +97,10 @@ The two main roughness parameters, the displacement height (d)
          By default, d in this equation is fixed to 0.7zh, but can be set to any
          other value.
 }
-
+\references{
+Choudhury, B. J., Monteith J.L., 1988: A four-layer model for the heat
+            budget of homogeneous land surfaces. Q. J. R. Meteorol. Soc. 114, 373-398.
+            
+            Shaw, R. H., Pereira, A., 1982: Aerodynamic roughness of a plant canopy: 
+            a numerical experiment. Agricultural Meteorology, 26, 51-65.
+}

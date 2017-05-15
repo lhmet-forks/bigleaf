@@ -31,4 +31,3 @@ mixing ratio is approximated by specific humidity.
 \references{
 Foken T., 2008: Micrometeorology. Springer, Berlin, Germany.
 }
-

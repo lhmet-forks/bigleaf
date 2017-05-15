@@ -78,4 +78,3 @@ Choudhury, B. J., Monteith J.L., 1988: A four-layer model for the heat
 \seealso{
 \code{\link{Gb.Thom}}, \code{\link{Gb.Su}}
 }
-

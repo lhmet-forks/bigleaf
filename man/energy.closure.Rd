@@ -42,6 +42,5 @@ The energy balance ratio (EBR) is calculated as:
 }
 \references{
 Wilson K., et al. 2002: Energy balance closure at FLUXNET sites.
-            Agricultural and Forest Meteorology 113, 223–243.
+            Agricultural and Forest Meteorology 113, 223-243.
 }
-

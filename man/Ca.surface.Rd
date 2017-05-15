@@ -24,4 +24,3 @@ the CO2 concentration at the canopy surface derived from net ecosystem
 the following sign convention is employed: negative values of NEE denote
       net CO2 uptake by the ecosystem.
 }
-

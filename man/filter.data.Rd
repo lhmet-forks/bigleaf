@@ -5,12 +5,12 @@
 \title{Filter data}
 \usage{
 filter.data(data, precip = "precip", PPFD = "PPFD", Tair = "Tair",
-  ustar = "ustar", VPD = "VPD", GPP = "GPP", Ca = "Ca", doy = "doy",
-  year = "year", quality.control = T, quality.ext = "_qc",
-  good.quality = c(0, 1), vars.qc = c("precip", "Tair", "VPD", "GPP", "H",
-  "LE"), tprecip = 0.01, precip.hours = 24, trad = 200, ttemp = 5,
-  tustar = 0.2, tGPP = 0.5, ws = 15, min.int = 5, trH = 0.95,
-  NA.as.precip = F)
+  ustar = "ustar", VPD = "VPD", GPP = "GPP_nt", doy = "doy",
+  year = "year", quality.control = TRUE, quality.ext = "_qc",
+  vars.qc = c("precip", "Tair", "VPD", "GPP_nt", "H", "LE"),
+  good.quality = c(0, 1), missing.qc.as.bad = TRUE, tprecip = 0.01,
+  precip.hours = 24, NA.as.precip = F, trad = 200, ttemp = 5,
+  tustar = 0.2, tGPP = 0.5, ws = 15, min.int = 5, trH = 0.95)
 }
 \arguments{
 \item{data}{data.frame or matrix containing all required input variables in 
@@ -28,8 +28,6 @@ half-hourly or hourly resolution. Including year, month, day information}
 
 \item{GPP}{gross primary productivity (umol m-2 s-1)}
 
-\item{Ca}{atmospheric CO2 concentration (umol mol-1)}
-
 \item{doy}{day of year}
 
 \item{year}{year}
@@ -38,51 +36,51 @@ half-hourly or hourly resolution. Including year, month, day information}
 
 \item{quality.ext}{the extension to the variables' names that marks them as quality control variables}
 
-\item{good.quality}{which values indicate good quality in the quality control (qc) variables?}
-
 \item{vars.qc}{character vector indicating the variables for which quality filter should 
 be applied. Leave empty if no quality filter should be applied.}
+
+\item{good.quality}{which values indicate good quality in the quality control (qc) variables?}
+
+\item{missing.qc.as.bad}{If quality control variable is NA, should the corresponding data point be
+treated as bad quality? Defaults to TRUE}
 
 \item{tprecip}{precipitation threshold used to demark a precipitation event (mm)}
 
 \item{precip.hours}{number of hours removed following a precipitation event (h)}
 
-\item{trad}{radiation threshold (umol m-2 s-1)}
-
-\item{ttemp}{temperature threshold (deg C)}
-
-\item{tustar}{friction velocity threshold (m s-1)}
-
-\item{tGPP}{GPP threshold (fraction of 95% quantile of the GPP time series).
-Takes values between 0 and 1.}
-
-\item{ws}{window size used for GPP time series smoothing}
-
-\item{min.int}{minimum time interval in days for a given state of growing season}
-
-\item{trH}{relative humidity threshold (-)}
-
 \item{NA.as.precip}{if TRUE missing precipitation data are treated as precipitation events}
 
-\item{rH}{relative humidity (-), only one of VPD and rH required}
+\item{trad}{radiation threshold (umol m-2 s-1)}
+
+\item{ttemp}{Temperature threshold (deg C)}
+
+\item{tustar}{Friction velocity threshold (m s-1)}
+
+\item{tGPP}{GPP threshold (fraction of 95% quantile of the GPP time series).
+Must be between 0 and 1.}
+
+\item{ws}{Window size used for GPP time series smoothing}
+
+\item{min.int}{Minimum time interval in days for a given state of growing season}
+
+\item{trH}{Relative humidity threshold (-). Note that relative humidity
+is calculated from VPD internally}
 }
 \value{
-filtered_data the same data frame as provided as argument to the function
-                      but with filtered timeperiods set to NA in all columns except
-                      the ones used for filtering. The data.frame contains one additional
-                      column "valid", which indicates whether the timestep is valid 
+filtered_data The same data frame as provided as first argument to the function
+                      with an additional column "valid", which indicates whether the timestep is valid 
                       according to the filter criteria (1) or invalid (0).
 }
 \description{
-Filters timeseries in which Gs describes physiologically meaningful
-             quantity
+Filters timeseries in which Gs constitutes a physiologically meaningful
+             quantity.
 }
 \details{
 This routine consists of two parts:
          1) Quality control: All variables included in \code{vars.qc} are filtered for 
             good quality data. For these variables a corresponding quality variable with 
             the same name as the variable plus the extension as specified in \code{quality.ext}
-            must be provided. For timesteps where the value of the quality indicator variables is not included
+            must be provided. For timesteps where the value of the quality indicator is not included
             in the argument \code{good.quality}, i.e. the quality is not considered as 'good', 
             its value is set to NA.
             
@@ -95,7 +93,3 @@ This routine consists of two parts:
             are set to NA.
             Set a threshold to 0 (or the minimum of the variable) if the dataset should not be filtered for a specific variable.
 }
-\references{
-Knauer 2017
-}
-

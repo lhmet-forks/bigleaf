@@ -5,8 +5,7 @@
 \title{Decoupling coefficient}
 \usage{
 decoupling(data, Tair = "Tair", pressure = "pressure", Ga = "Ga",
-  Gs = "Gs", approach = c("JarvisMcNaughton_1986", "Martin_1989"),
-  canopy.type = c("amphistomatous", "hypostomatous"), LAI,
+  Gs = "Gs", approach = c("JarvisMcNaughton_1986", "Martin_1989"), LAI,
   constants = bigleaf.constants())
 }
 \arguments{
@@ -22,8 +21,6 @@ decoupling(data, Tair = "Tair", pressure = "pressure", Ga = "Ga",
 
 \item{approach}{Approach used to calculate omega. Either "JarvisMcNaughton_1986" (default)
 or "Martin_1989".}
-
-\item{canopy.type}{Either "amphistomatous" (default) or "hypostomatous". See Details.}
 
 \item{LAI}{Leaf area index (m2 m-2), only used if approach = "Martin_1989"}
 
@@ -48,7 +45,7 @@ The decoupling coefficient Omega ranges from 0 to 1 and quantifies the
          a low stomatal control on transpiration (Jarvis & McNaughton 1986). \cr
          The "JarvisMcNaughton_1986" approach (default option) is the original
          formulation for the decoupling coefficient, given by (for an amphistomatous 
-         canopy (i.e. stomata located on both sides of leaves)):
+         canopy):
          
          \deqn{\Omega = \frac{\epsilon + 1}{\epsilon + 1 + \frac{Ga}{Gc}}}{%
          \Omega = (\epsilon + 1) / ( \epsilon + 1 + Ga/Gc)}
@@ -57,32 +54,16 @@ The decoupling coefficient Omega ranges from 0 to 1 and quantifies the
          with s being the slope of the saturation vapor pressure curve (Pa K-1), and \eqn{\gamma} the 
          psychrometric constant (Pa K-1).
          
-         This formulation can be modified for for hypostomatous (stomata located 
-         on only one side of the leaves) vegetation (e.g. Daudet et al. 1999): 
-         
-         \deqn{\Omega = \frac{\epsilon + 2}{\epsilon + 2 + 2\frac{Ga}{Gc}}}{%
-         \Omega = (\epsilon + 2) / (\epsilon + 2 + 2Ga/Gc)}
-         
          The approach "Martin_1989" by Martin 1989 additionally takes radiative coupling
-         into account. For amphistomatous vegetation:
+         into account:
          
          \deqn{\Omega = \frac{\epsilon + 1 + \frac{Gr}{Ga}}{\epsilon + (1 + \frac{Ga}{Gs}) (1 + \frac{Gr}{Ga})}}{%
          \Omega = (\epsilon + 1 + Gr/Ga) / (\epsilon + (1 + Ga/Gs) (1 + Gr/Ga))}
 }
 \references{
-Goldberg V., Bernhofer C., 2008: Testing different decoupling coefficients
-            with measurements and models of contrasting canopies and soil water conditions.
-            Annales Geophysicae 26, 1977-1992.
-
-            Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
+Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
             scaling up from leaf to region. Advances in Ecological Research 15, 1-49. 
-            
-            Daudet F. A., Le Roux X., Sinoquet H., and Adam A., 1999:
-            Wind speed and leaf boundary conductance variation within
-            tree crown, Consequences on leaf-atmosphere coupling and tree
-            functions, Agricultural and Forest Meteorology 97, 171-185.
             
             Martin P., 1989: The significance of radiative coupling between
             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
 }
-

@@ -4,14 +4,15 @@
 \alias{ET.ref}
 \title{Reference evapotranspiration}
 \usage{
-ET.ref(data, Gs, Tair = "Tair", pressure = "pressure", VPD = "VPD",
-  Ga = "Ga", Rn = "Rn", G = NULL, S = NULL, missing.G.as.NA = F,
-  missing.S.as.NA = F, constants = bigleaf.constants())
+ET.ref(data, Gs = 0.0143, Tair = "Tair", pressure = "pressure",
+  VPD = "VPD", Rn = "Rn", Ga = "Ga", G = NULL, S = NULL,
+  missing.G.as.NA = F, missing.S.as.NA = F,
+  constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
 
-\item{Gs}{Surface conductance (m s-1)}
+\item{Gs}{Surface conductance (m s-1); defaults to 0.0143 ms-1 (~ 0.58mol m-2 s-1)}
 
 \item{Tair}{Air temperature (deg C)}
 
@@ -19,9 +20,9 @@ ET.ref(data, Gs, Tair = "Tair", pressure = "pressure", VPD = "VPD",
 
 \item{VPD}{Vapor pressure deficit (kPa)}
 
-\item{Ga}{Aerodynamic conductance (m s-1)}
-
 \item{Rn}{Net radiation (W m-2)}
+
+\item{Ga}{Aerodynamic conductance (m s-1)}
 
 \item{G}{Ground heat flux (W m-2); optional}
 
@@ -43,17 +44,33 @@ a data.frame with the following columns:
         \item{LE_0}{reference latent heat flux (W m-2)}
 }
 \description{
-Reference evapotranspiration
+Reference evapotranspiration calculated from the Penman-Monteith
+             equation with a pre-defined surface conductance.
 }
 \details{
-Reference evapotranspiration calculated from the Penman-Monteith
-         equation with a pre-defined surface conductance.
-
 Reference evapotranspiration is calculated according to the Penman-Monteith
          equation:
 
          \deqn{LE_0 = (\delta * (Rn - G - S) * \rho * cp * VPD * Ga) / (\delta + \gamma * (1 + Ga/Gs)}
+         
+         The reference evapotranspiration is calculated with respect to a 'reference surface',
+         which is typically a well-watered grass/crop of 0.12 height, an albedo of 0.23 and 
+         a surface conductance of ~ 0.6 mol m-2 s-1 (Allen et al. 1998), but can be calculated for any other
+         surface.
+}
+\examples{
+# Calculate ET_ref for a surface with known Gs (=0.5mol m-2 s-1) and Ga (0.1 ms-1)
+
+# first, Gs has to be converted to ms-1
+Gs_ms <- mol.to.ms(0.5,Tair=20,pressure=100)
+ET_ref <- ET.ref(Gs=Gs_ms,Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400)
+
+# now cross-check with the inverted version
+surface.conductance(Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400,LE=ET_ref[,"LE_ref"])
+
 }
 \references{
-
+Allen R.G., Pereira L.S., Raes D., Smith M., 1998: Crop evapotranspiration -
+             Guidelines for computing crop water requirements - FAO Irrigation and drainage
+             paper 56.
 }

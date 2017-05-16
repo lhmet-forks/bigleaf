@@ -21,7 +21,13 @@ the CO2 concentration at the canopy surface derived from net ecosystem
              CO2 exchange and measured atmospheric CO2 concentration.
 }
 \details{
+CO2 concentration at the canopy surface is calculated as:
 
+       \deqn{Ca_surf = Ca + NEE / Ga_CO2}
+       
+       Note that this equation can be used for any gas measured (with NEE
+       replaced by the net exchange of the gas and Ga_CO2 by the Ga of 
+       the respective gas).
 }
 \note{
 the following sign convention is employed: negative values of NEE denote

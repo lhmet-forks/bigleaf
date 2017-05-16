@@ -27,6 +27,8 @@ a named vector containing:
         \item{slope}{slope of the OLS regression}
         \item{r_squared}{r^2 of the OLS regression}
         \item{EBR}{energy balance ratio}
+        
+        if \code{instantaneous} is TRUE, only \code{EBR} is returned
 }
 \description{
 Calculates the degree of the energy balance non-closure for the entire timespan

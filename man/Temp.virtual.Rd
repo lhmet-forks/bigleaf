@@ -4,12 +4,14 @@
 \alias{Temp.virtual}
 \title{Virtual temperature}
 \usage{
-Temp.virtual(Tair, q, constants = bigleaf.constants())
+Temp.virtual(Tair, pressure, VPD, constants = bigleaf.constants())
 }
 \arguments{
 \item{Tair}{Air temperature (deg C)}
 
-\item{q}{Specific humidity (kg kg-1)}
+\item{pressure}{Air pressure (kPa)}
+
+\item{VPD}{Vapor pressure deficit (kPa)}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin}
 }
@@ -24,6 +26,8 @@ Virtual temperature, defined as the temperature at which dry air would have the 
 the virtual temperature is given by:
  
  \deqn{Tv = (Tair+273.15)(1 + 0.61*q)}
+
+  VPD is converted to specific humidity (q in kg kg-1) with VPD.to.q() internally.
 }
 \note{
 mixing ratio is approximated by specific humidity.

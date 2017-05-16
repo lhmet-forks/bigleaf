@@ -4,22 +4,24 @@
 \alias{intercellular.CO2}
 \title{Bulk intercellular CO2 concentration}
 \usage{
-intercellular.CO2(Ca, GPP, Gs, surface.Ca = F, Ga = NULL, NEE = NULL,
-  constants = bigleaf.constants())
+intercellular.CO2(Ca, GPP, RecoLeaf = NULL, Gs, calc.Csurf = F, Ga = NULL,
+  NEE = NULL, constants = bigleaf.constants())
 }
 \arguments{
 \item{Ca}{Atmospheric CO2 concentration (umol mol-1)}
 
 \item{GPP}{Gross primary productivity (umol CO2 m-2 s-1)}
 
+\item{RecoLeaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
+
 \item{Gs}{Surface conductance to water (mol m-2 s-1)}
 
-\item{surface.Ca}{Should the derived surface CO2 concentration be used instead of 
+\item{calc.Csurf}{Should the derived surface CO2 concentration be used instead of 
 measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.}
 
 \item{Ga}{Aerodynamic conductance to CO2 (mol m-2 s-1)}
 
-\item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1)}
+\item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem}
 
 \item{constants}{DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)}
 }
@@ -34,10 +36,11 @@ Bulk canopy intercellular CO2 concentration (Ci) calculated based on Fick's law
 \details{
 Bulk intercellular CO2 concentration (Ci) is given as:
 
-         \deqn{Ci = Ca - GPP/(Gs/1.6)}
+         \deqn{Ci = Ca - (GPP - Reco_Leaf)/(Gs/1.6)}
          
          where Gs/1.6 (mol m-2 s-1) represents the surface conductance to CO2.
-         Note that Gs is required in mol m-2 s-1.
+         Note that Gs is required in mol m-2 s-1 to water. Gs is converted to
+         its value for CO2 internally.
 }
 \note{
 The equation is based on Fick's law of diffusion and is equivalent to the
@@ -46,7 +49,18 @@ The equation is based on Fick's law of diffusion and is equivalent to the
       Gs comprises non-pyhsiological contributions (i.e. physical evaporation)
       and is confounded by physical factors (e.g. energy balance non-closure).
       GPP does not account for dark respiration and is further subject to uncertainties
-      in the NEE partitioning algorithm used.
+      in the NEE partitioning algorithm used. Leaf respiration can be provided,
+      but it is usually not known at ecosytem level (as a consequence, Ci is likely to be 
+      slightly underestimated)
       This function should be used with care and the resulting Ci might not be
-      readily comparable to its leaf-level analogue.
+      readily comparable to its leaf-level analogue and/or physiological meaningful.
+}
+\references{
+Kosugi Y. et al., 2013: Determination of the gas exchange phenology in an
+            evergreen coniferous forest from 7 years of eddy covariance flux data using
+            an extended big-leaf analysis. Ecol Res 28, 373-385.
+            
+            Keenan T., Sabate S., Gracia C., 2010: The importance of mesophyll conductance in
+            regulating forest ecosystem productivity during drought periods. Global Change Biology
+            16, 1019-1034.
 }

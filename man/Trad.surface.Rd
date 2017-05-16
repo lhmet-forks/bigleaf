@@ -15,7 +15,9 @@ Trad.surface(longwave.up, emissivity, constants = bigleaf.constants())
 Kelvin - conversion degree Celsius to Kelvin}
 }
 \value{
-Radiometric surface temperature in Kelvin and degC.
+a data.frame with the following columns:
+        \item{Trad_K}{Radiometric surface temperature (K)} \cr
+        \item{Trad_degC}{Radiometric surface temperature (degC)}
 }
 \description{
 Radiometric surface temperature from longwave upward radiation

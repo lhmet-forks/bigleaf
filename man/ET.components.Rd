@@ -5,7 +5,7 @@
 \title{Imposed and Equilibrium Evapotranspiration}
 \usage{
 ET.components(data, Tair = "Tair", pressure = "pressure", VPD = "VPD",
-  Rn = "Rn", G = NULL, S = NULL, Gs = "Gs", missing.G.as.NA = F,
+  Gs = "Gs", Rn = "Rn", G = NULL, S = NULL, missing.G.as.NA = F,
   missing.S.as.NA = F, constants = bigleaf.constants())
 }
 \arguments{
@@ -17,13 +17,13 @@ ET.components(data, Tair = "Tair", pressure = "pressure", VPD = "VPD",
 
 \item{VPD}{Air vapor pressure deficit (kPa)}
 
+\item{Gs}{surface conductance (m s-1)}
+
 \item{Rn}{Net radiation (W m-2)}
 
 \item{G}{Ground heat flux (W m-2); optional}
 
 \item{S}{Sum of all storage fluxes (W m-2); optional}
-
-\item{Gs}{surface conductance (m s-1)}
 
 \item{missing.G.as.NA}{if TRUE, missing G are treated as NA,otherwise set to 0.}
 

@@ -1538,7 +1538,6 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #'                  Kelvin - conversion degree Celsius to Kelvin \cr
 #'                  Mw - molar mass of water vapor (kg mol-1)
 #' 
-
 #' 
 #' @details Surface conductance (Gs) is calculated from the inverted Penman-Monteith equation:
 #' 
@@ -1586,7 +1585,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
 #' 
 #' # if G and/or S are available, don't forget to indicate (they are ignored by default). Note that
-#' # Ga is not added to the data.frame 'DE_Tha_June_2010'
+#' # note that Ga is not added to the data.frame 'DE_Tha_June_2010'
 #' Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
 #'                              VPD="VPD",Ga=Ga,PM=TRUE)
 #' summary(Gs_PM)
@@ -1629,7 +1628,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
        if (!missing.G.as.NA){G[is.na(G)] <- 0}
      } else {
        warning("Ground heat flux G is not provided and set to 0.")
-       G <- rep(0,nrow(data))
+       G <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
      }
      
      if(!is.null(S)){
@@ -1637,7 +1636,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
        if(!missing.S.as.NA){S[is.na(S)] <- 0 }
      } else {
        warning("Energy storage fluxes S are not provided and set to 0.")
-       S <- rep(0,nrow(data))
+       S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
      }
      
     
@@ -1780,11 +1779,17 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 #' @description the CO2 concentration at the canopy surface derived from net ecosystem
 #'              CO2 exchange and measured atmospheric CO2 concentration.
 #'              
-#' @param Ca     atmospheric CO2 concentration (umol mol-1)
-#' @param NEE    net ecosystem exchange (umol CO2 m-2 s-1)
-#' @param Ga_CO2 aerodynamic conductance for CO2 (mol m-2 s-1)
+#' @param Ca       atmospheric CO2 concentration (umol mol-1)
+#' @param NEE      net ecosystem exchange (umol CO2 m-2 s-1)
+#' @param Ga_CO2   aerodynamic conductance for CO2 (mol m-2 s-1)
 #' 
-#' @details 
+#' @details CO2 concentration at the canopy surface is calculated as:
+#' 
+#'        \deqn{Ca_surf = Ca + NEE / Ga_CO2}
+#'        
+#'        Note that this equation can be used for any gas measured (with NEE
+#'        replaced by the net exchange of the gas and Ga_CO2 by the Ga of 
+#'        the respective gas).
 #' 
 #' @note the following sign convention is employed: negative values of NEE denote
 #'       net CO2 uptake by the ecosystem.
@@ -1814,7 +1819,13 @@ Ca.surface <- function(Ca,NEE,Ga_CO2){
 #' 
 #'          \deqn{Trad = LW_up / (\sigma \epsilon)^(1/4)}   
 #' 
-#' @return Radiometric surface temperature in Kelvin and degC.
+#' @return a data.frame with the following columns:
+#'         \item{Trad_K}{Radiometric surface temperature (K)} \cr
+#'         \item{Trad_degC}{Radiometric surface temperature (degC)} 
+#' 
+#' @example 
+#' # determine Trad of an object that has an emissivity of 0.98 and emits longwave radiation of 400Wm-2  
+#' Trad.surface(400,0.98)
 #' 
 #' @export
 Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
@@ -1944,8 +1955,6 @@ Gr.longwave <- function(Tair,LAI,constants=bigleaf.constants()){
 }
 
 
-### relate more to surface temperature?
-### actually it's the wrong Esat here....
 
 #' Dew point temperature
 #' 
@@ -1997,12 +2006,15 @@ dew.point <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #'              density as moist air at its actual temperature.
 #' 
 #' @param Tair      Air temperature (deg C)
-#' @param q         Specific humidity (kg kg-1)
+#' @param pressure  Air pressure (kPa)
+#' @param VPD       Vapor pressure deficit (kPa)
 #' @param constants Kelvin - conversion degree Celsius to Kelvin
 #' 
 #' @details the virtual temperature is given by:
 #'  
 #'  \deqn{Tv = (Tair+273.15)(1 + 0.61*q)}
+#' 
+#'   VPD is converted to specific humidity (q in kg kg-1) with VPD.to.q() internally.
 #' 
 #' @note mixing ratio is approximated by specific humidity.
 #' 
@@ -2011,12 +2023,15 @@ dew.point <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #' @references Foken T., 2008: Micrometeorology. Springer, Berlin, Germany.
 #' 
 #' @export
-Temp.virtual <- function(Tair,q,constants=bigleaf.constants()){
+Temp.virtual <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
+   q    <- VPD.to.q(VPD,Tair,pressure)
    Tair <- Tair + 273.15
    Tv   <- Tair*(1+0.61*q)
    Tv   <- Tv - constants$Kelvin
    return(Tv)
 }
+
+
 
 
 #' Saturation vapor pressure (Esat) and slope of the Esat curve
@@ -2025,7 +2040,7 @@ Temp.virtual <- function(Tair,q,constants=bigleaf.constants()){
 #'              corresponding slope of the saturation vapor pressure curve.
 #' 
 #' @param Tair     Air temperature (deg C)
-#' @param formula  Formula to be used. Either "Alduchov_1996" or "Sonntag_1990"
+#' @param formula  Formula to be used. Either "Sonntag_1990" (Default) or "Alduchov_1996"
 #' 
 #' @details Esat (kPa) is calculated based on the Magnus equation:
 #' 
@@ -2041,32 +2056,37 @@ Temp.virtual <- function(Tair,q,constants=bigleaf.constants()){
 #'    \item{delta}{Slope of the saturation vapor pressure curve (kPa K-1)}
 #'    
 #'    
-#' @references Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 
+#' @references Sonntag_1990 Important new values of the physical constants of 1986, vapor 
+#'             pressure formulations based on the ITS-90, and psychrometric formulae 
+#'             
+#'             Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 
 #'             saturation vapor pressure. Journal of Applied Meteorology, 1996, 35, 601-609
 #' 
-#'             Sonntag_1990 Important new values of the physical constants of 1986, vapor 
-#'             pressure formulations based on the ITS-90, and psychrometric formulae 
-#'             (--> as used by WMO 2008!)
+#'             
 #' @export
-Esat <- function(Tair,formula=c("Alduchov_1996","Sonntag_1990")){
+Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
   
   formula <- match.arg(formula)
   
-  if (formula == "Alduchov_1996"){
-    a <- 610.94
-    b <- 17.625
-    c <- 243.04
-  } else if (formula == "Sonntag_1990"){
+  if (formula == "Sonntag_1990"){
     a <- 611.2
     b <- 17.62
     c <- 243.12
+  } else if (formula == "Alduchov_1996"){
+    a <- 610.94
+    b <- 17.625
+    c <- 243.04
   }
   
+  # saturation vapor pressure
   Esat <- a * exp((b * Tair) / (c + Tair))
   Esat <- Esat/1000
   
+  # slope of the saturation vapor pressure curve
   delta <- eval(D(expression(a * exp((b * Tair) / (c + Tair))),name="Tair"))
   delta <- delta/1000
+  
+  
   
   
   return(data.frame(Esat,delta))
@@ -2315,11 +2335,34 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 #' }
 
 
-#' Conversion between mass and molar units of carbon
+#' Conversion between mass and molar units of carbon and CO2
 #' 
 #' @description Converts CO2 quantities from umol CO2 m-2 s-1 to gC and vice versa.
 #' 
+#' @param CO2_flux  CO2 flux (umol CO2 m-2 s-1)
+#' @param constants Cmol - molar mass of carbon (kg mol-1) \cr
+#'                  Omol - molar mass of oxygen (kg mol-1)
 #' 
+#' @details The conversion is given by:
+#' 
+#' @return C_flux carbon flux in gC m-2 d-1
+#' 
+#' @export
+umolCO2.to.gC <- function(CO2_flux,constants=bigleaf.constants()){
+  
+  C_flux <- (CO2_flux / 1e06) * constants$Cmol * 1000 * 86400
+  
+  return(C_flux)
+}
+
+
+
+# gC.to.umolCO2 <- function(C_flux,constants=bigleaf.constants()){
+#   
+# 
+#   
+#   return(CO2_flux)
+# }
 
 
 
@@ -2329,9 +2372,9 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 
 #' Potential evapotranspiration
 #' 
-#' @details Potential evapotranspiration ET_pot according to Priestley & Taylor 1972.
+#' @description Potential evapotranspiration ET_pot according to Priestley & Taylor 1972.
 #' 
-#' @param data      Data.frame or matrix containing all required variables
+#' @param data      Data.frame or matrix containing all required variables; optional
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Air pressure (kPa)
 #' @param Rn        Net radiation (W m-2)
@@ -2350,9 +2393,19 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 #' @return a data.frame with the following columns:
 #'         \item{ET_pot}{potential evapotranspiration (kg m-2 s-1)}
 #'         \item{LE_pot}{potential latent heat flux (W m-2)}
+#'         
+#' @note If the first argument 'data' is provided (either a matrix or a data.frame),
+#'       the following variables can be provided as character (in which case they are interpreted as
+#'       the column name of 'data') or as numeric vectors, in which case they are taken
+#'       directly for the calculations. If 'data' is not provided, all input variables have to be
+#'       numeric vectors.        
 #'   
 #' @references Priestley C.H.B., Taylor R.J., 1972: On the assessment of surface heat flux
-#'             and evaporation using large-scale parameters. Monthly Weather Review 100, 81-92.           
+#'             and evaporation using large-scale parameters. Monthly Weather Review 100, 81-92.  
+#'             
+#' @example 
+#' # Calculate potential ET from a surface that receives Rn of 400 Wm-2
+#' ET.pot(Tair=30,pressure=100,Rn=400,alpha=1.26)    
 #' 
 #' @export
 ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,alpha=1.26,
@@ -2367,7 +2420,7 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
     warning("ground heat flux G is not provided and set to 0.")
-    G <- rep(0,nrow(data))
+    G <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
   }
   
   if(!is.null(S)){
@@ -2375,7 +2428,7 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
     warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,nrow(data))
+    S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
@@ -2392,12 +2445,12 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 
 #' Reference evapotranspiration
 #' 
-#' @details Reference evapotranspiration calculated from the Penman-Monteith
-#'          equation with a pre-defined surface conductance.
+#' @description Reference evapotranspiration calculated from the Penman-Monteith
+#'              equation with a pre-defined surface conductance.
 #'          
 #' 
 #' @param data      Data.frame or matrix containing all required variables
-#' @param Gs        Surface conductance (m s-1)
+#' @param Gs        Surface conductance (m s-1); defaults to 0.0143 ms-1 (~ 0.58mol m-2 s-1)
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Air pressure (kPa)
 #' @param VPD       Vapor pressure deficit (kPa)
@@ -2417,22 +2470,39 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #'          equation:
 #' 
 #'          \deqn{LE_0 = (\delta * (Rn - G - S) * \rho * cp * VPD * Ga) / (\delta + \gamma * (1 + Ga/Gs)}
+#'          
+#'          The reference evapotranspiration is calculated with respect to a 'reference surface',
+#'          which is typically a well-watered grass/crop of 0.12 height, an albedo of 0.23 and 
+#'          a surface conductance of ~ 0.6 mol m-2 s-1 (Allen et al. 1998), but can be calculated for any other
+#'          surface.
 #'
 #' @return a data.frame with the following columns:
 #'         \item{ET_0}{reference evapotranspiration (kg m-2 s-1)}
 #'         \item{LE_0}{reference latent heat flux (W m-2)}              
 #'                  
-#' @references        
+#' @references  Allen R.G., Pereira L.S., Raes D., Smith M., 1998: Crop evapotranspiration -
+#'              Guidelines for computing crop water requirements - FAO Irrigation and drainage
+#'              paper 56.
+#' 
+#' @examples 
+#' # Calculate ET_ref for a surface with known Gs (=0.5mol m-2 s-1) and Ga (0.1 ms-1)
+#' 
+#' # first, Gs has to be converted to ms-1
+#' Gs_ms <- mol.to.ms(0.5,Tair=20,pressure=100)
+#' ET_ref <- ET.ref(Gs=Gs_ms,Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400)
+#' 
+#' # now cross-check with the inverted version
+#' surface.conductance(Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400,LE=ET_ref[,"LE_ref"])
 #' 
 #' @export                 
-ET.ref <- function(data,Gs,Tair="Tair",pressure="pressure",VPD="VPD",Ga="Ga",Rn="Rn",
+ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="Rn",Ga="Ga",
                    G=NULL,S=NULL,missing.G.as.NA=F,missing.S.as.NA=F,
                    constants=bigleaf.constants()){
   
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
-  Rn       <- check.columns(data,Rn)
   VPD      <- check.columns(data,VPD)
+  Rn       <- check.columns(data,Rn)
   Ga       <- check.columns(data,Ga)
   
   if(!is.null(G)){
@@ -2440,7 +2510,7 @@ ET.ref <- function(data,Gs,Tair="Tair",pressure="pressure",VPD="VPD",Ga="Ga",Rn=
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
     warning("ground heat flux G is not provided and set to 0.")
-    G <- rep(0,nrow(data))
+    G <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
   }
   
   if(!is.null(S)){
@@ -2448,19 +2518,19 @@ ET.ref <- function(data,Gs,Tair="Tair",pressure="pressure",VPD="VPD",Ga="Ga",Rn=
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
     warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,nrow(data))
+    S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
   delta  <- Esat(Tair)[,"delta"]
   rho    <- air.density(Tair,pressure)
   
-  ET_0 <- (delta * (Rn - G - S) + rho * constants$cp * VPD * Ga) / 
+  LE_ref <- (delta * (Rn - G - S) + rho * constants$cp * VPD * Ga) / 
           (delta + gamma * (1 + Ga / Gs))
   
-  LE_0 <- ET.to.LE(ET_0,Tair)
+  ET_ref <- LE.to.ET(LE_ref,Tair)
   
-  return(data.frame(ET_0,LE_0))
+  return(data.frame(ET_ref,LE_ref))
   
 }
 
@@ -2476,12 +2546,12 @@ ET.ref <- function(data,Gs,Tair="Tair",pressure="pressure",VPD="VPD",Ga="Ga",Rn=
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Air pressure (kPa)
 #' @param VPD       Air vapor pressure deficit (kPa)
+#' @param Gs        surface conductance (m s-1)
 #' @param Rn        Net radiation (W m-2)
 #' @param G         Ground heat flux (W m-2); optional
 #' @param S         Sum of all storage fluxes (W m-2); optional
 #' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
 #' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0.
-#' @param Gs        surface conductance (m s-1)
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-)
 #'                  
@@ -2516,8 +2586,8 @@ ET.ref <- function(data,Gs,Tair="Tair",pressure="pressure",VPD="VPD",Ga="Ga",Rn=
 #'             3rd edition. Academic Press, London. 
 #'             
 #' @export
-ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
-                          Rn="Rn",G=NULL,S=NULL,Gs="Gs",missing.G.as.NA=F,missing.S.as.NA=F,
+ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
+                          Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=F,missing.S.as.NA=F,
                           constants=bigleaf.constants()){
   
   Tair     <- check.columns(data,Tair)
@@ -2531,7 +2601,7 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
     warning("ground heat flux G is not provided and set to 0.")
-    G <- rep(0,nrow(data))
+    G <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
   }
   
   if(!is.null(S)){
@@ -2539,7 +2609,7 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
     warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,nrow(data))
+    S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
   }
   
   rho    <- air.density(Tair,pressure)
@@ -2570,20 +2640,22 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
 #'              atmospheric CO2 concentration (Ca).
 #'                            
 #' @param Ca         Atmospheric CO2 concentration (umol mol-1)              
-#' @param GPP        Gross primary productivity (umol CO2 m-2 s-1)              
+#' @param GPP        Gross primary productivity (umol CO2 m-2 s-1)
+#' @param RecoLeaf   Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
 #' @param Gs         Surface conductance to water (mol m-2 s-1)
-#' @param surface.Ca Should the derived surface CO2 concentration be used instead of 
+#' @param calc.Csurf Should the derived surface CO2 concentration be used instead of 
 #'                   measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.
 #' @param Ga         Aerodynamic conductance to CO2 (mol m-2 s-1) 
-#' @param NEE        Net ecosystem exchange (umol CO2 m-2 s-1)
+#' @param NEE        Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem
 #' @param constants  DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
 #' 
 #' @details Bulk intercellular CO2 concentration (Ci) is given as:
 #' 
-#'          \deqn{Ci = Ca - GPP/(Gs/1.6)}
+#'          \deqn{Ci = Ca - (GPP - Reco_Leaf)/(Gs/1.6)}
 #'          
 #'          where Gs/1.6 (mol m-2 s-1) represents the surface conductance to CO2.
-#'          Note that Gs is required in mol m-2 s-1.
+#'          Note that Gs is required in mol m-2 s-1 to water. Gs is converted to
+#'          its value for CO2 internally.
 #'          
 #' @note The equation is based on Fick's law of diffusion and is equivalent to the
 #'       often used equation at leaf level (ci = ca - An/gs).
@@ -2591,24 +2663,49 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",
 #'       Gs comprises non-pyhsiological contributions (i.e. physical evaporation)
 #'       and is confounded by physical factors (e.g. energy balance non-closure).
 #'       GPP does not account for dark respiration and is further subject to uncertainties
-#'       in the NEE partitioning algorithm used.
+#'       in the NEE partitioning algorithm used. Leaf respiration can be provided,
+#'       but it is usually not known at ecosytem level (as a consequence, Ci is likely to be 
+#'       slightly underestimated)
 #'       This function should be used with care and the resulting Ci might not be
-#'       readily comparable to its leaf-level analogue.          
+#'       readily comparable to its leaf-level analogue and/or physiological meaningful.          
 #' 
 #' @return Ci - Bulk canopy intercellular CO2 concentration (umol mol-1)
 #' 
+#' @example 
+#' # calculate bulk canopy Ci of a productive ecosystem
+#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
+#' 
+#' # now calculate bulk canopy Ci, but with Ca at the canopy surface (Ga and NEE are needed)
+#' # Ga has to be in mol m-2 s-1 and for CO2, assuming that Ga for CO2 in ms-1 is 0.05
+#' # alternatively, the function aerodynamic.conductance returns Ga for CO2
+#' Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
+#' 
+#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) # note the sign convention for NEE
+#' 
+#' @references Kosugi Y. et al., 2013: Determination of the gas exchange phenology in an
+#'             evergreen coniferous forest from 7 years of eddy covariance flux data using
+#'             an extended big-leaf analysis. Ecol Res 28, 373-385.
+#'             
+#'             Keenan T., Sabate S., Gracia C., 2010: The importance of mesophyll conductance in
+#'             regulating forest ecosystem productivity during drought periods. Global Change Biology
+#'             16, 1019-1034.
 #' 
 #' @export
-intercellular.CO2 <- function(Ca,GPP,Gs,surface.Ca=F,Ga=NULL,NEE=NULL,
+intercellular.CO2 <- function(Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=F,Ga=NULL,NEE=NULL,
                               constants=bigleaf.constants()){
   
   
-  if (surface.Ca){
+  if (calc.Csurf){
     Ca <- Ca.surface(Ca,NEE,Ga)
   }
   
-  Ci <- Ca - GPP/(Gs/constants$DwDc)
+  if (is.null(RecoLeaf)){
+    RecoLeaf <- 0
+    warning("Respiration from the leaves is ignored and set to 0.")
+  }
   
+  Ci <- Ca - (GPP - RecoLeaf)/(Gs/constants$DwDc)
+
   return(Ci)
   
 }
@@ -2621,12 +2718,12 @@ intercellular.CO2 <- function(Ca,GPP,Gs,surface.Ca=F,Ga=NULL,NEE=NULL,
 #'              CO2 concentration using the Farquhar et al. 1980 model for C3 photosynthesis.
 #'              
 #' @param Temp      Surface (or air) temperature (degC) 
-#' @param PPFD      Photosynthetic photon flux density (umol m-2 s-1)           
 #' @param GPP       Gross primary productivty (umol m-2 s-1)
 #' @param Ci        Bulk canopy intercellular CO2 concentration (umol mol-1)
+#' @param PPFD      Photosynthetic photon flux density (umol m-2 s-1) 
 #' @param PPFD_sat  PPFD threshold, above which the canopy is considered to 
 #'                  be light saturated.
-#' @param Ox        O2 concentration (mol mol-1)
+#' @param Oi        intercellular O2 concentration (mol mol-1)
 #' @param Kc25      Michaelis-Menten constant for CO2 at 25 degC (umol mol-1)
 #' @param Ko25      Michaelis-Menten constant for O2 at 25 degC (mmol mol-1)
 #' @param Kc_Ha     activation energy for Kc (kJ mol-1)
@@ -2635,9 +2732,29 @@ intercellular.CO2 <- function(Ca,GPP,Gs,surface.Ca=F,Ga=NULL,NEE=NULL,
 #' @param Vcmax_Hd  deactivation energy for Vcmax (kJ mol-1)
 #' @param dS        entropy term (J mol-1 K-1)
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
-#'                  Rgas -
-
-carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,O2=0.21,Kc25=404.9,Ko25=278.4,
+#'                  Rgas - universal gas constant (J mol-1 K-1)
+#'                  
+#' @details The maximum carboxylation rate (Vcmax) and Vcmax25 (Vcmax at 25degC) are calculated
+#'          as at leaf level. The required variables Gs and Ci can be calculated from surface.conductance()
+#'          and intercellular.CO2(), respectively.
+#'          
+#' @return a data.frame with the following columns:
+#'         \item{Vcmax}{maximum carboxylation rate at Temp (umol m-2 s-1)}
+#'         \item{Vcmax25}{maximum carboxylation rate at 25degC (umol m-2 s-1)}
+#'         \item{Ko}{Michaelis-Menten constant for O2 at Temp (mmol mol-1)}
+#'         \item{Kc}{Michaelis-Menten constant for CO2 at Temp (umol mol-1)}   
+#'        
+#' @references Kosugi Y. et al., 2013: Determination of the gas exchange phenology in an
+#'             evergreen coniferous forest from 7 years of eddy covariance flux data using
+#'             an extended big-leaf analysis. Ecol Res 28, 373-385. 
+#'             
+#'             Sharkey T.D., Bernacchi C.J., Farquhar G.D., Singsaas E.L., 2007: Fitting
+#'             photosynthetic carbon dioxide response curves for C3 leaves. Plant, Cell and
+#'             Environment 30, 1035-1040.
+#'             
+#'                             
+#' @export                  
+carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
                         Kc_Ha=79.43,Ko_Ha=36.38,Vcmax_Ha=65.33,Vcmax_Hd=200,
                         dS=640,constants=bigleaf.constants()){
   
@@ -2659,7 +2776,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,O2=0.21,Kc25=404.9,Ko25=278.4,
   GPPc <- GPP
   
   # calculate Vcmax and Vcmax25
-  Vcmax   <- (GPPc * (Ci + Kc*(1.0 + Ox/Ko))) / Ci
+  Vcmax   <- (GPPc * (Ci + Kc*(1.0 + Oi/Ko))) / Ci
   
   Vcmax25 <- Vcmax / 
              ( exp(Vcmax_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
@@ -2682,8 +2799,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,O2=0.21,Kc25=404.9,Ko25=278.4,
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Air pressure (kPa)
 #' @param GPP       Gross primary productivity (umol CO2 m-2 s-1)
-#' @param Gs        Surface conductance to water vapor (m s-1); converted to mol m-2 s-1
-#'                  internally.
+#' @param Gs        Surface conductance to water vapor (mol m-2 s-1)
 #' @param VPD       Vapor pressure deficit (kPa)
 #' @param Ca        Atmospheric CO2 concentration (umol mol-1)
 #' @param model     Stomatal model used. One of c("USO","Ball&Berry","Leuning")
@@ -2743,7 +2859,23 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,O2=0.21,Kc25=404.9,Ko25=278.4,
 #' # select data only that were filtered in the previous function and in June
 #' DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month"] == 6,]
 #' 
+#' # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed)
+#' # calculate a simple estimate of Ga based on Thom 1972
+#' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
 #' 
+#' # if G and/or S are available, don't forget to indicate (they are ignored by default). Note that
+#' # note that Ga is not added to the data.frame 'DE_Tha_June_2010'
+#' Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
+#'                              VPD="VPD",Ga=Ga,PM=TRUE)[,"Gs_mol"]
+#'                              
+#' ### Estimate the stomatal slope parameter g1 using the USO model
+#' mod_USO <- stomatal.slope(DE_Tha_June_2010,model="USO",GPP="GPP_nt",Gs=Gs_PM,nmin=40,fitg0=FALSE)
+#' 
+#' ### Estimate the same parameter from the Ball&Berry model and prescribe g0
+#' mod_BB <- stomatal.slope(DE_Tha_June_2010,model="Ball&Berry",GPP="GPP_nt",Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
+#' 
+#' ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
+#' mod_Leu <- stomatal.slope(DE_Tha_June_2010,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,nmin=40,fitg0=TRUE,D0=1.5,fitD0=FALSE)                         
 #' 
 #' @export 
 stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs="Gs",VPD="VPD",Ca="Ca",
@@ -2752,19 +2884,14 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
   
   model <- match.arg(model)
   
-  if (!missing(data)){
-    Tair     <- check.columns(data,Tair)
-    pressure <- check.columns(data,pressure)
-    GPP      <- check.columns(data,GPP)
-    Gs       <- check.columns(data,Gs)
-    VPD      <- check.columns(data,VPD)
-    Ca       <- check.columns(data,Ca)
-  }
-  
-  Gs <- ms.to.mol(Gs,Tair,pressure,constants)
+  Tair     <- check.columns(data,Tair)
+  pressure <- check.columns(data,pressure)
+  GPP      <- check.columns(data,GPP)
+  Gs       <- check.columns(data,Gs)
+  VPD      <- check.columns(data,VPD)
+  Ca       <- check.columns(data,Ca)
   
   nr_data <- sum(!is.na(GPP) & !is.na(Gs) & !is.na(VPD) & !is.na(Ca))
-  
   
   if (nr_data < nmin){
     stop("number of data is less than 'nmin'. g1 is not fitted to the data.")
@@ -2884,10 +3011,21 @@ biochemical.energy <- function(alpha=0.422,NEE){
 #'         \item{slope}{slope of the OLS regression}
 #'         \item{r_squared}{r^2 of the OLS regression}
 #'         \item{EBR}{energy balance ratio}
+#'         
+#'         if \code{instantaneous} is TRUE, only \code{EBR} is returned
 #' 
 #' @references Wilson K., et al. 2002: Energy balance closure at FLUXNET sites.
 #'             Agricultural and Forest Meteorology 113, 223-243.
 #'
+#' @example 
+#' load("DE-Tha_2010.rda") # load data
+#' 
+#' ## characterize energy balance closure for DE-Tha in 2010
+#' energy.closure(DE_Tha_2010,instantaneous=F)
+#' 
+#' ## look at half-hourly closure 
+#' energy.closure(DE_Tha_2010,instantaneous=T)
+#' 
 #' @export
 energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneous=F,
                            missing.G.as.NA=F,missing.S.as.NA=F){
@@ -2901,7 +3039,7 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
     warning("ground heat flux G is not provided and set to 0.")
-    G <- rep(0,nrow(data))
+    G <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
   }
   
   if(!is.null(S)){
@@ -2909,7 +3047,7 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
     warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,nrow(data))
+    S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
   }
 
   if (!instantaneous){
@@ -2919,11 +3057,11 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
     EBR <- sum(LE[comp] + H[comp]) / sum(Rn[comp] - G[comp] - S[comp])
   
     emod <- lm((LE + H) ~ (Rn - G - S))
-    intercept <- summary(emod)$coef[1,1]  
-    slope     <- summary(emod)$coef[2,1] 
+    intercept <- summary(emod)$coef[1,1]
+    slope     <- summary(emod)$coef[2,1]
     r_squared <- summary(emod)$r.squared
     
-    return(c("n"=n,"intercept"=intercept,"slope"=slope,"r^2"=r_squared,"EBR"=EBR))
+    return(c("n"=n,"intercept"=round(intercept,3),"slope"=round(slope,3),"r^2"=round(r_squared,3),"EBR"=round(EBR,3)))
   
   } else {
     

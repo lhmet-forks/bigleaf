@@ -4,7 +4,7 @@
 \alias{carbox.rate}
 \title{Bulk canopy maximum carboxylation efficiency (Vcmax)}
 \usage{
-carbox.rate(Temp, GPP, Ci, PPFD, PPFD_sat, O2 = 0.21, Kc25 = 404.9,
+carbox.rate(Temp, GPP, Ci, PPFD, PPFD_sat, Oi = 0.21, Kc25 = 404.9,
   Ko25 = 278.4, Kc_Ha = 79.43, Ko_Ha = 36.38, Vcmax_Ha = 65.33,
   Vcmax_Hd = 200, dS = 640, constants = bigleaf.constants())
 }
@@ -19,6 +19,8 @@ carbox.rate(Temp, GPP, Ci, PPFD, PPFD_sat, O2 = 0.21, Kc25 = 404.9,
 
 \item{PPFD_sat}{PPFD threshold, above which the canopy is considered to 
 be light saturated.}
+
+\item{Oi}{intercellular O2 concentration (mol mol-1)}
 
 \item{Kc25}{Michaelis-Menten constant for CO2 at 25 degC (umol mol-1)}
 
@@ -35,11 +37,30 @@ be light saturated.}
 \item{dS}{entropy term (J mol-1 K-1)}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
-Rgas -}
-
-\item{Ox}{O2 concentration (mol mol-1)}
+Rgas - universal gas constant (J mol-1 K-1)}
+}
+\value{
+a data.frame with the following columns:
+        \item{Vcmax}{maximum carboxylation rate at Temp (umol m-2 s-1)}
+        \item{Vcmax25}{maximum carboxylation rate at 25degC (umol m-2 s-1)}
+        \item{Ko}{Michaelis-Menten constant for O2 at Temp (mmol mol-1)}
+        \item{Kc}{Michaelis-Menten constant for CO2 at Temp (umol mol-1)}
 }
 \description{
 Bulk canopy maximum carboxylation rate (Vcmax) from bulk intercellular 
              CO2 concentration using the Farquhar et al. 1980 model for C3 photosynthesis.
+}
+\details{
+The maximum carboxylation rate (Vcmax) and Vcmax25 (Vcmax at 25degC) are calculated
+         as at leaf level. The required variables Gs and Ci can be calculated from surface.conductance()
+         and intercellular.CO2(), respectively.
+}
+\references{
+Kosugi Y. et al., 2013: Determination of the gas exchange phenology in an
+            evergreen coniferous forest from 7 years of eddy covariance flux data using
+            an extended big-leaf analysis. Ecol Res 28, 373-385. 
+            
+            Sharkey T.D., Bernacchi C.J., Farquhar G.D., Singsaas E.L., 2007: Fitting
+            photosynthetic carbon dioxide response curves for C3 leaves. Plant, Cell and
+            Environment 30, 1035-1040.
 }

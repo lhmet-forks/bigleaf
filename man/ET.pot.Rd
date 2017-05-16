@@ -2,14 +2,14 @@
 % Please edit documentation in R/bigleaf.R
 \name{ET.pot}
 \alias{ET.pot}
-\title{Conversions between radiation measures}
+\title{Potential evapotranspiration}
 \usage{
 ET.pot(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
   S = NULL, alpha = 1.26, missing.G.as.NA = F, missing.S.as.NA = F,
   constants = bigleaf.constants())
 }
 \arguments{
-\item{data}{Data.frame or matrix containing all required variables}
+\item{data}{Data.frame or matrix containing all required variables; optional}
 
 \item{Tair}{Air temperature (deg C)}
 
@@ -36,26 +36,19 @@ a data.frame with the following columns:
         \item{LE_pot}{potential latent heat flux (W m-2)}
 }
 \description{
-Converts radiation from umol m-2 s-1 to W m-2 and vice versa.
-
-
-Watt.to.mol <- function(PAR,conversion){
-  PPFD <- PAR
-  return(PPFD)
-}
-Conversion between mass and molar units of carbon
-
-Converts CO2 quantities from umol CO2 m-2 s-1 to gC and vice versa.
-
-
-Potential evapotranspiration
+Potential evapotranspiration ET_pot according to Priestley & Taylor 1972.
 }
 \details{
-Potential evapotranspiration ET_pot according to Priestley & Taylor 1972.
-
 Potential evapotranspiration is calculated according to Priestley & Taylor, 1972:
 
          \deqn{LE_pot = (\alpha * \delta * (Rn - G - S)) / (\delta + \gamma)}
+}
+\note{
+If the first argument 'data' is provided (either a matrix or a data.frame),
+      the following variables can be provided as character (in which case they are interpreted as
+      the column name of 'data') or as numeric vectors, in which case they are taken
+      directly for the calculations. If 'data' is not provided, all input variables have to be
+      numeric vectors.
 }
 \references{
 Priestley C.H.B., Taylor R.J., 1972: On the assessment of surface heat flux

@@ -93,7 +93,7 @@ summary(Gs_gradient)
 Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
 
 # if G and/or S are available, don't forget to indicate (they are ignored by default). Note that
-# Ga is not added to the data.frame 'DE_Tha_June_2010'
+# note that Ga is not added to the data.frame 'DE_Tha_June_2010'
 Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
                              VPD="VPD",Ga=Ga,PM=TRUE)
 summary(Gs_PM)

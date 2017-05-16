@@ -4,12 +4,12 @@
 \alias{Esat}
 \title{Saturation vapor pressure (Esat) and slope of the Esat curve}
 \usage{
-Esat(Tair, formula = c("Alduchov_1996", "Sonntag_1990"))
+Esat(Tair, formula = c("Sonntag_1990", "Alduchov_1996"))
 }
 \arguments{
 \item{Tair}{Air temperature (deg C)}
 
-\item{formula}{Formula to be used. Either "Alduchov_1996" or "Sonntag_1990"}
+\item{formula}{Formula to be used. Either "Sonntag_1990" (Default) or "Alduchov_1996"}
 }
 \value{
 A dataframe with the following columns: 
@@ -31,10 +31,9 @@ Esat (kPa) is calculated based on the Magnus equation:
  formula
 }
 \references{
-Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 
-            saturation vapor pressure. Journal of Applied Meteorology, 1996, 35, 601-609
-
-            Sonntag_1990 Important new values of the physical constants of 1986, vapor 
+Sonntag_1990 Important new values of the physical constants of 1986, vapor 
             pressure formulations based on the ITS-90, and psychrometric formulae 
-            (--> as used by WMO 2008!)
+            
+            Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 
+            saturation vapor pressure. Journal of Applied Meteorology, 1996, 35, 601-609
 }

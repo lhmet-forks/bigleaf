@@ -28,3 +28,8 @@ Radiometric surface temperature (Trad) is calculated as:
 
          \deqn{Trad = LW_up / (\sigma \epsilon)^(1/4)}
 }
+\examples{
+# determine Trad of an object that has an emissivity of 0.98 and emits longwave radiation of 400Wm-2  
+Trad.surface(400,0.98)
+
+}

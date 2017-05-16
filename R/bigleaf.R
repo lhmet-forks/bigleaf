@@ -1823,7 +1823,7 @@ Ca.surface <- function(Ca,NEE,Ga_CO2){
 #'         \item{Trad_K}{Radiometric surface temperature (K)} \cr
 #'         \item{Trad_degC}{Radiometric surface temperature (degC)} 
 #' 
-#' @example 
+#' @examples 
 #' # determine Trad of an object that has an emissivity of 0.98 and emits longwave radiation of 400Wm-2  
 #' Trad.surface(400,0.98)
 #' 
@@ -2403,7 +2403,7 @@ umolCO2.to.gC <- function(CO2_flux,constants=bigleaf.constants()){
 #' @references Priestley C.H.B., Taylor R.J., 1972: On the assessment of surface heat flux
 #'             and evaporation using large-scale parameters. Monthly Weather Review 100, 81-92.  
 #'             
-#' @example 
+#' @examples 
 #' # Calculate potential ET from a surface that receives Rn of 400 Wm-2
 #' ET.pot(Tair=30,pressure=100,Rn=400,alpha=1.26)    
 #' 
@@ -2642,19 +2642,19 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
 #' @param Ca         Atmospheric CO2 concentration (umol mol-1)              
 #' @param GPP        Gross primary productivity (umol CO2 m-2 s-1)
 #' @param RecoLeaf   Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
-#' @param Gs         Surface conductance to water (mol m-2 s-1)
+#' @param Gs         Surface conductance to water vapor (mol m-2 s-1)
 #' @param calc.Csurf Should the derived surface CO2 concentration be used instead of 
 #'                   measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.
 #' @param Ga         Aerodynamic conductance to CO2 (mol m-2 s-1) 
 #' @param NEE        Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem
 #' @param constants  DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
 #' 
-#' @details Bulk intercellular CO2 concentration (Ci) is given as:
+#' @details Bulk intercellular CO2 concentration (Ci) is given by:
 #' 
 #'          \deqn{Ci = Ca - (GPP - Reco_Leaf)/(Gs/1.6)}
 #'          
 #'          where Gs/1.6 (mol m-2 s-1) represents the surface conductance to CO2.
-#'          Note that Gs is required in mol m-2 s-1 to water. Gs is converted to
+#'          Note that Gs is required in mol m-2 s-1 for water vapor. Gs is converted to
 #'          its value for CO2 internally.
 #'          
 #' @note The equation is based on Fick's law of diffusion and is equivalent to the
@@ -2671,7 +2671,7 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
 #' 
 #' @return Ci - Bulk canopy intercellular CO2 concentration (umol mol-1)
 #' 
-#' @example 
+#' @examples 
 #' # calculate bulk canopy Ci of a productive ecosystem
 #' intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
 #' 
@@ -2848,7 +2848,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #' 
 #' @examples 
 #' # calculate g1 for the site DE-Tha using data from June 2010
-#' load("DE-Tha_2010.rda") # load data
+#' load("DE_Tha_2010") # load data
 #' 
 #' # filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
 #' DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
@@ -2951,8 +2951,8 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
 #' @description Radiant energy absorbed in photosynthesis or heat release by respiration calculated
 #'              from net ecosystem exchange of CO2 (NEE).  
 #' 
-#' @param alpha   Energy taken up/released by photosynthesis/respiration (J umol-1)
 #' @param NEE     Net ecosystem exchange (umol CO2 m-2 s-1)
+#' @param alpha   Energy taken up/released by photosynthesis/respiration (J umol-1)
 #' 
 #' @details The following sign convention is employed: NEE is negative when carbon is taken up by the ecosystem.
 #'          Positive values of the resulting biochemical energy mean that energy is taken up by the ecosystem, 
@@ -2972,12 +2972,12 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
 #'             forest: Partitioning overstory and understory components. 
 #'             Journal of Geophysical Research 102, 28915-28927. 
 #'             
-#' @example 
+#' @examples 
 #' # Calculate biochemical energy taken up by the ecosystem with a measured NEE of -30umol CO2 m-2 s-1             
 #' biochemical.energy(NEE=-30)            
 #'            
 #' @export 
-biochemical.energy <- function(alpha=0.422,NEE){
+biochemical.energy <- function(NEE,alpha=0.422){
   Sp <- -alpha*NEE
   return(Sp)
 }
@@ -3017,7 +3017,7 @@ biochemical.energy <- function(alpha=0.422,NEE){
 #' @references Wilson K., et al. 2002: Energy balance closure at FLUXNET sites.
 #'             Agricultural and Forest Meteorology 113, 223-243.
 #'
-#' @example 
+#' @examples 
 #' load("DE-Tha_2010.rda") # load data
 #' 
 #' ## characterize energy balance closure for DE-Tha in 2010
@@ -3099,7 +3099,7 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
 #' @references Jones, H. 2014: Plants and Microclimate. 3rd edition, Cambridge
 #'             University Press.
 #' 
-#' @example 
+#' @examples 
 #' # calculate isothermal net radiation of a surface that is 2?c warmer than the air.
 #' isothermal.Rn(Rn=400,Tair=25,Tsurf=27,emissivity=0.98)
 #' 

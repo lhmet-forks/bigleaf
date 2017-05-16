@@ -50,6 +50,11 @@ If the first argument 'data' is provided (either a matrix or a data.frame),
       directly for the calculations. If 'data' is not provided, all input variables have to be
       numeric vectors.
 }
+\examples{
+# Calculate potential ET from a surface that receives Rn of 400 Wm-2
+ET.pot(Tair=30,pressure=100,Rn=400,alpha=1.26)    
+
+}
 \references{
 Priestley C.H.B., Taylor R.J., 1972: On the assessment of surface heat flux
             and evaporation using large-scale parameters. Monthly Weather Review 100, 81-92.

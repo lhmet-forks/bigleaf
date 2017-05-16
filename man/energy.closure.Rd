@@ -42,6 +42,16 @@ The energy balance ratio (EBR) is calculated as:
          the sum is taken for all timesteps with complete observations (i.e. where
          all energy balance terms are available).
 }
+\examples{
+load("DE-Tha_2010.rda") # load data
+
+## characterize energy balance closure for DE-Tha in 2010
+energy.closure(DE_Tha_2010,instantaneous=F)
+
+## look at half-hourly closure 
+energy.closure(DE_Tha_2010,instantaneous=T)
+
+}
 \references{
 Wilson K., et al. 2002: Energy balance closure at FLUXNET sites.
             Agricultural and Forest Meteorology 113, 223-243.

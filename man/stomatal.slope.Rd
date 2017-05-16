@@ -71,7 +71,7 @@ All stomatal models were developed at leaf-level, but its parameters
 }
 \examples{
 # calculate g1 for the site DE-Tha using data from June 2010
-load("DE-Tha_2010.rda") # load data
+load("DE_Tha_2010") # load data
 
 # filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
 DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",

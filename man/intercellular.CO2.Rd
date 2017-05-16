@@ -14,7 +14,7 @@ intercellular.CO2(Ca, GPP, RecoLeaf = NULL, Gs, calc.Csurf = F, Ga = NULL,
 
 \item{RecoLeaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 
-\item{Gs}{Surface conductance to water (mol m-2 s-1)}
+\item{Gs}{Surface conductance to water vapor (mol m-2 s-1)}
 
 \item{calc.Csurf}{Should the derived surface CO2 concentration be used instead of 
 measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.}
@@ -34,12 +34,12 @@ Bulk canopy intercellular CO2 concentration (Ci) calculated based on Fick's law
              atmospheric CO2 concentration (Ca).
 }
 \details{
-Bulk intercellular CO2 concentration (Ci) is given as:
+Bulk intercellular CO2 concentration (Ci) is given by:
 
          \deqn{Ci = Ca - (GPP - Reco_Leaf)/(Gs/1.6)}
          
          where Gs/1.6 (mol m-2 s-1) represents the surface conductance to CO2.
-         Note that Gs is required in mol m-2 s-1 to water. Gs is converted to
+         Note that Gs is required in mol m-2 s-1 for water vapor. Gs is converted to
          its value for CO2 internally.
 }
 \note{
@@ -54,6 +54,18 @@ The equation is based on Fick's law of diffusion and is equivalent to the
       slightly underestimated)
       This function should be used with care and the resulting Ci might not be
       readily comparable to its leaf-level analogue and/or physiological meaningful.
+}
+\examples{
+# calculate bulk canopy Ci of a productive ecosystem
+intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
+
+# now calculate bulk canopy Ci, but with Ca at the canopy surface (Ga and NEE are needed)
+# Ga has to be in mol m-2 s-1 and for CO2, assuming that Ga for CO2 in ms-1 is 0.05
+# alternatively, the function aerodynamic.conductance returns Ga for CO2
+Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
+
+intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) # note the sign convention for NEE
+
 }
 \references{
 Kosugi Y. et al., 2013: Determination of the gas exchange phenology in an

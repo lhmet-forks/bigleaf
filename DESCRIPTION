@@ -1,13 +1,13 @@
 Package: bigleaf
 Version: 0.1
-Date: 2017-01-09
+Date: 2017-05-15
 Title: 
 Authors@R: c( person("Juergen", "Knauer", role=c("aut","cre"), email="jknauer@bgc-jena.mpg.de"),
               person("Soenke", "Zaehle", role=c("aut"), email="szaehle@bgc.mpg.de") 
 			 )
 Description: Calculation of meteorological, aerodynamic, and physiological ecosystem properties based on
              measured fluxes with the eddy-covariance technique and meteorological data. Calculations
-			 assume the surface to behave like a 'big leaf'.
+			 assume the surface to behave like a 'big-leaf'.
 License: GPL (>= 2)
 LazyData: no
 Built: R 3.1.0; x86_64-w64-mingw32; 2016-12-21 10:28:22 UTC; windows

@@ -4,12 +4,12 @@
 \alias{biochemical.energy}
 \title{Biochemical energy}
 \usage{
-biochemical.energy(alpha = 0.422, NEE)
+biochemical.energy(NEE, alpha = 0.422)
 }
 \arguments{
-\item{alpha}{Energy taken up/released by photosynthesis/respiration (J umol-1)}
-
 \item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1)}
+
+\item{alpha}{Energy taken up/released by photosynthesis/respiration (J umol-1)}
 }
 \value{
 Sp - biochemical energy (W m-2)
@@ -24,6 +24,11 @@ The following sign convention is employed: NEE is negative when carbon is taken 
          negative ones that heat is released.
          The value of alpha is taken from Nobel 1974 (see Meyers & Hollinger 2004), but other values
          have been used (e.g. Blanken et al., 1997)
+}
+\examples{
+# Calculate biochemical energy taken up by the ecosystem with a measured NEE of -30umol CO2 m-2 s-1             
+biochemical.energy(NEE=-30)            
+           
 }
 \references{
 Meyers, T.P., Hollinger, S.E. 2004: An assessment of storage terms in the surface energy

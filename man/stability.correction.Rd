@@ -2,32 +2,14 @@
 % Please edit documentation in R/bigleaf.R
 \name{stability.correction}
 \alias{stability.correction}
-\title{stability correction functions for heat and momentum}
+\title{Integrated stability correction functions for heat and momentum}
 \usage{
-stability.correction(data, Tair = "Tair", pressure = "pressure",
-  ustar = "ustar", H = "H", zr, d, formulation = c("Dyer_1970",
-  "Businger_1971"), constants = bigleaf.constants())
+stability.correction(zeta, formulation = c("Dyer_1970", "Businger_1971"))
 }
 \arguments{
-\item{Tair}{Air temperature (deg C)}
-
-\item{pressure}{Air pressure (kPa)}
-
-\item{ustar}{Friction velocity (m s-1)}
-
-\item{H}{Sensible heat flux (W m-2)}
-
-\item{zr}{instrument (reference) height (m)}
-
-\item{d}{Zero-plane displacement height (m)}
+\item{zeta}{Stability parameter zeta (-)}
 
 \item{formulation}{Formulation for the stability function. Either "Dyer_1970", or "Businger_1971"}
-
-\item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
-Rd - gas constant of dry air (J kg-1 K-1) \cr
-cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
-k - von Karman constant (-) \cr
-g - gravitational acceleration (m s-2)}
 }
 \value{
 a data.frame with the following columns:
@@ -39,21 +21,26 @@ dimensionless stability functions needed to correct deviations
              from the exponential wind profile under non-neutral conditions.
 }
 \details{
-gives the integrated form of the universal functions.
-
-The functions depend on the value of the stability parameter \eqn{\zeta},
+The functions give the integrated form of the universal functions. They
+         depend on the value of the stability parameter \eqn{\zeta},
          which can be calculated from the function \code{\link{stability.parameter}}.
          The integration of the universal functions is:
          
-         \deqn{-x * zeta} 
+         \deqn{\psi = -x * zeta} 
          
          for stable atmospheric conditions (\eqn{\zeta} >= 0), and
          
-         \deqn{2 * log( (1 + y) / 2) }
+         \deqn{\psi = 2 * log( (1 + y) / 2) }
          
          for unstable atmospheric conditions (\eqn{\zeta} < 0).
          
          The different formulations differ in their value of x and y.
+}
+\examples{
+zeta <- seq(-2,0.5,0.01)
+stability.correction(zeta)
+stability.correction(zeta,formulation="Businger_1971")                          
+            
 }
 \references{
 Dyer, A.J., 1974: A review of flux-profile relationships. 

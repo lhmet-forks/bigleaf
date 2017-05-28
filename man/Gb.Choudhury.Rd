@@ -5,9 +5,9 @@
 \title{Boundary layer conductance according to Choudhury & Monteith 1988}
 \usage{
 Gb.Choudhury(data, Tair = "Tair", pressure = "pressure", wind = "wind",
-  ustar = "ustar", H = "H", leafwidth, LAI, zh, zr, d, z0m,
-  stab_correction = TRUE, stab_formulation = c("Dyer_1970",
-  "Businger_1971"), constants = bigleaf.constants())
+  ustar = "ustar", H = "H", leafwidth, LAI, zh, zr, d,
+  stab_formulation = c("Dyer_1970", "Businger_1971"),
+  constants = bigleaf.constants())
 }
 \arguments{
 \item{wind}{Wind speed at sensor height (m s-1)}
@@ -22,7 +22,7 @@ Gb.Choudhury(data, Tair = "Tair", pressure = "pressure", wind = "wind",
 
 \item{zr}{Instrument (reference) height (m)}
 
-\item{stab_correction}{Should stability correction be applied? Defaults to TRUE}
+\item{d}{Zero-plane displacement height (-), can be calculated using \code{roughness.parameters}}
 
 \item{stab_formulation}{Stability correction function used (If stab_correction is TRUE).
 Either "Dyer_1970" or "Businger_1971".}
@@ -57,12 +57,21 @@ Boundary layer conductance according to Choudhury & Monteith 1988 is
          
          Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
  
-         \deqn{Rb_CO2 = 1.4 * Rb}
+         \deqn{Rb_CO2 = 1.37 * Rb}
  
-         The factor 1.4 arises due the lower molecular diffusivity of CO2 compared to water.
+         The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
          It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
          across the boundary layer is assumed to be partly by diffusion and partly by turbulent
          mixing (Nobel 2005).
+}
+\examples{
+## bulk canopy boundary layer resistance for a closed canopy (LAI=5) with large leaves (leafwdith=0.1)            
+df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250))    
+Gb.Choudhury(data=df,leafwidth=0.1,LAI=5,zh=25,d=17.5,zr=40)
+
+## same conditions, but smaller leaves (leafwidth=0.01)
+Gb.Choudhury(data=df,leafwidth=0.01,LAI=5,zh=25,d=17.5,zr=40) 
+
 }
 \references{
 Choudhury, B. J., Monteith J.L., 1988: A four-layer model for the heat

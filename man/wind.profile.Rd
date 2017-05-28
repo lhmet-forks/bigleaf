@@ -4,16 +4,17 @@
 \alias{wind.profile}
 \title{Wind speed at given levels in the surface layer}
 \usage{
-wind.profile(heights, data, Tair = "Tair", pressure = "pressure",
-  ustar = "ustar", H = "H", zr, d, z0m, stab_correction = TRUE,
+wind.profile(data, heights, Tair = "Tair", pressure = "pressure",
+  ustar = "ustar", H = "H", zr, zh, d = NULL, frac_d = 0.7,
+  z0m = NULL, frac_z0m = 0.1, stab_correction = TRUE,
   stab_formulation = c("Dyer_1970", "Businger_1971"),
   constants = bigleaf.constants())
 }
 \arguments{
+\item{data}{Data.frame or matrix containing all required variables}
+
 \item{heights}{vector with heights for which wind speed is to be 
 calculated.}
-
-\item{data}{Data.frame or matrix containing all required variables}
 
 \item{Tair}{Air temperature (deg C)}
 
@@ -25,9 +26,17 @@ calculated.}
 
 \item{zr}{Instrument (reference) height (m)}
 
-\item{d}{Zero-plane displacement height (m)}
+\item{zh}{Canopy height (m)}
 
-\item{z0m}{Roughness length for momentum (m)}
+\item{d}{Zero-plane displacement height (-)}
+
+\item{frac_d}{Fraction of displacement height on canopy height (-);
+only used if \code{d} is not available}
+
+\item{z0m}{Roughness length (m), optional; only used if stab_correction=FALSE (default=0.1)}
+
+\item{frac_z0m}{Fraction of roughness length on canopy height (-), optional; only used 
+if stab_correction=FALSE (default=0.1), only used if \code{z0m} is not available}
 
 \item{stab_correction}{Should stability correction be applied? Defaults to TRUE}
 
@@ -58,8 +67,14 @@ The underlying assumption is the existence of a logarithmic wind profile
          can be approximated from \code{\link{roughness.parameters}}.
 }
 \note{
-Note that this equation is only valid for z >= d + z0m. All values in \code{heights}
+Note that this equation is only valid for z >= d + z0m, and it is not 
+      meaningful to calculate values closely above d + z0m. All values in \code{heights}
       smaller than d + z0m will return 0.
+}
+\examples{
+df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 
+wind.profile(df,heights=c(17:40),zr=40,zh=25,d=16)
+
 }
 \references{
 

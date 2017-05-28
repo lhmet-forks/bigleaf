@@ -30,12 +30,17 @@ The empirical equation for Rb to water suggested by Thom 1972 is:
  
  Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
  
- \deqn{Rb_CO2 = 1.4 * Rb}
+ \deqn{Rb_CO2 = 1.37 * Rb}
  
- The factor 1.4 arises due the lower molecular diffusivity of CO2 compared to water.
+ The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
  It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
  across the boundary layer is assumed to be partly by diffusion and partly by turbulent
  mixing (Nobel 2005).
+}
+\examples{
+# calculate Canopy boundary layer resistance when ustar=0.4ms-1
+Gb.Thom(0.4)
+
 }
 \references{
 Thom, A., 1972: Momentum, mass and heat exchange of vegetation.

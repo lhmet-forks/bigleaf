@@ -2,31 +2,25 @@
 % Please edit documentation in R/bigleaf.R
 \name{umolCO2.to.gC}
 \alias{umolCO2.to.gC}
-\title{Conversions between radiation measures}
+\alias{gC.to.umolCO2}
+\title{Conversion between mass and molar units}
 \usage{
 umolCO2.to.gC(CO2_flux, constants = bigleaf.constants())
+
+gC.to.umolCO2(C_flux, constants = bigleaf.constants())
 }
 \arguments{
 \item{CO2_flux}{CO2 flux (umol CO2 m-2 s-1)}
 
-\item{constants}{Cmol - molar mass of carbon (kg mol-1) \cr
-Omol - molar mass of oxygen (kg mol-1)}
-}
-\value{
-C_flux carbon flux in gC m-2 d-1
+\item{constants}{Cmol - molar mass of carbon (kg mol-1)}
+
+\item{C_flux}{C flux (gC m-2 s-1)}
+
+\item{C_flux}{CO2 flux (gC m-2 s-1)}
 }
 \description{
-Converts radiation from umol m-2 s-1 to W m-2 and vice versa.
-
-
-Watt.to.mol <- function(PAR,conversion){
-  PPFD <- PAR
-  return(PPFD)
-}
-Conversion between mass and molar units of carbon and CO2
-
 Converts CO2 quantities from umol CO2 m-2 s-1 to gC and vice versa.
 }
 \details{
-The conversion is given by:
+The conversions are given by:
 }

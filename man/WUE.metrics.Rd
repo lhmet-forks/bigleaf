@@ -20,7 +20,7 @@ WUE.metrics(data, GPP = "GPP_nt", NEE = "NEE", LE = "LE", VPD = "VPD",
 
 \item{Tair}{Air temperature (deg C)}
 
-\item{constants}{}
+\item{constants}{Cmol - molar mass of carbon (kg mol-1)}
 }
 \value{
 a named vector with the following elements:
@@ -50,9 +50,13 @@ the following metrics are calculated:
          Underlying water-use efficiency (uWUE; Zhou et al. 2014):
          
          \deqn{uWUE= (GPP * sqrt(VPD)) / ET}
+         
+         All metrics are calculated based on the median of all values. E.g.
+         WUE = median(GPP/ET,na.rm=T)
 }
 \note{
 Units for VPD can also be hPa. Units change accordingly.
+      WUE_NEE is calculated based on the absolute value of NEE (the sign convention does not matter).
 }
 \references{
 Beer, C., et al., 2009: Temporal and among-site variability of inherent

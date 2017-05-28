@@ -12,6 +12,6 @@ check.columns(data, column_name)
 \item{column_name}{the column name}
 }
 \description{
-check if columns in a data.frame or matrix exist and if they 
-             are of the right type (numeric).
+check if columns in a data.frame or matrix (or vector variables) 
+             exist and if they are of the right type (numeric).
 }

@@ -42,6 +42,3 @@ The basic idea behind the growing season filter is that vegetation is
          as growing season or non-growing season, it is changed to the status of 
          the neighbouring values.
 }
-\references{
-Knauer 2017
-}

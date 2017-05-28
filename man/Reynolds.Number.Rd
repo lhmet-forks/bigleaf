@@ -28,7 +28,7 @@ a data.frame with the following columns:
 
 }
 \details{
-The roughness Reynolds Number is calculated as in Massman 1999a:
+The Roughness Reynolds Number is calculated as in Massman 1999a:
          
          \deqn{Re = hs * ustar / v}
          

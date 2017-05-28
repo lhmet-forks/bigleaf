@@ -5,45 +5,40 @@
 \title{Boundary layer conductance according to Su et al. 2001}
 \usage{
 Gb.Su(data, Tair = "Tair", pressure = "pressure", ustar = "ustar",
-  wind = "wind", H = "H", zh, zr, d, z0m, Dl, N, fc = NULL, LAI,
-  Cd = 0.2, hs = 0.01, stab_correction = TRUE,
-  stab_formulation = c("Dyer_1970", "Businger_1971"),
+  wind = "wind", H = "H", zh, zr, d, Dl, fc = NULL, LAI = NULL, N = 2,
+  Cd = 0.2, hs = 0.01, stab_formulation = c("Dyer_1970", "Businger_1971"),
   constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
 
-\item{Tair}{air temperature (degC)}
+\item{Tair}{Air temperature (degC)}
 
-\item{ustar}{friction velocity (m s-1)}
+\item{ustar}{Friction velocity (m s-1)}
 
-\item{wind}{wind speed (m s-1)}
+\item{wind}{Wind speed (m s-1)}
 
-\item{H}{sensible heat flux (W m-2)}
+\item{H}{Sensible heat flux (W m-2)}
 
-\item{zh}{canopy height (m)}
+\item{zh}{Canopy height (m)}
 
-\item{zr}{reference height (m)}
+\item{zr}{Reference height (m)}
 
-\item{d}{zero-plane displacement height (m)}
+\item{d}{Zero-plane displacement height (-), can be calculated using \code{roughness.parameters}}
 
-\item{z0m}{roughness length for momentum (m)}
+\item{Dl}{Leaf characteristic dimension (m)}
 
-\item{Dl}{leaf characteristic dimension (m)}
+\item{fc}{Fractional vegetation cover [0-1] (if not provided, calculated from LAI)}
 
-\item{N}{number of leaf sides participating in heat exchange (1 or 2)}
+\item{LAI}{One-sided leaf area index (-)}
 
-\item{fc}{fractional vegetation cover [0-1] (if not provided, calculated from LAI)}
+\item{N}{Number of leaf sides participating in heat exchange (defaults to 2)}
 
-\item{LAI}{one-sided leaf area index (-)}
+\item{Cd}{Foliage drag coefficient (-)}
 
-\item{Cd}{foliage drag coefficient (-)}
+\item{hs}{Roughness height of the soil (m)}
 
-\item{hs}{roughness height of the soil (m)}
-
-\item{stab_correction}{should stability correction be applied? Defaults to TRUE}
-
-\item{stab_formulation}{stability correction function used (If stab_correction is TRUE).
+\item{stab_formulation}{Stability correction function used (If stab_correction is TRUE).
 Either "Dyer_1970" or "Businger_1971".}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
@@ -51,7 +46,7 @@ pressure0 - reference atmospheric pressure at sea level (Pa) \cr
 Tair0 - reference air temperature (K) \cr
 Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
 
-\item{presssure}{atmospheric pressure (Pa)}
+\item{presssure}{Atmospheric pressure (kPa)}
 }
 \value{
 a data.frame with the following columns:
@@ -91,12 +86,24 @@ The formulation is based on the kB-1 model developed by Massman 1999.
          
          Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
  
-         \deqn{Rb_CO2 = 1.4 * Rb}
+         \deqn{Rb_CO2 = 1.37 * Rb}
  
-         The factor 1.4 arises due the lower molecular diffusivity of CO2 compared to water.
+         The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
          It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
          across the boundary layer is assumed to be partly by diffusion and partly by turbulent
          mixing (Nobel 2005).
+}
+\examples{
+# Canopy boundary layer resistance (and kB-1 parameter) for a set of meteorological conditions,
+# a leaf characteristic dimension of 1cm, and an LAI of 5
+df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 
+Gb.Su(data=df,zh=25,zr=40,Dl=0.01,LAI=5)
+
+# the same meteorological conditions, but larger leaves
+Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.1,LAI=5)
+
+# same conditions, large leaves, and sparse canopy cover (LAI = 1.5)
+Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.01,LAI=1.5)
 }
 \references{
 Su, Z., Schmugge, T., Kustas, W. & Massman, W., 2001: An evaluation of

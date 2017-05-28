@@ -4,30 +4,32 @@
 \alias{roughness.parameters}
 \title{Roughness parameters}
 \usage{
-roughness.parameters(method = c("wind_profile", "canopy_height",
-  "canopy_height+LAI"), zh, frac_d = 0.7, frac_z0m = 0.1, cd = 0.2,
-  hs = 0.01, LAI, data, Tair = "Tair", pressure = "pressure",
-  wind = "wind", ustar = "ustar", H = "H", zr, d = NULL, z0m = NULL,
-  stab_roughness = TRUE, stab_formulation = c("Dyer_1970", "Businger_1971"),
-  constants = bigleaf.constants())
+roughness.parameters(method = c("canopy_height", "canopy_height&LAI",
+  "wind_profile"), zh, frac_d = 0.7, frac_z0m = 0.1, LAI, zr, cd = 0.2,
+  hs = 0.01, data, Tair = "Tair", pressure = "pressure", wind = "wind",
+  ustar = "ustar", H = "H", d = NULL, z0m = NULL,
+  stab_roughness = FALSE, stab_formulation = c("Dyer_1970",
+  "Businger_1971"), constants = bigleaf.constants())
 }
 \arguments{
-\item{method}{Method to use, either "canopy_height", "canopy_height+LAI", or "wind_profile" \cr
+\item{method}{Method to use, either "canopy_height", "canopy_height&LAI", or "wind_profile" \cr
 NOTE: if method is "canopy_height", only the following three arguments
-are used. If method is "canopy_height+LAI", only zh, LAI, cd, and hs are required}
+are used. If method is "canopy_height&LAI", only zh, LAI, cd, and hs are required}
 
 \item{zh}{Vegetation height (m)}
 
 \item{frac_d}{Fraction of displacement height on canopy height (-)}
 
-\item{frac_z0m}{Fraction of roughness length on canopy height (-)
-The following arguments are only needed if method = "wind_profile"!}
+\item{frac_z0m}{Fraction of roughness length on canopy height (-)}
+
+\item{LAI}{Leaf area index (-) 
+The following arguments are only needed if \code{method = "wind_profile"}!}
+
+\item{zr}{Instrument (reference) height (m)}
 
 \item{cd}{Mean drag coefficient for individual leaves. Defaults to 0.2.}
 
 \item{hs}{roughness length of the soil surface (m)}
-
-\item{LAI}{Leaf area index (-)}
 
 \item{data}{Data.frame or matrix containing all required variables}
 
@@ -40,8 +42,6 @@ The following arguments are only needed if method = "wind_profile"!}
 \item{ustar}{Friction velocity (m s-1)}
 
 \item{H}{Sensible heat flux (W m-2)}
-
-\item{zr}{Instrument (reference) height (m)}
 
 \item{d}{Zero-plane displacement height (m); optional}
 
@@ -61,7 +61,7 @@ g - gravitational acceleration (m s-2) \cr}
 a data.frame with the following columns:
         \item{d}{Zero-plane displacement height (m)}
         \item{z0m}{Roughness length for momentum (m)}
-        \item{z0m_se}{Standard Error of the median for z0m (m)}
+        \item{z0m_se}{Only if \code{method} is \code{wind_profile}: Standard Error of the median for z0m (m)}
 }
 \description{
 A simple approximation of the two roughness parameters displacement height (d)
@@ -80,7 +80,7 @@ The two main roughness parameters, the displacement height (d)
          where frac_d defaults to 0.7 and frac_z0m to 0.1.
          
          Alternatively, d and z0m can be estimated from both canopy height and LAI
-         (If \code{method} is \code{canopy_height+LAI}).
+         (If \code{method} is \code{canopy_height&LAI}).
          Based on data from Shaw & Pereira 1982, Choudhury & Monteith 1988 proposed 
          the following semi-empirical relations:
          
@@ -95,7 +95,19 @@ The two main roughness parameters, the displacement height (d)
          \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
                  
          By default, d in this equation is fixed to 0.7zh, but can be set to any
-         other value.
+         other value. psi_m is 0 if \code{stab_roughness=FALSE} (the default).
+}
+\examples{
+# estimate d and z0m from canopy height for a dense (LAI=5) and open (LAI=2) canopy
+roughness.parameters(method="canopy_height&LAI",zh=25,LAI=5)
+roughness.parameters(method="canopy_height&LAI",zh=25,LAI=2)   
+   
+# fix d to 0.7*zh and estimate z0m from the wind profile
+df <- data.frame(Tair=c(25,25,25),pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=200)
+roughness.parameters(method="wind_profile",zh=25,zr=40,frac_d=0.7,data=df)
+
+# assume d = 0.8*zh
+roughness.parameters(method="wind_profile",zh=25,zr=40,frac_d=0.8,data=df)  
 }
 \references{
 Choudhury, B. J., Monteith J.L., 1988: A four-layer model for the heat

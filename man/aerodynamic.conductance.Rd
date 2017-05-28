@@ -138,6 +138,11 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
 The roughness length for water and heat (z0h) is not returned by this function, but 
       it can be calculated from the following relationship (e.g. Verma 1989):
 }
+\examples{
+df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250))   
+ 
+ 
+}
 \references{
 Verma, S., 1989: Aerodynamic resistances to transfers of heat, mass and momentum.
             In: Estimation of areal evapotranspiration, IAHS Pub, 177, 13-20.

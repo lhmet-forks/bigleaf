@@ -24,6 +24,11 @@ Air density of moist air from air temperature and pressure.
 Air density (\eqn{\rho}) is calculated as:
 \deqn{\rho = pressure / Rd * Tair}
 }
+\examples{
+# air density at 25degC and standard pressure (101.325kPa)
+air.density(25,101.325)
+
+}
 \references{
 Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 }

@@ -14,7 +14,7 @@ Esat(Tair, formula = c("Sonntag_1990", "Alduchov_1996"))
 \value{
 A dataframe with the following columns: 
    \item{Esat}{Saturation vapor pressure (kPa)}
-   \item{delta}{Slope of the saturation vapor pressure curve (kPa K-1)}
+   \item{Delta}{Slope of the saturation vapor pressure curve (kPa K-1)}
 }
 \description{
 Calculates Saturation vapor pressure (Esat) over water and the
@@ -26,9 +26,14 @@ Esat (kPa) is calculated based on the Magnus equation:
  \deqn{Esat = a * exp((b * Tair) / (c + Tair)) / 1000}
  
  where the coefficients a, b, c take different values depending on the formula used.
- The slope of the Esat curve (\eqn{\delta}) is calculated as the first derivative of the function:
+ The slope of the Esat curve (\eqn{\Delta}) is calculated as the first derivative of the function:
  
  formula
+}
+\examples{
+Esat(seq(0,45,5))[,"Esat"]  # Esat in kPa
+Esat(seq(0,45,5))[,"Delta"] # the corresponding slope of the Esat curve in kPa K-1
+            
 }
 \references{
 Sonntag_1990 Important new values of the physical constants of 1986, vapor 

@@ -51,7 +51,7 @@ Reference evapotranspiration calculated from the Penman-Monteith
 Reference evapotranspiration is calculated according to the Penman-Monteith
          equation:
 
-         \deqn{LE_0 = (\delta * (Rn - G - S) * \rho * cp * VPD * Ga) / (\delta + \gamma * (1 + Ga/Gs)}
+         \deqn{LE_0 = (\Delta * (Rn - G - S) * \rho * cp * VPD * Ga) / (\Delta + \gamma * (1 + Ga/Gs)}
          
          The reference evapotranspiration is calculated with respect to a 'reference surface',
          which is typically a well-watered grass/crop of 0.12 height, an albedo of 0.23 and 

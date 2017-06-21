@@ -2,39 +2,30 @@
 % Please edit documentation in R/bigleaf.R
 \name{dew.point}
 \alias{dew.point}
-\title{Dew point temperature}
+\title{Dew point}
 \usage{
-dew.point(Tair, pressure, VPD, constants = bigleaf.constants())
+dew.point(Tair, pressure, VPD)
 }
 \arguments{
-\item{Tair}{Air temperature (deg C)}
-
-\item{pressure}{Air pressure (kPa)}
+\item{Tair}{Air temperature (degC)}
 
 \item{VPD}{Vapor pressure deficit (kPa)}
 
-\item{constants}{Kelvin - 
-Mw - 
-Rgas -}
+\item{presssure}{Air pressure (kPa)}
 }
 \value{
-dew point Td (deg C)
+dew point temperature Td (deg C)
 }
 \description{
 calculates the dew point, the temperature to which air must be 
              cooled to become saturated (i.e. e = esat(Td))
 }
 \details{
-Dew point is given by:
+Dew point temperature (Td) is defined by:
 
-        \deqn{Td = T* / (1 - log(e/esat(T*) / A))}
+        \deqn{e = Esat(Td)}
    
-         where T* is 0 deg C. A is given by:
-         
-         \deqn{A = \lambda * Mw / (R*Tair)}
-         
-         where \eqn{\lambda} is the latent heat of vaporization and Mw the 
-         molecular weight of water.
+         which is solved for Td using \link{\code{nls}}.
 }
 \references{
 Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.

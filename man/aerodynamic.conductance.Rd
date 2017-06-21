@@ -6,10 +6,10 @@
 \usage{
 aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
   wind = "wind", ustar = "ustar", H = "H", zr, zh, d, z0m, Dl, N,
-  fc = NULL, LAI, Cd = 0.2, hs = 0.01, stab_correction = TRUE,
-  stab_formulation = c("Dyer_1970", "Businger_1971"),
-  Rb_model = c("Thom_1972", "Choudhury_1988", "Su_2001", "constant_kB"),
-  kB = NULL, constants = bigleaf.constants())
+  fc = NULL, LAI, Cd = 0.2, hs = 0.01, wind_profile = FALSE,
+  stab_correction = TRUE, stab_formulation = c("Dyer_1970",
+  "Businger_1971"), Rb_model = c("Thom_1972", "Choudhury_1988", "Su_2001",
+  "constant_kB"), kB = NULL, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
@@ -44,10 +44,13 @@ aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
 
 \item{hs}{Roughness length of bare soil (m); only used if \code{Rb_model} is "Su_2001".}
 
-\item{stab_correction}{Should stability correction be applied? Default is TRUE}
+\item{wind_profile}{Should Ga for resistance be calculated based on the logarithmic wind profile equation? 
+Defaults to FALSE.}
+
+\item{stab_correction}{Should stability correction be applied? Defaults to TRUE. Ignored if \code{wind_profile} is FALSE}
 
 \item{stab_formulation}{Stability correction function. Either "Dyer_1970" (default) or
-"Businger_1971". Ignored if \code{stab_correction} is FALSE.}
+"Businger_1971". Ignored if one of \code{wind_profile} and \code{stab_correction} is FALSE}
 
 \item{Rb_model}{Boundary layer resistance formulation. One of c("Thom_1972","Choudhury_1988","Su_2001).}
 
@@ -86,10 +89,31 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  Ga_h = 1 / (Ra_m + Rb)
  
  where Ra_m is the aerodynamic resistance for momentum and Rb the canopy boundary
- layer resistance (or 'excess resistance').
+ layer resistance ('excess resistance').
  
- The model used to determine Rb is specified by the argument \code{Rb_model}. The following 
- options are implemented:
+ The aerodynamic resistance for momentum Ra_m is given by:
+ 
+ \deqn{Ra_m = u/ustar^2}
+ 
+ Note that this formulation accounts for changes in atmospheric stability, and does not require an
+ additional stability correction function. 
+ 
+ An alternative method to calculate Ra_m is provided
+ (calculated if \code{wind_profile} set to TRUE):
+ 
+ \deqn{Ra_m = (ln((zr - d)/z0m) - psi_h) / (k ustar)}
+ 
+ If the roughness parameters z0m and d are unknown, they can be estimated using
+ \link{\code{roughness.parameters}}. The argument \code{stab_formulation} determines the stability correction function used 
+ to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
+ and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
+ where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
+ calculated with \code{\link{MoninObukhov.length}}
+ The Stability correction function is chosen by the argument \code{stab_formulation}. Options are 
+ Dyer_1970" and "Businger_1971".
+ 
+ The model used to determine the canopy boundary layer resistance (Rb) is specified by 
+ the argument \code{Rb_model}. The following options are implemented:
  "Thom_1972" is an empirical formulation based on the friction velocity (ustar) (Thom 1972):
  
    \deqn{Rb = 0.67ustar^0.67}
@@ -119,29 +143,31 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
  across the boundary layer is assumed to be partly by diffusion and partly by turbulent
  mixing (Nobel 2005).
- 
- If the roughness parameters z0m and d are unknown, they can be estimated using
- \link{\code{roughness.parameters}}.
- 
- The argument \code{stab_formulation} determines the stability correction function used 
- to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
- and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
- where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
- calculated with \code{\link{MoninObukhov.length}}
- The Stability correction function is chosen by the argument \code{stab_formulation}. Options are 
- Dyer_1970" and "Businger_1971".  
- If \code{stab_correction} is set to FALSE, the effects of atmospheric stability on Ga are neglected,
- and the Monin-Obukhov length, the stability parameter zeta, as well as the stability correction functions
- are not calculated.
 }
 \note{
 The roughness length for water and heat (z0h) is not returned by this function, but 
       it can be calculated from the following relationship (e.g. Verma 1989):
+      
+      kB-1 = ln(z0m/z0h) 
+      
+      it follows:
+      
+      z0h = z0m / exp(kB-1)    
+      
+      kB-1 is an output of this function
 }
 \examples{
 df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250))   
  
- 
+# simple calculation of Ga  
+aerodynamic.conductance(df,Rb_model="Thom_1972") 
+
+# calculation of Ga using a model derived from the logarithmic wind profile
+aerodynamic.conductance(df,Rb_model="Thom_1972",zr=40,zh=25,d=17.5,z0m=2,wind_profile=TRUE) 
+
+# simple calculation of Ga, but a physically based canopy boundary layer model
+aerodynamic.conductance(df,Rb_model="Su_2001",zr=40,zh=25,d=17.5,Dl=0.05,N=2,fc=0.8)
+
 }
 \references{
 Verma, S., 1989: Aerodynamic resistances to transfers of heat, mass and momentum.

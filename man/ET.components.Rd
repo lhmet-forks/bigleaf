@@ -51,7 +51,7 @@ Total evapotranspiration can be written in the form:
          that would occur under uncoupled conditions, where the heat budget
          is dominated by radiation (when Ga -> 0).
          
-         \deqn{ET_eq = (\delta * (Rn - G - S) * \lambda) / (\delta + \gamma)}
+         \deqn{ET_eq = (\Delta * (Rn - G - S) * \lambda) / (\Delta + \gamma)}
          
          and ET_imp is the imposed evapotranspiration rate, the ET rate
          that would occur under fully coupled conditions (when Ga -> inf):

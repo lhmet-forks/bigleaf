@@ -41,7 +41,7 @@ Potential evapotranspiration ET_pot according to Priestley & Taylor 1972.
 \details{
 Potential evapotranspiration is calculated according to Priestley & Taylor, 1972:
 
-         \deqn{LE_pot = (\alpha * \delta * (Rn - G - S)) / (\delta + \gamma)}
+         \deqn{LE_pot = (\alpha * \Delta * (Rn - G - S)) / (\Delta + \gamma)}
 }
 \note{
 If the first argument 'data' is provided (either a matrix or a data.frame),

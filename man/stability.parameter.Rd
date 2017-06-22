@@ -42,3 +42,8 @@ The stability parameter \eqn{\zeta} is given by:
          \code{\link{MoninObukhov.length}}. The displacement height d can 
          be estimated from the function \code{\link{roughness.parameters}}.
 }
+\examples{
+df <- data.frame(Tair=25,pressure=100,ustar=seq(0.2,1,0.1),H=seq(40,200,20))
+stability.parameter(df,zr=40,d=15)
+
+}

@@ -26,6 +26,10 @@ the following formula is used (Martin, 1989):
 
          \deqn{Gr = 4 \sigma Tair^3 LAI / cp}
 }
+\examples{
+Gr.longwave(25,seq(1,8,1))            
+                 
+}
 \references{
 Martin P., 1989: The significance of radiative coupling between
             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.

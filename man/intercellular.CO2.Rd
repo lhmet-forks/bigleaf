@@ -61,7 +61,7 @@ intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
 
 # now calculate bulk canopy Ci, but with Ca at the canopy surface (Ga and NEE are needed)
 # Ga has to be in mol m-2 s-1 and for CO2, assuming that Ga for CO2 in ms-1 is 0.05
-# alternatively, the function aerodynamic.conductance returns Ga for CO2
+# alternatively, the function aerodynamic.conductance also returns Ga for CO2
 Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
 
 intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) # note the sign convention for NEE

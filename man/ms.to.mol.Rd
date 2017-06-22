@@ -26,6 +26,19 @@ Rgas - universal gas constant (J mol-1 K-1)}
 Converts conductances from ms-1
              to mol m-2 s-1, or vice versa.
 }
+\details{
+The conversions are given by:
+
+\deqn{G_mol = G_ms * pressure / (Rgas * Tair)}
+
+\deqn{G_ms = G_mol * (Rgas * Tair) / pressure}
+
+where Tair is in Kelvin and pressure in Pa (converted internally)
+}
+\examples{
+ms.to.mol(0.005,25,100)
+            
+}
 \references{
 Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.
             2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p --> replace with third edition

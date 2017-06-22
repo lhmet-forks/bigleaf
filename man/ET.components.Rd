@@ -62,6 +62,11 @@ Total evapotranspiration can be written in the form:
 Surface conductance (Gs) is calculated with \code{\link{surface.conductance}}.
       Aerodynamic conductance (Ga) can be calculated using \code{\link{Ga}}.
 }
+\examples{
+df <- data.frame(Tair=20,pressure=100,VPD=seq(0.5,4,0.5),Gs=seq(0.01,0.002,length.out=8),Rn=seq(50,400,50))            
+ET.components(df)            
+            
+}
 \references{
 Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
             scaling up from leaf to region. Advances in Ecological Research 15, 1-49.

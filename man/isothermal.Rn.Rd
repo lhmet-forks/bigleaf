@@ -37,8 +37,8 @@ The isothermal net radiation (Rni) is given by:
          with Tsurf and Tair in Kelvin.
 }
 \examples{
-# calculate isothermal net radiation of a surface that is 2?c warmer than the air.
-isothermal.Rn(Rn=400,Tair=25,Tsurf=27,emissivity=0.98)
+# calculate isothermal net radiation of a surface that is 2degC warmer than the air.
+isothermal.Rn(Rn=400,Tair=25,Tsurf=27,emissivity=0.98) 
 
 }
 \references{

@@ -60,6 +60,16 @@ The decoupling coefficient Omega ranges from 0 to 1 and quantifies the
          \deqn{\Omega = \frac{\epsilon + 1 + \frac{Gr}{Ga}}{\epsilon + (1 + \frac{Ga}{Gs}) (1 + \frac{Gr}{Ga})}}{%
          \Omega = (\epsilon + 1 + Gr/Ga) / (\epsilon + (1 + Ga/Gs) (1 + Gr/Ga))}
 }
+\examples{
+# omega calculated following Jarvis & McNaughton 1986
+set.seed(3)
+df <- data.frame(Tair=rnorm(20,25,1),pressure=100,Ga=rnorm(20,0.06,0.01),Gs=rnorm(20,0.005,0.001))
+decoupling(df,approach="JarvisMcNaughton_1986")
+
+# omega calculated following Martin 1989 (requires LAI)
+decoupling(df,approach="Martin_1989",LAI=4)
+
+}
 \references{
 Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
             scaling up from leaf to region. Advances in Ecological Research 15, 1-49. 

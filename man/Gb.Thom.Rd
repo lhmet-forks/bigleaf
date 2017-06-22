@@ -38,8 +38,7 @@ The empirical equation for Rb to water suggested by Thom 1972 is:
  mixing (Nobel 2005).
 }
 \examples{
-# calculate Canopy boundary layer resistance when ustar=0.4ms-1
-Gb.Thom(0.4)
+Gb.Thom(seq(0.1,1.4,0.1))
 
 }
 \references{

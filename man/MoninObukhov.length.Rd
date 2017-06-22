@@ -35,6 +35,10 @@ Note that L gets very small for very low ustar values with implications
       for subsequent functions using L as input. It is recommended to filter
       data and exclude low ustar values (ustar < ~0.2) beforehand.
 }
+\examples{
+MoninObukhov.length(Tair=25,pressure=100,ustar=seq(0.2,1,0.1),H=seq(40,200,20))
+
+}
 \references{
 Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 }

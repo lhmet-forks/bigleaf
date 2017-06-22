@@ -15,6 +15,18 @@ LE.to.ET(LE, Tair)
 \item{ET}{Evapotranspiration (kg m-2 s-1)}
 }
 \description{
-converts evpaorative water flux from mass (ET=evapotranspiration)
+converts evporative water flux from mass (ET=evapotranspiration)
              to energy (LE=latent heat) units, or vice versa.
+}
+\details{
+The conversion are given by:
+
+\deqn{ET = LE/\lambda}
+
+\deqn{LE = \lambda ET}
+}
+\examples{
+# LE of 200 Wm-2 and air temperature of 25degC
+LE.to.ET(200,25)
+
 }

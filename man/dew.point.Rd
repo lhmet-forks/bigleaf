@@ -27,6 +27,10 @@ Dew point temperature (Td) is defined by:
    
          which is solved for Td using \link{\code{nls}}.
 }
+\examples{
+dew.point(25,100,1.5)                
+
+}
 \references{
 Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
             3rd edition. Academic Press, London.

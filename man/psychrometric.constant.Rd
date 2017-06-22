@@ -28,6 +28,10 @@ The psychrometric constant (\eqn{\gamma}) is given as:
  where \eqn{\lambda} is the latent heaf of vaporization (J kg-1), 
  as calculated with \code{\link{LE.vaporization}}.
 }
+\examples{
+psychrometric.constant(seq(5,45,5),100)
+
+}
 \references{
 Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
             3rd edition. Academic Press, London.

@@ -90,6 +90,7 @@ summary(surf)  # note the outliers in both directions. They are associated with 
 # calculate surface conditions including Ca at the surface (NEE and Ga for CO2 are now needed as input)                                                                            
 # Ga for CO2 can be calculated with the same function as above:
 Ga_CO2_ms <- aerodynamic.conductance(FR_Pue_2005_July,stab_correction=F,Rb_model="Thom_1972")[,"Ga_CO2"]
+
 # note that the function requires Ga for CO2 in mol m-2 s-1, not in ms-1.
 Ga_CO2_mol <- ms.to.mol(Ga_CO2_ms,FR_Pue_2005_July[,"Tair"],FR_Pue_2005_July[,"pressure"])
 surf <- surface.conditions(FR_Pue_2005_July,Ga=Ga_CO2_mol,NEE="NEE",calc.Ca=T)                                                                                        

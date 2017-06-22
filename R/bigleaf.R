@@ -189,7 +189,6 @@ bigleaf.constants <- function(){
 #' @param min.int       Minimum time interval in days for a given state of growing season
 #' @param trH           Relative humidity threshold (-). Note that relative humidity
 #'                      is calculated from VPD internally
-
 #' 
 #' 
 #' @details This routine consists of two parts:
@@ -572,8 +571,7 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
 #' @seealso \code{\link{Gb.Su}}, \code{\link{Gb.Choudhury}}
 #' 
 #' @examples 
-#' # calculate Canopy boundary layer resistance when ustar=0.4ms-1
-#' Gb.Thom(0.4)
+#' Gb.Thom(seq(0.1,1.4,0.1))
 #' 
 #' @export
 Gb.Thom <- function(ustar,constants=bigleaf.constants()){
@@ -1249,6 +1247,9 @@ pressure.from.elevation <- function(elev,Tair,q=NULL,constants=bigleaf.constants
 #' 
 #' @references Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany. 
 #' 
+#' @examples 
+#' MoninObukhov.length(Tair=25,pressure=100,ustar=seq(0.2,1,0.1),H=seq(40,200,20))
+#' 
 #' @export
 MoninObukhov.length <- function(Tair,pressure,ustar,H,constants=bigleaf.constants()){
     
@@ -1283,6 +1284,10 @@ MoninObukhov.length <- function(Tair,pressure,ustar,H,constants=bigleaf.constant
 #'          be estimated from the function \code{\link{roughness.parameters}}.
 #'          
 #' @return the stability parameter \eqn{\zeta}
+#' 
+#' @examples 
+#' df <- data.frame(Tair=25,pressure=100,ustar=seq(0.2,1,0.1),H=seq(40,200,20))
+#' stability.parameter(df,zr=40,d=15)
 #' 
 #' @export           
 stability.parameter <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",
@@ -1698,12 +1703,12 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #' Gs_gradient <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",VPD="VPD",PM=FALSE)
 #' summary(Gs_gradient)
 #' 
-#' # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed)
-#' # calculate a simple estimate of Ga based on Thom 1972
+#' # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed),
+#' # using a simple estimate of Ga based on Thom 1972
 #' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
 #' 
-#' # if G and/or S are available, don't forget to indicate (they are ignored by default). Note that
-#' # note that Ga is not added to the data.frame 'DE_Tha_June_2010'
+#' # if G and/or S are available, don't forget to indicate (they are ignored by default).
+#' # Note that Ga is not added to the data.frame 'DE_Tha_June_2010'
 #' Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
 #'                              VPD="VPD",Ga=Ga,PM=TRUE)
 #' summary(Gs_PM)
@@ -1844,6 +1849,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #' # calculate surface conditions including Ca at the surface (NEE and Ga for CO2 are now needed as input)                                                                            
 #' # Ga for CO2 can be calculated with the same function as above:
 #' Ga_CO2_ms <- aerodynamic.conductance(FR_Pue_2005_July,stab_correction=F,Rb_model="Thom_1972")[,"Ga_CO2"]
+#' 
 #' # note that the function requires Ga for CO2 in mol m-2 s-1, not in ms-1.
 #' Ga_CO2_mol <- ms.to.mol(Ga_CO2_ms,FR_Pue_2005_July[,"Tair"],FR_Pue_2005_July[,"pressure"])
 #' surf <- surface.conditions(FR_Pue_2005_July,Ga=Ga_CO2_mol,NEE="NEE",calc.Ca=T)                                                                                        
@@ -1906,8 +1912,8 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 #'        \deqn{Ca_surf = Ca + NEE / Ga_CO2}
 #'        
 #'        Note that this equation can be used for any gas measured (with NEE
-#'        replaced by the net exchange of the gas and Ga_CO2 by the Ga of 
-#'        the respective gas).
+#'        replaced by the net exchange of the respective gas and Ga_CO2 by the Ga of 
+#'        that gas).
 #' 
 #' @note the following sign convention is employed: negative values of NEE denote
 #'       net CO2 uptake by the ecosystem.
@@ -2005,13 +2011,21 @@ Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
 #'             Martin P., 1989: The significance of radiative coupling between
 #'             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
 #' 
+#' @examples 
+#' # omega calculated following Jarvis & McNaughton 1986
+#' set.seed(3)
+#' df <- data.frame(Tair=rnorm(20,25,1),pressure=100,Ga=rnorm(20,0.06,0.01),Gs=rnorm(20,0.005,0.001))
+#' decoupling(df,approach="JarvisMcNaughton_1986")
+#' 
+#' # omega calculated following Martin 1989 (requires LAI)
+#' decoupling(df,approach="Martin_1989",LAI=4)
+#' 
 #' @export
 decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
                        approach=c("JarvisMcNaughton_1986","Martin_1989"),
                        LAI,constants=bigleaf.constants()){
 
   approach    <- match.arg(approach)
-  canopy.type <- match.arg(canopy.type)
   
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
@@ -2061,7 +2075,10 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
 #'                  
 #' @references Martin P., 1989: The significance of radiative coupling between
 #'             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
-#'             
+#'          
+#' @examples 
+#' Gr.longwave(25,seq(1,8,1))            
+#'                  
 #' @export             
 Gr.longwave <- function(Tair,LAI,constants=bigleaf.constants()){
   
@@ -2135,7 +2152,10 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #' @return dew point temperature Td (deg C)
 #' 
 #' @references Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
-#'             3rd edition. Academic Press, London. 
+#'             3rd edition. Academic Press, London.
+#'             
+#' @examples
+#' dew.point(25,100,1.5)                
 #' 
 #' @export              
 dew.point <- function(Tair,pressure,VPD){
@@ -2277,6 +2297,10 @@ Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
 #' @references Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
 #'             3rd edition. Academic Press, London. 
 #' 
+#' @examples 
+#' psychrometric.constant(seq(5,45,5),100)
+#' 
+#' @export
 psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
   
   lambda <- LE.vaporization(Tair)
@@ -2300,6 +2324,9 @@ psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
 #' 
 #' @references Stull, B., 1988: An Introduction to Boundary Layer Meteorology (p.641)
 #'             Kluwer Academic Publishers, Dordrecht, Netherlands
+#' 
+#' @examples 
+#' LE.vaporization(seq(5,45,5))             
 #'             
 #' @export
 LE.vaporization <- function(Tair) {
@@ -2318,7 +2345,7 @@ LE.vaporization <- function(Tair) {
 
 #' Conversion between latent heat flux and evapotranspiration
 #' 
-#' @description converts evpaorative water flux from mass (ET=evapotranspiration)
+#' @description converts evporative water flux from mass (ET=evapotranspiration)
 #'              to energy (LE=latent heat) units, or vice versa.
 #'              
 #' @aliases LE.to.ET ET.to.LE
@@ -2326,6 +2353,17 @@ LE.vaporization <- function(Tair) {
 #' @param LE   Latent heat flux (W m-2)
 #' @param ET   Evapotranspiration (kg m-2 s-1)
 #' @param Tair Air temperature (deg C)
+#' 
+#' @details 
+#' The conversion are given by:
+#' 
+#' \deqn{ET = LE/\lambda}
+#' 
+#' \deqn{LE = \lambda ET}
+#' 
+#' @examples 
+#' # LE of 200 Wm-2 and air temperature of 25degC
+#' LE.to.ET(200,25)
 #' 
 #' @export
 LE.to.ET <- function(LE,Tair){
@@ -2361,15 +2399,29 @@ ET.to.LE <- function(ET,Tair){
 #' @param constants  Kelvin - conversion degree Celsius to Kelvin \cr
 #'                   Rgas - universal gas constant (J mol-1 K-1)
 #' 
+#' @details 
+#' The conversions are given by:
+#' 
+#' \deqn{G_mol = G_ms * pressure / (Rgas * Tair)}
+#' 
+#' \deqn{G_ms = G_mol * (Rgas * Tair) / pressure}
+#' 
+#' where Tair is in Kelvin and pressure in Pa (converted internally)
+#' 
 #' @family conductance conversion
 #' 
 #' @references Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.
 #'             2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p --> replace with third edition
 #'             
+#' @examples 
+#' ms.to.mol(0.005,25,100)
+#'             
 #' @export
 ms.to.mol <- function(G_ms,Tair,pressure,constants=bigleaf.constants()){
-  Tair   <- Tair + constants$Kelvin
-  G_mol  <- G_ms * pressure*1000 / (constants$Rgas * Tair)
+  Tair     <- Tair + constants$Kelvin
+  pressure <- pressure * 1000
+  
+  G_mol  <- G_ms * pressure / (constants$Rgas * Tair)
   
   return(G_mol)
 }
@@ -2378,8 +2430,10 @@ ms.to.mol <- function(G_ms,Tair,pressure,constants=bigleaf.constants()){
 #' @rdname ms.to.mol
 #' @family conductance conversion
 mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
-  Tair  <- Tair + constants$Kelvin
-  G_ms  <- G_mol * (constants$Rgas * Tair) / (pressure*1000)
+  Tair     <- Tair + constants$Kelvin
+  pressure <- pressure * 1000
+  
+  G_ms  <- G_mol * (constants$Rgas * Tair) / (pressure)
   
   return(G_ms)
 }
@@ -2475,7 +2529,7 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
   esat <- Esat(Tair)[,"Esat"]
   e    <- esat - VPD
   q    <- e.to.q(e,pressure,constants)
-  return(q)
+  return(q) 
 } 
 
 
@@ -2497,7 +2551,7 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 #' 
 #'  \deqn{PPFD = Rg * frac_PAR * J_to_mol}
 #'  
-#' by default, the combined conversion factor is 2.3
+#' by default, the combined conversion factor (frac_PAR * J_to_mol) is 2.3
 #'
 #' @examples 
 #' # convert a measured incoming short-wave radiation of 500 Wm-2 to 
@@ -2522,7 +2576,7 @@ PPFD.to.Rg <- function(PPFD,J_to_mol=4.6,frac_PAR=0.5){
 
 
 
-#' Conversion between mass and molar units
+#' Conversion between mass and molar units of C and CO2
 #' 
 #' @description Converts CO2 quantities from umol CO2 m-2 s-1 to gC and vice versa.
 #' 
@@ -2530,9 +2584,10 @@ PPFD.to.Rg <- function(PPFD,J_to_mol=4.6,frac_PAR=0.5){
 #' @param C_flux    C flux (gC m-2 s-1)
 #' @param constants Cmol - molar mass of carbon (kg mol-1)
 #' 
-#' @details The conversions are given by:
+#' @examples 
+#' gC_s <- umolCO2.to.gC(20)  # gC m-2 s-1
+#' gC_d <- gC_s * 86400       # gC m-2 d-1 
 #' 
-#'         
 #' @export
 umolCO2.to.gC <- function(CO2_flux,constants=bigleaf.constants()){
   
@@ -2674,7 +2729,7 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #' @examples 
 #' # Calculate ET_ref for a surface with known Gs (=0.5mol m-2 s-1) and Ga (0.1 ms-1)
 #' 
-#' # first, Gs has to be converted to ms-1
+#' # Gs is required in ms-1
 #' Gs_ms <- mol.to.ms(0.5,Tair=20,pressure=100)
 #' ET_ref <- ET.ref(Gs=Gs_ms,Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400)
 #' 
@@ -2772,6 +2827,10 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #'             Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
 #'             3rd edition. Academic Press, London. 
 #'             
+#' @examples 
+#' df <- data.frame(Tair=20,pressure=100,VPD=seq(0.5,4,0.5),Gs=seq(0.01,0.002,length.out=8),Rn=seq(50,400,50))            
+#' ET.components(df)            
+#'             
 #' @export
 ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
                           Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=F,missing.S.as.NA=F,
@@ -2782,6 +2841,7 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
   VPD      <- check.columns(data,VPD)
   Rn       <- check.columns(data,Rn)
   Gs       <- check.columns(data,Gs)
+  check.length(Tair,pressure,VPD,Rn,Gs)
   
   if(!is.null(G)){
     G <- check.columns(data,G)
@@ -2858,17 +2918,6 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
 #' 
 #' @return Ci - Bulk canopy intercellular CO2 concentration (umol mol-1)
 #' 
-#' @examples 
-#' # calculate bulk canopy Ci of a productive ecosystem
-#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
-#' 
-#' # now calculate bulk canopy Ci, but with Ca at the canopy surface (Ga and NEE are needed)
-#' # Ga has to be in mol m-2 s-1 and for CO2, assuming that Ga for CO2 in ms-1 is 0.05
-#' # alternatively, the function aerodynamic.conductance returns Ga for CO2
-#' Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
-#' 
-#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) # note the sign convention for NEE
-#' 
 #' @references Kosugi Y. et al., 2013: Determination of the gas exchange phenology in an
 #'             evergreen coniferous forest from 7 years of eddy covariance flux data using
 #'             an extended big-leaf analysis. Ecol Res 28, 373-385.
@@ -2876,6 +2925,17 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
 #'             Keenan T., Sabate S., Gracia C., 2010: The importance of mesophyll conductance in
 #'             regulating forest ecosystem productivity during drought periods. Global Change Biology
 #'             16, 1019-1034.
+#'             
+#' @examples 
+#' # calculate bulk canopy Ci of a productive ecosystem
+#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
+#' 
+#' # now calculate bulk canopy Ci, but with Ca at the canopy surface (Ga and NEE are needed)
+#' # Ga has to be in mol m-2 s-1 and for CO2, assuming that Ga for CO2 in ms-1 is 0.05
+#' # alternatively, the function aerodynamic.conductance also returns Ga for CO2
+#' Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
+#' 
+#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) # note the sign convention for NEE
 #' 
 #' @export
 intercellular.CO2 <- function(Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=F,Ga=NULL,NEE=NULL,
@@ -3287,8 +3347,8 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
 #'             University Press.
 #' 
 #' @examples 
-#' # calculate isothermal net radiation of a surface that is 2?c warmer than the air.
-#' isothermal.Rn(Rn=400,Tair=25,Tsurf=27,emissivity=0.98)
+#' # calculate isothermal net radiation of a surface that is 2degC warmer than the air.
+#' isothermal.Rn(Rn=400,Tair=25,Tsurf=27,emissivity=0.98) 
 #' 
 #' @export
 isothermal.Rn <- function(data,Rn="Rn",Tair="Tair",Tsurf="Tsurf",emissivity,

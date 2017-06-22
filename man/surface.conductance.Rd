@@ -88,12 +88,12 @@ DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month
 Gs_gradient <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",VPD="VPD",PM=FALSE)
 summary(Gs_gradient)
 
-# calculate Gs from the the inverted PM equation (now Rn, and Ga are needed)
-# calculate a simple estimate of Ga based on Thom 1972
+# calculate Gs from the the inverted PM equation (now Rn, and Ga are needed),
+# using a simple estimate of Ga based on Thom 1972
 Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
 
-# if G and/or S are available, don't forget to indicate (they are ignored by default). Note that
-# note that Ga is not added to the data.frame 'DE_Tha_June_2010'
+# if G and/or S are available, don't forget to indicate (they are ignored by default).
+# Note that Ga is not added to the data.frame 'DE_Tha_June_2010'
 Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
                              VPD="VPD",Ga=Ga,PM=TRUE)
 summary(Gs_PM)

@@ -30,7 +30,7 @@ eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 sigma - Stefan-Boltzmann constant (W m-2 K-4) \cr}
 }
 \value{
-omega The decoupling coefficient omega (-)
+\item{omega}{The decoupling coefficient omega (-)}
 }
 \description{
 The canopy-atmosphere decoupling coefficient 'Omega'.

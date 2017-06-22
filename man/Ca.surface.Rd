@@ -4,14 +4,18 @@
 \alias{Ca.surface}
 \title{Canopy surface CO2 concentration}
 \usage{
-Ca.surface(Ca, NEE, Ga_CO2)
+Ca.surface(Ca, NEE, Ga_CO2, Tair, pressure)
 }
 \arguments{
-\item{Ca}{atmospheric CO2 concentration (umol mol-1)}
+\item{Ca}{Atmospheric CO2 concentration (umol mol-1)}
 
-\item{NEE}{net ecosystem exchange (umol CO2 m-2 s-1)}
+\item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1)}
 
-\item{Ga_CO2}{aerodynamic conductance for CO2 (mol m-2 s-1)}
+\item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1)}
+
+\item{Tair}{Air temperature (degC)}
+
+\item{pressure}{Air pressure (kPa)}
 }
 \value{
 Ca_surf CO2 concentration at the canopy surface (umol mol-1)

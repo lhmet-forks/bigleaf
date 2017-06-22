@@ -157,8 +157,8 @@ bigleaf.constants <- function(){
 
 #' Filter data
 #'
-#' @description Filters timeseries in which Gs constitutes a physiologically meaningful
-#'              quantity.
+#' @description Filters timeseries of EC data for high-quality values and specified
+#'              meteorological conditions.
 #' 
 #' @param data          data.frame or matrix containing all required input variables in 
 #'                      half-hourly or hourly resolution. Including year, month, day information
@@ -192,6 +192,7 @@ bigleaf.constants <- function(){
 #' 
 #' 
 #' @details This routine consists of two parts:
+#' 
 #'          1) Quality control: All variables included in \code{vars.qc} are filtered for 
 #'             good quality data. For these variables a corresponding quality variable with 
 #'             the same name as the variable plus the extension as specified in \code{quality.ext}
@@ -208,9 +209,18 @@ bigleaf.constants <- function(){
 #'             are set to NA.
 #'             Set a threshold to 0 (or the minimum of the variable) if the dataset should not be filtered for a specific variable.
 #'          
-#' @return filtered_data The same data frame as provided as first argument to the function
-#'                       with an additional column "valid", which indicates whether the timestep is valid 
-#'                       according to the filter criteria (1) or invalid (0).
+#' @return The same data frame as provided as first argument to the function
+#'         with an additional column "valid", which indicates whether the timestep fulfills 
+#'         the filtering criteria (1) or not (0).
+#' 
+#' @examples 
+#' load("DE-Tha_2010.rda") # load data
+#' 
+#' # filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
+#' DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
+#'                            vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+#'                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                            ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
 #' 
 #' @export                     
 filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="ustar",
@@ -496,6 +506,13 @@ filter.growseas <- function(GPPd,tGPP,ws=15,min.int=5){
 #'             
 #'             Zhou, S., et al., 2014: The effect of vapor pressure deficit on water
 #'             use efficiency at the subdaily time scale. Geophysical Research Letters 41.
+#'             
+#' @examples 
+#' load("DE-Tha_2010.rda") # load data 'DE_Tha_2010'
+#' 
+#' # filter out time periods that are not in the growing season
+#'                         
+#'                            
 #'                                      
 #' @export
 WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
@@ -1662,7 +1679,8 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #'                  Mw - molar mass of water vapor (kg mol-1)
 #' 
 #' 
-#' @details Surface conductance (Gs) is calculated from the inverted Penman-Monteith equation:
+#' @details Surface conductance (Gs) is calculated from the inverted Penman-Monteith equation 
+#'          (if \code{PM} is TRUE, the default):
 #' 
 #'  \deqn{Gs = ( LE * Ga * \gamma ) / ( \Delta * (Rn-G-S) + \rho * cp * Ga * VPD - LE * ( \Delta + \gamma ) )}
 #'  
@@ -1798,7 +1816,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #' @param calc.Csurf Calculate surface CO2 concentration?
 #' @param Ca         Atmospheric CO2 concentration (mol mol-1). Required if calc.Ca = TRUE
 #' @param NEE        Net ecosystem exchange (umol m-2 s-1). Required if calc.Ca = TRUE
-#' @param Ga_CO2     Aerodynamic conductance for CO2 (mol m-2 s-1). Required if calc.Ca = TRUE          
+#' @param Ga_CO2     Aerodynamic conductance for CO2 (m s-1). Required if calc.Ca = TRUE          
 #' @param constants  cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
 #'                   eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 #' 
@@ -1833,31 +1851,20 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #'         \item{rH_surf}{relative humidity at the surface (-)} \cr
 #'         \item{Ca_surf}{CO2 concentration at the surface (umol mol-1)}             
 #'         
-#' @examples 
-#' # load("FR-Pue_2005.rda") # load data for the site FR-Pue  
-#' # select data from July
-#' FR_Pue_2005_July <- FR_Pue_2005[FR_Pue_2005[,"month"] == 7,]
-#'   
-#'       
-#' # calculate a simple estimate of Ga based on Thom 1972
-#' Ga <- aerodynamic.conductance(FR_Pue_2005_July,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
-#'      
-#' # calculate surface conditions (without Ca)      
-#' surf <- surface.conditions(FR_Pue_2005_July,Ga=Ga,calc.Ca=F)           
-#' summary(surf)  # note the outliers in both directions. They are associated with very low values of Ga    
-#' 
-#' # calculate surface conditions including Ca at the surface (NEE and Ga for CO2 are now needed as input)                                                                            
-#' # Ga for CO2 can be calculated with the same function as above:
-#' Ga_CO2_ms <- aerodynamic.conductance(FR_Pue_2005_July,stab_correction=F,Rb_model="Thom_1972")[,"Ga_CO2"]
-#' 
-#' # note that the function requires Ga for CO2 in mol m-2 s-1, not in ms-1.
-#' Ga_CO2_mol <- ms.to.mol(Ga_CO2_ms,FR_Pue_2005_July[,"Tair"],FR_Pue_2005_July[,"pressure"])
-#' surf <- surface.conditions(FR_Pue_2005_July,Ga=Ga_CO2_mol,NEE="NEE",calc.Ca=T)                                                                                        
-#'                                                                                                                                                                                                                                                                                                            
+#' @examples
+#' # calculate surface temperature, water vapor, VPD etc. at the surface
+#' # for a given temperature and turbulent fluxes, and under different 
+#' # aerodynamic conductance.
+#' surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1)) 
+#'          
+#' # now calculate also surface CO2 concentration
+#' surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1),
+#'                    Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.Csurf=T)                                                                                                                                                                                                                                                                                                            
+#'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 #' @export 
-surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",Ca="Ca",
-                               VPD="VPD",Ga="Ga",calc.Csurf=F,Ga_CO2="Ga_CO2",NEE="NEE",
-                               constants=bigleaf.constants()){
+surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",
+                               VPD="VPD",Ga="Ga",calc.Csurf=F,Ca="Ca",Ga_CO2="Ga_CO2",
+                               NEE="NEE",constants=bigleaf.constants()){
   
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
@@ -1890,7 +1897,7 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
   # 3) CO2 concentration
   Ca_surf <- as.numeric(rep(NA,length(Tsurf)))
   if (calc.Csurf){
-    Ca_surf <- Ca.surface(Ca,NEE,Ga_CO2)
+    Ca_surf <- Ca.surface(Ca,NEE,Ga_CO2,Tair,pressure)
   }
   
   return(data.frame(Tsurf,esat_surf,esurf,VPD_surf,qsurf,rH_surf,Ca_surf))
@@ -1903,9 +1910,11 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 #' @description the CO2 concentration at the canopy surface derived from net ecosystem
 #'              CO2 exchange and measured atmospheric CO2 concentration.
 #'              
-#' @param Ca       atmospheric CO2 concentration (umol mol-1)
-#' @param NEE      net ecosystem exchange (umol CO2 m-2 s-1)
-#' @param Ga_CO2   aerodynamic conductance for CO2 (mol m-2 s-1)
+#' @param Ca       Atmospheric CO2 concentration (umol mol-1)
+#' @param NEE      Net ecosystem exchange (umol CO2 m-2 s-1)
+#' @param Ga_CO2   Aerodynamic conductance for CO2 (m s-1)
+#' @param Tair     Air temperature (degC)
+#' @param pressure Air pressure (kPa)
 #' 
 #' @details CO2 concentration at the canopy surface is calculated as:
 #' 
@@ -1920,7 +1929,9 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 #' 
 #' @return Ca_surf CO2 concentration at the canopy surface (umol mol-1)
 #' 
-Ca.surface <- function(Ca,NEE,Ga_CO2){
+Ca.surface <- function(Ca,NEE,Ga_CO2,Tair,pressure){
+  
+  Ga_CO2 <- ms.to.mol(Ga_CO2,Tair,pressure)
   
   Ca_surf <- Ca + NEE/Ga_CO2
   
@@ -2003,7 +2014,7 @@ Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
 #'          \deqn{\Omega = \frac{\epsilon + 1 + \frac{Gr}{Ga}}{\epsilon + (1 + \frac{Ga}{Gs}) (1 + \frac{Gr}{Ga})}}{%
 #'          \Omega = (\epsilon + 1 + Gr/Ga) / (\epsilon + (1 + Ga/Gs) (1 + Gr/Ga))}
 #' 
-#' @return omega The decoupling coefficient omega (-)
+#' @return \item{omega}{The decoupling coefficient omega (-)}
 #' 
 #' @references Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
 #'             scaling up from leaf to region. Advances in Ecological Research 15, 1-49. 
@@ -2456,22 +2467,14 @@ mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
 #' @references Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 #' 
 #' @export
-e.to.q <- function(e,pressure,constants=bigleaf.constants()){
-  q <- constants$eps * e / (pressure - (1-constants$eps) * e) 
-  return(q)
-}
-
-
-#' @rdname e.to.q
-#' @family humidity conversion
-#' @export
-q.to.e <- function(q,pressure,constants=bigleaf.constants()){
-  e <- q * pressure / ((1-constants$eps) * q + constants$eps)
+VPD.to.e <- function(VPD,pressure,Tair){
+  esat <- Esat(Tair)[,"Esat"]
+  e    <- esat - VPD
   return(e)
 }
 
 
-#' @rdname e.to.q
+#' @rdname VPD.to.e
 #' @family humidity conversion
 #' @export
 e.to.VPD <- function(e,pressure,Tair){
@@ -2481,17 +2484,25 @@ e.to.VPD <- function(e,pressure,Tair){
 }
 
 
-#' @rdname e.to.q
+#' @rdname VPD.to.e
 #' @family humidity conversion
 #' @export
-VPD.to.e <- function(VPD,pressure,Tair){
-  esat <- Esat(Tair)[,"Esat"]
-  e    <- esat - VPD
+e.to.q <- function(e,pressure,constants=bigleaf.constants()){
+  q <- constants$eps * e / (pressure - (1-constants$eps) * e) 
+  return(q)
+}
+
+
+#' @rdname VPD.to.e
+#' @family humidity conversion
+#' @export
+q.to.e <- function(q,pressure,constants=bigleaf.constants()){
+  e <- q * pressure / ((1-constants$eps) * q + constants$eps)
   return(e)
 }
 
 
-#' @rdname e.to.q
+#' @rdname VPD.to.e
 #' @family humidity conversion
 #' @export
 rH.to.VPD <- function(rH,Tair){
@@ -2501,7 +2512,7 @@ rH.to.VPD <- function(rH,Tair){
 } 
 
 
-#' @rdname e.to.q
+#' @rdname VPD.to.e
 #' @family humidity conversion
 #' @export
 VPD.to.rH <- function(VPD,Tair){
@@ -2511,7 +2522,7 @@ VPD.to.rH <- function(VPD,Tair){
 } 
 
 
-#' @rdname e.to.q
+#' @rdname VPD.to.e
 #' @family humidity conversion
 #' @export
 q.to.VPD <- function(q,Tair,pressure,constants=bigleaf.constants()){
@@ -2522,7 +2533,7 @@ q.to.VPD <- function(q,Tair,pressure,constants=bigleaf.constants()){
 } 
 
 
-#' @rdname e.to.q
+#' @rdname VPD.to.e
 #' @family humidity conversion
 #' @export
 VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
@@ -3066,7 +3077,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #'      
 #'          \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
 #'          
-#'          The empirical model by Ball et al. 1987 is defined as:
+#'          The semi-empirical model by Ball et al. 1987 is defined as:
 #'          
 #'          \deqn{gs = g0 + g1* ((An * rH) / Ca)}
 #'          
@@ -3076,7 +3087,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #'          
 #'          The parameters in the models are estimated using non-linear regression (\code{nls()}).
 #'          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
-#'          the big leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
+#'          the big-leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
 #'          
 #' 
 #' @return an nls model object, containing information on the fitted parameters, their uncertainty range,
@@ -3207,7 +3218,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
 #'          The value of alpha is taken from Nobel 1974 (see Meyers & Hollinger 2004), but other values
 #'          have been used (e.g. Blanken et al., 1997)
 #' 
-#' @return Sp - biochemical energy (W m-2)
+#' @return \item{Sp}{biochemical energy (W m-2)}
 #' 
 #' @references Meyers, T.P., Hollinger, S.E. 2004: An assessment of storage terms in the surface energy
 #'             balance of maize and soybean. Agricultural and Forest Meteorology 125, 105-115.

@@ -57,7 +57,7 @@ All stomatal models were developed at leaf-level, but its parameters
      
          \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
          
-         The empirical model by Ball et al. 1987 is defined as:
+         The semi-empirical model by Ball et al. 1987 is defined as:
          
          \deqn{gs = g0 + g1* ((An * rH) / Ca)}
          
@@ -67,7 +67,7 @@ All stomatal models were developed at leaf-level, but its parameters
          
          The parameters in the models are estimated using non-linear regression (\code{nls()}).
          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
-         the big leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
+         the big-leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
 }
 \examples{
 # calculate g1 for the site DE-Tha using data from June 2010

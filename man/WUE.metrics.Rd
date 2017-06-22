@@ -58,6 +58,14 @@ the following metrics are calculated:
 Units for VPD can also be hPa. Units change accordingly.
       WUE_NEE is calculated based on the absolute value of NEE (the sign convention does not matter).
 }
+\examples{
+load("DE-Tha_2010.rda") # load data 'DE_Tha_2010'
+
+# filter out time periods that are not in the growing season
+                        
+                           
+                                     
+}
 \references{
 Beer, C., et al., 2009: Temporal and among-site variability of inherent
             water use efficiency at the ecosystem level. Global Biogeochemical Cycles 23, GB2018.

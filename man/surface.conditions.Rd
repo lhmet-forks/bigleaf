@@ -5,7 +5,7 @@
 \title{Big-leaf surface conditions}
 \usage{
 surface.conditions(data, Tair = "Tair", pressure = "pressure", LE = "LE",
-  H = "H", Ca = "Ca", VPD = "VPD", Ga = "Ga", calc.Csurf = F,
+  H = "H", VPD = "VPD", Ga = "Ga", calc.Csurf = F, Ca = "Ca",
   Ga_CO2 = "Ga_CO2", NEE = "NEE", constants = bigleaf.constants())
 }
 \arguments{
@@ -19,15 +19,15 @@ surface.conditions(data, Tair = "Tair", pressure = "pressure", LE = "LE",
 
 \item{H}{Sensible heat flux (W m-2)}
 
-\item{Ca}{Atmospheric CO2 concentration (mol mol-1). Required if calc.Ca = TRUE}
-
 \item{VPD}{Vapor pressure deficit (kPa)}
 
 \item{Ga}{Aerodynamic conductance for heat and water vapor (m s-1)}
 
 \item{calc.Csurf}{Calculate surface CO2 concentration?}
 
-\item{Ga_CO2}{Aerodynamic conductance for CO2 (mol m-2 s-1). Required if calc.Ca = TRUE}
+\item{Ca}{Atmospheric CO2 concentration (mol mol-1). Required if calc.Ca = TRUE}
+
+\item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1). Required if calc.Ca = TRUE}
 
 \item{NEE}{Net ecosystem exchange (umol m-2 s-1). Required if calc.Ca = TRUE}
 
@@ -75,24 +75,13 @@ Canopy surface temperature and humidity are calculated by inverting bulk transfe
          conditions outside the canopy boundary layer, i.e. in the canopy airspace.
 }
 \examples{
-# load("FR-Pue_2005.rda") # load data for the site FR-Pue  
-# select data from July
-FR_Pue_2005_July <- FR_Pue_2005[FR_Pue_2005[,"month"] == 7,]
-  
-      
-# calculate a simple estimate of Ga based on Thom 1972
-Ga <- aerodynamic.conductance(FR_Pue_2005_July,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
-     
-# calculate surface conditions (without Ca)      
-surf <- surface.conditions(FR_Pue_2005_July,Ga=Ga,calc.Ca=F)           
-summary(surf)  # note the outliers in both directions. They are associated with very low values of Ga    
-
-# calculate surface conditions including Ca at the surface (NEE and Ga for CO2 are now needed as input)                                                                            
-# Ga for CO2 can be calculated with the same function as above:
-Ga_CO2_ms <- aerodynamic.conductance(FR_Pue_2005_July,stab_correction=F,Rb_model="Thom_1972")[,"Ga_CO2"]
-
-# note that the function requires Ga for CO2 in mol m-2 s-1, not in ms-1.
-Ga_CO2_mol <- ms.to.mol(Ga_CO2_ms,FR_Pue_2005_July[,"Tair"],FR_Pue_2005_July[,"pressure"])
-surf <- surface.conditions(FR_Pue_2005_July,Ga=Ga_CO2_mol,NEE="NEE",calc.Ca=T)                                                                                        
-                                                                                                                                                                                                                                                                                                           
+# calculate surface temperature, water vapor, VPD etc. at the surface
+# for a given temperature and turbulent fluxes, and under different 
+# aerodynamic conductance.
+surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1)) 
+         
+# now calculate also surface CO2 concentration
+surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1),
+                   Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.Csurf=T)                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 }

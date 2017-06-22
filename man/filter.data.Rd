@@ -67,16 +67,17 @@ Must be between 0 and 1.}
 is calculated from VPD internally}
 }
 \value{
-filtered_data The same data frame as provided as first argument to the function
-                      with an additional column "valid", which indicates whether the timestep is valid 
-                      according to the filter criteria (1) or invalid (0).
+The same data frame as provided as first argument to the function
+        with an additional column "valid", which indicates whether the timestep fulfills 
+        the filtering criteria (1) or not (0).
 }
 \description{
-Filters timeseries in which Gs constitutes a physiologically meaningful
-             quantity.
+Filters timeseries of EC data for high-quality values and specified
+             meteorological conditions.
 }
 \details{
 This routine consists of two parts:
+
          1) Quality control: All variables included in \code{vars.qc} are filtered for 
             good quality data. For these variables a corresponding quality variable with 
             the same name as the variable plus the extension as specified in \code{quality.ext}
@@ -92,4 +93,14 @@ This routine consists of two parts:
             specified threshold are set to NA for all variables. E.g. when radiation is below 'trad', all variables 
             are set to NA.
             Set a threshold to 0 (or the minimum of the variable) if the dataset should not be filtered for a specific variable.
+}
+\examples{
+load("DE-Tha_2010.rda") # load data
+
+# filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
+DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
+                           vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+                           tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+                           ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
+
 }

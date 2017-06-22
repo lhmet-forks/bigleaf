@@ -52,7 +52,8 @@ Calculates surface conductance to water vapor from the inverted Penman-Monteith
              equation.
 }
 \details{
-Surface conductance (Gs) is calculated from the inverted Penman-Monteith equation:
+Surface conductance (Gs) is calculated from the inverted Penman-Monteith equation 
+         (if \code{PM} is TRUE, the default):
 
  \deqn{Gs = ( LE * Ga * \gamma ) / ( \Delta * (Rn-G-S) + \rho * cp * Ga * VPD - LE * ( \Delta + \gamma ) )}
  

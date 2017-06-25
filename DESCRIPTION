@@ -1,5 +1,5 @@
 Package: bigleaf
-Version: 0.1
+Version: 0.0.0.9000
 Date: 2017-05-15
 Title: 
 Authors@R: c( person("Juergen", "Knauer", role=c("aut","cre"), email="jknauer@bgc-jena.mpg.de"),

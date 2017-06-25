@@ -1838,7 +1838,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #'          Note that Ga is assumed to be equal for water vapor and sensible heat.
 #'          Ga is further assumed to be the inverse of the sum of the turbulent part
 #'          and the canopy boundary layer conductance (1/Ga = 1/Ga_m + 1/Gb; 
-#'          see \link{\code{aerodynamic.conductance}}). If Ga is replaced by Ga_m (i.e.
+#'          see \code{\link{aerodynamic.conductance}}). If Ga is replaced by Ga_m (i.e.
 #'          only the turbulent conductance part), the results of the functions represent
 #'          conditions outside the canopy boundary layer, i.e. in the canopy airspace.
 #' 
@@ -2117,7 +2117,7 @@ Gr.longwave <- function(Tair,LAI,constants=bigleaf.constants()){
 #'          
 #'          \deqn{e = Esat(Tw) - gamma* (Tair - Tw)}
 #'          
-#'          The equation is solved for Tw using \link{\code{nls}}.
+#'          The equation is solved for Tw using \code{\link{nls}}.
 #'          Actual vapor pressure e is calculated from VPD using the function \code{\link{VPD.to.e}}.
 #'          
 #' @references Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.

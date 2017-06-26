@@ -15,7 +15,7 @@ mol.to.ms(G_mol, Tair, pressure, constants = bigleaf.constants())
 
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 Rgas - universal gas constant (J mol-1 K-1)}

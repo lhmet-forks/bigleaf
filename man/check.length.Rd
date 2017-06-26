@@ -9,6 +9,9 @@ check.length(...)
 
 check.length(...)
 }
+\arguments{
+\item{...}{variables for which the length has to be compared}
+}
 \description{
 tests if variables have the same length
 

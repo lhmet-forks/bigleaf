@@ -19,6 +19,14 @@ energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
 \item{LE}{Latent heat flux (W m-2)}
 
 \item{H}{Sensible heat flux (W m-2)}
+
+\item{instantaneous}{should the energy balance be calculated at the timestep 
+of the observations (TRUE), or over the entire timeperiod
+provided as input (FALSE)}
+
+\item{missing.G.as.NA}{if TRUE, missing G are treated as NA,otherwise set to 0.}
+
+\item{missing.S.as.NA}{if TRUE, missing S are treated as NA,otherwise set to 0.}
 }
 \value{
 a named vector containing:
@@ -28,7 +36,7 @@ a named vector containing:
         \item{r_squared}{r^2 of the OLS regression}
         \item{EBR}{energy balance ratio}
         
-        if \code{instantaneous} is TRUE, only \code{EBR} is returned
+        if \code{instantaneous} is TRUE, only \code{EBR} is returned.
 }
 \description{
 Calculates the degree of the energy balance non-closure for the entire timespan

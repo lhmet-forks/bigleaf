@@ -14,6 +14,8 @@ Gb.Su(data, Tair = "Tair", pressure = "pressure", ustar = "ustar",
 
 \item{Tair}{Air temperature (degC)}
 
+\item{pressure}{Atmospheric pressure (kPa)}
+
 \item{ustar}{Friction velocity (m s-1)}
 
 \item{wind}{Wind speed (m s-1)}
@@ -45,8 +47,6 @@ Either "Dyer_1970" or "Businger_1971".}
 pressure0 - reference atmospheric pressure at sea level (Pa) \cr
 Tair0 - reference air temperature (K) \cr
 Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
-
-\item{presssure}{Atmospheric pressure (kPa)}
 }
 \value{
 a data.frame with the following columns:
@@ -104,6 +104,7 @@ Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.1,LAI=5)
 
 # same conditions, large leaves, and sparse canopy cover (LAI = 1.5)
 Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.01,LAI=1.5)
+
 }
 \references{
 Su, Z., Schmugge, T., Kustas, W. & Massman, W., 2001: An evaluation of

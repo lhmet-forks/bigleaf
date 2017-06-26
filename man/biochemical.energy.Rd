@@ -26,7 +26,8 @@ The following sign convention is employed: NEE is negative when carbon is taken 
          have been used (e.g. Blanken et al., 1997)
 }
 \examples{
-# Calculate biochemical energy taken up by the ecosystem with a measured NEE of -30umol CO2 m-2 s-1             
+# Calculate biochemical energy taken up by the ecosystem with 
+# a measured NEE of -30umol CO2 m-2 s-1             
 biochemical.energy(NEE=-30)            
            
 }

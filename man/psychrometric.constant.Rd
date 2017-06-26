@@ -9,7 +9,7 @@ psychrometric.constant(Tair, pressure, constants = bigleaf.constants())
 \arguments{
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-)}

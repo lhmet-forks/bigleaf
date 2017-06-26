@@ -15,8 +15,6 @@ gC.to.umolCO2(C_flux, constants = bigleaf.constants())
 \item{constants}{Cmol - molar mass of carbon (kg mol-1)}
 
 \item{C_flux}{C flux (gC m-2 s-1)}
-
-\item{C_flux}{CO2 flux (gC m-2 s-1)}
 }
 \description{
 Converts CO2 quantities from umol CO2 m-2 s-1 to gC and vice versa.

@@ -16,7 +16,7 @@ ET.ref(data, Gs = 0.0143, Tair = "Tair", pressure = "pressure",
 
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{VPD}{Vapor pressure deficit (kPa)}
 
@@ -59,7 +59,7 @@ Reference evapotranspiration is calculated according to the Penman-Monteith
          surface.
 }
 \examples{
-# Calculate ET_ref for a surface with known Gs (=0.5mol m-2 s-1) and Ga (0.1 ms-1)
+# Calculate ET_ref for a surface with known Gs (0.5mol m-2 s-1) and Ga (0.1 ms-1)
 
 # Gs is required in ms-1
 Gs_ms <- mol.to.ms(0.5,Tair=20,pressure=100)

@@ -13,7 +13,7 @@ ET.pot(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
 
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{Rn}{Net radiation (W m-2)}
 

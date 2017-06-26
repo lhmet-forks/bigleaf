@@ -16,7 +16,7 @@ aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
 
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{wind}{Wind speed (m s-1)}
 
@@ -104,7 +104,7 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  \deqn{Ra_m = (ln((zr - d)/z0m) - psi_h) / (k ustar)}
  
  If the roughness parameters z0m and d are unknown, they can be estimated using
- \link{\code{roughness.parameters}}. The argument \code{stab_formulation} determines the stability correction function used 
+ \code{\link{roughness.parameters}}. The argument \code{stab_formulation} determines the stability correction function used 
  to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
  and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 

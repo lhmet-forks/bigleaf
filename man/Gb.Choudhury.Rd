@@ -10,9 +10,17 @@ Gb.Choudhury(data, Tair = "Tair", pressure = "pressure", wind = "wind",
   constants = bigleaf.constants())
 }
 \arguments{
+\item{data}{Data.frame or matrix containing all required variables}
+
+\item{Tair}{Air temperature (degC)}
+
+\item{pressure}{Atmospheric pressure (kPa)}
+
 \item{wind}{Wind speed at sensor height (m s-1)}
 
 \item{ustar}{Friction velocity (m s-1)}
+
+\item{H}{Sensible heat flux (W m-2)}
 
 \item{leafwidth}{Leaf width (m)}
 
@@ -65,7 +73,8 @@ Boundary layer conductance according to Choudhury & Monteith 1988 is
          mixing (Nobel 2005).
 }
 \examples{
-## bulk canopy boundary layer resistance for a closed canopy (LAI=5) with large leaves (leafwdith=0.1)            
+## bulk canopy boundary layer resistance for a closed canopy (LAI=5) 
+## with large leaves (leafwdith=0.1)            
 df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250))    
 Gb.Choudhury(data=df,leafwidth=0.1,LAI=5,zh=25,d=17.5,zr=40)
 

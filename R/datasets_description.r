@@ -8,4 +8,4 @@
 #'    \item{year}{year of measurement}
 #'  }
 #' @source original data were downloaded at
-#'         \url{https://fluxnet.fluxdata.org/}   
+#'         \url{https://fluxnet.fluxdata.org/}  

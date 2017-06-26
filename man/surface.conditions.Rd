@@ -33,8 +33,6 @@ surface.conditions(data, Tair = "Tair", pressure = "pressure", LE = "LE",
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
 eps - ratio of the molecular weight of water vapor to dry air (-) \cr}
-
-\item{Rn}{Net radiation (W m-2)}
 }
 \value{
 a data.frame with the following columns:

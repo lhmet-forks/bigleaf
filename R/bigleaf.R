@@ -109,6 +109,7 @@ check.columns <- function(data,column_name){
 
 #' tests if variables have the same length
 #' 
+#' @param ... variables for which the length has to be compared
 #' 
 check.length <- function(...){
 
@@ -605,11 +606,11 @@ Gb.Thom <- function(ustar,constants=bigleaf.constants()){
 
 #' Roughness Reynolds Number
 #' 
-#' @description 
+#' @description calculate the Roughness Reynolds Number.
 #' 
 #' 
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param ustar     Friction velocity (m s-1)
 #' @param hs        Roughness length of the soil (m)
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
@@ -653,23 +654,23 @@ Reynolds.Number <- function(Tair,pressure,ustar,hs,constants=bigleaf.constants()
 
 #' Boundary layer conductance according to Su et al. 2001
 #' 
-#' A physically based formulation for the canopy boundary layer conductance. 
+#' @description A physically based formulation for the canopy boundary layer conductance. 
 #'
-#' @param data      Data.frame or matrix containing all required variables
-#' @param Tair      Air temperature (degC)
-#' @param presssure Atmospheric pressure (kPa)
-#' @param ustar     Friction velocity (m s-1)
-#' @param wind      Wind speed (m s-1)
-#' @param H         Sensible heat flux (W m-2)
-#' @param zh        Canopy height (m)
-#' @param zr        Reference height (m)
-#' @param d         Zero-plane displacement height (-), can be calculated using \code{roughness.parameters}
-#' @param Dl        Leaf characteristic dimension (m)
-#' @param fc        Fractional vegetation cover [0-1] (if not provided, calculated from LAI)
-#' @param LAI       One-sided leaf area index (-)
-#' @param N         Number of leaf sides participating in heat exchange (defaults to 2)
-#' @param Cd        Foliage drag coefficient (-)
-#' @param hs        Roughness height of the soil (m)
+#' @param data     Data.frame or matrix containing all required variables
+#' @param Tair     Air temperature (degC)
+#' @param pressure Atmospheric pressure (kPa)
+#' @param ustar    Friction velocity (m s-1)
+#' @param wind     Wind speed (m s-1)
+#' @param H        Sensible heat flux (W m-2)
+#' @param zh       Canopy height (m)
+#' @param zr       Reference height (m)
+#' @param d        Zero-plane displacement height (-), can be calculated using \code{roughness.parameters}
+#' @param Dl       Leaf characteristic dimension (m)
+#' @param fc       Fractional vegetation cover [0-1] (if not provided, calculated from LAI)
+#' @param LAI      One-sided leaf area index (-)
+#' @param N        Number of leaf sides participating in heat exchange (defaults to 2)
+#' @param Cd       Foliage drag coefficient (-)
+#' @param hs       Roughness height of the soil (m)
 #' @param stab_formulation Stability correction function used (If stab_correction is TRUE).
 #'                         Either "Dyer_1970" or "Businger_1971".
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
@@ -740,6 +741,7 @@ Reynolds.Number <- function(Tair,pressure,ustar,hs,constants=bigleaf.constants()
 #' 
 #' # same conditions, large leaves, and sparse canopy cover (LAI = 1.5)
 #' Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.01,LAI=1.5)
+#' 
 #' @export
 Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind",
                   H="H",zh,zr,d,Dl,fc=NULL,LAI=NULL,N=2,Cd=0.2,hs=0.01,
@@ -789,8 +791,12 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
 
 #' Boundary layer conductance according to Choudhury & Monteith 1988
 #' 
+#' @param data             Data.frame or matrix containing all required variables
+#' @param Tair             Air temperature (degC)
+#' @param pressure         Atmospheric pressure (kPa)
 #' @param wind             Wind speed at sensor height (m s-1)
 #' @param ustar            Friction velocity (m s-1)
+#' @param H                Sensible heat flux (W m-2)
 #' @param leafwidth        Leaf width (m)
 #' @param LAI              One-sided leaf area index
 #' @param zh               Canopy height (m)
@@ -843,7 +849,8 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
 #' @seealso \code{\link{Gb.Thom}}, \code{\link{Gb.Su}}  
 #'    
 #' @examples 
-#' ## bulk canopy boundary layer resistance for a closed canopy (LAI=5) with large leaves (leafwdith=0.1)            
+#' ## bulk canopy boundary layer resistance for a closed canopy (LAI=5) 
+#' ## with large leaves (leafwdith=0.1)            
 #' df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250))    
 #' Gb.Choudhury(data=df,leafwidth=0.1,LAI=5,zh=25,d=17.5,zr=40)
 #' 
@@ -899,7 +906,7 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #' @param heights   vector with heights for which wind speed is to be 
 #'                  calculated.
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)                                                                                  
+#' @param pressure  Atmospheric pressure (kPa)                                                                                  
 #' @param ustar     Friction velocity (m s-1)
 #' @param H         Sensible heat flux (W m-2)
 #' @param zr        Instrument (reference) height (m)
@@ -922,9 +929,7 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #'       meaningful to calculate values closely above d + z0m. All values in \code{heights}
 #'       smaller than d + z0m will return 0.                                 
 #'                                  
-#' @return a data.frame with rows representing time and columns representing heights as specified in \code{heights}.     
-#'                                            
-#' @references
+#' @return a data.frame with rows representing time and columns representing heights as specified in \code{heights}.
 #' 
 #' @examples 
 #' df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 
@@ -1013,7 +1018,7 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
 #' @param hs        roughness length of the soil surface (m)
 #' @param data      Data.frame or matrix containing all required variables
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param wind      Wind speed at height zr (m s-1)
 #' @param ustar     Friction velocity (m s-1)
 #' @param H              Sensible heat flux (W m-2)
@@ -1080,7 +1085,7 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
 #' # assume d = 0.8*zh
 #' roughness.parameters(method="wind_profile",zh=25,zr=40,frac_d=0.8,data=df) 
 #' 
-#' @importFrom stats median complete.cases 
+#' @importFrom stats median sd complete.cases 
 #' @export                                  
 roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","wind_profile"),zh,
                                  frac_d=0.7,frac_z0m=0.1,LAI,zr,cd=0.2,hs=0.01,data,Tair="Tair",pressure="pressure",
@@ -1149,16 +1154,16 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 }
 
 
-############################
-### air pressure, density ## --------------------------------------------------------------------------
-############################
+####################################
+### Atmospheric pressure, density ## --------------------------------------------------------------------------
+####################################
 
 #' Air density
 #' 
 #' @description Air density of moist air from air temperature and pressure.
 #' 
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param constants Kelvin - conversion degC to Kelvin \cr
 #'                  Rd - gas constant of dry air (J kg-1 K-1)
 #' 
@@ -1183,28 +1188,30 @@ air.density <- function(Tair,pressure,constants=bigleaf.constants()){
 
 
 
-#' Air pressure from hypsometric equation
+#' Atmospheric pressure from hypsometric equation
 #' 
 #' @description An estimate of mean pressure at a given elevation as predicted by the
 #'              hypsometric equation.
 #'              
 #' @param elev      Elevation a.s.l. (m)
 #' @param Tair      Air temperature (deg C)
-#' @param q         Specific humidity (kg kg-1); optional
+#' @param VPD       Vapor pressure deficit (kPa); optional
 #' @param constants Kelvin- conversion degC to Kelvin \cr
 #'                  pressure0 - reference atmospheric pressure at sea level (Pa) \cr
 #'                  Rd - gas constant of dry air (J kg-1 K-1) \cr
 #'                  g -  gravitational acceleration (m s-2) \cr
 #' 
+#' @details Atmospheric pressure is approximated by the hypsometric equation:
 #' 
-#' @details 
-#' 
+#'       \deqn{pressure = pressure_0 / (exp(g * elevation / (Rd Temp)))}
+#'       
 #' @note The hypsometric equation gives an estimate of the standard pressure
 #'       at a given altitude. 
-#'       If specific humidity q is provided, humidity correction
-#'       is applied and the virtual temperature instead of air temperature is used.
+#'       If VPD is provided, humidity correction is applied and the
+#'       virtual temperature instead of air temperature is used. VPD is 
+#'       internally converted to specific humidity.
 #'
-#' @return pressure air pressure (kPa)
+#' @return pressure Atmospheric pressure (kPa)
 #'                            
 #' @references Stull B., 1988: An Introduction to Boundary Layer Meteorology.
 #'             Kluwer Academic Publishers, Dordrecht, Netherlands.
@@ -1214,11 +1221,11 @@ air.density <- function(Tair,pressure,constants=bigleaf.constants()){
 #' pressure.from.elevation(500,Tair=25,q=0.01)
 #' 
 #' @export                           
-pressure.from.elevation <- function(elev,Tair,q=NULL,constants=bigleaf.constants()){
-  if(is.null(q)){
+pressure.from.elevation <- function(elev,Tair,VPD=NULL,constants=bigleaf.constants()){
+  if(is.null(VPD)){
     Temp <- Tair + constants$Kelvin
   } else {
-    Temp <- virtual.temp(Tair,q,constants)  + constants$Kelvin
+    Temp <- virtual.temp(Tair,VPD,constants)  + constants$Kelvin
   }
   
   pressure <- constants$pressure0 / exp(constants$g * elev / (constants$Rd*Temp))
@@ -1248,7 +1255,7 @@ pressure.from.elevation <- function(elev,Tair,q=NULL,constants=bigleaf.constants
 #' @description 
 #' 
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param ustar     Friction velocity (m s-1)
 #' @param H         Sensible heat flux (W m-2)
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
@@ -1286,11 +1293,11 @@ MoninObukhov.length <- function(Tair,pressure,ustar,H,constants=bigleaf.constant
 #' 
 #' @param data      Data.frame or matrix containing all required variables
 #' @param Tair      Air temperature (degC)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param ustar     Friction velocity (m s-1)
 #' @param H         Sensible heat flux (W m-2)
 #' @param zr        Instrument (reference) height (m)
-#' @param disp      Zero-plane displacement height (m)
+#' @param d         Zero-plane displacement height (m)
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
 #'                  cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  k - von Karman constant (-) \cr
@@ -1424,7 +1431,7 @@ stability.correction <- function(zeta,formulation=c("Dyer_1970","Businger_1971")
 #' 
 #' @param data              Data.frame or matrix containing all required variables
 #' @param Tair              Air temperature (deg C)
-#' @param pressure          Air pressure (kPa)
+#' @param pressure          Atmospheric pressure (kPa)
 #' @param wind              Wind speed (m s-1)
 #' @param ustar             Friction velocity (m s-1)
 #' @param H                 Sensible heat flux (W m-2)
@@ -1475,7 +1482,7 @@ stability.correction <- function(zeta,formulation=c("Dyer_1970","Businger_1971")
 #'  \deqn{Ra_m = (ln((zr - d)/z0m) - psi_h) / (k ustar)}
 #'  
 #'  If the roughness parameters z0m and d are unknown, they can be estimated using
-#'  \link{\code{roughness.parameters}}. The argument \code{stab_formulation} determines the stability correction function used 
+#'  \code{\link{roughness.parameters}}. The argument \code{stab_formulation} determines the stability correction function used 
 #'  to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
 #'  and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
 #'  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
@@ -1722,28 +1729,30 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #' DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month"] == 6,]
 #' 
 #' # calculate Gs based on a simple gradient approach
-#' Gs_gradient <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",VPD="VPD",PM=FALSE)
+#' Gs_gradient <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+#'                                    VPD="VPD",PM=FALSE)
 #' summary(Gs_gradient)
 #' 
 #' # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed),
 #' # using a simple estimate of Ga based on Thom 1972
-#' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
+#' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,
+#'                               Rb_model="Thom_1972")[,"Ga_h"]
 #' 
 #' # if G and/or S are available, don't forget to indicate (they are ignored by default).
 #' # Note that Ga is not added to the data.frame 'DE_Tha_June_2010'
-#' Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
-#'                              VPD="VPD",Ga=Ga,PM=TRUE)
+#' Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+#'                              Rn="Rn",G="G",S=NULL,VPD="VPD",Ga=Ga,PM=TRUE)
 #' summary(Gs_PM)
 #' 
 #' 
 #' # compare to an Ga estimate that accounts for stability effects
-#' Ga_stab <- aerodynamic.conductance(DE_Tha_June_2010,zr=42,zh=26.5,d=18.5,z0m=2.6,stab_correction=T,
-#'                               Rb_model="Thom_1972")[,"Ga_h"]
+#' Ga_stab <- aerodynamic.conductance(DE_Tha_June_2010,zr=42,zh=26.5,d=18.5,z0m=2.6,
+#'                                    stab_correction=T,Rb_model="Thom_1972")[,"Ga_h"]
 #'                               
 #' # now add Ga2 to the data.frame 'DE_Tha_June_2010'
 #' DE_Tha_June_2010$Ga_stab <- Ga_stab
-#' Gs_PM2 <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
-#'                              VPD="VPD",Ga="Ga_stab",PM=TRUE)
+#' Gs_PM2 <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+#'                               Rn="Rn",G="G",S=NULL,VPD="VPD",Ga="Ga_stab",PM=TRUE)
 #' summary(Gs_PM2)
 #'                              
 #' @export
@@ -1813,7 +1822,6 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #' @param data       Data.frame or matrix containing all required input variables
 #' @param Tair       Air temperature (deg C)
 #' @param pressure   Atmospheric pressure (kPa)
-#' @param Rn         Net radiation (W m-2)
 #' @param H          Sensible heat flux (W m-2)
 #' @param LE         Latent heat flux (W m-2)
 #' @param VPD        Vapor pressure deficit (kPa)
@@ -1919,7 +1927,7 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 #' @param NEE      Net ecosystem exchange (umol CO2 m-2 s-1)
 #' @param Ga_CO2   Aerodynamic conductance for CO2 (m s-1)
 #' @param Tair     Air temperature (degC)
-#' @param pressure Air pressure (kPa)
+#' @param pressure Atmospheric pressure (kPa)
 #' 
 #' @details CO2 concentration at the canopy surface is calculated as:
 #' 
@@ -1964,7 +1972,8 @@ Ca.surface <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 #'         \item{Trad_degC}{Radiometric surface temperature (degC)} 
 #' 
 #' @examples 
-#' # determine Trad of an object that has an emissivity of 0.98 and emits longwave radiation of 400Wm-2  
+#' # determine radiative temperature of an object that has an emissivity of 0.98 
+#' # and emits longwave radiation of 400Wm-2  
 #' Trad.surface(400,0.98)
 #' 
 #' @export
@@ -1984,7 +1993,7 @@ Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
 #' 
 #' @param data        Data.frame or matrix containing all required input variables
 #' @param Tair        Air temperature (deg C)
-#' @param pressure    Air pressure (kPa)
+#' @param pressure    Atmospheric pressure (kPa)
 #' @param Ga          Aerodynamic conductance (m s-1)
 #' @param Gs          Surface conductance (m s-1)
 #' @param approach    Approach used to calculate omega. Either "JarvisMcNaughton_1986" (default)
@@ -2113,7 +2122,7 @@ Gr.longwave <- function(Tair,LAI,constants=bigleaf.constants()){
 #'              that the air would have if it was saturated.
 #' 
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param VPD       Vapor pressure deficit (kPa)
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-) 
@@ -2156,15 +2165,15 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #' @description calculates the dew point, the temperature to which air must be 
 #'              cooled to become saturated (i.e. e = esat(Td))
 #'
-#' @param Tair      Air temperature (degC)
-#' @param presssure Air pressure (kPa)                           
-#' @param VPD       Vapor pressure deficit (kPa)
+#' @param Tair     Air temperature (degC)
+#' @param pressure Atmospheric pressure (kPa)                           
+#' @param VPD      Vapor pressure deficit (kPa)
 #' 
 #' @details Dew point temperature (Td) is defined by:
 #' 
 #'         \deqn{e = Esat(Td)}
 #'    
-#'          which is solved for Td using \link{\code{nls}}.
+#'          which is solved for Td using \code{\link{nls}}.
 #'          
 #' @return dew point temperature Td (deg C)
 #' 
@@ -2198,7 +2207,7 @@ dew.point <- function(Tair,pressure,VPD){
 #'              density as moist air at its actual temperature.
 #' 
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param VPD       Vapor pressure deficit (kPa)
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-) 
@@ -2208,7 +2217,7 @@ dew.point <- function(Tair,pressure,VPD){
 #'  \deqn{Tv = Tair / (1 - (1 - eps) e/pressure)}
 #' 
 #'  where Tair is in Kelvin (converted internally). Likewise, VPD is converted 
-#'  to actual vapor pressure (e in kPa) with \link{\code{VPD.to.e}} internally.
+#'  to actual vapor pressure (e in kPa) with \code{\link{VPD.to.e}} internally.
 #' 
 #' @return virtual temperature (deg C)
 #' 
@@ -2299,7 +2308,7 @@ Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
 #' @description Calculates the psychrometric 'constant'.
 #' 
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-)
 #'                  
@@ -2413,7 +2422,7 @@ ET.to.LE <- function(ET,Tair){
 #' @param G_ms       Conductance (ms-1)
 #' @param G_mol      Conductance (mol m-2 s-1)
 #' @param Tair       Air temperature (deg C)
-#' @param pressure   Air pressure (kPa)
+#' @param pressure   Atmospheric pressure (kPa)
 #' @param constants  Kelvin - conversion degree Celsius to Kelvin \cr
 #'                   Rgas - universal gas constant (J mol-1 K-1)
 #' 
@@ -2447,6 +2456,7 @@ ms.to.mol <- function(G_ms,Tair,pressure,constants=bigleaf.constants()){
 
 #' @rdname ms.to.mol
 #' @family conductance conversion
+#' @export
 mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
   Tair     <- Tair + constants$Kelvin
   pressure <- pressure * 1000
@@ -2462,8 +2472,9 @@ mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
 #' 
 #' @description Conversion between vapor pressure, vapor pressure deficit (VPD), specific humidity, and relative humidity.
 #' 
+#' @param Tair      Air temperature (deg C)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param e         Vapor pressure (kPa)
-#' @param p         Air pressure (kPa)
 #' @param q         Specific humidity (kg kg-1)
 #' @param VPD       Vapor pressure deficit (kPa)
 #' @param rH        Relative humidity (-)
@@ -2616,8 +2627,7 @@ umolCO2.to.gC <- function(CO2_flux,constants=bigleaf.constants()){
 
 
 #' @rdname umolCO2.to.gC
-#' @param C_flux CO2 flux (gC m-2 s-1)
-#'
+#' @export
 gC.to.umolCO2 <- function(C_flux,constants=bigleaf.constants()){
 
   CO2_flux <- C_flux / 1000 * (constants$Cmol / 2*constants$Omol) * 1e06
@@ -2637,7 +2647,7 @@ gC.to.umolCO2 <- function(C_flux,constants=bigleaf.constants()){
 #' 
 #' @param data      Data.frame or matrix containing all required variables; optional
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param Rn        Net radiation (W m-2)
 #' @param G         Ground heat flux (W m-2); optional
 #' @param S         Sum of all storage fluxes (W m-2); optional
@@ -2712,7 +2722,7 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #' @param data      Data.frame or matrix containing all required variables
 #' @param Gs        Surface conductance (m s-1); defaults to 0.0143 ms-1 (~ 0.58mol m-2 s-1)
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param VPD       Vapor pressure deficit (kPa)
 #' @param Ga        Aerodynamic conductance (m s-1)
 #' @param Rn        Net radiation (W m-2)
@@ -2745,7 +2755,7 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #'              paper 56.
 #' 
 #' @examples 
-#' # Calculate ET_ref for a surface with known Gs (=0.5mol m-2 s-1) and Ga (0.1 ms-1)
+#' # Calculate ET_ref for a surface with known Gs (0.5mol m-2 s-1) and Ga (0.1 ms-1)
 #' 
 #' # Gs is required in ms-1
 #' Gs_ms <- mol.to.ms(0.5,Tair=20,pressure=100)
@@ -2804,7 +2814,7 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #' 
 #' @param data      Data.frame or matrix containing all required input variables
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param VPD       Air vapor pressure deficit (kPa)
 #' @param Gs        surface conductance (m s-1)
 #' @param Rn        Net radiation (W m-2)
@@ -2831,7 +2841,7 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #'          \deqn{ET_imp = (\rho * cp * VPD * Gs * \lambda) / \gamma}
 #' 
 #' @note Surface conductance (Gs) is calculated with \code{\link{surface.conductance}}.
-#'       Aerodynamic conductance (Ga) can be calculated using \code{\link{Ga}}.
+#'       Aerodynamic conductance (Ga) can be calculated using \code{\link{aerodynamic.conductance}}.
 #'       
 #' @return a data.frame with the following columns:
 #'         \item{ET_eq}{equilibrium ET (kg m-2 s-1)}
@@ -2846,7 +2856,8 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #'             3rd edition. Academic Press, London. 
 #'             
 #' @examples 
-#' df <- data.frame(Tair=20,pressure=100,VPD=seq(0.5,4,0.5),Gs=seq(0.01,0.002,length.out=8),Rn=seq(50,400,50))            
+#' df <- data.frame(Tair=20,pressure=100,VPD=seq(0.5,4,0.5),
+#'                  Gs=seq(0.01,0.002,length.out=8),Rn=seq(50,400,50))            
 #' ET.components(df)            
 #'             
 #' @export
@@ -2953,7 +2964,8 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
 #' # alternatively, the function aerodynamic.conductance also returns Ga for CO2
 #' Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
 #' 
-#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) # note the sign convention for NEE
+#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) 
+#' # note the sign convention for NEE
 #' 
 #' @export
 intercellular.CO2 <- function(Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=F,Ga=NULL,NEE=NULL,
@@ -3062,7 +3074,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #' 
 #' @param data      Data.frame or matrix containing all required columns
 #' @param Tair      Air temperature (deg C)
-#' @param pressure  Air pressure (kPa)
+#' @param pressure  Atmospheric pressure (kPa)
 #' @param GPP       Gross primary productivity (umol CO2 m-2 s-1)
 #' @param Gs        Surface conductance to water vapor (mol m-2 s-1)
 #' @param VPD       Vapor pressure deficit (kPa)
@@ -3126,21 +3138,25 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #' 
 #' # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed)
 #' # calculate a simple estimate of Ga based on Thom 1972
-#' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
+#' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,
+#'                               Rb_model="Thom_1972")[,"Ga_h"]
 #' 
-#' # if G and/or S are available, don't forget to indicate (they are ignored by default). Note that
-#' # note that Ga is not added to the data.frame 'DE_Tha_June_2010'
-#' Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
-#'                              VPD="VPD",Ga=Ga,PM=TRUE)[,"Gs_mol"]
+#' # if G and/or S are available, don't forget to indicate (they are ignored by default).
+#' # Note that Ga is not added to the data.frame 'DE_Tha_June_2010'
+#' Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+#'                              Rn="Rn",G="G",S=NULL,VPD="VPD",Ga=Ga,PM=TRUE)[,"Gs_mol"]
 #'                              
 #' ### Estimate the stomatal slope parameter g1 using the USO model
-#' mod_USO <- stomatal.slope(DE_Tha_June_2010,model="USO",GPP="GPP_nt",Gs=Gs_PM,nmin=40,fitg0=FALSE)
+#' mod_USO <- stomatal.slope(DE_Tha_June_2010,model="USO",GPP="GPP_nt",Gs=Gs_PM,
+#'                           nmin=40,fitg0=FALSE)
 #' 
 #' ### Estimate the same parameter from the Ball&Berry model and prescribe g0
-#' mod_BB <- stomatal.slope(DE_Tha_June_2010,model="Ball&Berry",GPP="GPP_nt",Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
+#' mod_BB <- stomatal.slope(DE_Tha_June_2010,model="Ball&Berry",GPP="GPP_nt",
+#'                          Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
 #' 
 #' ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
-#' mod_Leu <- stomatal.slope(DE_Tha_June_2010,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,nmin=40,fitg0=TRUE,D0=1.5,fitD0=FALSE)                         
+#' mod_Leu <- stomatal.slope(DE_Tha_June_2010,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
+#'                           nmin=40,fitg0=TRUE,D0=1.5,fitD0=FALSE)                         
 #' 
 #' @importFrom stats nls 
 #' @export 
@@ -3240,7 +3256,8 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
 #'             Journal of Geophysical Research 102, 28915-28927. 
 #'             
 #' @examples 
-#' # Calculate biochemical energy taken up by the ecosystem with a measured NEE of -30umol CO2 m-2 s-1             
+#' # Calculate biochemical energy taken up by the ecosystem with 
+#' # a measured NEE of -30umol CO2 m-2 s-1             
 #' biochemical.energy(NEE=-30)            
 #'            
 #' @export 
@@ -3257,12 +3274,17 @@ biochemical.energy <- function(NEE,alpha=0.422){
 #' @description Calculates the degree of the energy balance non-closure for the entire timespan
 #'              based on the ratio of two sums (energy balance ratio), and ordinary least squares (OLS).
 #' 
-#' @param data Data.frame or matrix containing all required variables
-#' @param Rn   Net radiation (W m-2)
-#' @param G    Ground heat flux (W m-2); optional
-#' @param S    Sum of all storage fluxes (W m-2); optional
-#' @param LE   Latent heat flux (W m-2)
-#' @param H    Sensible heat flux (W m-2)
+#' @param data  Data.frame or matrix containing all required variables
+#' @param Rn    Net radiation (W m-2)
+#' @param G     Ground heat flux (W m-2); optional
+#' @param S     Sum of all storage fluxes (W m-2); optional
+#' @param LE    Latent heat flux (W m-2)
+#' @param H     Sensible heat flux (W m-2)
+#' @param instantaneous    should the energy balance be calculated at the timestep 
+#'                         of the observations (TRUE), or over the entire timeperiod
+#'                         provided as input (FALSE)
+#' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
+#' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0.
 #' 
 #' 
 #' @details The energy balance ratio (EBR) is calculated as:
@@ -3279,7 +3301,7 @@ biochemical.energy <- function(NEE,alpha=0.422){
 #'         \item{r_squared}{r^2 of the OLS regression}
 #'         \item{EBR}{energy balance ratio}
 #'         
-#'         if \code{instantaneous} is TRUE, only \code{EBR} is returned
+#'         if \code{instantaneous} is TRUE, only \code{EBR} is returned.
 #' 
 #' @references Wilson K., et al. 2002: Energy balance closure at FLUXNET sites.
 #'             Agricultural and Forest Meteorology 113, 223-243.
@@ -3307,7 +3329,7 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
     warning("ground heat flux G is not provided and set to 0.")
-    G <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
+    G <- rep(0,ifelse(!missing(data),nrow(data),length(Rn)))
   }
   
   if(!is.null(S)){
@@ -3315,7 +3337,7 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
     warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
+    S <- rep(0,ifelse(!missing(data),nrow(data),length(Rn)))
   }
 
   if (!instantaneous){

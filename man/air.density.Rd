@@ -9,7 +9,7 @@ air.density(Tair, pressure, constants = bigleaf.constants())
 \arguments{
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{constants}{Kelvin - conversion degC to Kelvin \cr
 Rd - gas constant of dry air (J kg-1 K-1)}

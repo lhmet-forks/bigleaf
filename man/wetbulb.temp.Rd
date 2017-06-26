@@ -9,7 +9,7 @@ wetbulb.temp(Tair, pressure, VPD, constants = bigleaf.constants())
 \arguments{
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{VPD}{Vapor pressure deficit (kPa)}
 

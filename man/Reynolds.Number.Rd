@@ -9,7 +9,7 @@ Reynolds.Number(Tair, pressure, ustar, hs, constants = bigleaf.constants())
 \arguments{
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{ustar}{Friction velocity (m s-1)}
 
@@ -25,7 +25,7 @@ a data.frame with the following columns:
         \item{Re}{Roughness Reynolds Number (-)}
 }
 \description{
-
+calculate the Roughness Reynolds Number.
 }
 \details{
 The Roughness Reynolds Number is calculated as in Massman 1999a:

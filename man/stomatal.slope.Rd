@@ -14,7 +14,7 @@ stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP_nt",
 
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{GPP}{Gross primary productivity (umol CO2 m-2 s-1)}
 
@@ -84,21 +84,25 @@ DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month
 
 # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed)
 # calculate a simple estimate of Ga based on Thom 1972
-Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
+Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,
+                              Rb_model="Thom_1972")[,"Ga_h"]
 
-# if G and/or S are available, don't forget to indicate (they are ignored by default). Note that
-# note that Ga is not added to the data.frame 'DE_Tha_June_2010'
-Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
-                             VPD="VPD",Ga=Ga,PM=TRUE)[,"Gs_mol"]
+# if G and/or S are available, don't forget to indicate (they are ignored by default).
+# Note that Ga is not added to the data.frame 'DE_Tha_June_2010'
+Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+                             Rn="Rn",G="G",S=NULL,VPD="VPD",Ga=Ga,PM=TRUE)[,"Gs_mol"]
                              
 ### Estimate the stomatal slope parameter g1 using the USO model
-mod_USO <- stomatal.slope(DE_Tha_June_2010,model="USO",GPP="GPP_nt",Gs=Gs_PM,nmin=40,fitg0=FALSE)
+mod_USO <- stomatal.slope(DE_Tha_June_2010,model="USO",GPP="GPP_nt",Gs=Gs_PM,
+                          nmin=40,fitg0=FALSE)
 
 ### Estimate the same parameter from the Ball&Berry model and prescribe g0
-mod_BB <- stomatal.slope(DE_Tha_June_2010,model="Ball&Berry",GPP="GPP_nt",Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
+mod_BB <- stomatal.slope(DE_Tha_June_2010,model="Ball&Berry",GPP="GPP_nt",
+                         Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
 
 ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
-mod_Leu <- stomatal.slope(DE_Tha_June_2010,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,nmin=40,fitg0=TRUE,D0=1.5,fitD0=FALSE)                         
+mod_Leu <- stomatal.slope(DE_Tha_June_2010,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
+                          nmin=40,fitg0=TRUE,D0=1.5,fitD0=FALSE)                         
 
 }
 \references{

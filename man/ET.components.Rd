@@ -13,7 +13,7 @@ ET.components(data, Tair = "Tair", pressure = "pressure", VPD = "VPD",
 
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{VPD}{Air vapor pressure deficit (kPa)}
 
@@ -60,10 +60,11 @@ Total evapotranspiration can be written in the form:
 }
 \note{
 Surface conductance (Gs) is calculated with \code{\link{surface.conductance}}.
-      Aerodynamic conductance (Ga) can be calculated using \code{\link{Ga}}.
+      Aerodynamic conductance (Ga) can be calculated using \code{\link{aerodynamic.conductance}}.
 }
 \examples{
-df <- data.frame(Tair=20,pressure=100,VPD=seq(0.5,4,0.5),Gs=seq(0.01,0.002,length.out=8),Rn=seq(50,400,50))            
+df <- data.frame(Tair=20,pressure=100,VPD=seq(0.5,4,0.5),
+                 Gs=seq(0.01,0.002,length.out=8),Rn=seq(50,400,50))            
 ET.components(df)            
             
 }

@@ -86,28 +86,30 @@ DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
 DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month"] == 6,]
 
 # calculate Gs based on a simple gradient approach
-Gs_gradient <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",VPD="VPD",PM=FALSE)
+Gs_gradient <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+                                   VPD="VPD",PM=FALSE)
 summary(Gs_gradient)
 
 # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed),
 # using a simple estimate of Ga based on Thom 1972
-Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,Rb_model="Thom_1972")[,"Ga_h"]
+Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,
+                              Rb_model="Thom_1972")[,"Ga_h"]
 
 # if G and/or S are available, don't forget to indicate (they are ignored by default).
 # Note that Ga is not added to the data.frame 'DE_Tha_June_2010'
-Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
-                             VPD="VPD",Ga=Ga,PM=TRUE)
+Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+                             Rn="Rn",G="G",S=NULL,VPD="VPD",Ga=Ga,PM=TRUE)
 summary(Gs_PM)
 
 
 # compare to an Ga estimate that accounts for stability effects
-Ga_stab <- aerodynamic.conductance(DE_Tha_June_2010,zr=42,zh=26.5,d=18.5,z0m=2.6,stab_correction=T,
-                              Rb_model="Thom_1972")[,"Ga_h"]
+Ga_stab <- aerodynamic.conductance(DE_Tha_June_2010,zr=42,zh=26.5,d=18.5,z0m=2.6,
+                                   stab_correction=T,Rb_model="Thom_1972")[,"Ga_h"]
                               
 # now add Ga2 to the data.frame 'DE_Tha_June_2010'
 DE_Tha_June_2010$Ga_stab <- Ga_stab
-Gs_PM2 <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",Rn="Rn",G="G",S=NULL,
-                             VPD="VPD",Ga="Ga_stab",PM=TRUE)
+Gs_PM2 <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+                              Rn="Rn",G="G",S=NULL,VPD="VPD",Ga="Ga_stab",PM=TRUE)
 summary(Gs_PM2)
                              
 }

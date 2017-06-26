@@ -35,7 +35,7 @@ The following arguments are only needed if \code{method = "wind_profile"}!}
 
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{wind}{Wind speed at height zr (m s-1)}
 

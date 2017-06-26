@@ -18,7 +18,7 @@ calculated.}
 
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{ustar}{Friction velocity (m s-1)}
 
@@ -74,8 +74,5 @@ Note that this equation is only valid for z >= d + z0m, and it is not
 \examples{
 df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 
 wind.profile(df,heights=c(17:40),zr=40,zh=25,d=16)
-
-}
-\references{
 
 }

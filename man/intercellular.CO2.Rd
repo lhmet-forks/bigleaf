@@ -64,7 +64,8 @@ intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
 # alternatively, the function aerodynamic.conductance also returns Ga for CO2
 Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
 
-intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) # note the sign convention for NEE
+intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) 
+# note the sign convention for NEE
 
 }
 \references{

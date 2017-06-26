@@ -13,7 +13,7 @@ decoupling(data, Tair = "Tair", pressure = "pressure", Ga = "Ga",
 
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{Ga}{Aerodynamic conductance (m s-1)}
 

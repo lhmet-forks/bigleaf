@@ -9,7 +9,7 @@ virtual.temp(Tair, pressure, VPD, constants = bigleaf.constants())
 \arguments{
 \item{Tair}{Air temperature (deg C)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{VPD}{Vapor pressure deficit (kPa)}
 
@@ -29,7 +29,7 @@ the virtual temperature is given by:
  \deqn{Tv = Tair / (1 - (1 - eps) e/pressure)}
 
  where Tair is in Kelvin (converted internally). Likewise, VPD is converted 
- to actual vapor pressure (e in kPa) with \link{\code{VPD.to.e}} internally.
+ to actual vapor pressure (e in kPa) with \code{\link{VPD.to.e}} internally.
 }
 \examples{
 virtual.temp(25,100,1.5)                        

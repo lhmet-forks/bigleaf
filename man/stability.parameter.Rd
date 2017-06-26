@@ -12,7 +12,7 @@ stability.parameter(data, Tair = "Tair", pressure = "pressure",
 
 \item{Tair}{Air temperature (degC)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{ustar}{Friction velocity (m s-1)}
 
@@ -20,12 +20,12 @@ stability.parameter(data, Tair = "Tair", pressure = "pressure",
 
 \item{zr}{Instrument (reference) height (m)}
 
+\item{d}{Zero-plane displacement height (m)}
+
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 k - von Karman constant (-) \cr
 g - gravitational acceleration (m s-2)}
-
-\item{disp}{Zero-plane displacement height (m)}
 }
 \value{
 the stability parameter \eqn{\zeta}

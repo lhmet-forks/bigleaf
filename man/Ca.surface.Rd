@@ -15,7 +15,7 @@ Ca.surface(Ca, NEE, Ga_CO2, Tair, pressure)
 
 \item{Tair}{Air temperature (degC)}
 
-\item{pressure}{Air pressure (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 }
 \value{
 Ca_surf CO2 concentration at the canopy surface (umol mol-1)

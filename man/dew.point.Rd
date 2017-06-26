@@ -9,9 +9,9 @@ dew.point(Tair, pressure, VPD)
 \arguments{
 \item{Tair}{Air temperature (degC)}
 
-\item{VPD}{Vapor pressure deficit (kPa)}
+\item{pressure}{Atmospheric pressure (kPa)}
 
-\item{presssure}{Air pressure (kPa)}
+\item{VPD}{Vapor pressure deficit (kPa)}
 }
 \value{
 dew point temperature Td (deg C)
@@ -25,7 +25,7 @@ Dew point temperature (Td) is defined by:
 
         \deqn{e = Esat(Td)}
    
-         which is solved for Td using \link{\code{nls}}.
+         which is solved for Td using \code{\link{nls}}.
 }
 \examples{
 dew.point(25,100,1.5)                

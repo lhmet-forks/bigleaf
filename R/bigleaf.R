@@ -222,6 +222,7 @@ bigleaf.constants <- function(){
 #'                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
 #'                            ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
 #' 
+#' @importFrom stats aggregate
 #' @export                     
 filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="ustar",
                         VPD="VPD",GPP="GPP_nt",doy="doy",year="year",quality.control=TRUE,
@@ -388,7 +389,8 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
 #'          
 #' @return a vector of type integer of the same length as the input GPPd in which 0 indicate
 #'         no growing season (dormant season) and 1 indicate growing season.
-#'                         
+#'                 
+#' @importFrom stats quantile filter                                 
 #' @export  
 filter.growseas <- function(GPPd,tGPP,ws=15,min.int=5){
   
@@ -513,7 +515,7 @@ filter.growseas <- function(GPPd,tGPP,ws=15,min.int=5){
 #' # filter out time periods that are not in the growing season
 #'                         
 #'                            
-#'                                      
+#' @importFrom stats median                                     
 #' @export
 WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
                         constants=bigleaf.constants()){
@@ -1076,7 +1078,9 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
 #' roughness.parameters(method="wind_profile",zh=25,zr=40,frac_d=0.7,data=df)
 #' 
 #' # assume d = 0.8*zh
-#' roughness.parameters(method="wind_profile",zh=25,zr=40,frac_d=0.8,data=df)  
+#' roughness.parameters(method="wind_profile",zh=25,zr=40,frac_d=0.8,data=df) 
+#' 
+#' @importFrom stats median complete.cases 
 #' @export                                  
 roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","wind_profile"),zh,
                                  frac_d=0.7,frac_z0m=0.1,LAI,zr,cd=0.2,hs=0.01,data,Tair="Tair",pressure="pressure",
@@ -1746,6 +1750,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,
                                 VPD="VPD",LE="LE",Ga="Ga",missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                                 PM=TRUE,constants=bigleaf.constants()){ 
+    
     Tair     <- check.columns(data,Tair)
     pressure <- check.columns(data,pressure)
     VPD      <- check.columns(data,VPD)
@@ -2125,7 +2130,8 @@ Gr.longwave <- function(Tair,LAI,constants=bigleaf.constants()){
 #'             
 #' @examples 
 #' wetbulb.temp(Tair=c(20,25),pressure=100,VPD=c(1,1.6))             
-#'             
+#'        
+#' @importFrom stats nls                  
 #' @export
 wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 
@@ -2168,6 +2174,7 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #' @examples
 #' dew.point(25,100,1.5)                
 #' 
+#' @importFrom stats nls 
 #' @export              
 dew.point <- function(Tair,pressure,VPD){
   
@@ -2214,7 +2221,7 @@ dew.point <- function(Tair,pressure,VPD){
 #' @export
 virtual.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
    
-  e    <- VPD.to.e(VPD,pressure,Tair)
+   e    <- VPD.to.e(VPD,pressure,Tair)
    Tair <- Tair + constants$Kelvin
    
    Tv <- Tair / (1 - (1 - constants$eps) * e/pressure) 
@@ -2244,9 +2251,8 @@ virtual.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #'  formula
 #' 
 #' @return A dataframe with the following columns: 
-#'    \item{Esat}{Saturation vapor pressure (kPa)}
-#'    \item{Delta}{Slope of the saturation vapor pressure curve (kPa K-1)}
-#'    
+#'  \item{Esat}{Saturation vapor pressure (kPa)}
+#'  \item{Delta}{Slope of the saturation vapor pressure curve (kPa K-1)}
 #'    
 #' @references Sonntag_1990 Important new values of the physical constants of 1986, vapor 
 #'             pressure formulations based on the ITS-90, and psychrometric formulae 
@@ -2257,7 +2263,8 @@ virtual.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #' @examples 
 #' Esat(seq(0,45,5))[,"Esat"]  # Esat in kPa
 #' Esat(seq(0,45,5))[,"Delta"] # the corresponding slope of the Esat curve in kPa K-1
-#'             
+#'        
+#' @importFrom stats D                  
 #' @export
 Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
   
@@ -3135,6 +3142,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #' ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
 #' mod_Leu <- stomatal.slope(DE_Tha_June_2010,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,nmin=40,fitg0=TRUE,D0=1.5,fitD0=FALSE)                         
 #' 
+#' @importFrom stats nls 
 #' @export 
 stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs="Gs",VPD="VPD",Ca="Ca",
                            model=c("USO","Ball&Berry","Leuning"),nmin=40,fitg0=FALSE,g0=0,fitD0=FALSE,
@@ -3148,6 +3156,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
   Gs       <- check.columns(data,Gs)
   VPD      <- check.columns(data,VPD)
   Ca       <- check.columns(data,Ca)
+  check.length(Tair,pressure,GPP,Gs,VPD,Ca)
   
   nr_data <- sum(!is.na(GPP) & !is.na(Gs) & !is.na(VPD) & !is.na(Ca))
   
@@ -3284,6 +3293,7 @@ biochemical.energy <- function(NEE,alpha=0.422){
 #' ## look at half-hourly closure 
 #' energy.closure(DE_Tha_2010,instantaneous=T)
 #' 
+#' @importFrom stats complete.cases lm
 #' @export
 energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneous=F,
                            missing.G.as.NA=F,missing.S.as.NA=F){

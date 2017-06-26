@@ -25,12 +25,12 @@ Wet-bulb temperature (Tw) is calculated from the following expression:
          
          \deqn{e = Esat(Tw) - gamma* (Tair - Tw)}
          
-         The equation is solved for Tw using \link{\code{nls}}.
+         The equation is solved for Tw using \code{\link{nls}}.
          Actual vapor pressure e is calculated from VPD using the function \code{\link{VPD.to.e}}.
 }
 \examples{
 wetbulb.temp(Tair=c(20,25),pressure=100,VPD=c(1,1.6))             
-            
+       
 }
 \references{
 Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.

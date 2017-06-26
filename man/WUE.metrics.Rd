@@ -64,7 +64,6 @@ load("DE-Tha_2010.rda") # load data 'DE_Tha_2010'
 # filter out time periods that are not in the growing season
                         
                            
-                                     
 }
 \references{
 Beer, C., et al., 2009: Temporal and among-site variability of inherent

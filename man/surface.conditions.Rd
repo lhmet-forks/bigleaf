@@ -70,7 +70,7 @@ Canopy surface temperature and humidity are calculated by inverting bulk transfe
          Note that Ga is assumed to be equal for water vapor and sensible heat.
          Ga is further assumed to be the inverse of the sum of the turbulent part
          and the canopy boundary layer conductance (1/Ga = 1/Ga_m + 1/Gb; 
-         see \link{\code{aerodynamic.conductance}}). If Ga is replaced by Ga_m (i.e.
+         see \code{\link{aerodynamic.conductance}}). If Ga is replaced by Ga_m (i.e.
          only the turbulent conductance part), the results of the functions represent
          conditions outside the canopy boundary layer, i.e. in the canopy airspace.
 }

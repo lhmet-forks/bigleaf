@@ -13,4 +13,6 @@ RnwWeave: Sweave
 LaTeX: pdfLaTeX
 
 BuildType: Package
+PackageUseDevtools: Yes
+PackagePath: ~/RPackage_BigLeaf
 PackageInstallArgs: --no-multiarch --with-keep.source

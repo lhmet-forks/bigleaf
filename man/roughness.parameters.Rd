@@ -107,7 +107,8 @@ df <- data.frame(Tair=c(25,25,25),pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.6
 roughness.parameters(method="wind_profile",zh=25,zr=40,frac_d=0.7,data=df)
 
 # assume d = 0.8*zh
-roughness.parameters(method="wind_profile",zh=25,zr=40,frac_d=0.8,data=df)  
+roughness.parameters(method="wind_profile",zh=25,zr=40,frac_d=0.8,data=df) 
+
 }
 \references{
 Choudhury, B. J., Monteith J.L., 1988: A four-layer model for the heat

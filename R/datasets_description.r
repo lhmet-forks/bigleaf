@@ -9,4 +9,3 @@
 #'  }
 #' @source original data were downloaded at
 #'         \url{https://fluxnet.fluxdata.org/}   
-"DE_Tha_2010"

@@ -54,7 +54,7 @@
 
 #' checks columns in a data frame 
 #' 
-#' @description check if columns in a data.frame or matrix (or vector variables) 
+#' @description check if columns in a data.frame or matrix (or vector variables)
 #'              exist and if they are of the right type (numeric).
 #' 
 #' @param data         a data.frame or a matrix
@@ -734,7 +734,7 @@ Reynolds.Number <- function(Tair,pressure,ustar,hs,constants=bigleaf.constants()
 #' # Canopy boundary layer resistance (and kB-1 parameter) for a set of meteorological conditions,
 #' # a leaf characteristic dimension of 1cm, and an LAI of 5
 #' df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 
-#' Gb.Su(data=df,zh=25,zr=40,Dl=0.01,LAI=5)
+#' Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.01,LAI=5)
 #' 
 #' # the same meteorological conditions, but larger leaves
 #' Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.1,LAI=5)
@@ -1872,7 +1872,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #'          
 #' # now calculate also surface CO2 concentration
 #' surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1),
-#'                    Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.Csurf=T)                                                                                                                                                                                                                                                                                                            
+#'                    Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.Csurf=TRUE)                                                                                                                                                                                                                                                                                                            
 #'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 #' @export 
 surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",

@@ -39,8 +39,8 @@ The hypsometric equation gives an estimate of the standard pressure
       internally converted to specific humidity.
 }
 \examples{
-# mean pressure at 500m altitude at 25 deg C and specific humidity of 0.01 kg kg-1
-pressure.from.elevation(500,Tair=25,q=0.01)
+# mean pressure at 500m altitude at 25 deg C and VPD of 1 kPa
+pressure.from.elevation(500,Tair=25,VPD=1)
 
 }
 \references{

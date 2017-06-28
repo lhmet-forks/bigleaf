@@ -1243,20 +1243,27 @@ air.density <- function(Tair,pressure,constants=bigleaf.constants()){
 #'             Kluwer Academic Publishers, Dordrecht, Netherlands.
 #' 
 #' @examples
-#' # mean pressure at 500m altitude at 25 deg C and specific humidity of 0.01 kg kg-1
-#' pressure.from.elevation(500,Tair=25,q=0.01)
+#' # mean pressure at 500m altitude at 25 deg C and VPD of 1 kPa
+#' pressure.from.elevation(500,Tair=25,VPD=1)
 #' 
 #' @export                           
 pressure.from.elevation <- function(elev,Tair,VPD=NULL,constants=bigleaf.constants()){
+  
+  Tair     <- Tair + constants$Kelvin
+  
   if(is.null(VPD)){
-    Temp <- Tair + constants$Kelvin
+    
+    pressure <- constants$pressure0 / exp(constants$g * elev / (constants$Rd*Tair))
+    
   } else {
-    Temp <- virtual.temp(Tair,VPD,constants)  + constants$Kelvin
+
+    pressure1   <- constants$pressure0 / exp(constants$g * elev / (constants$Rd*Tair))
+    Tv          <- virtual.temp(Tair - constants$Kelvin,pressure1 / 1000,VPD,constants) + constants$Kelvin
+    
+    pressure    <- constants$pressure0 / exp(constants$g * elev / (constants$Rd*Tv))
   }
-  
-  pressure <- constants$pressure0 / exp(constants$g * elev / (constants$Rd*Temp))
+
   pressure <- pressure/1000
-  
   return(pressure)
 } 
 

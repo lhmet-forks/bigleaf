@@ -4,7 +4,7 @@
 \alias{Reynolds.Number}
 \title{Roughness Reynolds Number}
 \usage{
-Reynolds.Number(Tair, pressure, ustar, hs, constants = bigleaf.constants())
+Reynolds.Number(Tair, pressure, ustar, z0m, constants = bigleaf.constants())
 }
 \arguments{
 \item{Tair}{Air temperature (deg C)}
@@ -13,34 +13,28 @@ Reynolds.Number(Tair, pressure, ustar, hs, constants = bigleaf.constants())
 
 \item{ustar}{Friction velocity (m s-1)}
 
-\item{hs}{Roughness length of the soil (m)}
+\item{z0m}{Roughness length (m)}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 pressure0 - reference atmospheric pressure at sea level (Pa) \cr
 Tair0 - reference air temperature (K)}
 }
 \value{
-a data.frame with the following columns:
-        \item{v}{kinematic viscosity of air (m2 s-1)}
-        \item{Re}{Roughness Reynolds Number (-)}
+\item{Re -}{Roughness Reynolds Number (-)}
 }
 \description{
-calculate the Roughness Reynolds Number.
+calculates the Roughness Reynolds Number.
 }
 \details{
 The Roughness Reynolds Number is calculated as in Massman 1999a:
          
-         \deqn{Re = hs * ustar / v}
-         
-         where v is the kinematic viscosity of the air (m2 s-1), given by (Massman 1999b):
-         
-         \deqn{v = 1.327 * 10^-5(pressure0/pressure)(Tair/Tair0)^1.81}
+         \deqn{Re = z0m * ustar / v}
+}
+\examples{
+Reynolds.Number(25,100,0.5,z0m=0.5)                             
+
 }
 \references{
 Massman, W.J., 1999a: A model study of kB H- 1 for vegetated surfaces using
            'localized near-field' Lagrangian theory. Journal of Hydrology 223, 27-43.
-
-            Massman, W.J., 1999b: Molecular diffusivities of Hg vapor in air, 
-            O2 and N2 near STP and the kinematic viscosity and thermal diffusivity
-            of air near STP. Atmospheric Environment 33, 453-457.
 }

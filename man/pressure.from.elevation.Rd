@@ -20,7 +20,7 @@ Rd - gas constant of dry air (J kg-1 K-1) \cr
 g -  gravitational acceleration (m s-2) \cr}
 }
 \value{
-pressure Atmospheric pressure (kPa)
+\item{pressure -}{Atmospheric pressure (kPa)}
 }
 \description{
 An estimate of mean pressure at a given elevation as predicted by the

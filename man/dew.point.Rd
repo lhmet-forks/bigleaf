@@ -14,7 +14,7 @@ dew.point(Tair, pressure, VPD)
 \item{VPD}{Vapor pressure deficit (kPa)}
 }
 \value{
-dew point temperature Td (deg C)
+\item{Td -}{dew point temperature (degC)}
 }
 \description{
 calculates the dew point, the temperature to which air must be 

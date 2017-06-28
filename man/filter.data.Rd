@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf.R
 \name{filter.data}
 \alias{filter.data}
-\title{Filter data}
+\title{Basic data filtering}
 \usage{
 filter.data(data, precip = "precip", PPFD = "PPFD", Tair = "Tair",
   ustar = "ustar", VPD = "VPD", GPP = "GPP_nt", doy = "doy",
@@ -107,9 +107,10 @@ This function is not exhaustive, and one may wish to exclude further situations
 \examples{
 # Example of data filtering; data are for a month within the growing season,
 # hence growing season is not filtered.
-DE_Tha_filtered <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
-                               quality.ext="_qc",vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
+                               quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
                                tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
-                               ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95) 
+                               ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
+# note the additional column 'valid' in DE_Tha_Jun_2014.                                 
 
 }

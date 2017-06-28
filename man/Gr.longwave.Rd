@@ -16,7 +16,7 @@ sigma - Stefan-Boltzmann constant (W m-2 K-4) \cr
 cp - specific heat of air for constant pressure (J K-1 kg-1)}
 }
 \value{
-Gr longwave radiative transfer conductance of the canopy (m s-1)
+\item{Gr -}{longwave radiative transfer conductance of the canopy (m s-1)}
 }
 \description{
 longwave radiative transfer conductance of the canopy

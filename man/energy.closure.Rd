@@ -51,13 +51,12 @@ The energy balance ratio (EBR) is calculated as:
          all energy balance terms are available).
 }
 \examples{
-load("DE-Tha_2010.rda") # load data
-
-## characterize energy balance closure for DE-Tha in 2010
-energy.closure(DE_Tha_2010,instantaneous=F)
+## characterize energy balance closure for DE-Tha in June 2014
+energy.closure(DE_Tha_Jun_2014,instantaneous=F)
 
 ## look at half-hourly closure 
-energy.closure(DE_Tha_2010,instantaneous=T)
+EBR_inst <- energy.closure(DE_Tha_Jun_2014,instantaneous=T)
+summary(EBR_inst)
 
 }
 \references{

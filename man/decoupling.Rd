@@ -30,7 +30,7 @@ eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 sigma - Stefan-Boltzmann constant (W m-2 K-4) \cr}
 }
 \value{
-\item{omega}{The decoupling coefficient omega (-)}
+\item{\eqn{\Omega} -}{the decoupling coefficient Omega (-)}
 }
 \description{
 The canopy-atmosphere decoupling coefficient 'Omega'.
@@ -61,12 +61,12 @@ The decoupling coefficient Omega ranges from 0 to 1 and quantifies the
          \Omega = (\epsilon + 1 + Gr/Ga) / (\epsilon + (1 + Ga/Gs) (1 + Gr/Ga))}
 }
 \examples{
-# omega calculated following Jarvis & McNaughton 1986
+# Omega calculated following Jarvis & McNaughton 1986
 set.seed(3)
 df <- data.frame(Tair=rnorm(20,25,1),pressure=100,Ga=rnorm(20,0.06,0.01),Gs=rnorm(20,0.005,0.001))
 decoupling(df,approach="JarvisMcNaughton_1986")
 
-# omega calculated following Martin 1989 (requires LAI)
+# Omega calculated following Martin 1989 (requires LAI)
 decoupling(df,approach="Martin_1989",LAI=4)
 
 }

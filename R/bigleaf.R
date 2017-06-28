@@ -157,7 +157,7 @@ bigleaf.constants <- function(){
 ### Filter functions ###----------------------------------------------------------------------------
 ########################
 
-#' Filter data
+#' Basic data filtering
 #'
 #' @description Filters timeseries of EC data for high-quality values and specified
 #'              meteorological conditions.
@@ -226,10 +226,11 @@ bigleaf.constants <- function(){
 #' @examples 
 #' # Example of data filtering; data are for a month within the growing season,
 #' # hence growing season is not filtered.
-#' DE_Tha_filtered <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
-#'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+#' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
+#'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
 #'                                tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
-#'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95) 
+#'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
+#' # note the additional column 'valid' in DE_Tha_Jun_2014.                                 
 #' 
 #' @importFrom stats aggregate
 #' @export                     
@@ -322,7 +323,7 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   precip_invalid <- unique(as.numeric(unlist(sapply(precip_events, function(x) x:(min(x+precip.hours*thour,nrow(data),na.rm=T))))))
   
   # 3) meteorological variables (PPFD, Tair, ustar, rH) 
-  PPFD_invalid  <- which(PPFD <= trad | is.na(trad))
+  PPFD_invalid  <- which(PPFD <= trad | is.na(PPFD))
   Tair_invalid  <- which(Tair <= ttemp | is.na(Tair))
   ustar_invalid <- which(ustar <= tustar | is.na(ustar))
   rH_invalid    <- which(rH >= trH | is.na(rH))
@@ -523,9 +524,14 @@ filter.growing.season <- function(GPPd,tGPP,ws=15,min.int=5){
 #'             use efficiency at the subdaily time scale. Geophysical Research Letters 41.
 #'             
 #' @examples 
-#' load("DE-Tha_2010.rda") # load data 'DE_Tha_2010'
+#' ## filter data for dry periods and daytime at DE-Tha in June 2014
+#' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
+#'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
+#'                                tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                                tustar=0.2,tGPP=0,ws=15,min.int=5)
 #' 
-#' # filter out time periods that are not in the growing season
+#' ## calculate WUE metrics in the selected periods
+#' WUE.metrics(DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"valid"] > 0,])
 #'                         
 #'                            
 #' @importFrom stats median                                     
@@ -553,11 +559,6 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
 }
 
 
-# by(data=testdk2,testdk2[,"month"],WUE.metrics,simplify=T) -> test
-# do.call(cbind,test) -> test2  # convert to data.frame
-
-
-
 
 ################################################
 ### Boundary layer conductance formulations #### 
@@ -571,13 +572,6 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
 #' @param ustar     friction velocity (m s-1)
 #' @param constants k - von-Karman constant (-) \cr
 #'                  Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)
-#' 
-#' @return a data.frame with the following columns:
-#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-#'  \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
-#'  \item{Gb}{Boundary layer conductance (m s-1)}
-#'  \item{kB}{kB-1 parameter (-)}
-#'  
 #'  
 #' @details
 #'  
@@ -593,6 +587,12 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
 #'  It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
 #'  across the boundary layer is assumed to be partly by diffusion and partly by turbulent
 #'  mixing (Nobel 2005).
+#'  
+#'  @return a data.frame with the following columns:
+#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+#'  \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
+#'  \item{Gb}{Boundary layer conductance (m s-1)}
+#'  \item{kB}{kB-1 parameter (-)}
 #' 
 #' @references Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
 #'             Quarterly Journal of the Royal Meteorological Society 98, 124-134.
@@ -616,48 +616,70 @@ Gb.Thom <- function(ustar,constants=bigleaf.constants()){
 }
 
 
+#' Kinematic viscosity of air
+#' 
+#' @description calculates the kinematic viscosity of air.
+#' 
+#' @param Tair      Air temperature (deg C)
+#' @param pressure  Atmospheric pressure (kPa)
+#' 
+#' @details where v is the kinematic viscosity of the air (m2 s-1), 
+#'          given by (Massman 1999b):
+#'          
+#'          \deqn{v = 1.327 * 10^-5(pressure0/pressure)(Tair/Tair0)^1.81}
+#'          
+#' @return \item{v -}{kinematic viscosity of air (m2 s-1)}
+#' 
+#' @references Massman, W.J., 1999b: Molecular diffusivities of Hg vapor in air, 
+#'             O2 and N2 near STP and the kinematic viscosity and thermal diffusivity
+#'             of air near STP. Atmospheric Environment 33, 453-457.      
+#'             
+#' @examples 
+#' kinematic.viscosity(25,100)    
+#' 
+#' @export         
+kinematic.viscosity <- function(Tair,pressure,constants=bigleaf.constants()){
+  
+  Tair     <- Tair + constants$Kelvin
+  pressure <- pressure * 1000
+  
+  v  <- 1.327e-05*(constants$pressure0/pressure)*(Tair/constants$Tair0)^1.81
+  return(v)
+}
+
+
+
 #' Roughness Reynolds Number
 #' 
-#' @description calculate the Roughness Reynolds Number.
-#' 
+#' @description calculates the Roughness Reynolds Number.
 #' 
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Atmospheric pressure (kPa)
 #' @param ustar     Friction velocity (m s-1)
-#' @param hs        Roughness length of the soil (m)
+#' @param z0m       Roughness length (m)
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
 #'                  pressure0 - reference atmospheric pressure at sea level (Pa) \cr
 #'                  Tair0 - reference air temperature (K)
 #'                  
 #' @details The Roughness Reynolds Number is calculated as in Massman 1999a:
 #'          
-#'          \deqn{Re = hs * ustar / v}
+#'          \deqn{Re = z0m * ustar / v}
 #'          
-#'          where v is the kinematic viscosity of the air (m2 s-1), given by (Massman 1999b):
-#'          
-#'          \deqn{v = 1.327 * 10^-5(pressure0/pressure)(Tair/Tair0)^1.81}
-#'        
-#' @return a data.frame with the following columns:
-#'         \item{v}{kinematic viscosity of air (m2 s-1)}
-#'         \item{Re}{Roughness Reynolds Number (-)}
+#' @return \item{Re -}{Roughness Reynolds Number (-)}
 #' 
 #' @references Massman, W.J., 1999a: A model study of kB H- 1 for vegetated surfaces using
 #'            'localized near-field' Lagrangian theory. Journal of Hydrology 223, 27-43.
 #' 
-#'             Massman, W.J., 1999b: Molecular diffusivities of Hg vapor in air, 
-#'             O2 and N2 near STP and the kinematic viscosity and thermal diffusivity
-#'             of air near STP. Atmospheric Environment 33, 453-457.              
+#' @examples 
+#' Reynolds.Number(25,100,0.5,z0m=0.5)                             
 #' 
 #' @export
-Reynolds.Number <- function(Tair,pressure,ustar,hs,constants=bigleaf.constants()){
-
-  Tair     <- Tair + constants$Kelvin
-  pressure <- pressure * 1000
+Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants()){
   
-  v  <- 1.327e-05*(constants$pressure0/pressure)*(Tair/constants$Tair0)^1.81
-  Re <- hs*ustar/v
+  v  <- kinematic.viscosity(Tair,pressure)
+  Re <- z0m*ustar/v
   
-  return(data.frame("v"=v,"Re"=Re))
+  return(Re)
 }
 
 
@@ -982,16 +1004,12 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
     i <- which(heights == z)
 
     if (stab_correction){
-      
       zeta  <- stability.parameter(data=data,Tair=Tair,pressure=pressure,ustar=ustar,H=H,
                                    zr=z,d=d,constants=constants)
-      
       psi_m <- stability.correction(zeta)[,"psi_m"]
-      
       wind_heights[,i] <- pmax(0,(ustar / constants$k) * (log(pmax(0,(z - d)) / z0m) - psi_m))
-    
-    } else {
       
+    } else {
       if (is.null(d)){
         d <- frac_d * zh
       }
@@ -1000,11 +1018,8 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
         z0m <- frac_z0m * zh
       }
 
-      
       wind_heights[,i] <- pmax(0,(ustar / constants$k) * (log(pmax(0,(z - d)) / z0m)))
-      
     }
-    
   }
   
   return(wind_heights)
@@ -1146,7 +1161,6 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
       zeta  <- stability.parameter(data=data,Tair=Tair,pressure=pressure,ustar=ustar,H=H,
                                    zr=zr,d=d,constants=constants)
       psi_m <- stability.correction(zeta)[,"psi_m"]
-      
       z0m_all <- (zr - d) * exp(-constants$k*wind / ustar - psi_m)
       
     } else {
@@ -1182,7 +1196,7 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 #' @details Air density (\eqn{\rho}) is calculated as:
 #' \deqn{\rho = pressure / Rd * Tair}
 #' 
-#' @return rho air density (kg m-3)
+#' @return \item{\eqn{\rho}}{air density (kg m-3)}
 #' 
 #' @examples 
 #' # air density at 25degC and standard pressure (101.325kPa)
@@ -1223,7 +1237,7 @@ air.density <- function(Tair,pressure,constants=bigleaf.constants()){
 #'       virtual temperature instead of air temperature is used. VPD is 
 #'       internally converted to specific humidity.
 #'
-#' @return pressure Atmospheric pressure (kPa)
+#' @return \item{pressure -}{Atmospheric pressure (kPa)}
 #'                            
 #' @references Stull B., 1988: An Introduction to Boundary Layer Meteorology.
 #'             Kluwer Academic Publishers, Dordrecht, Netherlands.
@@ -1279,7 +1293,7 @@ pressure.from.elevation <- function(elev,Tair,VPD=NULL,constants=bigleaf.constan
 #' 
 #'              \deqn{L = - (\rho * cp * ustar^3 * Tair) / (k * g * H)}
 #' 
-#' @return Monin-Obukhov length (m)
+#' @return \item{L -}{Monin-Obukhov length (m)}
 #' 
 #' @note Note that L gets very small for very low ustar values with implications
 #'       for subsequent functions using L as input. It is recommended to filter
@@ -1323,7 +1337,7 @@ MoninObukhov.length <- function(Tair,pressure,ustar,H,constants=bigleaf.constant
 #'          \code{\link{MoninObukhov.length}}. The displacement height d can 
 #'          be estimated from the function \code{\link{roughness.parameters}}.
 #'          
-#' @return the stability parameter \eqn{\zeta}
+#' @return \item{\eqn{\zeta} - }{stability parameter (-)}
 #' 
 #' @examples 
 #' df <- data.frame(Tair=25,pressure=100,ustar=seq(0.2,1,0.1),H=seq(40,200,20))
@@ -1400,7 +1414,7 @@ stability.correction <- function(zeta,formulation=c("Dyer_1970","Businger_1971")
   
   formulation  <- match.arg(formulation)
   
-  zeta <- check.columns(,zeta)
+  zeta <- check.columns( ,zeta)
   
   psi_h = psi_m <- numeric()
   
@@ -1651,7 +1665,6 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
     } else {
     
       Ra_m  <- pmax((log((zr - d)/z0m)),0) / (constants$k*ustar)
-    
       zeta = psi_h <- rep(NA,length=length(Ra_m))
     
     }
@@ -1659,7 +1672,6 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
   } else {
     
     Ra_m <- wind / ustar^2
-    
     zeta = psi_h <- rep(NA,length=length(Ra_m))
     
   }
@@ -1729,42 +1741,35 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #'  \item{Gs_mol}{Surface conductance in mol m-2 s-1}
 #' 
 #' @examples 
-#' load("DE-Tha_2010.rda") # load data
-#' 
-#' # filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
-#' DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
-#'                            vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
-#'                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
-#'                            ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
-#' 
-#' # select data that were filtered as in the previous function and in June 
-#' DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month"] == 6,]
+#' ## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
+#' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
+#'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
+#'                                tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
+#' # in addition, filter negative LE fluxes
+#' DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"LE"] < 0,] <- NA
 #' 
 #' # calculate Gs based on a simple gradient approach
-#' Gs_gradient <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+#' Gs_gradient <- surface.conductance(DE_Tha_Jun_2014,Tair="Tair",pressure="pressure",
 #'                                    VPD="VPD",PM=FALSE)
 #' summary(Gs_gradient)
 #' 
 #' # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed),
 #' # using a simple estimate of Ga based on Thom 1972
-#' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,
-#'                               Rb_model="Thom_1972")[,"Ga_h"]
+#' Ga <- aerodynamic.conductance(DE_Tha_Jun_2014,Rb_model="Thom_1972")[,"Ga_h"]
 #' 
 #' # if G and/or S are available, don't forget to indicate (they are ignored by default).
-#' # Note that Ga is not added to the data.frame 'DE_Tha_June_2010'
-#' Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+#' # Note that Ga is not added to the data.frame 'DE_Tha_Jun_2014'
+#' Gs_PM <- surface.conductance(DE_Tha_Jun_2014,Tair="Tair",pressure="pressure",
 #'                              Rn="Rn",G="G",S=NULL,VPD="VPD",Ga=Ga,PM=TRUE)
 #' summary(Gs_PM)
 #' 
-#' 
-#' # compare to an Ga estimate that accounts for stability effects
-#' Ga_stab <- aerodynamic.conductance(DE_Tha_June_2010,zr=42,zh=26.5,d=18.5,z0m=2.6,
-#'                                    stab_correction=T,Rb_model="Thom_1972")[,"Ga_h"]
 #'                               
-#' # now add Ga2 to the data.frame 'DE_Tha_June_2010'
-#' DE_Tha_June_2010$Ga_stab <- Ga_stab
-#' Gs_PM2 <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
-#'                               Rn="Rn",G="G",S=NULL,VPD="VPD",Ga="Ga_stab",PM=TRUE)
+#' # now add Ga to the data.frame 'DE_Tha_Jun_2014' and repeat
+#' DE_Tha_Jun_2014$Ga <- Ga
+#' Gs_PM2 <- surface.conductance(DE_Tha_Jun_2014,Tair="Tair",pressure="pressure",
+#'                               Rn="Rn",G="G",S=NULL,VPD="VPD",Ga="Ga",PM=TRUE)
+#' # note the difference to the previous version (Ga="Ga")
 #' summary(Gs_PM2)
 #'                              
 #' @export
@@ -1952,7 +1957,7 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 #' @note the following sign convention is employed: negative values of NEE denote
 #'       net CO2 uptake by the ecosystem.
 #' 
-#' @return Ca_surf CO2 concentration at the canopy surface (umol mol-1)
+#' @return \item{Ca_surf -}{CO2 concentration at the canopy surface (umol mol-1)}
 #' 
 Ca.surface <- function(Ca,NEE,Ga_CO2,Tair,pressure){
   
@@ -2040,7 +2045,7 @@ Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
 #'          \deqn{\Omega = \frac{\epsilon + 1 + \frac{Gr}{Ga}}{\epsilon + (1 + \frac{Ga}{Gs}) (1 + \frac{Gr}{Ga})}}{%
 #'          \Omega = (\epsilon + 1 + Gr/Ga) / (\epsilon + (1 + Ga/Gs) (1 + Gr/Ga))}
 #' 
-#' @return \item{omega}{The decoupling coefficient omega (-)}
+#' @return \item{\eqn{\Omega} -}{the decoupling coefficient Omega (-)}
 #' 
 #' @references Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
 #'             scaling up from leaf to region. Advances in Ecological Research 15, 1-49. 
@@ -2049,12 +2054,12 @@ Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
 #'             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
 #' 
 #' @examples 
-#' # omega calculated following Jarvis & McNaughton 1986
+#' # Omega calculated following Jarvis & McNaughton 1986
 #' set.seed(3)
 #' df <- data.frame(Tair=rnorm(20,25,1),pressure=100,Ga=rnorm(20,0.06,0.01),Gs=rnorm(20,0.005,0.001))
 #' decoupling(df,approach="JarvisMcNaughton_1986")
 #' 
-#' # omega calculated following Martin 1989 (requires LAI)
+#' # Omega calculated following Martin 1989 (requires LAI)
 #' decoupling(df,approach="Martin_1989",LAI=4)
 #' 
 #' @export
@@ -2075,7 +2080,7 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
   
   if (approach == "JarvisMcNaughton_1986"){
     
-    omega <- (epsilon + 1) / (epsilon + 1 + Ga/Gs)
+    Omega <- (epsilon + 1) / (epsilon + 1 + Ga/Gs)
     
   } else if (approach == "Martin_1989") {
   
@@ -2086,12 +2091,12 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
     } else {
       
       Gr    <- Gr.longwave(Tair,LAI,constants=constants)
-      omega <- (epsilon + 1 + Gr/Ga) / (epsilon + 1 + Ga/Gs + Gr/Gs + Gr/Ga)
+      Omega <- (epsilon + 1 + Gr/Ga) / (epsilon + 1 + Ga/Gs + Gr/Gs + Gr/Ga)
       
     }
   }
   
-  return(omega)
+  return(Omega)
 
 }
 
@@ -2108,7 +2113,7 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
 #' 
 #'          \deqn{Gr = 4 \sigma Tair^3 LAI / cp}                             
 #'                                       
-#' @return Gr longwave radiative transfer conductance of the canopy (m s-1)                 
+#' @return \item{Gr -}{longwave radiative transfer conductance of the canopy (m s-1)}
 #'                  
 #' @references Martin P., 1989: The significance of radiative coupling between
 #'             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
@@ -2128,7 +2133,7 @@ Gr.longwave <- function(Tair,LAI,constants=bigleaf.constants()){
 
 
 
-#' Wet bulb temperature
+#' Wet-bulb temperature
 #' 
 #' @description calculates the wet bulb temperature, i.e. the temperature
 #'              that the air would have if it was saturated.
@@ -2146,6 +2151,8 @@ Gr.longwave <- function(Tair,LAI,constants=bigleaf.constants()){
 #'          The equation is solved for Tw using \code{\link{nls}}.
 #'          Actual vapor pressure e is calculated from VPD using the function \code{\link{VPD.to.e}}.
 #'          
+#' @return \item{Tw -}{wet-bulb temperature (degC)}      
+#'              
 #' @references Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
 #'             3rd edition. Academic Press, London.
 #'             
@@ -2187,7 +2194,7 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #'    
 #'          which is solved for Td using \code{\link{nls}}.
 #'          
-#' @return dew point temperature Td (deg C)
+#' @return \item{Td -}{dew point temperature (degC)}
 #' 
 #' @references Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
 #'             3rd edition. Academic Press, London.
@@ -2231,7 +2238,7 @@ dew.point <- function(Tair,pressure,VPD){
 #'  where Tair is in Kelvin (converted internally). Likewise, VPD is converted 
 #'  to actual vapor pressure (e in kPa) with \code{\link{VPD.to.e}} internally.
 #' 
-#' @return virtual temperature (deg C)
+#' @return \item{Tv -}{virtual temperature (deg C)}
 #' 
 #' @references Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
 #'             3rd edition. Academic Press, London.
@@ -2331,7 +2338,7 @@ Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
 #'  where \eqn{\lambda} is the latent heaf of vaporization (J kg-1), 
 #'  as calculated with \code{\link{LE.vaporization}}.
 #'  
-#' @return the psychrometric constant \eqn{\gamma} (kPa K-1)
+#' @return \item{\eqn{\gamma} -}{the psychrometric constant (kPa K-1)}
 #'  
 #' @references Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
 #'             3rd edition. Academic Press, London. 
@@ -2359,7 +2366,7 @@ psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
 #' 
 #' \deqn{\lambda = (2.501 - 0.00237*Tair)10^6}
 #' 
-#' @return Latent heat of vaporization \eqn{\lambda} (J kg-1) 
+#' @return \item{\eqn{\lambda} -}{Latent heat of vaporization (J kg-1)} 
 #' 
 #' @references Stull, B., 1988: An Introduction to Boundary Layer Meteorology (p.641)
 #'             Kluwer Academic Publishers, Dordrecht, Netherlands
@@ -2957,7 +2964,7 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
 #'       This function should be used with care and the resulting Ci might not be
 #'       readily comparable to its leaf-level analogue and/or physiological meaningful.          
 #' 
-#' @return Ci - Bulk canopy intercellular CO2 concentration (umol mol-1)
+#' @return \item{Ci -}{Bulk canopy intercellular CO2 concentration (umol mol-1)}
 #' 
 #' @references Kosugi Y. et al., 2013: Determination of the gas exchange phenology in an
 #'             evergreen coniferous forest from 7 years of eddy covariance flux data using
@@ -3136,38 +3143,31 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #'             model for C3 plants. Plant, Cell and Environment 18, 339-355.
 #' 
 #' @examples 
-#' # calculate g1 for the site DE-Tha using data from June 2010
-#' load("DE_Tha_2010") # load data
+#' ## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
+#' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
+#'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
+#'                                tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
 #' 
-#' # filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
-#' DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
-#'                            vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
-#'                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
-#'                            ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
 #' 
-#' # select data only that were filtered in the previous function and in June
-#' DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month"] == 6,]
-#' 
-#' # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed)
-#' # calculate a simple estimate of Ga based on Thom 1972
-#' Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,
-#'                               Rb_model="Thom_1972")[,"Ga_h"]
+#' # calculate Gs from the the inverted PM equation
+#' Ga <- aerodynamic.conductance(DE_Tha_Jun_2014,Rb_model="Thom_1972")[,"Ga_h"]
 #' 
 #' # if G and/or S are available, don't forget to indicate (they are ignored by default).
-#' # Note that Ga is not added to the data.frame 'DE_Tha_June_2010'
-#' Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+#' Gs_PM <- surface.conductance(DE_Tha_Jun_2014,Tair="Tair",pressure="pressure",
 #'                              Rn="Rn",G="G",S=NULL,VPD="VPD",Ga=Ga,PM=TRUE)[,"Gs_mol"]
 #'                              
 #' ### Estimate the stomatal slope parameter g1 using the USO model
-#' mod_USO <- stomatal.slope(DE_Tha_June_2010,model="USO",GPP="GPP_nt",Gs=Gs_PM,
+#' mod_USO <- stomatal.slope(DE_Tha_Jun_2014,model="USO",GPP="GPP_nt",Gs=Gs_PM,
 #'                           nmin=40,fitg0=FALSE)
+#' # g1 is ~ 0.7, which corresponds to a high WUE 
 #' 
 #' ### Estimate the same parameter from the Ball&Berry model and prescribe g0
-#' mod_BB <- stomatal.slope(DE_Tha_June_2010,model="Ball&Berry",GPP="GPP_nt",
+#' mod_BB <- stomatal.slope(DE_Tha_Jun_2014,model="Ball&Berry",GPP="GPP_nt",
 #'                          Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
 #' 
 #' ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
-#' mod_Leu <- stomatal.slope(DE_Tha_June_2010,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
+#' mod_Leu <- stomatal.slope(DE_Tha_Jun_2014,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
 #'                           nmin=40,fitg0=TRUE,D0=1.5,fitD0=FALSE)                         
 #' 
 #' @importFrom stats nls 
@@ -3255,7 +3255,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
 #'          The value of alpha is taken from Nobel 1974 (see Meyers & Hollinger 2004), but other values
 #'          have been used (e.g. Blanken et al., 1997)
 #' 
-#' @return \item{Sp}{biochemical energy (W m-2)}
+#' @return \item{Sp -}{biochemical energy (W m-2)}
 #' 
 #' @references Meyers, T.P., Hollinger, S.E. 2004: An assessment of storage terms in the surface energy
 #'             balance of maize and soybean. Agricultural and Forest Meteorology 125, 105-115.
@@ -3319,13 +3319,12 @@ biochemical.energy <- function(NEE,alpha=0.422){
 #'             Agricultural and Forest Meteorology 113, 223-243.
 #'
 #' @examples 
-#' load("DE-Tha_2010.rda") # load data
-#' 
-#' ## characterize energy balance closure for DE-Tha in 2010
-#' energy.closure(DE_Tha_2010,instantaneous=F)
+#' ## characterize energy balance closure for DE-Tha in June 2014
+#' energy.closure(DE_Tha_Jun_2014,instantaneous=F)
 #' 
 #' ## look at half-hourly closure 
-#' energy.closure(DE_Tha_2010,instantaneous=T)
+#' EBR_inst <- energy.closure(DE_Tha_Jun_2014,instantaneous=T)
+#' summary(EBR_inst)
 #' 
 #' @importFrom stats complete.cases lm
 #' @export
@@ -3396,7 +3395,7 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
 #'          
 #'          with Tsurf and Tair in Kelvin.
 #'          
-#' @return Rni isothermal net radiation (W m-2)
+#' @return \item{Rni -}{isothermal net radiation (W m-2)}
 #' 
 #' @references Jones, H. 2014: Plants and Microclimate. 3rd edition, Cambridge
 #'             University Press.

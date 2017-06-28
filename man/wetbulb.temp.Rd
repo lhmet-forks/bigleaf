@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf.R
 \name{wetbulb.temp}
 \alias{wetbulb.temp}
-\title{Wet bulb temperature}
+\title{Wet-bulb temperature}
 \usage{
 wetbulb.temp(Tair, pressure, VPD, constants = bigleaf.constants())
 }
@@ -15,6 +15,9 @@ wetbulb.temp(Tair, pressure, VPD, constants = bigleaf.constants())
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-)}
+}
+\value{
+\item{Tw -}{wet-bulb temperature (degC)}
 }
 \description{
 calculates the wet bulb temperature, i.e. the temperature

@@ -18,7 +18,7 @@ Ca.surface(Ca, NEE, Ga_CO2, Tair, pressure)
 \item{pressure}{Atmospheric pressure (kPa)}
 }
 \value{
-Ca_surf CO2 concentration at the canopy surface (umol mol-1)
+\item{Ca_surf -}{CO2 concentration at the canopy surface (umol mol-1)}
 }
 \description{
 the CO2 concentration at the canopy surface derived from net ecosystem

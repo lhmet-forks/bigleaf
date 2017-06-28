@@ -17,7 +17,7 @@ virtual.temp(Tair, pressure, VPD, constants = bigleaf.constants())
 eps - ratio of the molecular weight of water vapor to dry air (-)}
 }
 \value{
-virtual temperature (deg C)
+\item{Tv -}{virtual temperature (deg C)}
 }
 \description{
 Virtual temperature, defined as the temperature at which dry air would have the same

@@ -70,38 +70,31 @@ All stomatal models were developed at leaf-level, but its parameters
          the big-leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
 }
 \examples{
-# calculate g1 for the site DE-Tha using data from June 2010
-load("DE_Tha_2010") # load data
+## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
+DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
+                               quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
+                               tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+                               ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
 
-# filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
-DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
-                           vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
-                           tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
-                           ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
 
-# select data only that were filtered in the previous function and in June
-DE_Tha_June_2010 <- DE_Tha_2010[DE_Tha_2010[,"valid"] == 1 & DE_Tha_2010[,"month"] == 6,]
-
-# calculate Gs from the the inverted PM equation (now Rn, and Ga are needed)
-# calculate a simple estimate of Ga based on Thom 1972
-Ga <- aerodynamic.conductance(DE_Tha_June_2010,stab_correction=F,
-                              Rb_model="Thom_1972")[,"Ga_h"]
+# calculate Gs from the the inverted PM equation
+Ga <- aerodynamic.conductance(DE_Tha_Jun_2014,Rb_model="Thom_1972")[,"Ga_h"]
 
 # if G and/or S are available, don't forget to indicate (they are ignored by default).
-# Note that Ga is not added to the data.frame 'DE_Tha_June_2010'
-Gs_PM <- surface.conductance(DE_Tha_June_2010,Tair="Tair",pressure="pressure",
+Gs_PM <- surface.conductance(DE_Tha_Jun_2014,Tair="Tair",pressure="pressure",
                              Rn="Rn",G="G",S=NULL,VPD="VPD",Ga=Ga,PM=TRUE)[,"Gs_mol"]
                              
 ### Estimate the stomatal slope parameter g1 using the USO model
-mod_USO <- stomatal.slope(DE_Tha_June_2010,model="USO",GPP="GPP_nt",Gs=Gs_PM,
+mod_USO <- stomatal.slope(DE_Tha_Jun_2014,model="USO",GPP="GPP_nt",Gs=Gs_PM,
                           nmin=40,fitg0=FALSE)
+# g1 is ~ 0.7, which corresponds to a high WUE 
 
 ### Estimate the same parameter from the Ball&Berry model and prescribe g0
-mod_BB <- stomatal.slope(DE_Tha_June_2010,model="Ball&Berry",GPP="GPP_nt",
+mod_BB <- stomatal.slope(DE_Tha_Jun_2014,model="Ball&Berry",GPP="GPP_nt",
                          Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
 
 ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
-mod_Leu <- stomatal.slope(DE_Tha_June_2010,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
+mod_Leu <- stomatal.slope(DE_Tha_Jun_2014,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
                           nmin=40,fitg0=TRUE,D0=1.5,fitD0=FALSE)                         
 
 }

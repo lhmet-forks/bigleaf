@@ -12,13 +12,6 @@ Gb.Thom(ustar, constants = bigleaf.constants())
 \item{constants}{k - von-Karman constant (-) \cr
 Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
 }
-\value{
-a data.frame with the following columns:
- \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
- \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
- \item{Gb}{Boundary layer conductance (m s-1)}
- \item{kB}{kB-1 parameter (-)}
-}
 \description{
 An empirical formulation for the canopy boundary layer conductance
              based on a simple ustar dependency.
@@ -36,6 +29,12 @@ The empirical equation for Rb to water suggested by Thom 1972 is:
  It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
  across the boundary layer is assumed to be partly by diffusion and partly by turbulent
  mixing (Nobel 2005).
+ 
+ @return a data.frame with the following columns:
+ \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+ \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
+ \item{Gb}{Boundary layer conductance (m s-1)}
+ \item{kB}{kB-1 parameter (-)}
 }
 \examples{
 Gb.Thom(seq(0.1,1.4,0.1))

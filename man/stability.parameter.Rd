@@ -28,7 +28,7 @@ k - von Karman constant (-) \cr
 g - gravitational acceleration (m s-2)}
 }
 \value{
-the stability parameter \eqn{\zeta}
+\item{\eqn{\zeta} - }{stability parameter (-)}
 }
 \description{
 stability parameter 'zeta'

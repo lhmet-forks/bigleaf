@@ -15,7 +15,7 @@ air.density(Tair, pressure, constants = bigleaf.constants())
 Rd - gas constant of dry air (J kg-1 K-1)}
 }
 \value{
-rho air density (kg m-3)
+\item{\eqn{\rho}}{air density (kg m-3)}
 }
 \description{
 Air density of moist air from air temperature and pressure.

@@ -26,7 +26,7 @@ measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.}
 \item{constants}{DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)}
 }
 \value{
-Ci - Bulk canopy intercellular CO2 concentration (umol mol-1)
+\item{Ci -}{Bulk canopy intercellular CO2 concentration (umol mol-1)}
 }
 \description{
 Bulk canopy intercellular CO2 concentration (Ci) calculated based on Fick's law

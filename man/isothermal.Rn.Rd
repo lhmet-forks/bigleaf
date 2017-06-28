@@ -22,7 +22,7 @@ isothermal.Rn(data, Rn = "Rn", Tair = "Tair", Tsurf = "Tsurf", emissivity,
 Kelvin - conversion degree Celsius to Kelvin}
 }
 \value{
-Rni isothermal net radiation (W m-2)
+\item{Rni -}{isothermal net radiation (W m-2)}
 }
 \description{
 Calculates the isothermal net radiation, i.e. the net radiation 

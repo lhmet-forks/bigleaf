@@ -59,9 +59,14 @@ Units for VPD can also be hPa. Units change accordingly.
       WUE_NEE is calculated based on the absolute value of NEE (the sign convention does not matter).
 }
 \examples{
-load("DE-Tha_2010.rda") # load data 'DE_Tha_2010'
+## filter data for dry periods and daytime at DE-Tha in June 2014
+DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
+                               quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
+                               tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+                               tustar=0.2,tGPP=0,ws=15,min.int=5)
 
-# filter out time periods that are not in the growing season
+## calculate WUE metrics in the selected periods
+WUE.metrics(DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"valid"] > 0,])
                         
                            
 }

@@ -12,7 +12,7 @@ biochemical.energy(NEE, alpha = 0.422)
 \item{alpha}{Energy taken up/released by photosynthesis/respiration (J umol-1)}
 }
 \value{
-\item{Sp}{biochemical energy (W m-2)}
+\item{Sp -}{biochemical energy (W m-2)}
 }
 \description{
 Radiant energy absorbed in photosynthesis or heat release by respiration calculated

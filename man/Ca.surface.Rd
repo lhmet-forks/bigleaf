@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf.R
 \name{Ca.surface}
 \alias{Ca.surface}
-\title{Canopy surface CO2 concentration}
+\title{CO2 concentration at the canopy surface}
 \usage{
 Ca.surface(Ca, NEE, Ga_CO2, Tair, pressure)
 }

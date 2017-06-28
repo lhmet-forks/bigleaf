@@ -4,10 +4,13 @@
 \alias{intercellular.CO2}
 \title{Bulk intercellular CO2 concentration}
 \usage{
-intercellular.CO2(Ca, GPP, RecoLeaf = NULL, Gs, calc.Csurf = FALSE,
-  Ga = NULL, NEE = NULL, constants = bigleaf.constants())
+intercellular.CO2(data, Ca, GPP, RecoLeaf = NULL, Gs, calc.Csurf = FALSE,
+  Ga_CO2 = NULL, NEE = NULL, Tair = NULL, pressure = NULL,
+  constants = bigleaf.constants())
 }
 \arguments{
+\item{data}{Data.Frame or matrix with all required columns}
+
 \item{Ca}{Atmospheric CO2 concentration (umol mol-1)}
 
 \item{GPP}{Gross primary productivity (umol CO2 m-2 s-1)}
@@ -19,9 +22,13 @@ intercellular.CO2(Ca, GPP, RecoLeaf = NULL, Gs, calc.Csurf = FALSE,
 \item{calc.Csurf}{Should the derived surface CO2 concentration be used instead of 
 measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.}
 
-\item{Ga}{Aerodynamic conductance to CO2 (mol m-2 s-1)}
+\item{Ga_CO2}{Aerodynamic conductance to CO2 (m s-1)}
 
 \item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem}
+
+\item{Tair}{Air temperature (degC); ignored if \code{calc.Csurf} is FALSE}
+
+\item{pressure}{Atmospheric pressure (kPa); ignored if \code{calc.Csurf} is FALSE}
 
 \item{constants}{DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)}
 }
@@ -60,11 +67,11 @@ The equation is based on Fick's law of diffusion and is equivalent to the
 intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
 
 # now calculate bulk canopy Ci, but with Ca at the canopy surface (Ga and NEE are needed)
-# Ga has to be in mol m-2 s-1 and for CO2, assuming that Ga for CO2 in ms-1 is 0.05
-# alternatively, the function aerodynamic.conductance also returns Ga for CO2
-Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
+# The function \\code{\\link{aerodynamic.conductance}} can be used to calculate \\code{Ga_CO2}.
+# Here, \\code{Ga_CO2} of 0.05ms-1 is assumed.
 
-intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=TRUE,Ga=Ga_mol,NEE=-55) 
+intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=TRUE,Ga_CO2=0.05,NEE=-55,
+                  Tair=25,pressure=100) 
 # note the sign convention for NEE
 
 }

@@ -1201,6 +1201,8 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 #' air.density(25,101.325)
 #' 
 #' @references Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany. 
+#' 
+#' @export
 air.density <- function(Tair,pressure,constants=bigleaf.constants()){
   Tair     <- Tair + constants$Kelvin
   pressure <- pressure*1000
@@ -1933,7 +1935,7 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 
 
 
-#' Canopy surface CO2 concentration
+#' CO2 concentration at the canopy surface
 #'
 #' @description the CO2 concentration at the canopy surface derived from net ecosystem
 #'              CO2 exchange and measured atmospheric CO2 concentration.
@@ -2932,14 +2934,17 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
 #'              given surface conductance (Gs), gross primary productivity (GPP) and 
 #'              atmospheric CO2 concentration (Ca).
 #'                            
+#' @param data       Data.Frame or matrix with all required columns                            
 #' @param Ca         Atmospheric CO2 concentration (umol mol-1)              
 #' @param GPP        Gross primary productivity (umol CO2 m-2 s-1)
 #' @param RecoLeaf   Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
 #' @param Gs         Surface conductance to water vapor (mol m-2 s-1)
 #' @param calc.Csurf Should the derived surface CO2 concentration be used instead of 
 #'                   measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.
-#' @param Ga         Aerodynamic conductance to CO2 (mol m-2 s-1) 
+#' @param Ga_CO2     Aerodynamic conductance to CO2 (m s-1) 
 #' @param NEE        Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem
+#' @param Tair       Air temperature (degC); ignored if \code{calc.Csurf} is FALSE
+#' @param pressure   Atmospheric pressure (kPa); ignored if \code{calc.Csurf} is FALSE
 #' @param constants  DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
 #' 
 #' @details Bulk intercellular CO2 concentration (Ci) is given by:
@@ -2977,20 +2982,29 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
 #' intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
 #' 
 #' # now calculate bulk canopy Ci, but with Ca at the canopy surface (Ga and NEE are needed)
-#' # Ga has to be in mol m-2 s-1 and for CO2, assuming that Ga for CO2 in ms-1 is 0.05
-#' # alternatively, the function aerodynamic.conductance also returns Ga for CO2
-#' Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
+#' # The function \code{\link{aerodynamic.conductance}} can be used to calculate \code{Ga_CO2}.
+#' # Here, \code{Ga_CO2} of 0.05ms-1 is assumed.
 #' 
-#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=TRUE,Ga=Ga_mol,NEE=-55) 
+#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=TRUE,Ga_CO2=0.05,NEE=-55,
+#'                   Tair=25,pressure=100) 
 #' # note the sign convention for NEE
 #' 
 #' @export
-intercellular.CO2 <- function(Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=FALSE,Ga=NULL,NEE=NULL,
+intercellular.CO2 <- function(data,Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=FALSE,
+                              Ga_CO2=NULL,NEE=NULL,Tair=NULL,pressure=NULL,
                               constants=bigleaf.constants()){
   
+  Ca  <- check.columns(data,Ca)
+  GPP <- check.columns(data,GPP)
+  Gs  <- check.columns(data,Gs)
   
   if (calc.Csurf){
-    Ca <- Ca.surface(Ca,NEE,Ga)
+    Tair     <- check.columns(data,Tair)
+    pressure <- check.columns(data,pressure)
+    Ga_CO2   <- check.columns(data,Ga_CO2)
+    NEE      <- check.columns(data,NEE)
+    
+    Ca <- Ca.surface(Ca,NEE,Ga_CO2,Tair,pressure)
   }
   
   if (is.null(RecoLeaf)){

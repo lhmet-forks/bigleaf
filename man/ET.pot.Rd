@@ -5,8 +5,8 @@
 \title{Potential evapotranspiration}
 \usage{
 ET.pot(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
-  S = NULL, alpha = 1.26, missing.G.as.NA = F, missing.S.as.NA = F,
-  constants = bigleaf.constants())
+  S = NULL, alpha = 1.26, missing.G.as.NA = FALSE,
+  missing.S.as.NA = FALSE, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables; optional}

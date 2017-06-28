@@ -5,8 +5,8 @@
 \title{Imposed and Equilibrium Evapotranspiration}
 \usage{
 ET.components(data, Tair = "Tair", pressure = "pressure", VPD = "VPD",
-  Gs = "Gs", Rn = "Rn", G = NULL, S = NULL, missing.G.as.NA = F,
-  missing.S.as.NA = F, constants = bigleaf.constants())
+  Gs = "Gs", Rn = "Rn", G = NULL, S = NULL, missing.G.as.NA = FALSE,
+  missing.S.as.NA = FALSE, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required input variables}

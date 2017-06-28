@@ -228,7 +228,7 @@ bigleaf.constants <- function(){
 #' # hence growing season is not filtered.
 #' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
 #'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-#'                                tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                                tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
 #'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
 #' # note the additional column 'valid' in DE_Tha_Jun_2014.                                 
 #' 
@@ -239,7 +239,7 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
                         filter.growseas=FALSE,quality.ext="_qc",
                         vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
                         good.quality=c(0,1),missing.qc.as.bad=TRUE,tprecip=0.01,
-                        precip.hours=24,NA.as.precip=F,trad=200,ttemp=5,tustar=0.2,
+                        precip.hours=24,NA.as.precip=FALSE,trad=200,ttemp=5,tustar=0.2,
                         trH=0.95,tGPP=0.5,ws=15,min.int=5){
   
   
@@ -277,9 +277,9 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
       
       qc_invalid_perc <- round((qc_invalid/nrow(data))*100,2)
         
-      cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) set to NA",fill=T,sep="")
+      cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) set to NA",fill=TRUE,sep="")
     }
-    cat("-------------------------------------",fill=T)
+    cat("-------------------------------------",fill=TRUE)
   }
   
   ## test data availability
@@ -309,7 +309,7 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   growseas_invalid <- numeric()
   if(filter.growseas){
     GPP              <- check.columns(data,GPP)
-    GPP_daily        <- aggregate(GPP,by=list(strftime(date)),mean,na.rm=T)[,2]
+    GPP_daily        <- aggregate(GPP,by=list(strftime(date)),mean,na.rm=TRUE)[,2]
     growing_season   <- filter.growing.season(GPP_daily,tGPP=tGPP,ws=ws,min.int=min.int)
     growseas_invalid <- which(sapply(growing_season,rep,48) == 0)
   }
@@ -320,7 +320,7 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   } else {
     precip_events <- which(precip > tprecip)
   }
-  precip_invalid <- unique(as.numeric(unlist(sapply(precip_events, function(x) x:(min(x+precip.hours*thour,nrow(data),na.rm=T))))))
+  precip_invalid <- unique(as.numeric(unlist(sapply(precip_events, function(x) x:(min(x+precip.hours*thour,nrow(data),na.rm=TRUE))))))
   
   # 3) meteorological variables (PPFD, Tair, ustar, rH) 
   PPFD_invalid  <- which(PPFD <= trad | is.na(PPFD))
@@ -348,21 +348,21 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   addition_ustar_perc <- round(addition_ustar/nrow(data)*100,2)
   addition_rH_perc <- round(addition_rH/nrow(data)*100,2)
   
-  cat("Data filters:",fill=T)
-  cat(length(growseas_invalid)," data points (",growseas_perc,"%) excluded by growing season filter",fill=T,sep="")
-  cat(addition_precip," additional data points (",addition_precip_perc,"%) excluded by precipitation filter (",length(precip_invalid)," data points = ",precip_perc,"% in total)",fill=T,sep="")
-  cat(addition_PPFD," additional data points (",addition_PPFD_perc,"%) excluded by radiation filter (",length(PPFD_invalid)," data points = ",PPFD_perc,"% in total)",fill=T,sep="")
-  cat(addition_Tair," additional data points (",addition_Tair_perc,"%) excluded by air temperature filter (",length(Tair_invalid)," data points = ",Tair_perc,"% in total)",fill=T,sep="")
-  cat(addition_ustar," additional data points (",addition_ustar_perc,"%) excluded by friction velocity filter (",length(ustar_invalid)," data points = ",ustar_perc,"% in total)",fill=T,sep="")
-  cat(addition_rH," additional data points (",addition_rH_perc,"%) excluded by relative humidity filter (",length(rH_invalid)," data points = ",rH_perc,"% in total)",fill=T,sep="")
+  cat("Data filters:",fill=TRUE)
+  cat(length(growseas_invalid)," data points (",growseas_perc,"%) excluded by growing season filter",fill=TRUE,sep="")
+  cat(addition_precip," additional data points (",addition_precip_perc,"%) excluded by precipitation filter (",length(precip_invalid)," data points = ",precip_perc,"% in total)",fill=TRUE,sep="")
+  cat(addition_PPFD," additional data points (",addition_PPFD_perc,"%) excluded by radiation filter (",length(PPFD_invalid)," data points = ",PPFD_perc,"% in total)",fill=TRUE,sep="")
+  cat(addition_Tair," additional data points (",addition_Tair_perc,"%) excluded by air temperature filter (",length(Tair_invalid)," data points = ",Tair_perc,"% in total)",fill=TRUE,sep="")
+  cat(addition_ustar," additional data points (",addition_ustar_perc,"%) excluded by friction velocity filter (",length(ustar_invalid)," data points = ",ustar_perc,"% in total)",fill=TRUE,sep="")
+  cat(addition_rH," additional data points (",addition_rH_perc,"%) excluded by relative humidity filter (",length(rH_invalid)," data points = ",rH_perc,"% in total)",fill=TRUE,sep="")
   
   invalid        <- unique(c(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid,ustar_invalid,rH_invalid))
   valid[invalid] <- 0
   
   excl_perc <- round((length(invalid)/nrow(data))*100,2)
   
-  cat(length(invalid)," data points (",excl_perc,"%) excluded in total",fill=T,sep="")
-  cat(nrow(data) - length(invalid)," valid data points (",100-excl_perc,"%) remaining.",fill=T,sep="")
+  cat(length(invalid)," data points (",excl_perc,"%) excluded in total",fill=TRUE,sep="")
+  cat(nrow(data) - length(invalid)," valid data points (",100-excl_perc,"%) remaining.",fill=TRUE,sep="")
   
   # 5) set all other columns to NA
   data_filtered <- data.frame(data,valid)
@@ -418,14 +418,14 @@ filter.growing.season <- function(GPPd,tGPP,ws=15,min.int=5){
     
     ## set values at the beginning and end of the time series to the mean of the original values
     wsd <- floor(ws/2)
-    GPPd_smoothed[1:wsd] <- mean(GPPd[1:(2*wsd)],na.rm=T)
-    GPPd_smoothed[(length(GPPd)-(wsd-1)):length(GPPd)] <- mean(GPPd[(length(GPPd)-(2*wsd-1)):length(GPPd)],na.rm=T)
+    GPPd_smoothed[1:wsd] <- mean(GPPd[1:(2*wsd)],na.rm=TRUE)
+    GPPd_smoothed[(length(GPPd)-(wsd-1)):length(GPPd)] <- mean(GPPd[(length(GPPd)-(2*wsd-1)):length(GPPd)],na.rm=TRUE)
     
     # check for occurence of missing values and set them to mean of the values surrounding them
     missing <- which(is.na(GPPd_smoothed))
     if (length(missing) > 0){
       if (length(missing) > 10){warning("Attention, there is a gap in 'GPPd' of length n = ",length(missing))}
-      replace_val <- mean(GPPd_smoothed[max(1,missing[1] - 4):min((missing[length(missing)] + 4),length(GPPd_smoothed))],na.rm=T)
+      replace_val <- mean(GPPd_smoothed[max(1,missing[1] - 4):min((missing[length(missing)] + 4),length(GPPd_smoothed))],na.rm=TRUE)
       GPPd_smoothed[missing] <- replace_val
     }
     
@@ -506,7 +506,7 @@ filter.growing.season <- function(GPPd,tGPP,ws=15,min.int=5){
 #'          \deqn{uWUE= (GPP * sqrt(VPD)) / ET}
 #'          
 #'          All metrics are calculated based on the median of all values. E.g.
-#'          WUE = median(GPP/ET,na.rm=T)
+#'          WUE = median(GPP/ET,na.rm=TRUE)
 #' 
 #' @return a named vector with the following elements:
 #'         \item{WUE}{Water-use efficiency (gC (kg H20)-1)}
@@ -527,13 +527,12 @@ filter.growing.season <- function(GPPd,tGPP,ws=15,min.int=5){
 #' ## filter data for dry periods and daytime at DE-Tha in June 2014
 #' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
 #'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-#'                                tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                                tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
 #'                                tustar=0.2,tGPP=0,ws=15,min.int=5)
 #' 
 #' ## calculate WUE metrics in the selected periods
 #' WUE.metrics(DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"valid"] > 0,])
 #'                         
-#'                            
 #' @importFrom stats median                                     
 #' @export
 WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
@@ -550,10 +549,10 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
   GPP <- (GPP/1e06 * constants$Cmol)*1000  # gC m-2 s-1
   NEE <- (NEE/1e06 * constants$Cmol)*1000  # gC m-2 s-1
   
-  WUE     <- median(GPP/ET,na.rm=T)
-  WUE_NEE <- median(abs(NEE)/ET,na.rm=T)
-  IWUE    <- median((GPP*VPD)/ET,na.rm=T)
-  uWUE    <- median((GPP*sqrt(VPD))/ET,na.rm=T)
+  WUE     <- median(GPP/ET,na.rm=TRUE)
+  WUE_NEE <- median(abs(NEE)/ET,na.rm=TRUE)
+  IWUE    <- median((GPP*VPD)/ET,na.rm=TRUE)
+  uWUE    <- median((GPP*sqrt(VPD))/ET,na.rm=TRUE)
   
   return(c(WUE=WUE,WUE_NEE=WUE_NEE,IWUE=IWUE,uWUE=uWUE))
 }
@@ -573,9 +572,7 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
 #' @param constants k - von-Karman constant (-) \cr
 #'                  Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)
 #'  
-#' @details
-#'  
-#'  The empirical equation for Rb to water suggested by Thom 1972 is:
+#' @details The empirical equation for Rb to water suggested by Thom 1972 is:
 #'  
 #'  \deqn{Rb = 6.2ustar^-0.67}
 #'  
@@ -588,7 +585,7 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
 #'  across the boundary layer is assumed to be partly by diffusion and partly by turbulent
 #'  mixing (Nobel 2005).
 #'  
-#'  @return a data.frame with the following columns:
+#' @return a data.frame with the following columns:
 #'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
 #'  \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
 #'  \item{Gb}{Boundary layer conductance (m s-1)}
@@ -599,8 +596,6 @@ WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair
 #'             
 #'             Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
 #'             Edition. Elsevier Academic Press, Burlington, USA.
-#' 
-#' @seealso \code{\link{Gb.Su}}, \code{\link{Gb.Choudhury}}
 #' 
 #' @examples 
 #' Gb.Thom(seq(0.1,1.4,0.1))
@@ -622,6 +617,9 @@ Gb.Thom <- function(ustar,constants=bigleaf.constants()){
 #' 
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Atmospheric pressure (kPa)
+#' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
+#'                  pressure0 - reference atmospheric pressure at sea level (Pa) \cr
+#'                  Tair0 - reference air temperature (K)
 #' 
 #' @details where v is the kinematic viscosity of the air (m2 s-1), 
 #'          given by (Massman 1999b):
@@ -676,7 +674,7 @@ kinematic.viscosity <- function(Tair,pressure,constants=bigleaf.constants()){
 #' @export
 Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants()){
   
-  v  <- kinematic.viscosity(Tair,pressure)
+  v  <- kinematic.viscosity(Tair,pressure,constants)
   Re <- z0m*ustar/v
   
   return(Re)
@@ -774,7 +772,7 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 #' Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.1,LAI=5)
 #' 
 #' # same conditions, large leaves, and sparse canopy cover (LAI = 1.5)
-#' Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.01,LAI=1.5)
+#' Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.1,LAI=1.5)
 #' 
 #' @export
 Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind",
@@ -803,8 +801,8 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
                           zr=zr,zh=zh,d=d,stab_correction=TRUE,
                           stab_formulation=stab_formulation)[,1]
 
-  v   <- Reynolds.Number(Tair,pressure,ustar,hs,constants)[,"v"]
-  Re  <- Reynolds.Number(Tair,pressure,ustar,hs,constants)[,"Re"]
+  v   <- kinematic.viscosity(Tair,pressure,constants)
+  Re  <- Reynolds.Number(Tair,pressure,ustar,hs,constants)
   kBs <- 2.46 * (Re)^0.25 - log(7.4)
   Reh <- Dl * wind_zh / v
   Ct  <- 1*0.71^-0.6667*Reh^-0.5*N   # 0.71 = Prandtl number
@@ -1171,8 +1169,8 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
     
     z0m_all[z0m_all > zh] <- NA
     
-    z0m    <- median(z0m_all,na.rm=T)
-    z0m_se <- 1.253 * (sd(z0m_all,na.rm=T) / sqrt(length(z0m_all[complete.cases(z0m_all)])))
+    z0m    <- median(z0m_all,na.rm=TRUE)
+    z0m_se <- 1.253 * (sd(z0m_all,na.rm=TRUE) / sqrt(length(z0m_all[complete.cases(z0m_all)])))
 
   }
 
@@ -1744,7 +1742,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #' ## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
 #' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
 #'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-#'                                tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                                tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
 #'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
 #' # in addition, filter negative LE fluxes
 #' DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"LE"] < 0,] <- NA
@@ -1893,7 +1891,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 #' @export 
 surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",
-                               VPD="VPD",Ga="Ga",calc.Csurf=F,Ca="Ca",Ga_CO2="Ga_CO2",
+                               VPD="VPD",Ga="Ga",calc.Csurf=FALSE,Ca="Ca",Ga_CO2="Ga_CO2",
                                NEE="NEE",constants=bigleaf.constants()){
   
   Tair     <- check.columns(data,Tair)
@@ -2699,7 +2697,7 @@ gC.to.umolCO2 <- function(C_flux,constants=bigleaf.constants()){
 #' 
 #' @export
 ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,alpha=1.26,
-                   missing.G.as.NA=F,missing.S.as.NA=F,constants=bigleaf.constants()){
+                   missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,constants=bigleaf.constants()){
   
   Tair     <- check.columns(data,Tair)
   pressure <- check.columns(data,pressure)
@@ -2785,7 +2783,7 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #' 
 #' @export                 
 ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="Rn",Ga="Ga",
-                   G=NULL,S=NULL,missing.G.as.NA=F,missing.S.as.NA=F,
+                   G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                    constants=bigleaf.constants()){
   
   Tair     <- check.columns(data,Tair)
@@ -2881,7 +2879,7 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #'             
 #' @export
 ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
-                          Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=F,missing.S.as.NA=F,
+                          Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                           constants=bigleaf.constants()){
   
   Tair     <- check.columns(data,Tair)
@@ -2983,11 +2981,11 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
 #' # alternatively, the function aerodynamic.conductance also returns Ga for CO2
 #' Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
 #' 
-#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) 
+#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=TRUE,Ga=Ga_mol,NEE=-55) 
 #' # note the sign convention for NEE
 #' 
 #' @export
-intercellular.CO2 <- function(Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=F,Ga=NULL,NEE=NULL,
+intercellular.CO2 <- function(Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=FALSE,Ga=NULL,NEE=NULL,
                               constants=bigleaf.constants()){
   
   
@@ -3146,7 +3144,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #' ## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
 #' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
 #'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-#'                                tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                                tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
 #'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
 #' 
 #' 
@@ -3320,16 +3318,16 @@ biochemical.energy <- function(NEE,alpha=0.422){
 #'
 #' @examples 
 #' ## characterize energy balance closure for DE-Tha in June 2014
-#' energy.closure(DE_Tha_Jun_2014,instantaneous=F)
+#' energy.closure(DE_Tha_Jun_2014,instantaneous=FALSE)
 #' 
 #' ## look at half-hourly closure 
-#' EBR_inst <- energy.closure(DE_Tha_Jun_2014,instantaneous=T)
+#' EBR_inst <- energy.closure(DE_Tha_Jun_2014,instantaneous=TRUE)
 #' summary(EBR_inst)
 #' 
 #' @importFrom stats complete.cases lm
 #' @export
-energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneous=F,
-                           missing.G.as.NA=F,missing.S.as.NA=F){
+energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneous=FALSE,
+                           missing.G.as.NA=FALSE,missing.S.as.NA=FALSE){
   
   Rn <- check.columns(data,Rn)
   LE <- check.columns(data,LE)

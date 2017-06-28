@@ -52,7 +52,7 @@ the following metrics are calculated:
          \deqn{uWUE= (GPP * sqrt(VPD)) / ET}
          
          All metrics are calculated based on the median of all values. E.g.
-         WUE = median(GPP/ET,na.rm=T)
+         WUE = median(GPP/ET,na.rm=TRUE)
 }
 \note{
 Units for VPD can also be hPa. Units change accordingly.
@@ -62,13 +62,12 @@ Units for VPD can also be hPa. Units change accordingly.
 ## filter data for dry periods and daytime at DE-Tha in June 2014
 DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-                               tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+                               tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
                                tustar=0.2,tGPP=0,ws=15,min.int=5)
 
 ## calculate WUE metrics in the selected periods
 WUE.metrics(DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"valid"] > 0,])
                         
-                           
 }
 \references{
 Beer, C., et al., 2009: Temporal and among-site variability of inherent

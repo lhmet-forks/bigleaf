@@ -6,7 +6,7 @@
 \usage{
 ET.ref(data, Gs = 0.0143, Tair = "Tair", pressure = "pressure",
   VPD = "VPD", Rn = "Rn", Ga = "Ga", G = NULL, S = NULL,
-  missing.G.as.NA = F, missing.S.as.NA = F,
+  missing.G.as.NA = FALSE, missing.S.as.NA = FALSE,
   constants = bigleaf.constants())
 }
 \arguments{

@@ -73,7 +73,7 @@ All stomatal models were developed at leaf-level, but its parameters
 ## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
 DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-                               tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+                               tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
 
 

@@ -4,8 +4,8 @@
 \alias{intercellular.CO2}
 \title{Bulk intercellular CO2 concentration}
 \usage{
-intercellular.CO2(Ca, GPP, RecoLeaf = NULL, Gs, calc.Csurf = F, Ga = NULL,
-  NEE = NULL, constants = bigleaf.constants())
+intercellular.CO2(Ca, GPP, RecoLeaf = NULL, Gs, calc.Csurf = FALSE,
+  Ga = NULL, NEE = NULL, constants = bigleaf.constants())
 }
 \arguments{
 \item{Ca}{Atmospheric CO2 concentration (umol mol-1)}
@@ -64,7 +64,7 @@ intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
 # alternatively, the function aerodynamic.conductance also returns Ga for CO2
 Ga_mol <- ms.to.mol(0.05,Tair=20,pressure=100)
 
-intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=T,Ga=Ga_mol,NEE=-55) 
+intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=TRUE,Ga=Ga_mol,NEE=-55) 
 # note the sign convention for NEE
 
 }

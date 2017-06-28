@@ -103,7 +103,7 @@ Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.01,LAI=5)
 Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.1,LAI=5)
 
 # same conditions, large leaves, and sparse canopy cover (LAI = 1.5)
-Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.01,LAI=1.5)
+Gb.Su(data=df,zh=25,zr=40,d=17.5,Dl=0.1,LAI=1.5)
 
 }
 \references{

@@ -5,7 +5,8 @@
 \title{Energy balance closure}
 \usage{
 energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
-  H = "H", instantaneous = F, missing.G.as.NA = F, missing.S.as.NA = F)
+  H = "H", instantaneous = FALSE, missing.G.as.NA = FALSE,
+  missing.S.as.NA = FALSE)
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
@@ -52,10 +53,10 @@ The energy balance ratio (EBR) is calculated as:
 }
 \examples{
 ## characterize energy balance closure for DE-Tha in June 2014
-energy.closure(DE_Tha_Jun_2014,instantaneous=F)
+energy.closure(DE_Tha_Jun_2014,instantaneous=FALSE)
 
 ## look at half-hourly closure 
-EBR_inst <- energy.closure(DE_Tha_Jun_2014,instantaneous=T)
+EBR_inst <- energy.closure(DE_Tha_Jun_2014,instantaneous=TRUE)
 summary(EBR_inst)
 
 }

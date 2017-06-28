@@ -162,36 +162,40 @@ bigleaf.constants <- function(){
 #' @description Filters timeseries of EC data for high-quality values and specified
 #'              meteorological conditions.
 #' 
-#' @param data          data.frame or matrix containing all required input variables in 
-#'                      half-hourly or hourly resolution. Including year, month, day information
-#' @param precip        precipitation (mm)
-#' @param PPFD          photosynthetically photon flux density (umol m-2 s-1)
-#' @param Tair          air temperature (deg C)
-#' @param ustar         friction velocity (m s-1)
-#' @param VPD           vapor pressure deficit (kPa)
-#' @param GPP           gross primary productivity (umol m-2 s-1)
-#' @param doy           day of year
-#' @param year          year
-#' @param quality.control should quality control be applied?
-#' @param quality.ext   the extension to the variables' names that marks them as 
-#'                      quality control variables. Ignored if \code{quality.control} is FALSE.
-#' @param vars.qc       character vector indicating the variables for which quality filter should 
-#'                      be applied. Leave empty if no quality filter should be applied.  
-#' @param good.quality  which values indicate good quality in the quality control (qc) variables?
+#' @param data            Data.frame or matrix containing all required input variables in 
+#'                        half-hourly or hourly resolution. Including year, month, day information
+#' @param precip          Precipitation (mm)
+#' @param PPFD            Photosynthetically photon flux density (umol m-2 s-1)
+#' @param Tair            Air temperature (deg C)
+#' @param ustar           Friction velocity (m s-1)
+#' @param VPD             Vapor pressure deficit (kPa)
+#' @param GPP             Gross primary productivity (umol m-2 s-1); Ignored if \code{filter.growseas} is FALSE.
+#' @param doy             Day of year
+#' @param year            Year
+#' @param quality.control Should quality control be applied? Defaults to TRUE
+#' @param filter.growseas Should data be filtered for growing season? Defaults to FALSE
+#' @param quality.ext     The extension to the variables' names that marks them as 
+#'                        quality control variables. Ignored if \code{quality.control} is FALSE.
+#' @param vars.qc         Character vector indicating the variables for which quality filter should 
+#'                        be applied. Ignored if \code{quality.control} is FALSE.
+#' @param good.quality    Which values indicate good quality in the quality control (qc) variables?
+#'                        Ignored if \code{quality.control} is FALSE.
 #' @param missing.qc.as.bad If quality control variable is NA, should the corresponding data point be
-#'                          treated as bad quality? Defaults to TRUE
-#' @param tprecip       precipitation threshold used to demark a precipitation event (mm)
-#' @param precip.hours  number of hours removed following a precipitation event (h)
-#' @param NA.as.precip  if TRUE missing precipitation data are treated as precipitation events
-#' @param trad          radiation threshold (umol m-2 s-1)
+#'                          treated as bad quality? Defaults to TRUE. Ignored if \code{quality.control} is FALSE.
+#' @param tprecip       Precipitation threshold used to demark a precipitation event (mm)
+#' @param precip.hours  Number of hours removed following a precipitation event (h)
+#' @param NA.as.precip  If TRUE missing precipitation data are treated as precipitation events
+#' @param trad          Radiation threshold (umol m-2 s-1)
 #' @param ttemp         Temperature threshold (deg C)
 #' @param tustar        Friction velocity threshold (m s-1)
-#' @param tGPP          GPP threshold (fraction of 95% quantile of the GPP time series).
-#'                      Must be between 0 and 1. 
-#' @param ws            Window size used for GPP time series smoothing
-#' @param min.int       Minimum time interval in days for a given state of growing season
 #' @param trH           Relative humidity threshold (-). Note that relative humidity
 #'                      is calculated from VPD internally
+#' @param tGPP          GPP threshold (fraction of 95% quantile of the GPP time series).
+#'                      Must be between 0 and 1. Ignored if \code{filter.growseas} is FALSE.
+#' @param ws            Window size used for GPP time series smoothing. 
+#'                      Ignored if \code{filter.growseas} is FALSE.
+#' @param min.int       Minimum time interval in days for a given state of growing season.
+#'                      Ignored if \code{filter.growseas} is FALSE.
 #' 
 #' 
 #' @details This routine consists of two parts:
@@ -215,23 +219,27 @@ bigleaf.constants <- function(){
 #' @return The same data frame as provided as first argument to the function
 #'         with an additional column "valid", which indicates whether the timestep fulfills 
 #'         the filtering criteria (1) or not (0).
+#'         
+#' @note This function is not exhaustive, and one may wish to exclude further situations 
+#'       (e.g. negative LE fluxes, counter-gradient fluxes, etc.), depending on the purpose.       
 #' 
 #' @examples 
 #' # Example of data filtering; data are for a month within the growing season,
-#' # hence growing season is not filtered (tGPP=0)
-#' DE_Tha_2010 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,quality.ext="_qc",
-#'                            vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
-#'                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
-#'                            ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95) 
+#' # hence growing season is not filtered.
+#' DE_Tha_filtered <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
+#'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+#'                                tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+#'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95) 
 #' 
 #' @importFrom stats aggregate
 #' @export                     
 filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="ustar",
                         VPD="VPD",GPP="GPP_nt",doy="doy",year="year",quality.control=TRUE,
-                        quality.ext="_qc",vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
-                        good.quality=c(0,1),missing.qc.as.bad=TRUE,
-                        tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,ttemp=5,tustar=0.2,tGPP=0.5,
-                        ws=15,min.int=5,trH=0.95){
+                        filter.growseas=FALSE,quality.ext="_qc",
+                        vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+                        good.quality=c(0,1),missing.qc.as.bad=TRUE,tprecip=0.01,
+                        precip.hours=24,NA.as.precip=F,trad=200,ttemp=5,tustar=0.2,
+                        trH=0.95,tGPP=0.5,ws=15,min.int=5){
   
   
   ### I) Quality control filter
@@ -279,7 +287,6 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   Tair   <- check.columns(data,Tair)
   ustar  <- check.columns(data,ustar)
   VPD    <- check.columns(data,VPD)
-  GPP    <- check.columns(data,GPP)
   doy    <- check.columns(data,doy)
   year   <- check.columns(data,year)
   
@@ -298,9 +305,13 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   
   ## start filtering
   # 1) GPP
-  GPP_daily        <- aggregate(GPP,by=list(strftime(date)),mean,na.rm=T)[,2]
-  growing_season   <- filter.growseas(GPP_daily,tGPP=tGPP,ws=ws,min.int=min.int)
-  growseas_invalid <- which(sapply(growing_season,rep,48) == 0)
+  growseas_invalid <- numeric()
+  if(filter.growseas){
+    GPP              <- check.columns(data,GPP)
+    GPP_daily        <- aggregate(GPP,by=list(strftime(date)),mean,na.rm=T)[,2]
+    growing_season   <- filter.growing.season(GPP_daily,tGPP=tGPP,ws=ws,min.int=min.int)
+    growseas_invalid <- which(sapply(growing_season,rep,48) == 0)
+  }
   
   # 2) precipitation
   if (NA.as.precip){
@@ -394,7 +405,7 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
 #'                 
 #' @importFrom stats quantile filter                                 
 #' @export  
-filter.growseas <- function(GPPd,tGPP,ws=15,min.int=5){
+filter.growing.season <- function(GPPd,tGPP,ws=15,min.int=5){
   
   if(sum(is.na(GPPd)) < 0.5*length(GPPd)){
   

@@ -6,66 +6,71 @@
 \usage{
 filter.data(data, precip = "precip", PPFD = "PPFD", Tair = "Tair",
   ustar = "ustar", VPD = "VPD", GPP = "GPP_nt", doy = "doy",
-  year = "year", quality.control = TRUE, quality.ext = "_qc",
-  vars.qc = c("precip", "Tair", "VPD", "GPP_nt", "H", "LE"),
-  good.quality = c(0, 1), missing.qc.as.bad = TRUE, tprecip = 0.01,
+  year = "year", quality.control = TRUE, filter.growseas = FALSE,
+  quality.ext = "_qc", vars.qc = c("precip", "Tair", "VPD", "GPP_nt", "H",
+  "LE"), good.quality = c(0, 1), missing.qc.as.bad = TRUE, tprecip = 0.01,
   precip.hours = 24, NA.as.precip = F, trad = 200, ttemp = 5,
-  tustar = 0.2, tGPP = 0.5, ws = 15, min.int = 5, trH = 0.95)
+  tustar = 0.2, trH = 0.95, tGPP = 0.5, ws = 15, min.int = 5)
 }
 \arguments{
-\item{data}{data.frame or matrix containing all required input variables in 
+\item{data}{Data.frame or matrix containing all required input variables in 
 half-hourly or hourly resolution. Including year, month, day information}
 
-\item{precip}{precipitation (mm)}
+\item{precip}{Precipitation (mm)}
 
-\item{PPFD}{photosynthetically photon flux density (umol m-2 s-1)}
+\item{PPFD}{Photosynthetically photon flux density (umol m-2 s-1)}
 
-\item{Tair}{air temperature (deg C)}
+\item{Tair}{Air temperature (deg C)}
 
-\item{ustar}{friction velocity (m s-1)}
+\item{ustar}{Friction velocity (m s-1)}
 
-\item{VPD}{vapor pressure deficit (kPa)}
+\item{VPD}{Vapor pressure deficit (kPa)}
 
-\item{GPP}{gross primary productivity (umol m-2 s-1)}
+\item{GPP}{Gross primary productivity (umol m-2 s-1); Ignored if \code{filter.growseas} is FALSE.}
 
-\item{doy}{day of year}
+\item{doy}{Day of year}
 
-\item{year}{year}
+\item{year}{Year}
 
-\item{quality.control}{should quality control be applied?}
+\item{quality.control}{Should quality control be applied? Defaults to TRUE}
 
-\item{quality.ext}{the extension to the variables' names that marks them as 
+\item{filter.growseas}{Should data be filtered for growing season? Defaults to FALSE}
+
+\item{quality.ext}{The extension to the variables' names that marks them as 
 quality control variables. Ignored if \code{quality.control} is FALSE.}
 
-\item{vars.qc}{character vector indicating the variables for which quality filter should 
-be applied. Leave empty if no quality filter should be applied.}
+\item{vars.qc}{Character vector indicating the variables for which quality filter should 
+be applied. Ignored if \code{quality.control} is FALSE.}
 
-\item{good.quality}{which values indicate good quality in the quality control (qc) variables?}
+\item{good.quality}{Which values indicate good quality in the quality control (qc) variables?
+Ignored if \code{quality.control} is FALSE.}
 
 \item{missing.qc.as.bad}{If quality control variable is NA, should the corresponding data point be
-treated as bad quality? Defaults to TRUE}
+treated as bad quality? Defaults to TRUE. Ignored if \code{quality.control} is FALSE.}
 
-\item{tprecip}{precipitation threshold used to demark a precipitation event (mm)}
+\item{tprecip}{Precipitation threshold used to demark a precipitation event (mm)}
 
-\item{precip.hours}{number of hours removed following a precipitation event (h)}
+\item{precip.hours}{Number of hours removed following a precipitation event (h)}
 
-\item{NA.as.precip}{if TRUE missing precipitation data are treated as precipitation events}
+\item{NA.as.precip}{If TRUE missing precipitation data are treated as precipitation events}
 
-\item{trad}{radiation threshold (umol m-2 s-1)}
+\item{trad}{Radiation threshold (umol m-2 s-1)}
 
 \item{ttemp}{Temperature threshold (deg C)}
 
 \item{tustar}{Friction velocity threshold (m s-1)}
 
-\item{tGPP}{GPP threshold (fraction of 95% quantile of the GPP time series).
-Must be between 0 and 1.}
-
-\item{ws}{Window size used for GPP time series smoothing}
-
-\item{min.int}{Minimum time interval in days for a given state of growing season}
-
 \item{trH}{Relative humidity threshold (-). Note that relative humidity
 is calculated from VPD internally}
+
+\item{tGPP}{GPP threshold (fraction of 95% quantile of the GPP time series).
+Must be between 0 and 1. Ignored if \code{filter.growseas} is FALSE.}
+
+\item{ws}{Window size used for GPP time series smoothing. 
+Ignored if \code{filter.growseas} is FALSE.}
+
+\item{min.int}{Minimum time interval in days for a given state of growing season.
+Ignored if \code{filter.growseas} is FALSE.}
 }
 \value{
 The same data frame as provided as first argument to the function
@@ -95,12 +100,16 @@ This routine consists of two parts:
             are set to NA.
             Set a threshold to 0 (or the minimum of the variable) if the dataset should not be filtered for a specific variable.
 }
+\note{
+This function is not exhaustive, and one may wish to exclude further situations 
+      (e.g. negative LE fluxes, counter-gradient fluxes, etc.), depending on the purpose.
+}
 \examples{
 # Example of data filtering; data are for a month within the growing season,
-# hence growing season is not filtered (tGPP=0)
-DE_Tha_2010 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,quality.ext="_qc",
-                           vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
-                           tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
-                           ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95) 
+# hence growing season is not filtered.
+DE_Tha_filtered <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
+                               quality.ext="_qc",vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
+                               tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
+                               ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95) 
 
 }

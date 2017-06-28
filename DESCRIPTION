@@ -1,7 +1,7 @@
 Package: bigleaf
 Type: Package
-Version: 0.0.0.9000
-Date: 2017-05-15
+Version: 0.0.1.9000
+Date: 2017-06-27
 Title: Physical and physiological ecosystem properties from eddy covariance data
 Authors@R: c( person("Juergen", "Knauer", role=c("aut","cre"), email="jknauer@bgc-jena.mpg.de"),
               person("Soenke", "Zaehle", role=c("aut"), email="szaehle@bgc.mpg.de")
@@ -9,6 +9,7 @@ Authors@R: c( person("Juergen", "Knauer", role=c("aut","cre"), email="jknauer@bg
 Description: Calculation of meteorological, aerodynamic, and physiological ecosystem properties
              based on measured fluxes with the eddy-covariance technique and meteorological data.
 			 Calculations assume the surface to behave like a 'big-leaf'.
+Depends: R (>= 2.10)
 License: GPL (>= 2)
-LazyData: no
+LazyData: yes
 RoxygenNote: 6.0.1

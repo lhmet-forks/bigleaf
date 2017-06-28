@@ -3,6 +3,7 @@
 
 # library(devtools)
 # library(roxygen2)
+# library(tools)
 
 
 ## Todo
@@ -172,7 +173,8 @@ bigleaf.constants <- function(){
 #' @param doy           day of year
 #' @param year          year
 #' @param quality.control should quality control be applied?
-#' @param quality.ext   the extension to the variables' names that marks them as quality control variables
+#' @param quality.ext   the extension to the variables' names that marks them as 
+#'                      quality control variables. Ignored if \code{quality.control} is FALSE.
 #' @param vars.qc       character vector indicating the variables for which quality filter should 
 #'                      be applied. Leave empty if no quality filter should be applied.  
 #' @param good.quality  which values indicate good quality in the quality control (qc) variables?
@@ -215,13 +217,12 @@ bigleaf.constants <- function(){
 #'         the filtering criteria (1) or not (0).
 #' 
 #' @examples 
-#' load("DE-Tha_2010.rda") # load data
-#' 
-#' # filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
-#' DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
+#' # Example of data filtering; data are for a month within the growing season,
+#' # hence growing season is not filtered (tGPP=0)
+#' DE_Tha_2010 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,quality.ext="_qc",
 #'                            vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
 #'                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
-#'                            ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
+#'                            ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95) 
 #' 
 #' @importFrom stats aggregate
 #' @export                     
@@ -1872,7 +1873,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
 #'          
 #' # now calculate also surface CO2 concentration
 #' surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1),
-#'                    Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.Csurf=TRUE)                                                                                                                                                                                                                                                                                                            
+#'                    Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.Csurf=TRUE)
 #'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 #' @export 
 surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",

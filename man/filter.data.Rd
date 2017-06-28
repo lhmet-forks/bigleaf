@@ -34,7 +34,8 @@ half-hourly or hourly resolution. Including year, month, day information}
 
 \item{quality.control}{should quality control be applied?}
 
-\item{quality.ext}{the extension to the variables' names that marks them as quality control variables}
+\item{quality.ext}{the extension to the variables' names that marks them as 
+quality control variables. Ignored if \code{quality.control} is FALSE.}
 
 \item{vars.qc}{character vector indicating the variables for which quality filter should 
 be applied. Leave empty if no quality filter should be applied.}
@@ -95,12 +96,11 @@ This routine consists of two parts:
             Set a threshold to 0 (or the minimum of the variable) if the dataset should not be filtered for a specific variable.
 }
 \examples{
-load("DE-Tha_2010.rda") # load data
-
-# filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
-DE_Tha_2010 <- filter.data(DE_Tha_2010,quality.control=TRUE,quality.ext="_qc",
+# Example of data filtering; data are for a month within the growing season,
+# hence growing season is not filtered (tGPP=0)
+DE_Tha_2010 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,quality.ext="_qc",
                            vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
                            tprecip=0.01,precip.hours=24,NA.as.precip=F,trad=200,
-                           ttemp=5,tustar=0.2,tGPP=0.5,ws=15,min.int=5,trH=0.95) 
+                           ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95) 
 
 }

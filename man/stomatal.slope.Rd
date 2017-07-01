@@ -6,8 +6,8 @@
 \usage{
 stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP_nt",
   Gs = "Gs", VPD = "VPD", Ca = "Ca", model = c("USO", "Ball&Berry",
-  "Leuning"), nmin = 40, fitg0 = FALSE, g0 = 0, fitD0 = FALSE,
-  D0 = 1.5, Gamma = 50, constants = bigleaf.constants())
+  "Leuning"), robust.nls = FALSE, nmin = 40, fitg0 = FALSE, g0 = 0,
+  fitD0 = FALSE, D0 = 1.5, Gamma = 50, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required columns}
@@ -26,6 +26,8 @@ stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP_nt",
 
 \item{model}{Stomatal model used. One of c("USO","Ball&Berry","Leuning")}
 
+\item{robust.nls}{Use robust nonlinear regression (\code{\link[robustbase]{nlrob}})? Default is FALSE.}
+
 \item{nmin}{Minimum number of data required to perform the fit; defaults to 40.}
 
 \item{fitg0}{Should g0 and g1 be fitted simultaneously?}
@@ -36,7 +38,8 @@ stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP_nt",
 
 \item{D0}{Stomatal sensitivity parameter to VPD; only used if \code{model} is "Leuning" and fitD0 is FALSE}
 
-\item{Gamma}{Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning", defaults to 50 umol mol-1.}
+\item{Gamma}{Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning". 
+Can be a constant or a variable. Defaults to 50 umol mol-1.}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 Rgas - universal gas constant (J mol-1 K-1)}
@@ -74,8 +77,8 @@ All stomatal models were developed at leaf-level, but its parameters
 DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
                                tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
-                               ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
-
+                               ttemp=5,tustar=0.2,trH=0.95)
+DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"valid"] < 1,] <- NA
 
 # calculate Gs from the the inverted PM equation
 Ga <- aerodynamic.conductance(DE_Tha_Jun_2014,Rb_model="Thom_1972")[,"Ga_h"]
@@ -86,16 +89,19 @@ Gs_PM <- surface.conductance(DE_Tha_Jun_2014,Tair="Tair",pressure="pressure",
                              
 ### Estimate the stomatal slope parameter g1 using the USO model
 mod_USO <- stomatal.slope(DE_Tha_Jun_2014,model="USO",GPP="GPP_nt",Gs=Gs_PM,
-                          nmin=40,fitg0=FALSE)
-# g1 is ~ 0.7, which corresponds to a high WUE 
+                          robust.nls=FALSE,nmin=40,fitg0=FALSE)
+                          
+### Use robust regression to minimize influence of outliers in Gs                           
+mod_USO <- stomatal.slope(DE_Tha_Jun_2014,model="USO",GPP="GPP_nt",Gs=Gs_PM,
+                          robust.nls=TRUE,nmin=40,fitg0=FALSE)
 
 ### Estimate the same parameter from the Ball&Berry model and prescribe g0
 mod_BB <- stomatal.slope(DE_Tha_Jun_2014,model="Ball&Berry",GPP="GPP_nt",
-                         Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
+                         robust.nls=FALSE,Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
 
 ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
 mod_Leu <- stomatal.slope(DE_Tha_Jun_2014,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
-                          nmin=40,fitg0=TRUE,D0=1.5,fitD0=FALSE)                         
+                          robust.nls=FALSE,nmin=40,fitg0=FALSE,D0=1.5,fitD0=FALSE)                         
 
 }
 \references{

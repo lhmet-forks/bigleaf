@@ -22,14 +22,14 @@ are used. If method is "canopy_height&LAI", only zh, LAI, cd, and hs are require
 
 \item{frac_z0m}{Fraction of roughness length on canopy height (-)}
 
-\item{LAI}{Leaf area index (-) 
-The following arguments are only needed if \code{method = "wind_profile"}!}
+\item{LAI}{Leaf area index (-)}
 
 \item{zr}{Instrument (reference) height (m)}
 
-\item{cd}{Mean drag coefficient for individual leaves. Defaults to 0.2.}
+\item{cd}{Mean drag coefficient for individual leaves. Defaults to 0.2. Only needed if \code{method = "canopy_height&LAI"}}
 
-\item{hs}{roughness length of the soil surface (m)}
+\item{hs}{roughness length of the soil surface (m). Only needed if \code{method = "canopy_height&LAI"}
+The following arguments are only needed if \code{method = "wind_profile"}!}
 
 \item{data}{Data.frame or matrix containing all required variables}
 

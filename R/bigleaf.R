@@ -1037,10 +1037,10 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
 #' @param frac_d    Fraction of displacement height on canopy height (-)
 #' @param frac_z0m  Fraction of roughness length on canopy height (-)
 #' @param LAI       Leaf area index (-) 
-#'                  The following arguments are only needed if \code{method = "wind_profile"}!
 #' @param zr        Instrument (reference) height (m)
-#' @param cd        Mean drag coefficient for individual leaves. Defaults to 0.2.
-#' @param hs        roughness length of the soil surface (m)
+#' @param cd        Mean drag coefficient for individual leaves. Defaults to 0.2. Only needed if \code{method = "canopy_height&LAI"}
+#' @param hs        roughness length of the soil surface (m). Only needed if \code{method = "canopy_height&LAI"}
+#'                  The following arguments are only needed if \code{method = "wind_profile"}!
 #' @param data      Data.frame or matrix containing all required variables
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Atmospheric pressure (kPa)
@@ -3110,22 +3110,24 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #' @description Estimation of the intrinsic WUE metric "g1" (stomatal slope) 
 #'              from non-linear regression.
 #' 
-#' @param data      Data.frame or matrix containing all required columns
-#' @param Tair      Air temperature (deg C)
-#' @param pressure  Atmospheric pressure (kPa)
-#' @param GPP       Gross primary productivity (umol CO2 m-2 s-1)
-#' @param Gs        Surface conductance to water vapor (mol m-2 s-1)
-#' @param VPD       Vapor pressure deficit (kPa)
-#' @param Ca        Atmospheric CO2 concentration (umol mol-1)
-#' @param model     Stomatal model used. One of c("USO","Ball&Berry","Leuning")
-#' @param nmin      Minimum number of data required to perform the fit; defaults to 40.
-#' @param fitg0     Should g0 and g1 be fitted simultaneously? 
-#' @param g0        Minimum stomatal conductance (mol m-2 s-1); ignored if \code{fitg0} is TRUE.
-#' @param fitD0     Should D0 be fitted along with g1 (and g0 if fitg0 = TRUE)?; only used if \code{model} is "Leuning"
-#' @param D0        Stomatal sensitivity parameter to VPD; only used if \code{model} is "Leuning" and fitD0 is FALSE
-#' @param Gamma     Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning", defaults to 50 umol mol-1.
-#' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
-#'                  Rgas - universal gas constant (J mol-1 K-1)
+#' @param data       Data.frame or matrix containing all required columns
+#' @param Tair       Air temperature (deg C)
+#' @param pressure   Atmospheric pressure (kPa)
+#' @param GPP        Gross primary productivity (umol CO2 m-2 s-1)
+#' @param Gs         Surface conductance to water vapor (mol m-2 s-1)
+#' @param VPD        Vapor pressure deficit (kPa)
+#' @param Ca         Atmospheric CO2 concentration (umol mol-1)
+#' @param model      Stomatal model used. One of c("USO","Ball&Berry","Leuning")
+#' @param robust.nls Use robust nonlinear regression (\code{\link[robustbase]{nlrob}})? Default is FALSE.
+#' @param nmin       Minimum number of data required to perform the fit; defaults to 40.
+#' @param fitg0      Should g0 and g1 be fitted simultaneously? 
+#' @param g0         Minimum stomatal conductance (mol m-2 s-1); ignored if \code{fitg0} is TRUE.
+#' @param fitD0      Should D0 be fitted along with g1 (and g0 if fitg0 = TRUE)?; only used if \code{model} is "Leuning"
+#' @param D0         Stomatal sensitivity parameter to VPD; only used if \code{model} is "Leuning" and fitD0 is FALSE
+#' @param Gamma      Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning". 
+#'                   Can be a constant or a variable. Defaults to 50 umol mol-1.
+#' @param constants  Kelvin - conversion degree Celsius to Kelvin \cr
+#'                   Rgas - universal gas constant (J mol-1 K-1)
 #' 
 #' @details All stomatal models were developed at leaf-level, but its parameters 
 #'          can also be estimated at ecosystem level (but be aware of caveats).
@@ -3166,8 +3168,8 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
 #'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
 #'                                tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
-#'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
-#' 
+#'                                ttemp=5,tustar=0.2,trH=0.95)
+#' DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"valid"] < 1,] <- NA
 #' 
 #' # calculate Gs from the the inverted PM equation
 #' Ga <- aerodynamic.conductance(DE_Tha_Jun_2014,Rb_model="Thom_1972")[,"Ga_h"]
@@ -3178,21 +3180,26 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #'                              
 #' ### Estimate the stomatal slope parameter g1 using the USO model
 #' mod_USO <- stomatal.slope(DE_Tha_Jun_2014,model="USO",GPP="GPP_nt",Gs=Gs_PM,
-#'                           nmin=40,fitg0=FALSE)
-#' # g1 is ~ 0.7, which corresponds to a high WUE 
+#'                           robust.nls=FALSE,nmin=40,fitg0=FALSE)
+#'                           
+#' ### Use robust regression to minimize influence of outliers in Gs                           
+#' mod_USO <- stomatal.slope(DE_Tha_Jun_2014,model="USO",GPP="GPP_nt",Gs=Gs_PM,
+#'                           robust.nls=TRUE,nmin=40,fitg0=FALSE)
 #' 
 #' ### Estimate the same parameter from the Ball&Berry model and prescribe g0
 #' mod_BB <- stomatal.slope(DE_Tha_Jun_2014,model="Ball&Berry",GPP="GPP_nt",
-#'                          Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
+#'                          robust.nls=FALSE,Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
 #' 
 #' ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
 #' mod_Leu <- stomatal.slope(DE_Tha_Jun_2014,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
-#'                           nmin=40,fitg0=TRUE,D0=1.5,fitD0=FALSE)                         
+#'                           robust.nls=FALSE,nmin=40,fitg0=FALSE,D0=1.5,fitD0=FALSE)                         
 #' 
-#' @importFrom stats nls 
+#' @importFrom stats nls
+#'             robustbase nlrob 
 #' @export 
-stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs="Gs",VPD="VPD",Ca="Ca",
-                           model=c("USO","Ball&Berry","Leuning"),nmin=40,fitg0=FALSE,g0=0,fitD0=FALSE,
+stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs="Gs",
+                           VPD="VPD",Ca="Ca",model=c("USO","Ball&Berry","Leuning"),
+                           robust.nls=FALSE,nmin=40,fitg0=FALSE,g0=0,fitD0=FALSE,
                            D0=1.5,Gamma=50,constants=bigleaf.constants()){
   
   model <- match.arg(model)
@@ -3204,6 +3211,14 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
   VPD      <- check.columns(data,VPD)
   Ca       <- check.columns(data,Ca)
   check.length(Tair,pressure,GPP,Gs,VPD,Ca)
+  df <- data.frame(Tair,pressure,GPP,Gs,VPD,Ca)
+  
+  if (model == "Leuning"){
+    if (length(Gamma) == 1){
+      Gamma <- rep(Gamma,nrow(df))
+    }
+    df$Gamma <- Gamma
+  }
   
   nr_data <- sum(!is.na(GPP) & !is.na(Gs) & !is.na(VPD) & !is.na(Ca))
   
@@ -3214,35 +3229,94 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
     if (model == "USO"){
       
       if (fitg0){
-        mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3))
+        if (robust.nls){
+          mod_weights <- nlrob(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g0=0,g1=3),
+                               na.action=na.exclude)$w
+          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),weights=mod_weights)
+        } else {
+          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3))
+        }
       } else {
-        mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3))
+        if (robust.nls){
+          df$g0   <- rep(g0,nrow(df))
+          mod_weights <- nlrob(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g1=3),
+                               na.action=na.exclude)$w
+          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),weights=mod_weights)
+        } else {
+          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3))
+        }
       }
       
     } else if (model == "Leuning"){
       
       if (fitg0){
         if (fitD0){
-          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9,D0=1.5))
+          if (robust.nls){
+            mod_weights <- nlrob(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),data=df,
+                                 start=list(g0=0,g1=9,D0=1.5),na.action=na.exclude)$w
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9,D0=1.5),
+                       weights=mod_weights)
+          } else {
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9,D0=1.5))
+          }
         } else {
-          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9))
+          if (robust.nls){
+            df$D0  <- rep(D0,nrow(df))
+            mod_weights <- nlrob(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),data=df,
+                                 start=list(g0=0,g1=9),na.action=na.exclude)$w
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9),
+                       weights=mod_weights)
+          } else {
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9))
+          }
         }
       } else {
         if (fitD0){
-          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9,D0=1.5))
+          if (robust.nls){
+            df$g0   <- rep(g0,nrow(df))
+            mod_weights <- nlrob(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),data=df,
+                                 start=list(g1=9,D0=1.5),na.action=na.exclude)$w
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9,D0=1.5),
+                       weights=mod_weights)
+          } else {
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9,D0=1.5))
+          }
         } else {
-          mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9))
+          if (robust.nls){
+            df$g0  <- rep(g0,nrow(df))
+            df$D0  <- rep(D0,nrow(df))
+            mod_weights <- nlrob(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),data=df,
+                                 start=list(g1=9),na.action=na.exclude)$w
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9),
+                       weights=mod_weights)
+          } else {
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9))
+          }
         }
       }
       
     } else if (model == "Ball&Berry"){
       
       rH <- VPD.to.rH(VPD,Tair)
+      df$rH <- rH
       
       if (fitg0){
-        mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9))
+        if (robust.nls){
+          mod_weights <- nlrob(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9),data=df,
+                               na.action=na.exclude)$w
+          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9),weights=mod_weights)
+        } else {
+          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9))
+        }
       } else {
-        mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9))
+        if (robust.nls){
+          g0   <- rep(g0,nrow(df))
+          mod_weights <- nlrob(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9),data=df,
+                               na.action=na.exclude)$w
+          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9),weights=mod_weights)
+        } else {
+          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9))
+        }
       }
       
     }

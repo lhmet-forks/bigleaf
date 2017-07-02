@@ -2155,7 +2155,7 @@ Gr.longwave <- function(Tair,LAI,constants=bigleaf.constants()){
 #'          
 #'          \deqn{e = Esat(Tw) - gamma* (Tair - Tw)}
 #'          
-#'          The equation is solved for Tw using \code{\link{nls}}.
+#'          The equation is solved for Tw using \code{\link[stats]{nls}}.
 #'          Actual vapor pressure e is calculated from VPD using the function \code{\link{VPD.to.e}}.
 #'          
 #' @return \item{Tw -}{wet-bulb temperature (degC)}      
@@ -2199,7 +2199,7 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #' 
 #'         \deqn{e = Esat(Td)}
 #'    
-#'          which is solved for Td using \code{\link{nls}}.
+#'          which is solved for Td using \code{\link[stats]{nls}}.
 #'          
 #' @return \item{Td -}{dew point temperature (degC)}
 #' 
@@ -2276,24 +2276,33 @@ virtual.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #' @param Tair     Air temperature (deg C)
 #' @param formula  Formula to be used. Either "Sonntag_1990" (Default) or "Alduchov_1996"
 #' 
-#' @details Esat (kPa) is calculated based on the Magnus equation:
+#' @details Esat (kPa) is calculated using the Magnus equation:
 #' 
 #'  \deqn{Esat = a * exp((b * Tair) / (c + Tair)) / 1000}
 #'  
 #'  where the coefficients a, b, c take different values depending on the formula used.
+#'  The default values are from Sonntag 1990 (a=611.2, b=17.62, c=243.12). This version
+#'  of the Magnus equation is recommended by the WMO (WMO 2008; p1.4-29).
 #'  The slope of the Esat curve (\eqn{\Delta}) is calculated as the first derivative of the function:
 #'  
-#'  formula
+#'  \deqn{\Delta = dEsat / dTair}
+#'  
+#'  which is solved using \code{\link[stats]{D}}.
 #' 
 #' @return A dataframe with the following columns: 
 #'  \item{Esat}{Saturation vapor pressure (kPa)}
 #'  \item{Delta}{Slope of the saturation vapor pressure curve (kPa K-1)}
 #'    
-#' @references Sonntag_1990 Important new values of the physical constants of 1986, vapor 
-#'             pressure formulations based on the ITS-90, and psychrometric formulae 
+#' @references Sonntag D. 1990: Important new values of the physical constants of 1986, vapor 
+#'             pressure formulations based on the ITS-90 and psychrometric formulae. 
+#'             Zeitschrift für Meteorologie 70, 340-344.
 #'             
 #'             Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 
-#'             saturation vapor pressure. Journal of Applied Meteorology, 1996, 35, 601-609
+#'             saturation vapor pressure. Journal of Applied Meteorology, 35, 601-609
+#'             
+#'             World Meteorological Organization 2008: Guide to Meteorological Instruments
+#'             and Methods of Observation (WMO-No.8). World Meteorological Organization,
+#'             Geneva. 7th Edition.
 #' 
 #' @examples 
 #' Esat(seq(0,45,5))[,"Esat"]  # Esat in kPa
@@ -2464,7 +2473,7 @@ ET.to.LE <- function(ET,Tair){
 #' @family conductance conversion
 #' 
 #' @references Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.
-#'             2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p --> replace with third edition
+#'             2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p
 #'             
 #' @examples 
 #' ms.to.mol(0.005,25,100)

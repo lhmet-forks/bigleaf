@@ -21,14 +21,18 @@ Calculates Saturation vapor pressure (Esat) over water and the
              corresponding slope of the saturation vapor pressure curve.
 }
 \details{
-Esat (kPa) is calculated based on the Magnus equation:
+Esat (kPa) is calculated using the Magnus equation:
 
  \deqn{Esat = a * exp((b * Tair) / (c + Tair)) / 1000}
  
  where the coefficients a, b, c take different values depending on the formula used.
+ The default values are from Sonntag 1990 (a=611.2, b=17.62, c=243.12). This version
+ of the Magnus equation is recommended by the WMO (WMO 2008; p1.4-29).
  The slope of the Esat curve (\eqn{\Delta}) is calculated as the first derivative of the function:
  
- formula
+ \deqn{\Delta = dEsat / dTair}
+ 
+ which is solved using \code{\link[stats]{D}}.
 }
 \examples{
 Esat(seq(0,45,5))[,"Esat"]  # Esat in kPa
@@ -36,9 +40,14 @@ Esat(seq(0,45,5))[,"Delta"] # the corresponding slope of the Esat curve in kPa K
        
 }
 \references{
-Sonntag_1990 Important new values of the physical constants of 1986, vapor 
-            pressure formulations based on the ITS-90, and psychrometric formulae 
+Sonntag D. 1990: Important new values of the physical constants of 1986, vapor 
+            pressure formulations based on the ITS-90 and psychrometric formulae. 
+            Zeitschrift für Meteorologie 70, 340-344.
             
             Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 
-            saturation vapor pressure. Journal of Applied Meteorology, 1996, 35, 601-609
+            saturation vapor pressure. Journal of Applied Meteorology, 35, 601-609
+            
+            World Meteorological Organization 2008: Guide to Meteorological Instruments
+            and Methods of Observation (WMO-No.8). World Meteorological Organization,
+            Geneva. 7th Edition.
 }

@@ -25,7 +25,7 @@ Dew point temperature (Td) is defined by:
 
         \deqn{e = Esat(Td)}
    
-         which is solved for Td using \code{\link{nls}}.
+         which is solved for Td using \code{\link[stats]{nls}}.
 }
 \examples{
 dew.point(25,100,1.5)                

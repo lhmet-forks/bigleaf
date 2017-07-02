@@ -28,7 +28,7 @@ Wet-bulb temperature (Tw) is calculated from the following expression:
          
          \deqn{e = Esat(Tw) - gamma* (Tair - Tw)}
          
-         The equation is solved for Tw using \code{\link{nls}}.
+         The equation is solved for Tw using \code{\link[stats]{nls}}.
          Actual vapor pressure e is calculated from VPD using the function \code{\link{VPD.to.e}}.
 }
 \examples{

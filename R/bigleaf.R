@@ -3036,8 +3036,8 @@ intercellular.CO2 <- function(data,Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=FALSE,
 #' @param GPP       Gross primary productivty (umol m-2 s-1)
 #' @param Ci        Bulk canopy intercellular CO2 concentration (umol mol-1)
 #' @param PPFD      Photosynthetic photon flux density (umol m-2 s-1) 
-#' @param PPFD_sat  PPFD threshold, above which the canopy is considered to 
-#'                  be light saturated.
+#' @param PPFD_c    PPFD threshold, above which the canopy is considered to 
+#'                  be light saturated (and Rubisco limited).
 #' @param Oi        intercellular O2 concentration (mol mol-1)
 #' @param Kc25      Michaelis-Menten constant for CO2 at 25 degC (umol mol-1)
 #' @param Ko25      Michaelis-Menten constant for O2 at 25 degC (mmol mol-1)
@@ -3050,8 +3050,37 @@ intercellular.CO2 <- function(data,Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=FALSE,
 #'                  Rgas - universal gas constant (J mol-1 K-1)
 #'                  
 #' @details The maximum carboxylation rate (Vcmax) and Vcmax25 (Vcmax at 25degC) are calculated
-#'          as at leaf level. The required variables Gs and Ci can be calculated from surface.conductance()
-#'          and intercellular.CO2(), respectively.
+#'          as at leaf level. The required variables Gs and Ci can be calculated from 
+#'          \code{\link{surface.conductance}} and \code{\link{intercellular.CO2}}, respectively.
+#'          
+#'          Gas exchange parameters are taken from Bernacchi et al. 2001 (assuming
+#'          an infinite mesophyll conductance)
+#'          
+#'          Vcmax is calculated from the photosynthesis model by Farquhar et al. 1980,
+#'          assuming that net photosynthesis is Rubisco-limited (RuBP-satured carboxylation
+#'          rate, i.e. light has to be saturating):
+#'          
+#'          \deqn{Vcmax = (GPP * (Ci + Kc*(1.0 + Oi/Ko))) / Ci}
+#'          
+#'          Vcmax at canopy level is assumed to follow the same temperature response
+#'          as at leaf level. Hence, Vcmax at 25degC (Vcmax25) is calculated as 
+#'          (see e.g. Kattge & Knorr 2007):
+#'          
+#'          \deqn{Vcmax25 = Vcmax / 
+#'                         ( exp(Vcmax_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
+#'                         (1 + exp((Tref*dS - Vcmax_Hd) / (Tref * constants$Rgas))) /
+#'                         (1 + exp((Temp*dS - Vcmax_Hd) / (Temp * constants$Rgas)))
+#'                         )
+#'                }
+#'          
+#' @note   The critical assumption is that bulk canopy photosynthesis is Rubisco-
+#'         limited. Therefore, only GPP data above a certain light threshold are
+#'         used for the calculation of Vcmax. This threshold (\code{PPFD_c}) is
+#'         likely dependent on the canopy of the ecosystem and presumably higher
+#'         for dense than for open canopies. A threshold of 500 umol m-2 s-1 PPFD
+#'         is a reasonable working assumption (see Kosugi et al. 2013).
+#'         The photosynthesis parameters are also likely dependent on the ecosystem
+#'         and growth conditions.         
 #'          
 #' @return a data.frame with the following columns:
 #'         \item{Vcmax}{maximum carboxylation rate at Temp (umol m-2 s-1)}
@@ -3063,13 +3092,20 @@ intercellular.CO2 <- function(data,Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=FALSE,
 #'             evergreen coniferous forest from 7 years of eddy covariance flux data using
 #'             an extended big-leaf analysis. Ecol Res 28, 373-385. 
 #'             
-#'             Sharkey T.D., Bernacchi C.J., Farquhar G.D., Singsaas E.L., 2007: Fitting
-#'             photosynthetic carbon dioxide response curves for C3 leaves. Plant, Cell and
-#'             Environment 30, 1035-1040.
+#'             Bernacchi C.J, Singsaas E.L., Pimentel C., Portis JR A.R., Long S.P., 2001:
+#'             Improved temperature response functions for models of Rubisco-limited
+#'             photosynthesis. Plant, Cell and Environment 24, 253-259. 
 #'             
-#'                             
+#'             Kattge J., Knorr W., 2007: Temperature acclimation in a biochemical
+#'             model of photosynthesis: a reanalysis of data from 36 species.
+#'             Plant, Cell and Environment 30, 1176-1190.
+#'             
+#'
+#' @examples 
+#' carbox.rate(Temp=20,GPP=15,Ci=300,PPFD=1000,PPFD_c=500)  
+#'                                       
 #' @export                  
-carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
+carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_c,Oi=0.21,Kc25=404.9,Ko25=278.4,
                         Kc_Ha=79.43,Ko_Ha=36.38,Vcmax_Ha=65.33,Vcmax_Hd=200,
                         dS=640,constants=bigleaf.constants()){
   
@@ -3087,7 +3123,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
   Ko <- Ko / 1000
   
   # exclude light unsaturated GPP 
-  GPP[PPFD < PPFD_sat] <- NA
+  GPP[PPFD < PPFD_c] <- NA
   GPPc <- GPP
   
   # calculate Vcmax and Vcmax25
@@ -3108,7 +3144,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #' Stomatal slope parameter "g1"
 #' 
 #' @description Estimation of the intrinsic WUE metric "g1" (stomatal slope) 
-#'              from non-linear regression.
+#'              from nonlinear regression.
 #' 
 #' @param data       Data.frame or matrix containing all required columns
 #' @param Tair       Air temperature (deg C)
@@ -3144,7 +3180,10 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #'          
 #'          \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
 #'          
-#'          The parameters in the models are estimated using non-linear regression (\code{nls()}).
+#'          The parameters in the models are estimated using nonlinear regression (\code{\link[stats]{nls}}) if
+#'          \code{robust.nls == FALSE} and weighted nonlinear regression if \code{robust.nls == TRUE}.
+#'          The weights are calculated from \code{\link[robustbase]{nlrob}}, and \code{\link[stats]{nls}}
+#'          is used for the actual fitting.
 #'          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
 #'          the big-leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
 #'          
@@ -3192,7 +3231,7 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_sat,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #' 
 #' ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
 #' mod_Leu <- stomatal.slope(DE_Tha_Jun_2014,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
-#'                           robust.nls=FALSE,nmin=40,fitg0=FALSE,D0=1.5,fitD0=FALSE)                         
+#'                           robust.nls=FALSE,nmin=40,fitg0=FALSE,D0=1.5,fitD0=FALSE)
 #' 
 #' @importFrom stats nls
 #'             robustbase nlrob 
@@ -3238,7 +3277,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
         }
       } else {
         if (robust.nls){
-          df$g0   <- rep(g0,nrow(df))
+          df$g0   <- rep(g0,nrow(df)) # g0 as constant does not work in the nlrob function...
           mod_weights <- nlrob(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g1=3),
                                na.action=na.exclude)$w
           mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),weights=mod_weights)

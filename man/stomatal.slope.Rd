@@ -50,7 +50,7 @@ an nls model object, containing information on the fitted parameters, their unce
 }
 \description{
 Estimation of the intrinsic WUE metric "g1" (stomatal slope) 
-             from non-linear regression.
+             from nonlinear regression.
 }
 \details{
 All stomatal models were developed at leaf-level, but its parameters 
@@ -68,7 +68,10 @@ All stomatal models were developed at leaf-level, but its parameters
          
          \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
          
-         The parameters in the models are estimated using non-linear regression (\code{nls()}).
+         The parameters in the models are estimated using nonlinear regression (\code{\link[stats]{nls}}) if
+         \code{robust.nls == FALSE} and weighted nonlinear regression if \code{robust.nls == TRUE}.
+         The weights are calculated from \code{\link[robustbase]{nlrob}}, and \code{\link[stats]{nls}}
+         is used for the actual fitting.
          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
          the big-leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
 }
@@ -101,7 +104,7 @@ mod_BB <- stomatal.slope(DE_Tha_Jun_2014,model="Ball&Berry",GPP="GPP_nt",
 
 ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
 mod_Leu <- stomatal.slope(DE_Tha_Jun_2014,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
-                          robust.nls=FALSE,nmin=40,fitg0=FALSE,D0=1.5,fitD0=FALSE)                         
+                          robust.nls=FALSE,nmin=40,fitg0=FALSE,D0=1.5,fitD0=FALSE)
 
 }
 \references{

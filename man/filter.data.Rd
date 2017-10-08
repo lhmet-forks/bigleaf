@@ -4,64 +4,51 @@
 \alias{filter.data}
 \title{Basic data filtering}
 \usage{
-filter.data(data, precip = "precip", PPFD = "PPFD", Tair = "Tair",
-  ustar = "ustar", VPD = "VPD", GPP = "GPP_nt", doy = "doy",
-  year = "year", quality.control = TRUE, filter.growseas = FALSE,
-  quality.ext = "_qc", vars.qc = c("precip", "Tair", "VPD", "GPP_nt", "H",
-  "LE"), good.quality = c(0, 1), missing.qc.as.bad = TRUE, tprecip = 0.01,
-  precip.hours = 24, NA.as.precip = FALSE, trad = 200, ttemp = 5,
-  tustar = 0.2, trH = 0.95, tGPP = 0.5, ws = 15, min.int = 5)
+filter.data(data, quality.control = TRUE, vars.qc = NULL,
+  filter.growseas = FALSE, filter.precip = FALSE, filter.vars = NULL,
+  filter.vals.min, filter.vals.max, NA.as.invalid = TRUE,
+  quality.ext = "_qc", good.quality = c(0, 1), missing.qc.as.bad = TRUE,
+  GPP = "GPP", doy = "doy", year = "year", tGPP = 0.5, ws = 15,
+  min.int = 5, precip = "precip", tprecip = 0.01, precip.hours = 24,
+  records.per.hour = 2)
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required input variables in 
 half-hourly or hourly resolution. Including year, month, day information}
 
-\item{precip}{Precipitation (mm)}
-
-\item{PPFD}{Photosynthetically photon flux density (umol m-2 s-1)}
-
-\item{Tair}{Air temperature (deg C)}
-
-\item{ustar}{Friction velocity (m s-1)}
-
-\item{VPD}{Vapor pressure deficit (kPa)}
-
-\item{GPP}{Gross primary productivity (umol m-2 s-1); Ignored if \code{filter.growseas} is FALSE.}
-
-\item{doy}{Day of year}
-
-\item{year}{Year}
-
-\item{quality.control}{Should quality control be applied? Defaults to TRUE}
-
-\item{filter.growseas}{Should data be filtered for growing season? Defaults to FALSE}
-
-\item{quality.ext}{The extension to the variables' names that marks them as 
-quality control variables. Ignored if \code{quality.control} is FALSE.}
+\item{quality.control}{Should quality control be applied? Defaults to TRUE.}
 
 \item{vars.qc}{Character vector indicating the variables for which quality filter should 
 be applied. Ignored if \code{quality.control} is FALSE.}
 
-\item{good.quality}{Which values indicate good quality in the quality control (qc) variables?
-Ignored if \code{quality.control} is FALSE.}
+\item{filter.growseas}{Should data be filtered for growing season? Defaults to FALSE.}
+
+\item{filter.precip}{Should precipitation filtering be applied? Defaults to FALSE.}
+
+\item{filter.vars}{Additional variables to be filtered. Vector of type character.}
+
+\item{filter.vals.min}{Minimum values of the variables to be filtered. Numeric vector of 
+the same length than \code{filter.vars}. Set to NA to be ignored.}
+
+\item{filter.vals.max}{Maximum values of the variables to be filtered. Numeric vector of 
+the same length than \code{filter.vars}. Set to NA to be ignored.}
+
+\item{NA.as.invalid}{If TRUE (the default) missing data are filtered out (applies to all variables).}
+
+\item{quality.ext}{The extension to the variables' names that marks them as 
+quality control variables. Ignored if \code{quality.control} is FALSE.}
+
+\item{good.quality}{Which values indicate good quality (i.e. not to be filtered) 
+in the quality control (qc) variables? Ignored if \code{quality.control} is FALSE.}
 
 \item{missing.qc.as.bad}{If quality control variable is NA, should the corresponding data point be
 treated as bad quality? Defaults to TRUE. Ignored if \code{quality.control} is FALSE.}
 
-\item{tprecip}{Precipitation threshold used to demark a precipitation event (mm)}
+\item{GPP}{Gross primary productivity (umol m-2 s-1); Ignored if \code{filter.growseas} is FALSE.}
 
-\item{precip.hours}{Number of hours removed following a precipitation event (h)}
+\item{doy}{Day of year; Ignored if \code{filter.growseas} is FALSE.}
 
-\item{NA.as.precip}{If TRUE missing precipitation data are treated as precipitation events}
-
-\item{trad}{Radiation threshold (umol m-2 s-1)}
-
-\item{ttemp}{Temperature threshold (deg C)}
-
-\item{tustar}{Friction velocity threshold (m s-1)}
-
-\item{trH}{Relative humidity threshold (-). Note that relative humidity
-is calculated from VPD internally}
+\item{year}{Year; Ignored if \code{filter.growseas} is FALSE.}
 
 \item{tGPP}{GPP threshold (fraction of 95% quantile of the GPP time series).
 Must be between 0 and 1. Ignored if \code{filter.growseas} is FALSE.}
@@ -71,10 +58,20 @@ Ignored if \code{filter.growseas} is FALSE.}
 
 \item{min.int}{Minimum time interval in days for a given state of growing season.
 Ignored if \code{filter.growseas} is FALSE.}
+
+\item{precip}{Precipitation (mm time-1)}
+
+\item{tprecip}{Precipitation threshold used to demark a precipitation event (mm). 
+Ignored if \code{filter.precip} is FALSE}
+
+\item{precip.hours}{Number of hours removed following a precipitation event (h).
+Ignored if \code{filter.precip} is FALSE}
+
+\item{records.per.hour}{Number of observations per hour. I.e. 2 for half-hourly data.}
 }
 \value{
 The same data frame as provided as first argument to the function
-        with an additional column "valid", which indicates whether the timestep fulfills 
+        with an additional column "valid", which indicates whether the data fulfill 
         the filtering criteria (1) or not (0).
 }
 \description{
@@ -93,24 +90,32 @@ This routine consists of two parts:
             
          2) Meteorological filtering. Under certain conditions (e.g. low ustar), the assumptions
             of the EC method are not fulfilled. Further, some data analysis require certain meteorological
-            conditions, such as precipitation free periods, or active vegetation (growing season, daytime).
+            conditions, such as periods without rainfall, or active vegetation (growing season, daytime).
             The filter applied in this second step serves to exclude time periods that do not fulfill the criteria
-            specified in the arguments. More specifically, timeperiods where one of the variables is lower than the 
-            specified threshold are set to NA for all variables. E.g. when radiation is below 'trad', all variables 
-            are set to NA.
-            Set a threshold to 0 (or the minimum of the variable) if the dataset should not be filtered for a specific variable.
+            specified in the arguments. More specifically, timeperiods where one of the variables is higher
+            or lower than the specified thresholds (\code{filter.vals.min} and \code{filter.vals.max})
+            are set to NA for all variables. If a threshold is set to NA, it will be ignored.
 }
 \note{
-This function is not exhaustive, and one may wish to exclude further situations 
-      (e.g. negative LE fluxes, counter-gradient fluxes, etc.), depending on the purpose.
+Variables considered of bad quality (as specified by the corresponding quality control variables)      
+      will be set to NA by this routine. Data that do not fulfill the filtering critera are not set to
+      NA but the corresponding "valid" entry is set to 0.
 }
 \examples{
 # Example of data filtering; data are for a month within the growing season,
 # hence growing season is not filtered.
-DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
-                               quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-                               tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
-                               ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
-# note the additional column 'valid' in DE_Tha_Jun_2014.                                 
+DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,vars.qc=c("Tair","precip","H","LE"),
+                                 filter.growseas=FALSE,filter.precip=TRUE,
+                                 filter.vars=c("Tair","PPFD","ustar"),filter.vals.min=c(5,200,0.2),
+                                 filter.vals.max=c(NA,NA,NA),NA.as.invalid=TRUE,
+                                 quality.ext="_qc",good.quality=c(0,1),
+                                 missing.qc.as.bad=TRUE,GPP="GPP_nt",doy="doy",
+                                 year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
+                                 tprecip=0.1,precip.hours=24,records.per.hour=2)
 
+ # note the additional column 'valid' in DE_Tha_Jun_2014_2.
+ # To remove timesteps marked as filtered out (i.e. 0 values in column 'valid'):                                 
+ DE_Tha_Jun_2014_2[DE_Tha_Jun_2014_2["valid"] == 0,] <- NA
+  
+  
 }

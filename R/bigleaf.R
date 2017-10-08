@@ -164,38 +164,38 @@ bigleaf.constants <- function(){
 #' 
 #' @param data            Data.frame or matrix containing all required input variables in 
 #'                        half-hourly or hourly resolution. Including year, month, day information
-#' @param precip          Precipitation (mm)
-#' @param PPFD            Photosynthetically photon flux density (umol m-2 s-1)
-#' @param Tair            Air temperature (deg C)
-#' @param ustar           Friction velocity (m s-1)
-#' @param VPD             Vapor pressure deficit (kPa)
-#' @param GPP             Gross primary productivity (umol m-2 s-1); Ignored if \code{filter.growseas} is FALSE.
-#' @param doy             Day of year
-#' @param year            Year
-#' @param quality.control Should quality control be applied? Defaults to TRUE
-#' @param filter.growseas Should data be filtered for growing season? Defaults to FALSE
-#' @param quality.ext     The extension to the variables' names that marks them as 
-#'                        quality control variables. Ignored if \code{quality.control} is FALSE.
+#' @param quality.control Should quality control be applied? Defaults to TRUE.
 #' @param vars.qc         Character vector indicating the variables for which quality filter should 
 #'                        be applied. Ignored if \code{quality.control} is FALSE.
-#' @param good.quality    Which values indicate good quality in the quality control (qc) variables?
-#'                        Ignored if \code{quality.control} is FALSE.
+#' @param filter.growseas Should data be filtered for growing season? Defaults to FALSE.
+#' @param filter.precip   Should precipitation filtering be applied? Defaults to FALSE.
+#' @param filter.vars     Additional variables to be filtered. Vector of type character.
+#' @param filter.vals.min Minimum values of the variables to be filtered. Numeric vector of 
+#'                        the same length than \code{filter.vars}. Set to NA to be ignored.
+#' @param filter.vals.max Maximum values of the variables to be filtered. Numeric vector of 
+#'                        the same length than \code{filter.vars}. Set to NA to be ignored.
+#' @param NA.as.invalid   If TRUE (the default) missing data are filtered out (applies to all variables).
+#' @param quality.ext     The extension to the variables' names that marks them as 
+#'                        quality control variables. Ignored if \code{quality.control} is FALSE.                       
+#' @param good.quality    Which values indicate good quality (i.e. not to be filtered) 
+#'                        in the quality control (qc) variables? Ignored if \code{quality.control} is FALSE.
 #' @param missing.qc.as.bad If quality control variable is NA, should the corresponding data point be
-#'                          treated as bad quality? Defaults to TRUE. Ignored if \code{quality.control} is FALSE.
-#' @param tprecip       Precipitation threshold used to demark a precipitation event (mm)
-#' @param precip.hours  Number of hours removed following a precipitation event (h)
-#' @param NA.as.precip  If TRUE missing precipitation data are treated as precipitation events
-#' @param trad          Radiation threshold (umol m-2 s-1)
-#' @param ttemp         Temperature threshold (deg C)
-#' @param tustar        Friction velocity threshold (m s-1)
-#' @param trH           Relative humidity threshold (-). Note that relative humidity
-#'                      is calculated from VPD internally
-#' @param tGPP          GPP threshold (fraction of 95% quantile of the GPP time series).
-#'                      Must be between 0 and 1. Ignored if \code{filter.growseas} is FALSE.
-#' @param ws            Window size used for GPP time series smoothing. 
-#'                      Ignored if \code{filter.growseas} is FALSE.
-#' @param min.int       Minimum time interval in days for a given state of growing season.
-#'                      Ignored if \code{filter.growseas} is FALSE.
+#'                          treated as bad quality? Defaults to TRUE. Ignored if \code{quality.control} is FALSE.                        
+#' @param precip          Precipitation (mm time-1)
+#' @param GPP             Gross primary productivity (umol m-2 s-1); Ignored if \code{filter.growseas} is FALSE.
+#' @param doy             Day of year; Ignored if \code{filter.growseas} is FALSE.
+#' @param year            Year; Ignored if \code{filter.growseas} is FALSE.
+#' @param tGPP            GPP threshold (fraction of 95% quantile of the GPP time series).
+#'                        Must be between 0 and 1. Ignored if \code{filter.growseas} is FALSE.
+#' @param ws              Window size used for GPP time series smoothing. 
+#'                        Ignored if \code{filter.growseas} is FALSE.
+#' @param min.int         Minimum time interval in days for a given state of growing season.
+#'                        Ignored if \code{filter.growseas} is FALSE.
+#' @param tprecip         Precipitation threshold used to demark a precipitation event (mm). 
+#'                        Ignored if \code{filter.precip} is FALSE
+#' @param precip.hours    Number of hours removed following a precipitation event (h).
+#'                        Ignored if \code{filter.precip} is FALSE
+#' @param records.per.hour Number of observations per hour. I.e. 2 for half-hourly data.
 #' 
 #' 
 #' @details This routine consists of two parts:
@@ -209,42 +209,54 @@ bigleaf.constants <- function(){
 #'             
 #'          2) Meteorological filtering. Under certain conditions (e.g. low ustar), the assumptions
 #'             of the EC method are not fulfilled. Further, some data analysis require certain meteorological
-#'             conditions, such as precipitation free periods, or active vegetation (growing season, daytime).
+#'             conditions, such as periods without rainfall, or active vegetation (growing season, daytime).
 #'             The filter applied in this second step serves to exclude time periods that do not fulfill the criteria
-#'             specified in the arguments. More specifically, timeperiods where one of the variables is lower than the 
-#'             specified threshold are set to NA for all variables. E.g. when radiation is below 'trad', all variables 
-#'             are set to NA.
-#'             Set a threshold to 0 (or the minimum of the variable) if the dataset should not be filtered for a specific variable.
+#'             specified in the arguments. More specifically, timeperiods where one of the variables is higher
+#'             or lower than the specified thresholds (\code{filter.vals.min} and \code{filter.vals.max})
+#'             are set to NA for all variables. If a threshold is set to NA, it will be ignored.
 #'          
 #' @return The same data frame as provided as first argument to the function
-#'         with an additional column "valid", which indicates whether the timestep fulfills 
+#'         with an additional column "valid", which indicates whether the data fulfill 
 #'         the filtering criteria (1) or not (0).
 #'         
-#' @note This function is not exhaustive, and one may wish to exclude further situations 
-#'       (e.g. negative LE fluxes, counter-gradient fluxes, etc.), depending on the purpose.       
+#' @note Variables considered of bad quality (as specified by the corresponding quality control variables)      
+#'       will be set to NA by this routine. Data that do not fulfill the filtering critera are not set to
+#'       NA but the corresponding "valid" entry is set to 0.
 #' 
 #' @examples 
 #' # Example of data filtering; data are for a month within the growing season,
 #' # hence growing season is not filtered.
-#' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
-#'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-#'                                tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
-#'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
-#' # note the additional column 'valid' in DE_Tha_Jun_2014.                                 
-#' 
+#' DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,vars.qc=c("Tair","precip","H","LE"),
+#'                                  filter.growseas=FALSE,filter.precip=TRUE,
+#'                                  filter.vars=c("Tair","PPFD","ustar"),filter.vals.min=c(5,200,0.2),
+#'                                  filter.vals.max=c(NA,NA,NA),NA.as.invalid=TRUE,
+#'                                  quality.ext="_qc",good.quality=c(0,1),
+#'                                  missing.qc.as.bad=TRUE,GPP="GPP_nt",doy="doy",
+#'                                  year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
+#'                                  tprecip=0.1,precip.hours=24,records.per.hour=2)
+#'
+#'  # note the additional column 'valid' in DE_Tha_Jun_2014_2.
+#'  # To remove timesteps marked as filtered out (i.e. 0 values in column 'valid'):                                 
+#'  DE_Tha_Jun_2014_2[DE_Tha_Jun_2014_2["valid"] == 0,] <- NA
+#'   
+#'   
 #' @importFrom stats aggregate
 #' @export                     
-filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="ustar",
-                        VPD="VPD",GPP="GPP_nt",doy="doy",year="year",quality.control=TRUE,
-                        filter.growseas=FALSE,quality.ext="_qc",
-                        vars.qc=c("precip","Tair","VPD","GPP_nt","H","LE"),
-                        good.quality=c(0,1),missing.qc.as.bad=TRUE,tprecip=0.01,
-                        precip.hours=24,NA.as.precip=FALSE,trad=200,ttemp=5,tustar=0.2,
-                        trH=0.95,tGPP=0.5,ws=15,min.int=5){
+filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=FALSE,
+                        filter.precip=FALSE,filter.vars=NULL,
+                        filter.vals.min,filter.vals.max,NA.as.invalid=TRUE,
+                        quality.ext="_qc",good.quality=c(0,1),
+                        missing.qc.as.bad=TRUE,GPP="GPP",doy="doy",
+                        year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
+                        tprecip=0.01,precip.hours=24,records.per.hour=2){
   
   
   ### I) Quality control filter
   if (quality.control){
+    
+    if (is.null(vars.qc)){
+      stop("quality.control (qc) is TRUE, but no qc variables are provided!")
+    }
     
     if (any(!vars.qc %in% colnames(data))){
       
@@ -260,7 +272,7 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
       missing_vars2   <- substr(missing_vars_qc,1,nchar(missing_vars_qc) - nchar(quality.ext))
       stop(paste("Quality control for variable ",missing_vars2,"(",missing_vars_qc,") does not exist in the input data!")) 
     }
-
+    
     ## data quality
     cat("Quality control:",fill=TRUE)
     for (var in vars.qc){
@@ -276,38 +288,22 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
       }
       
       qc_invalid_perc <- round((qc_invalid/nrow(data))*100,2)
-        
+      
       cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) set to NA",fill=TRUE,sep="")
     }
     cat("-------------------------------------",fill=TRUE)
   }
   
-  ## test data availability
-  precip <- check.columns(data,precip)
-  PPFD   <- check.columns(data,PPFD)
-  Tair   <- check.columns(data,Tair)
-  ustar  <- check.columns(data,ustar)
-  VPD    <- check.columns(data,VPD)
-  doy    <- check.columns(data,doy)
-  year   <- check.columns(data,year)
   
-  date <- strptime(paste0(year,"-",doy),format="%Y-%j")
-  
-  #### II) filtering based on meteorology
-  rH <- VPD.to.rH(VPD,Tair)
-  
-  ## hourly or halfhourly data?
-  tstep_day <- as.integer(nrow(data) / length(unique(year)))
-  thour     <- ifelse(tstep_day >= 17520 & any(!is.na(Tair[seq(1,length(Tair),2)])) &
-                      any(!is.na(Tair[seq(2,length(Tair),2)])),2,1)
-  
+  #### II) Data filter
   valid <- rep(1L,nrow(data))
   
-  
-  ## start filtering
   # 1) GPP
   growseas_invalid <- numeric()
   if(filter.growseas){
+    doy    <- check.columns(data,doy)
+    year   <- check.columns(data,year)
+    date <- strptime(paste0(year,"-",doy),format="%Y-%j")
     GPP              <- check.columns(data,GPP)
     GPP_daily        <- aggregate(GPP,by=list(strftime(date)),mean,na.rm=TRUE)[,2]
     growing_season   <- filter.growing.season(GPP_daily,tGPP=tGPP,ws=ws,min.int=min.int)
@@ -315,48 +311,55 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   }
   
   # 2) precipitation
-  if (NA.as.precip){
-    precip_events <- which(precip > tprecip | is.na(precip))
-  } else {
-    precip_events <- which(precip > tprecip)
+  precip_invalid <- numeric()
+  if (filter.precip){
+    precip <- check.columns(data,precip)
+    if (NA.as.invalid){
+      precip_events <- which(precip > tprecip | is.na(precip))
+    } else {
+      precip_events <- which(precip > tprecip)
+    }
+    precip_invalid <- unique(as.numeric(unlist(sapply(precip_events, function(x) x:(min(x+precip.hours*records.per.hour,nrow(data),na.rm=TRUE))))))
   }
-  precip_invalid <- unique(as.numeric(unlist(sapply(precip_events, function(x) x:(min(x+precip.hours*thour,nrow(data),na.rm=TRUE))))))
   
-  # 3) meteorological variables (PPFD, Tair, ustar, rH) 
-  PPFD_invalid  <- which(PPFD <= trad | is.na(PPFD))
-  Tair_invalid  <- which(Tair <= ttemp | is.na(Tair))
-  ustar_invalid <- which(ustar <= tustar | is.na(ustar))
-  rH_invalid    <- which(rH >= trH | is.na(rH))
+  # 3) all other filter variables (defined in filter.vars)
+  invalids <- list(growseas_invalid,precip_invalid)
   
-  # 4) count number of filtered data and write to output 
-  growseas_perc <- round((length(growseas_invalid)/nrow(data))*100,2)
-  precip_perc   <- round((length(precip_invalid)/nrow(data))*100,2)
-  PPFD_perc     <- round((length(PPFD_invalid)/nrow(data))*100,2)
-  Tair_perc     <- round((length(Tair_invalid)/nrow(data))*100,2)
-  ustar_perc    <- round((length(ustar_invalid)/nrow(data))*100,2)
-  rH_perc       <- round((length(rH_invalid)/nrow(data))*100,2)
+  if (!is.null(filter.vars)){
+    for (var in filter.vars){
+      v  <- which(filter.vars == var)
+      vf <- v + 2
+      assign(var,check.columns(data,var))
+      if (NA.as.invalid){
+        invalids[[vf]] <- which(get(var) < filter.vals.min[v] | get(var) > filter.vals.max[v] | is.na(get(var)))
+      } else {
+        invalids[[vf]] <- which(get(var) < filter.vals.min[v] | get(var) > filter.vals.max[v] & !is.na(get(var)))
+      }
+    }
+  }
   
-  addition_precip <- length(setdiff(precip_invalid,unique(growseas_invalid)))
-  addition_PPFD   <- length(setdiff(PPFD_invalid,unique(c(growseas_invalid,precip_invalid))))
-  addition_Tair   <- length(setdiff(Tair_invalid,unique(c(growseas_invalid,precip_invalid,PPFD_invalid))))
-  addition_ustar  <- length(setdiff(ustar_invalid,unique(c(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid))))
-  addition_rH     <- length(setdiff(rH_invalid,unique(c(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid,ustar_invalid))))
+  # 4) calculate number and percentage of filtered values
+  invalids_perc <- sapply(invalids, function(x) round((length(x)/nrow(data))*100,2))
   
-  addition_precip_perc <- round(addition_precip/nrow(data)*100,2)
-  addition_PPFD_perc <- round(addition_PPFD/nrow(data)*100,2)
-  addition_Tair_perc <- round(addition_Tair/nrow(data)*100,2)
-  addition_ustar_perc <- round(addition_ustar/nrow(data)*100,2)
-  addition_rH_perc <- round(addition_rH/nrow(data)*100,2)
+  additional_invalids <- sapply(2:length(invalids), function(x) 
+    length(setdiff(invalids[[x]],unique(unlist(invalids[1:(x-1)])))))
   
-  cat("Data filters:",fill=TRUE)
-  cat(length(growseas_invalid)," data points (",growseas_perc,"%) excluded by growing season filter",fill=TRUE,sep="")
-  cat(addition_precip," additional data points (",addition_precip_perc,"%) excluded by precipitation filter (",length(precip_invalid)," data points = ",precip_perc,"% in total)",fill=TRUE,sep="")
-  cat(addition_PPFD," additional data points (",addition_PPFD_perc,"%) excluded by radiation filter (",length(PPFD_invalid)," data points = ",PPFD_perc,"% in total)",fill=TRUE,sep="")
-  cat(addition_Tair," additional data points (",addition_Tair_perc,"%) excluded by air temperature filter (",length(Tair_invalid)," data points = ",Tair_perc,"% in total)",fill=TRUE,sep="")
-  cat(addition_ustar," additional data points (",addition_ustar_perc,"%) excluded by friction velocity filter (",length(ustar_invalid)," data points = ",ustar_perc,"% in total)",fill=TRUE,sep="")
-  cat(addition_rH," additional data points (",addition_rH_perc,"%) excluded by relative humidity filter (",length(rH_invalid)," data points = ",rH_perc,"% in total)",fill=TRUE,sep="")
+  additional_invalids_perc <- round(additional_invalids/nrow(data)*100,2)
   
-  invalid        <- unique(c(growseas_invalid,precip_invalid,PPFD_invalid,Tair_invalid,ustar_invalid,rH_invalid))
+  
+  # 5) write to output
+  var.names <- c("growing season","precipitation",filter.vars)
+  cat("Data filtering:",fill=TRUE)
+  
+  cat(length(growseas_invalid)," data points (",invalids_perc[1],"%) excluded by growing season filter",fill=TRUE,sep="")
+  
+  invisible(sapply(c(1:(length(invalids)-1)), function(x) cat(additional_invalids[x]," additional data points (",
+                                                              additional_invalids_perc[x],"%) excluded by ",var.names[x+1],
+                                                              " filter (",length(unlist(invalids[x+1]))," data points = ",
+                                                              invalids_perc[x+1]," % in total)",fill=TRUE,sep="")))
+  
+  
+  invalid        <- unique(unlist(invalids))
   valid[invalid] <- 0
   
   excl_perc <- round((length(invalid)/nrow(data))*100,2)
@@ -364,11 +367,13 @@ filter.data <- function(data,precip="precip",PPFD="PPFD",Tair="Tair",ustar="usta
   cat(length(invalid)," data points (",excl_perc,"%) excluded in total",fill=TRUE,sep="")
   cat(nrow(data) - length(invalid)," valid data points (",100-excl_perc,"%) remaining.",fill=TRUE,sep="")
   
-  # 5) set all other columns to NA
+  
+  # 6) return input data frame with additional 'valid' column
   data_filtered <- data.frame(data,valid)
   
   return(data_filtered)
 }
+
 
 
 

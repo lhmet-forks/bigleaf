@@ -10,7 +10,7 @@ Description: Calculation of meteorological, aerodynamic, and physiological ecosy
              based on measured fluxes with the eddy-covariance technique and meteorological data.
 			 Calculations assume the surface to behave like a 'big-leaf'.
 Depends: R (>= 2.10)
-Suggests: robustbase
+Imports: robustbase
 License: GPL (>= 2)
 LazyData: yes
 RoxygenNote: 6.0.1

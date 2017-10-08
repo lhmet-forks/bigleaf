@@ -42,7 +42,7 @@ Esat(seq(0,45,5))[,"Delta"] # the corresponding slope of the Esat curve in kPa K
 \references{
 Sonntag D. 1990: Important new values of the physical constants of 1986, vapor 
             pressure formulations based on the ITS-90 and psychrometric formulae. 
-            Zeitschrift für Meteorologie 70, 340-344.
+            Zeitschrift fuer Meteorologie 70, 340-344.
             
             Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 
             saturation vapor pressure. Journal of Applied Meteorology, 35, 601-609

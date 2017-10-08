@@ -226,9 +226,11 @@ bigleaf.constants <- function(){
 #' @examples 
 #' # Example of data filtering; data are for a month within the growing season,
 #' # hence growing season is not filtered.
-#' DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,vars.qc=c("Tair","precip","H","LE"),
+#' DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,
+#'                                  vars.qc=c("Tair","precip","H","LE"),
 #'                                  filter.growseas=FALSE,filter.precip=TRUE,
-#'                                  filter.vars=c("Tair","PPFD","ustar"),filter.vals.min=c(5,200,0.2),
+#'                                  filter.vars=c("Tair","PPFD","ustar"),
+#'                                  filter.vals.min=c(5,200,0.2),
 #'                                  filter.vals.max=c(NA,NA,NA),NA.as.invalid=TRUE,
 #'                                  quality.ext="_qc",good.quality=c(0,1),
 #'                                  missing.qc.as.bad=TRUE,GPP="GPP_nt",doy="doy",
@@ -236,7 +238,7 @@ bigleaf.constants <- function(){
 #'                                  tprecip=0.1,precip.hours=24,records.per.hour=2)
 #'
 #'  # note the additional column 'valid' in DE_Tha_Jun_2014_2.
-#'  # To remove timesteps marked as filtered out (i.e. 0 values in column 'valid'):                                 
+#'  # To remove timesteps marked as filtered out (i.e. 0 values in column 'valid'):
 #'  DE_Tha_Jun_2014_2[DE_Tha_Jun_2014_2["valid"] == 0,] <- NA
 #'   
 #'   
@@ -530,13 +532,19 @@ filter.growing.season <- function(GPPd,tGPP,ws=15,min.int=5){
 #'             
 #' @examples 
 #' ## filter data for dry periods and daytime at DE-Tha in June 2014
-#' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
-#'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-#'                                tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
-#'                                tustar=0.2,tGPP=0,ws=15,min.int=5)
+#' DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,
+#'                                  vars.qc=c("Tair","precip","VPD","H","LE"),
+#'                                  filter.growseas=FALSE,filter.precip=TRUE,
+#'                                  filter.vars=c("Tair","PPFD","ustar"),
+#'                                  filter.vals.min=c(5,200,0.2),
+#'                                  filter.vals.max=c(NA,NA,NA),NA.as.invalid=TRUE,
+#'                                  quality.ext="_qc",good.quality=c(0,1),
+#'                                  missing.qc.as.bad=TRUE,GPP="GPP_nt",doy="doy",
+#'                                  year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
+#'                                  tprecip=0.1,precip.hours=24,records.per.hour=2)
 #' 
-#' ## calculate WUE metrics in the selected periods
-#' WUE.metrics(DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"valid"] > 0,])
+#' ## calculate WUE metrics in the filtered periods
+#' WUE.metrics(DE_Tha_Jun_2014_2[DE_Tha_Jun_2014_2[,"valid"] > 0,])
 #'                         
 #' @importFrom stats median                                     
 #' @export
@@ -1754,32 +1762,36 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
 #' 
 #' @examples 
 #' ## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
-#' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
-#'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-#'                                tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
-#'                                ttemp=5,tustar=0.2,tGPP=0,ws=15,min.int=5,trH=0.95)
-#' # in addition, filter negative LE fluxes
-#' DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"LE"] < 0,] <- NA
+#' DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,
+#'                                  vars.qc=c("Tair","precip","VPD","H","LE"),
+#'                                  filter.growseas=FALSE,filter.precip=TRUE,
+#'                                  filter.vars=c("Tair","PPFD","ustar","LE"),
+#'                                  filter.vals.min=c(5,200,0.2,0),
+#'                                  filter.vals.max=c(NA,NA,NA,NA),NA.as.invalid=TRUE,
+#'                                  quality.ext="_qc",good.quality=c(0,1),
+#'                                  missing.qc.as.bad=TRUE,GPP="GPP_nt",doy="doy",
+#'                                  year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
+#'                                  tprecip=0.1,precip.hours=24,records.per.hour=2)
 #' 
 #' # calculate Gs based on a simple gradient approach
-#' Gs_gradient <- surface.conductance(DE_Tha_Jun_2014,Tair="Tair",pressure="pressure",
+#' Gs_gradient <- surface.conductance(DE_Tha_Jun_2014_2,Tair="Tair",pressure="pressure",
 #'                                    VPD="VPD",PM=FALSE)
 #' summary(Gs_gradient)
 #' 
 #' # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed),
 #' # using a simple estimate of Ga based on Thom 1972
-#' Ga <- aerodynamic.conductance(DE_Tha_Jun_2014,Rb_model="Thom_1972")[,"Ga_h"]
+#' Ga <- aerodynamic.conductance(DE_Tha_Jun_2014_2,Rb_model="Thom_1972")[,"Ga_h"]
 #' 
 #' # if G and/or S are available, don't forget to indicate (they are ignored by default).
 #' # Note that Ga is not added to the data.frame 'DE_Tha_Jun_2014'
-#' Gs_PM <- surface.conductance(DE_Tha_Jun_2014,Tair="Tair",pressure="pressure",
+#' Gs_PM <- surface.conductance(DE_Tha_Jun_2014_2,Tair="Tair",pressure="pressure",
 #'                              Rn="Rn",G="G",S=NULL,VPD="VPD",Ga=Ga,PM=TRUE)
 #' summary(Gs_PM)
 #' 
 #'                               
 #' # now add Ga to the data.frame 'DE_Tha_Jun_2014' and repeat
-#' DE_Tha_Jun_2014$Ga <- Ga
-#' Gs_PM2 <- surface.conductance(DE_Tha_Jun_2014,Tair="Tair",pressure="pressure",
+#' DE_Tha_Jun_2014_2$Ga <- Ga
+#' Gs_PM2 <- surface.conductance(DE_Tha_Jun_2014_2,Tair="Tair",pressure="pressure",
 #'                               Rn="Rn",G="G",S=NULL,VPD="VPD",Ga="Ga",PM=TRUE)
 #' # note the difference to the previous version (Ga="Ga")
 #' summary(Gs_PM2)
@@ -2300,7 +2312,7 @@ virtual.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #'    
 #' @references Sonntag D. 1990: Important new values of the physical constants of 1986, vapor 
 #'             pressure formulations based on the ITS-90 and psychrometric formulae. 
-#'             Zeitschrift für Meteorologie 70, 340-344.
+#'             Zeitschrift fuer Meteorologie 70, 340-344.
 #'             
 #'             Alduchov, O. A. & Eskridge, R. E., 1996: Improved Magnus form approximation of 
 #'             saturation vapor pressure. Journal of Applied Meteorology, 35, 601-609
@@ -2340,6 +2352,7 @@ Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
 
   return(data.frame(Esat,Delta))
 }
+
 
 
 
@@ -3218,37 +3231,45 @@ carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_c,Oi=0.21,Kc25=404.9,Ko25=278.4,
 #' 
 #' @examples 
 #' ## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
-#' DE_Tha_Jun_2014 <- filter.data(DE_Tha_Jun_2014,quality.control=TRUE,filter.growseas=FALSE,
-#'                                quality.ext="_qc",vars.qc=c("precip","Tair","VPD","H","LE"),
-#'                                tprecip=0.01,precip.hours=24,NA.as.precip=FALSE,trad=200,
-#'                                ttemp=5,tustar=0.2,trH=0.95)
-#' DE_Tha_Jun_2014[DE_Tha_Jun_2014[,"valid"] < 1,] <- NA
+#' DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,
+#'                                  vars.qc=c("Tair","precip","VPD","H","LE"),
+#'                                  filter.growseas=FALSE,filter.precip=TRUE,
+#'                                  filter.vars=c("Tair","PPFD","ustar","LE"),
+#'                                  filter.vals.min=c(5,200,0.2,0),
+#'                                  filter.vals.max=c(NA,NA,NA,NA),NA.as.invalid=TRUE,
+#'                                  quality.ext="_qc",good.quality=c(0,1),
+#'                                  missing.qc.as.bad=TRUE,GPP="GPP_nt",doy="doy",
+#'                                  year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
+#'                                  tprecip=0.1,precip.hours=24,records.per.hour=2)
+#'                                  
+#' DE_Tha_Jun_2014_2[DE_Tha_Jun_2014_2[,"valid"] < 1,] <- NA
 #' 
 #' # calculate Gs from the the inverted PM equation
-#' Ga <- aerodynamic.conductance(DE_Tha_Jun_2014,Rb_model="Thom_1972")[,"Ga_h"]
+#' Ga <- aerodynamic.conductance(DE_Tha_Jun_2014_2,Rb_model="Thom_1972")[,"Ga_h"]
 #' 
 #' # if G and/or S are available, don't forget to indicate (they are ignored by default).
-#' Gs_PM <- surface.conductance(DE_Tha_Jun_2014,Tair="Tair",pressure="pressure",
+#' Gs_PM <- surface.conductance(DE_Tha_Jun_2014_2,Tair="Tair",pressure="pressure",
 #'                              Rn="Rn",G="G",S=NULL,VPD="VPD",Ga=Ga,PM=TRUE)[,"Gs_mol"]
 #'                              
 #' ### Estimate the stomatal slope parameter g1 using the USO model
-#' mod_USO <- stomatal.slope(DE_Tha_Jun_2014,model="USO",GPP="GPP_nt",Gs=Gs_PM,
+#' mod_USO <- stomatal.slope(DE_Tha_Jun_2014_2,model="USO",GPP="GPP_nt",Gs=Gs_PM,
 #'                           robust.nls=FALSE,nmin=40,fitg0=FALSE)
 #'                           
 #' ### Use robust regression to minimize influence of outliers in Gs                           
-#' mod_USO <- stomatal.slope(DE_Tha_Jun_2014,model="USO",GPP="GPP_nt",Gs=Gs_PM,
+#' mod_USO <- stomatal.slope(DE_Tha_Jun_2014_2,model="USO",GPP="GPP_nt",Gs=Gs_PM,
 #'                           robust.nls=TRUE,nmin=40,fitg0=FALSE)
 #' 
 #' ### Estimate the same parameter from the Ball&Berry model and prescribe g0
-#' mod_BB <- stomatal.slope(DE_Tha_Jun_2014,model="Ball&Berry",GPP="GPP_nt",
-#'                          robust.nls=FALSE,Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)                         
+#' mod_BB <- stomatal.slope(DE_Tha_Jun_2014_2,model="Ball&Berry",GPP="GPP_nt",
+#'                          robust.nls=FALSE,Gs=Gs_PM,g0=0.01,nmin=40,fitg0=FALSE)
 #' 
 #' ## same for the Leuning model, but this time estimate both g1 and g0 (but fix D0)
-#' mod_Leu <- stomatal.slope(DE_Tha_Jun_2014,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
+#' mod_Leu <- stomatal.slope(DE_Tha_Jun_2014_2,model="Leuning",GPP="GPP_nt",Gs=Gs_PM,
 #'                           robust.nls=FALSE,nmin=40,fitg0=FALSE,D0=1.5,fitD0=FALSE)
 #' 
-#' @importFrom stats nls
-#'             robustbase nlrob 
+#' @importFrom stats nls na.exclude
+#' @importFrom robustbase nlrob 
+#' 
 #' @export 
 stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs="Gs",
                            VPD="VPD",Ca="Ca",model=c("USO","Ball&Berry","Leuning"),

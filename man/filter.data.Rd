@@ -104,9 +104,11 @@ Variables considered of bad quality (as specified by the corresponding quality c
 \examples{
 # Example of data filtering; data are for a month within the growing season,
 # hence growing season is not filtered.
-DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,vars.qc=c("Tair","precip","H","LE"),
+DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,
+                                 vars.qc=c("Tair","precip","H","LE"),
                                  filter.growseas=FALSE,filter.precip=TRUE,
-                                 filter.vars=c("Tair","PPFD","ustar"),filter.vals.min=c(5,200,0.2),
+                                 filter.vars=c("Tair","PPFD","ustar"),
+                                 filter.vals.min=c(5,200,0.2),
                                  filter.vals.max=c(NA,NA,NA),NA.as.invalid=TRUE,
                                  quality.ext="_qc",good.quality=c(0,1),
                                  missing.qc.as.bad=TRUE,GPP="GPP_nt",doy="doy",
@@ -114,7 +116,7 @@ DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,vars.qc=c
                                  tprecip=0.1,precip.hours=24,records.per.hour=2)
 
  # note the additional column 'valid' in DE_Tha_Jun_2014_2.
- # To remove timesteps marked as filtered out (i.e. 0 values in column 'valid'):                                 
+ # To remove timesteps marked as filtered out (i.e. 0 values in column 'valid'):
  DE_Tha_Jun_2014_2[DE_Tha_Jun_2014_2["valid"] == 0,] <- NA
   
   

@@ -2,6 +2,12 @@
 ### global constants ####
 #########################
 
+#' bigleaf constants
+#' 
+#' @description Constants used in the bigleaf package
+#'
+#'
+#' @export
 bigleaf.constants <- function(){
   
   list(

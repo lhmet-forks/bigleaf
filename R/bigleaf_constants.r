@@ -24,7 +24,7 @@
 #' \item{Rbwc}{Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
 #'
 #' @note Constants contained within this function can be changed permanently (which
-#'       makes sense for some of them, e.g. for the von-Karman constant), by using
+#'       makes sense for some of them, e.g. for the von Karman constant), by using
 #'       the command \code{\link[base]{fix}}
 #'
 #' @export

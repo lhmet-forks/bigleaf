@@ -4,7 +4,7 @@
 \name{DE_Tha_Jun_2014}
 \alias{DE_Tha_Jun_2014}
 \title{Eddy covariance data of DE-Tha (Tharandt)}
-\format{A data frame with 1440 observations and 31 columns:
+\format{A data frame with 1440 observations and 29 columns:
  \describe{
    \item{year}{year of measurement}
    \item{month}{month of measurement}
@@ -33,10 +33,8 @@
    \item{H_qc}{Quality control of \code{H}}
    \item{NEE}{Net ecosystem exchange (umol m-2 s-1)}
    \item{NEE_qc}{Quality control of \code{NEE}}
-   \item{GPP_nt}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}
-   \item{GPP_dt}{Gross primary productivity from daytime partitioning (umol m-2 s-1)}
-   \item{GPP_nt_qc}{Quality control of \code{GPP_nt}}
-   \item{GPP_dt_qc}{Quality control of \code{GPP_dt}}
+   \item{GPP}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}
+   \item{GPP_qc}{Quality control of \code{GPP_nt}}
  }}
 \source{
 original data were downloaded from

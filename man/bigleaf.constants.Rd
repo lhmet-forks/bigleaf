@@ -31,6 +31,6 @@ Constants used in the bigleaf package
 }
 \note{
 Constants contained within this function can be changed permanently (which
-      makes sense for some of them, e.g. for the von-Karman constant), by using
+      makes sense for some of them, e.g. for the von Karman constant), by using
       the command \code{\link[base]{fix}}
 }

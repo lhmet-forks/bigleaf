@@ -5,7 +5,7 @@
 #'              (\url{http://www.fluxdata.org:8080/sitepages/siteInfo.aspx?DE-Tha}). 
 #'              Data are from June 2014.
 #'              
-#' @format A data frame with 1440 observations and 31 columns:
+#' @format A data frame with 1440 observations and 29 columns:
 #'  \describe{
 #'    \item{year}{year of measurement}
 #'    \item{month}{month of measurement}
@@ -34,10 +34,8 @@
 #'    \item{H_qc}{Quality control of \code{H}}
 #'    \item{NEE}{Net ecosystem exchange (umol m-2 s-1)}
 #'    \item{NEE_qc}{Quality control of \code{NEE}}
-#'    \item{GPP_nt}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}
-#'    \item{GPP_dt}{Gross primary productivity from daytime partitioning (umol m-2 s-1)}
-#'    \item{GPP_nt_qc}{Quality control of \code{GPP_nt}}
-#'    \item{GPP_dt_qc}{Quality control of \code{GPP_dt}}
+#'    \item{GPP}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}
+#'    \item{GPP_qc}{Quality control of \code{GPP_nt}}
 #'  }
 #'  
 #' @note Squared brackets denote the original variables as provided by the FLUXNET2015 dataset.
@@ -54,9 +52,9 @@
 #' @description Halfhourly eddy covariance Data of the site FR-Pue,
 #'              a Mediterranean evergreen oak forest in Southern France
 #'              (\url{http://www.fluxdata.org:8080/sitepages/siteInfo.aspx?FR-Pue}).
-#'              Data are from May 2011.
+#'              Data are from May 2012.
 #'              
-#' @format A data frame with 1488 observations and 31 columns:
+#' @format A data frame with 1488 observations and 27 columns:
 #'  \describe{
 #'    \item{year}{year of measurement}
 #'    \item{month}{month of measurement}
@@ -77,18 +75,14 @@
 #'    \item{Ca}{CO2 concentration (ppm)}
 #'    \item{Ca_qc}{Quality control of \code{Ca}}
 #'    \item{Rn}{Net radiation (Wm-2)}
-#'    \item{G}{Ground heat flux (Wm-2)}
-#'    \item{G_qc}{Quality control of \code{G}}
 #'    \item{LE}{Latent heat flux (Wm-2)}
 #'    \item{LE_qc}{Quality control of \code{LE}}
 #'    \item{H}{Sensible heat flux (Wm-2)}
 #'    \item{H_qc}{Quality control of \code{H}}
 #'    \item{NEE}{Net ecosystem exchange (umol m-2 s-1)}
 #'    \item{NEE_qc}{Quality control of \code{NEE}}
-#'    \item{GPP_nt}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}
-#'    \item{GPP_dt}{Gross primary productivity from daytime partitioning (umol m-2 s-1)}
-#'    \item{GPP_nt_qc}{Quality control of \code{GPP_nt}}
-#'    \item{GPP_dt_qc}{Quality control of \code{GPP_dt}}
+#'    \item{GPP}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}
+#'    \item{GPP_qc}{Quality control of \code{GPP}}
 #'  }
 #'  
 #' @note Squared brackets denote the original variables as provided by the FLUXNET2015 dataset.
@@ -96,4 +90,4 @@
 #'  
 #' @source original data were downloaded from
 #'         \url{https://fluxnet.fluxdata.org/}  
-"FR_Pue_May_2011"
+"FR_Pue_May_2012"

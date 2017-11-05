@@ -11,8 +11,8 @@
 #' @param data       Data.Frame or matrix with all required columns                            
 #' @param Ca         Atmospheric CO2 concentration (umol mol-1)              
 #' @param GPP        Gross primary productivity (umol CO2 m-2 s-1)
-#' @param RecoLeaf   Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
 #' @param Gs         Surface conductance to water vapor (mol m-2 s-1)
+#' @param RecoLeaf   Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
 #' @param calc.Csurf Should the derived surface CO2 concentration be used instead of 
 #'                   measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.
 #' @param Ga_CO2     Aerodynamic conductance to CO2 (m s-1) 
@@ -64,7 +64,7 @@
 #' # note the sign convention for NEE
 #' 
 #' @export
-intercellular.CO2 <- function(data,Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=FALSE,
+intercellular.CO2 <- function(data,Ca,GPP,Gs,RecoLeaf=NULL,calc.Csurf=FALSE,
                               Ga_CO2=NULL,NEE=NULL,Tair=NULL,pressure=NULL,
                               constants=bigleaf.constants()){
   
@@ -94,27 +94,39 @@ intercellular.CO2 <- function(data,Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=FALSE,
 
 
 
-#' Bulk canopy maximum carboxylation efficiency (Vcmax)
+#' Bulk canopy biochemical parameters Vcmax and Jmax
 #' 
-#' @description Bulk canopy maximum carboxylation rate (Vcmax) from bulk intercellular 
+#' @description Bulk canopy maximum carboxylation rate (Vcmax), electron transport rate (J),
+#'              and maximum electron transport rate (Jmax) from bulk intercellular 
 #'              CO2 concentration using the Farquhar et al. 1980 model for C3 photosynthesis.
-#'              
+#'           
+#' @param data      Data.Frame or matrix with all required columns                 
 #' @param Temp      Surface (or air) temperature (degC) 
 #' @param GPP       Gross primary productivty (umol m-2 s-1)
 #' @param Ci        Bulk canopy intercellular CO2 concentration (umol mol-1)
 #' @param PPFD      Photosynthetic photon flux density (umol m-2 s-1) 
+#' @param PPFD_j    PPFD threshold, below which the canopy is considered to 
+#'                  be RuBP regeneration limited. Defaults to 500 umol m-2 s-1.
 #' @param PPFD_c    PPFD threshold, above which the canopy is considered to 
-#'                  be light saturated (and Rubisco limited).
-#' @param Oi        intercellular O2 concentration (mol mol-1)
+#'                  be Rubisco limited. Defaults to 1000 umol m-2 s-1.
+#' @param Oi        Intercellular O2 concentration (mol mol-1)
 #' @param Kc25      Michaelis-Menten constant for CO2 at 25 degC (umol mol-1)
 #' @param Ko25      Michaelis-Menten constant for O2 at 25 degC (mmol mol-1)
-#' @param Kc_Ha     activation energy for Kc (kJ mol-1)
-#' @param Ko_Ha     activation energy for Ko (kJ mol-1)
-#' @param Vcmax_Ha  activation energy for Vcmax (kJ mol-1)
-#' @param Vcmax_Hd  deactivation energy for Vcmax (kJ mol-1)
-#' @param dS        entropy term (J mol-1 K-1)
-#' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
-#'                  Rgas - universal gas constant (J mol-1 K-1)
+#' @param Gam25     Photorespiratory CO2 compensation point ('Gamma star') 
+#'                  at 25 degC (umol mol-1)
+#' @param Kc_Ha     Activation energy for Kc (kJ mol-1)
+#' @param Ko_Ha     Activation energy for Ko (kJ mol-1)
+#' @param Gam_Ha    Activation energy for Gam (kJ mol-1)
+#' @param Vcmax_Ha  Activation energy for Vcmax (kJ mol-1)
+#' @param Vcmax_Hd  Deactivation energy for Vcmax (kJ mol-1)
+#' @param Vcmax_dS  Entropy term for Vcmax (J mol-1 K-1)
+#' @param Jmax_Ha   Activation energy for Jmax (kJ mol-1)
+#' @param Jmax_Hd   Deactivation energy for Jmax (kJ mol-1)
+#' @param Jmax_dS   Entropy term for Jmax (J mol-1 K-1)
+#' @param Theta     Curvature term in the light response function of J (-)
+#' @param alpha_canopy Canopy absorptance (-)
+#' @param constants    Kelvin - conversion degree Celsius to Kelvin \cr
+#'                     Rgas - universal gas constant (J mol-1 K-1)
 #'                  
 #' @details The maximum carboxylation rate (Vcmax) and Vcmax25 (Vcmax at 25degC) are calculated
 #'          as at leaf level. The required variables Gs and Ci can be calculated from 
@@ -150,18 +162,31 @@ intercellular.CO2 <- function(data,Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=FALSE,
 #'         and growth conditions.         
 #'          
 #' @return a data.frame with the following columns:
-#'         \item{Vcmax}{maximum carboxylation rate at Temp (umol m-2 s-1)}
 #'         \item{Vcmax25}{maximum carboxylation rate at 25degC (umol m-2 s-1)}
-#'         \item{Ko}{Michaelis-Menten constant for O2 at Temp (mmol mol-1)}
-#'         \item{Kc}{Michaelis-Menten constant for CO2 at Temp (umol mol-1)}   
+#'         \item{Jmax25}{maximum electron transport rate at 25degC (umol m-2 s-1)}
 #'        
-#' @references Kosugi Y. et al., 2013: Determination of the gas exchange phenology in an
+#' @references Lloyd J. et al., 1995: A simple calibrated model of Amazon rainforest productivity
+#'             based on leaf biochemical properties. Plant, Cell and Environment 18, 1129-1145.
+#' 
+#'             Rayment M.B., Loustau D., Jarvis P.G., 2002: Photosynthesis and respiration
+#'             of black spruce at three organizational scales: shoot, branch and canopy.
+#'             Tree Physiology 22, 219-229.
+#' 
+#'             Kosugi Y. et al., 2013: Determination of the gas exchange phenology in an
 #'             evergreen coniferous forest from 7 years of eddy covariance flux data using
 #'             an extended big-leaf analysis. Ecol Res 28, 373-385. 
 #'             
-#'             Bernacchi C.J, Singsaas E.L., Pimentel C., Portis JR A.R., Long S.P., 2001:
+#'             Ueyama M. et al, 2016: Optimization of a biochemical model with eddy covariance
+#'             measurements in black spruce forests of Alaska for estimating CO2 fertilization
+#'             effects. Agricultural and Forest Meteorology 222, 98-111.
+#'             
+#'             Bernacchi C.J., Singsaas E.L., Pimentel C., Portis JR A.R., Long S.P., 2001:
 #'             Improved temperature response functions for models of Rubisco-limited
 #'             photosynthesis. Plant, Cell and Environment 24, 253-259. 
+#'             
+#'             Bernacchi C.J., Pimentel C., Long S.P., 2003: In vivo temperature response
+#'             functions of parameters required to model RuBP-limited photosynthesis.
+#'             Plant, Cell and Environment 26, 1419-1430.
 #'             
 #'             Kattge J., Knorr W., 2007: Temperature acclimation in a biochemical
 #'             model of photosynthesis: a reanalysis of data from 36 species.
@@ -172,38 +197,137 @@ intercellular.CO2 <- function(data,Ca,GPP,RecoLeaf=NULL,Gs,calc.Csurf=FALSE,
 #' carbox.rate(Temp=20,GPP=15,Ci=300,PPFD=1000,PPFD_c=500)  
 #'                                       
 #' @export                  
-carbox.rate <- function(Temp,GPP,Ci,PPFD,PPFD_c,Oi=0.21,Kc25=404.9,Ko25=278.4,
-                        Kc_Ha=79.43,Ko_Ha=36.38,Vcmax_Ha=65.33,Vcmax_Hd=200,
-                        dS=640,constants=bigleaf.constants()){
+bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(200,500),PPFD_c=1000,
+                               Oi=0.21,Kc25=404.9,Ko25=278.4,Gam25=42.75,Kc_Ha=79.43,
+                               Ko_Ha=36.38,Gam_Ha=37.83,Vcmax_Ha=65.33,Vcmax_Hd=200,
+                               Vcmax_dS=635,Jmax_Ha=43.9,Jmax_Hd=200,Jmax_dS=640,
+                               Theta=0.7,alpha_canopy=0.8,
+                               constants=bigleaf.constants()){
+  
+  Temp <- check.columns(data,Temp)
+  GPP  <- check.columns(data,GPP)
+  Ci   <- check.columns(data,Ci)
+  PPFD <- check.columns(data,PPFD)
   
   Temp <- Temp + constants$Kelvin
-  Tref <- constants$Kelvin + 25
+  Tref <- 25.0 + constants$Kelvin
   
   Kc_Ha    <- Kc_Ha * 1000
   Ko_Ha    <- Ko_Ha * 1000
+  Gam_Ha   <- Gam_Ha * 1000
   Vcmax_Ha <- Vcmax_Ha * 1000
   Vcmax_Hd <- Vcmax_Hd * 1000
+  Jmax_Ha  <- Jmax_Ha * 1000
+  Jmax_Hd  <- Jmax_Hd * 1000
   
   # Temperature dependencies of photosynthetic parameters 
-  Kc <- Kc25 * exp(Kc_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
-  Ko <- Ko25 * exp(Ko_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
+  Kc  <- Kc25 * exp(Kc_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
+  Ko  <- Ko25 * exp(Ko_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
+  Gam <- Gam25 * exp(Gam_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
   Ko <- Ko / 1000
   
-  # exclude light unsaturated GPP 
-  GPP[PPFD < PPFD_c] <- NA
-  GPPc <- GPP
+  # Presumed limitation states 
+  GPPc = GPPj <- GPP
+  GPPj[PPFD < PPFD_j[1] | PPFD > PPFD_j[2] | is.na(PPFD)] <- NA
+  GPPc[PPFD < PPFD_c | is.na(PPFD)] <- NA
   
-  # calculate Vcmax and Vcmax25
-  Vcmax   <- (GPPc * (Ci + Kc*(1.0 + Oi/Ko))) / Ci
+  # calculate Vcmax and J (electron transport rate)
+  Vcmax <- GPPc * (Ci + Kc*(1.0 + Oi/Ko)) / (Ci - Gam)
+  J     <- GPPj * (4.0 * Ci + 8.0 * Gam) / (Ci - Gam)
+
+  # calculate Jmax from J
+  APPFD_PSII <- PPFD * alpha_canopy * 0.85 * 0.5
+  dat <- data.frame(J,APPFD_PSII)
+  dat <- dat[complete.cases(dat),]
+  if (nrow(dat) > 0){
+    Jmax <- sapply(c(1:nrow(dat)), function(x) summary(nls(J ~ c((APPFD_PSII + Jmax - 
+                               sqrt((APPFD_PSII + Jmax)^2 - 
+                                     4.0 * Theta * APPFD_PSII * Jmax)) /
+                               (2.0 * Theta)),
+                        start=list(Jmax=50),data=dat[x,],algorithm="port",
+                        na.action=na.omit))$coef[1])
+  } else {
+    warning("Not enough observations to calculate Jmax!")
+    Jmax <- NA
+  }
   
-  Vcmax25 <- Vcmax / 
-    ( exp(Vcmax_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
-        (1 + exp((Tref*dS - Vcmax_Hd) / (Tref * constants$Rgas))) /
-        (1 + exp((Temp*dS - Vcmax_Hd) / (Temp * constants$Rgas)))
-    )
+  # calculate Vcmax25 and Jmax25
+  Vcmax25 <- Arrhenius.temp.response(Vcmax,Temp-constants$Kelvin,Ha=Vcmax_Ha/1000,
+                                     Hd=Vcmax_Hd/1000,dS=Vcmax_dS,constants=constants)
   
+  Jmax25 <- Arrhenius.temp.response(Jmax,Temp-constants$Kelvin,Ha=Jmax_Ha/1000,
+                                    Hd=Jmax_Hd/1000,dS=Jmax_dS,constants=constants)
   
-  return(data.frame(Vcmax,Vcmax25,Ko=Ko*1000,Kc))
+  Vcmax25 <- mean(Vcmax25,na.rm=T)
+  Jmax25  <- median(Jmax25,na.rm=T)
+    
+  return(c("Vcmax25"=Vcmax25,"Jmax25"=Jmax25))
+}
+
+
+
+#' (Modified) Arrhenius temperature response function
+#' 
+#' @description Common or modified (i.e. with temperature optimum - if the deactivation
+#'              energy and entropy term are provided) Arrhenius function describing
+#'              the temperature response of biochemical parameters.
+#'              
+#' @param param Parameter measured at measurement temperature (umol m-2 s-1)            
+#' @param Temp  Measurement temperature (degC)
+#' @param Ha    Activation energy for param (kJ mol-1)
+#' @param Hd    Deactivation energy for param (kJ mol-1)
+#' @param dS    Entropy term for param (J mol-1 K-1)
+#' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
+#'                  Rgas - universal gas constant (J mol-1 K-1)
+#'                  
+#' @details 
+#' 
+#'             \deqn{Vcmax25 = Vcmax / 
+#'                             ( exp(Vcmax_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
+#'                             (1 + exp((Tref*dS - Vcmax_Hd) / (Tref * constants$Rgas))) /
+#'                             (1 + exp((Temp*dS - Vcmax_Hd) / (Temp * constants$Rgas)))
+#'                             )
+#'                }  
+#'                                  
+#' @return param25 - value of the input parameter at the reference temperature of 25degC (umol m-2 s-1)
+#'               
+#' @references Kattge J., Knorr W., 2007: Temperature acclimation in a biochemical
+#'             model of photosynthesis: a reanalysis of data from 36 species.
+#'             Plant, Cell and Environment 30, 1176-1190.
+
+Arrhenius.temp.response <- function(param,Temp,Ha,Hd=NULL,dS=NULL,
+                                    constants=bigleaf.constants()){
+  
+  Temp <- Temp + constants$Kelvin
+  Tref <- 25.0 + constants$Kelvin
+  
+  Ha <- Ha * 1000
+  Hd <- Hd * 1000
+  
+  if (is.null(Hd) & is.null(dS)){
+    
+    param25 <- param / exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
+  
+  } else if (!is.null(Hd) & !is.null(dS)){
+    
+    param25 <- param / 
+      ( exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
+          (1 + exp((Tref*dS - Hd) / (Tref * constants$Rgas))) /
+          (1 + exp((Temp*dS - Hd) / (Temp * constants$Rgas)))
+      )
+    
+  } else if ((!is.null(Hd) & is.null(dS)) | (is.null(Hd) & !is.null(dS)) ){
+    
+    warning("Both Hd and dS have to be provided for a temperature response
+             that considers a temperature optimum! Continue considering activation 
+             energy (Ha) only...")
+    
+    param25 <- param / exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
+    
+  }
+
+  return(param25)
+  
 }
 
 

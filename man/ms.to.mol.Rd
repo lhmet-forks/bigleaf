@@ -23,8 +23,8 @@ Rgas - universal gas constant (J mol-1 K-1)}
 \item{G_mol}{Conductance (mol m-2 s-1)}
 }
 \description{
-Converts conductances from ms-1
-             to mol m-2 s-1, or vice versa.
+Converts conductances from mass (ms-1)
+             to molar units (mol m-2 s-1), or vice versa.
 }
 \details{
 The conversions are given by:

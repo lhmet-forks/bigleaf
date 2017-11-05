@@ -47,8 +47,8 @@ ET.to.LE <- function(ET,Tair){
 
 #' Conversion between conductance units
 #' 
-#' @description Converts conductances from ms-1
-#'              to mol m-2 s-1, or vice versa.
+#' @description Converts conductances from mass (ms-1)
+#'              to molar units (mol m-2 s-1), or vice versa.
 #' 
 #' @aliases ms.to.mol mol.to.ms
 #' 
@@ -118,42 +118,14 @@ mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
 #' @references Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 #' 
 #' @export
-VPD.to.e <- function(VPD,pressure,Tair){
+VPD.to.rH <- function(VPD,Tair){
   esat <- Esat(Tair)[,"Esat"]
-  e    <- esat - VPD
-  return(e)
-}
+  rH   <- 1 - VPD/esat
+  return(rH)
+} 
 
 
-#' @rdname VPD.to.e
-#' @family humidity conversion
-#' @export
-e.to.VPD <- function(e,pressure,Tair){
-  esat <- Esat(Tair)[,"Esat"]
-  VPD  <- esat - e 
-  return(VPD)
-}
-
-
-#' @rdname VPD.to.e
-#' @family humidity conversion
-#' @export
-e.to.q <- function(e,pressure,constants=bigleaf.constants()){
-  q <- constants$eps * e / (pressure - (1-constants$eps) * e) 
-  return(q)
-}
-
-
-#' @rdname VPD.to.e
-#' @family humidity conversion
-#' @export
-q.to.e <- function(q,pressure,constants=bigleaf.constants()){
-  e <- q * pressure / ((1-constants$eps) * q + constants$eps)
-  return(e)
-}
-
-
-#' @rdname VPD.to.e
+#' @rdname VPD.to.rH
 #' @family humidity conversion
 #' @export
 rH.to.VPD <- function(rH,Tair){
@@ -163,17 +135,45 @@ rH.to.VPD <- function(rH,Tair){
 } 
 
 
-#' @rdname VPD.to.e
+#' @rdname VPD.to.rH
 #' @family humidity conversion
 #' @export
-VPD.to.rH <- function(VPD,Tair){
+VPD.to.e <- function(VPD,Tair){
   esat <- Esat(Tair)[,"Esat"]
-  rH   <- 1 - VPD/esat
-  return(rH)
-} 
+  e    <- esat - VPD
+  return(e)
+}
 
 
-#' @rdname VPD.to.e
+#' @rdname VPD.to.rH
+#' @family humidity conversion
+#' @export
+e.to.VPD <- function(e,Tair){
+  esat <- Esat(Tair)[,"Esat"]
+  VPD  <- esat - e 
+  return(VPD)
+}
+
+
+#' @rdname VPD.to.rH
+#' @family humidity conversion
+#' @export
+e.to.q <- function(e,pressure,constants=bigleaf.constants()){
+  q <- constants$eps * e / (pressure - (1-constants$eps) * e) 
+  return(q)
+}
+
+
+#' @rdname VPD.to.rH
+#' @family humidity conversion
+#' @export
+q.to.e <- function(q,pressure,constants=bigleaf.constants()){
+  e <- q * pressure / ((1-constants$eps) * q + constants$eps)
+  return(e)
+}
+
+
+#' @rdname VPD.to.rH
 #' @family humidity conversion
 #' @export
 q.to.VPD <- function(q,Tair,pressure,constants=bigleaf.constants()){
@@ -184,7 +184,7 @@ q.to.VPD <- function(q,Tair,pressure,constants=bigleaf.constants()){
 } 
 
 
-#' @rdname VPD.to.e
+#' @rdname VPD.to.rH
 #' @family humidity conversion
 #' @export
 VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){

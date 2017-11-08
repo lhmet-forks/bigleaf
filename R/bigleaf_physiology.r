@@ -12,7 +12,7 @@
 #' @param Ca         Atmospheric CO2 concentration (umol mol-1)              
 #' @param GPP        Gross primary productivity (umol CO2 m-2 s-1)
 #' @param Gs         Surface conductance to water vapor (mol m-2 s-1)
-#' @param RecoLeaf   Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
+#' @param Reco_Leaf  Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
 #' @param calc.Csurf Should the derived surface CO2 concentration be used instead of 
 #'                   measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.
 #' @param Ga_CO2     Aerodynamic conductance to CO2 (m s-1) 
@@ -64,7 +64,7 @@
 #' # note the sign convention for NEE
 #' 
 #' @export
-intercellular.CO2 <- function(data,Ca,GPP,Gs,RecoLeaf=NULL,calc.Csurf=FALSE,
+intercellular.CO2 <- function(data,Ca,GPP,Gs,Reco_Leaf=NULL,calc.Csurf=FALSE,
                               Ga_CO2=NULL,NEE=NULL,Tair=NULL,pressure=NULL,
                               constants=bigleaf.constants()){
   
@@ -81,12 +81,12 @@ intercellular.CO2 <- function(data,Ca,GPP,Gs,RecoLeaf=NULL,calc.Csurf=FALSE,
     Ca <- Ca.surface(Ca,NEE,Ga_CO2,Tair,pressure)
   }
   
-  if (is.null(RecoLeaf)){
-    RecoLeaf <- 0
+  if (is.null(Reco_Leaf)){
+    Reco_Leaf <- 0
     warning("Respiration from the leaves is ignored and set to 0.")
   }
   
-  Ci <- Ca - (GPP - RecoLeaf)/(Gs/constants$DwDc)
+  Ci <- Ca - (GPP - Reco_Leaf)/(Gs/constants$DwDc)
   
   return(Ci)
   
@@ -100,30 +100,31 @@ intercellular.CO2 <- function(data,Ca,GPP,Gs,RecoLeaf=NULL,calc.Csurf=FALSE,
 #'              and maximum electron transport rate (Jmax) from bulk intercellular 
 #'              CO2 concentration using the Farquhar et al. 1980 model for C3 photosynthesis.
 #'           
-#' @param data      Data.Frame or matrix with all required columns                 
-#' @param Temp      Surface (or air) temperature (degC) 
-#' @param GPP       Gross primary productivty (umol m-2 s-1)
-#' @param Ci        Bulk canopy intercellular CO2 concentration (umol mol-1)
-#' @param PPFD      Photosynthetic photon flux density (umol m-2 s-1) 
-#' @param PPFD_j    PPFD threshold, below which the canopy is considered to 
-#'                  be RuBP regeneration limited. Defaults to 500 umol m-2 s-1.
-#' @param PPFD_c    PPFD threshold, above which the canopy is considered to 
-#'                  be Rubisco limited. Defaults to 1000 umol m-2 s-1.
-#' @param Oi        Intercellular O2 concentration (mol mol-1)
-#' @param Kc25      Michaelis-Menten constant for CO2 at 25 degC (umol mol-1)
-#' @param Ko25      Michaelis-Menten constant for O2 at 25 degC (mmol mol-1)
-#' @param Gam25     Photorespiratory CO2 compensation point ('Gamma star') 
-#'                  at 25 degC (umol mol-1)
-#' @param Kc_Ha     Activation energy for Kc (kJ mol-1)
-#' @param Ko_Ha     Activation energy for Ko (kJ mol-1)
-#' @param Gam_Ha    Activation energy for Gam (kJ mol-1)
-#' @param Vcmax_Ha  Activation energy for Vcmax (kJ mol-1)
-#' @param Vcmax_Hd  Deactivation energy for Vcmax (kJ mol-1)
-#' @param Vcmax_dS  Entropy term for Vcmax (J mol-1 K-1)
-#' @param Jmax_Ha   Activation energy for Jmax (kJ mol-1)
-#' @param Jmax_Hd   Deactivation energy for Jmax (kJ mol-1)
-#' @param Jmax_dS   Entropy term for Jmax (J mol-1 K-1)
-#' @param Theta     Curvature term in the light response function of J (-)
+#' @param data       Data.Frame or matrix with all required columns                 
+#' @param Temp       Surface (or air) temperature (degC) 
+#' @param GPP        Gross primary productivty (umol m-2 s-1)
+#' @param Ci         Bulk canopy intercellular CO2 concentration (umol mol-1)
+#' @param PPFD       Photosynthetic photon flux density (umol m-2 s-1) 
+#' @param PPFD_j     PPFD threshold, below which the canopy is considered to 
+#'                   be RuBP regeneration limited. Defaults to 500 umol m-2 s-1.
+#' @param PPFD_c     PPFD threshold, above which the canopy is considered to 
+#'                   be Rubisco limited. Defaults to 1000 umol m-2 s-1.
+#' @param Reco_Leaf  Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0 
+#' @param Oi         Intercellular O2 concentration (mol mol-1)
+#' @param Kc25       Michaelis-Menten constant for CO2 at 25 degC (umol mol-1)
+#' @param Ko25       Michaelis-Menten constant for O2 at 25 degC (mmol mol-1)
+#' @param Gam25      Photorespiratory CO2 compensation point ('Gamma star') 
+#'                   at 25 degC (umol mol-1)
+#' @param Kc_Ha      Activation energy for Kc (kJ mol-1)
+#' @param Ko_Ha      Activation energy for Ko (kJ mol-1)
+#' @param Gam_Ha     Activation energy for Gam (kJ mol-1)
+#' @param Vcmax_Ha   Activation energy for Vcmax (kJ mol-1)
+#' @param Vcmax_Hd   Deactivation energy for Vcmax (kJ mol-1)
+#' @param Vcmax_dS   Entropy term for Vcmax (J mol-1 K-1)
+#' @param Jmax_Ha    Activation energy for Jmax (kJ mol-1)
+#' @param Jmax_Hd    Deactivation energy for Jmax (kJ mol-1)
+#' @param Jmax_dS    Entropy term for Jmax (J mol-1 K-1)
+#' @param Theta      Curvature term in the light response function of J (-)
 #' @param alpha_canopy Canopy absorptance (-)
 #' @param constants    Kelvin - conversion degree Celsius to Kelvin \cr
 #'                     Rgas - universal gas constant (J mol-1 K-1)
@@ -194,12 +195,12 @@ intercellular.CO2 <- function(data,Ca,GPP,Gs,RecoLeaf=NULL,calc.Csurf=FALSE,
 #'             
 #'
 #' @examples 
-#' carbox.rate(Temp=20,GPP=15,Ci=300,PPFD=1000,PPFD_c=500)  
+#' bigleaf.Vcmax.Jmax(Temp=20,GPP=15,Ci=300,PPFD=1000,PPFD_j=c(100,400),PPFD_c=1000)  
 #'                                       
 #' @export                  
-bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(200,500),PPFD_c=1000,
-                               Oi=0.21,Kc25=404.9,Ko25=278.4,Gam25=42.75,Kc_Ha=79.43,
-                               Ko_Ha=36.38,Gam_Ha=37.83,Vcmax_Ha=65.33,Vcmax_Hd=200,
+bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=1000,
+                               Reco_Leaf=NULL,Oi=0.21,Kc25=404.9,Ko25=278.4,Gam25=42.75,
+                               Kc_Ha=79.43,Ko_Ha=36.38,Gam_Ha=37.83,Vcmax_Ha=65.33,Vcmax_Hd=200,
                                Vcmax_dS=635,Jmax_Ha=43.9,Jmax_Hd=200,Jmax_dS=640,
                                Theta=0.7,alpha_canopy=0.8,
                                constants=bigleaf.constants()){
@@ -231,21 +232,29 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(200,500),PPFD_c=10
   GPPj[PPFD < PPFD_j[1] | PPFD > PPFD_j[2] | is.na(PPFD)] <- NA
   GPPc[PPFD < PPFD_c | is.na(PPFD)] <- NA
   
+  if (is.null(Reco_Leaf)){
+    Reco_Leaf <- 0
+    warning("Respiration from the leaves is ignored and set to 0.")
+  }
+  
   # calculate Vcmax and J (electron transport rate)
-  Vcmax <- GPPc * (Ci + Kc*(1.0 + Oi/Ko)) / (Ci - Gam)
-  J     <- GPPj * (4.0 * Ci + 8.0 * Gam) / (Ci - Gam)
+  Vcmax <- (GPPc-Reco_Leaf) * (Ci + Kc*(1.0 + Oi/Ko)) / (Ci - Gam)
+  J     <- (GPPj-Reco_Leaf) * (4.0 * Ci + 8.0 * Gam) / (Ci - Gam)
 
   # calculate Jmax from J
   APPFD_PSII <- PPFD * alpha_canopy * 0.85 * 0.5
   dat <- data.frame(J,APPFD_PSII)
   dat <- dat[complete.cases(dat),]
   if (nrow(dat) > 0){
-    Jmax <- sapply(c(1:nrow(dat)), function(x) summary(nls(J ~ c((APPFD_PSII + Jmax - 
-                               sqrt((APPFD_PSII + Jmax)^2 - 
-                                     4.0 * Theta * APPFD_PSII * Jmax)) /
-                               (2.0 * Theta)),
-                        start=list(Jmax=50),data=dat[x,],algorithm="port",
-                        na.action=na.omit))$coef[1])
+    Jmax <- sapply(c(1:nrow(dat)), function(x) tryCatch(summary(nls(J ~ c((APPFD_PSII + Jmax - 
+                                                            sqrt((APPFD_PSII + Jmax)^2 - 
+                                                            4.0 * Theta * APPFD_PSII * Jmax)) /
+                                                            (2.0 * Theta)),
+                                                            start=list(Jmax=50),data=dat[x,],
+                                                            algorithm="port"))$coef[1],
+                                                            error=function(err){NA}
+                                                            )
+                       )
   } else {
     warning("Not enough observations to calculate Jmax!")
     Jmax <- NA
@@ -258,18 +267,21 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(200,500),PPFD_c=10
   Jmax25 <- Arrhenius.temp.response(Jmax,Temp-constants$Kelvin,Ha=Jmax_Ha/1000,
                                     Hd=Jmax_Hd/1000,dS=Jmax_dS,constants=constants)
   
-  Vcmax25 <- mean(Vcmax25,na.rm=T)
-  Jmax25  <- median(Jmax25,na.rm=T)
-    
-  return(c("Vcmax25"=Vcmax25,"Jmax25"=Jmax25))
+  Vcmax25_MEAN <- mean(Vcmax25,na.rm=T)
+  Vcmax25_SE   <- sd(Vcmax25)/sqrt((sum(!is.na(Vcmax25))))
+  Jmax25_MEAN  <- mean(Jmax25,na.rm=T)
+  Jmax25_SE    <- sd(Jmax25)/sqrt((sum(!is.na(Jmax25))))
+  
+  return(c("Vcmax25_MEAN"=Vcmax25_MEAN,"Vcmax25_SE"=Vcmax25_SE,
+           "Jmax25_MEAN"=Jmax25_MEAN,"Jmax25_SE"=Jmax25_SE))
 }
+
 
 
 
 #' (Modified) Arrhenius temperature response function
 #' 
-#' @description Common or modified (i.e. with temperature optimum - if the deactivation
-#'              energy and entropy term are provided) Arrhenius function describing
+#' @description (Modified) Arrhenius function describing
 #'              the temperature response of biochemical parameters.
 #'              
 #' @param param Parameter measured at measurement temperature (umol m-2 s-1)            
@@ -280,22 +292,37 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(200,500),PPFD_c=10
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
 #'                  Rgas - universal gas constant (J mol-1 K-1)
 #'                  
-#' @details 
+#' @details The temperature response is given by a modified form of the Arrhenius
+#'          function:
 #' 
-#'             \deqn{Vcmax25 = Vcmax / 
-#'                             ( exp(Vcmax_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
-#'                             (1 + exp((Tref*dS - Vcmax_Hd) / (Tref * constants$Rgas))) /
-#'                             (1 + exp((Temp*dS - Vcmax_Hd) / (Temp * constants$Rgas)))
-#'                             )
-#'                }  
+#'             \deqn{param25 = param / 
+#'                         ( exp(Ha * (Temp - Tref) / (Tref*Rgas*Temp)) *
+#'                         (1 + exp((Tref*dS - Hd) / (Tref * Rgas))) /
+#'                         (1 + exp((Temp*dS - Hd) / (Temp * Rgas)))
+#'                         )
+#'                  }
+#'                  
+#'          where param is the value/rate of the parameter at measurement temperature,
+#'          Temp is temperature in K, Tref is reference temperature (298.15K), and Rgas
+#'          is the universal gas constant (8.314 J K-1 mol-1). Ha is the activation
+#'          energy (kJ mol-1), Hd is the deactivation energy (kJ mol-1), and dS the
+#'          entropy term (J mol-1 K-1) of the respective parameter.
+#'          
+#'          If either Hd or dS or both are not provided, the equation above reduces
+#'          to the first term (i.e. the common Arrhenius equation without the deactivation
+#'          term.)         
 #'                                  
 #' @return param25 - value of the input parameter at the reference temperature of 25degC (umol m-2 s-1)
 #'               
-#' @references Kattge J., Knorr W., 2007: Temperature acclimation in a biochemical
+#' @references Johnson F.H., Eyring H., Williams R.W. 1942: 
+#'             The nature of enzyme inhibitions in bacterial luminescence: sulfanilamide,
+#'             urethane, temperature and pressure. Journal of cellular and comparative
+#'             physiology 20, 247-268.
+#' 
+#'             Kattge J., Knorr W., 2007: Temperature acclimation in a biochemical
 #'             model of photosynthesis: a reanalysis of data from 36 species.
 #'             Plant, Cell and Environment 30, 1176-1190.
-
-Arrhenius.temp.response <- function(param,Temp,Ha,Hd=NULL,dS=NULL,
+Arrhenius.temp.response <- function(param,Temp,Ha=NULL,Hd=NULL,dS=NULL,
                                     constants=bigleaf.constants()){
   
   Temp <- Temp + constants$Kelvin
@@ -303,6 +330,12 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd=NULL,dS=NULL,
   
   Ha <- Ha * 1000
   Hd <- Hd * 1000
+  
+  if (is.null(Ha)){
+    
+    stop("Activation energy (Ha) has to be provided!")
+    
+  }
   
   if (is.null(Hd) & is.null(dS)){
     
@@ -319,8 +352,8 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd=NULL,dS=NULL,
   } else if ((!is.null(Hd) & is.null(dS)) | (is.null(Hd) & !is.null(dS)) ){
     
     warning("Both Hd and dS have to be provided for a temperature response
-             that considers a temperature optimum! Continue considering activation 
-             energy (Ha) only...")
+             that considers a temperature optimum and a deactivation term!
+             Continue considering activation energy (Ha) only...")
     
     param25 <- param / exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
     
@@ -382,15 +415,15 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd=NULL,dS=NULL,
 #' @return an nls model object, containing information on the fitted parameters, their uncertainty range,
 #'         model fit, etc.
 #' 
-#' @references Medlyn, B.E., et al., 2011: Reconciling the optimal and empirical approaches to
+#' @references Medlyn B.E., et al., 2011: Reconciling the optimal and empirical approaches to
 #'             modelling stomatal conductance. Global Change Biology 17, 2134-2144.
 #'             
-#'             Ball, T.J., Woodrow, I.E., Berry, J.A. 1987: A model predicting stomatal conductance
+#'             Ball T.J., Woodrow I.E., Berry J.A. 1987: A model predicting stomatal conductance
 #'             and its contribution to the control of photosynthesis under different environmental conditions.
 #'             In: Progress in Photosynthesis Research, edited by J.Biggins, pp. 221-224, Martinus Nijhoff Publishers,
 #'             Dordrecht, Netherlands.
 #'             
-#'             Leuning, R., 1995: A critical appraisal of a combined stomatal-photosynthesis
+#'             Leuning R., 1995: A critical appraisal of a combined stomatal-photosynthesis
 #'             model for C3 plants. Plant, Cell and Environment 18, 339-355.
 #' 
 #' @examples 
@@ -435,7 +468,7 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd=NULL,dS=NULL,
 #' @importFrom robustbase nlrob 
 #' 
 #' @export 
-stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs="Gs",
+stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs",
                            VPD="VPD",Ca="Ca",model=c("USO","Ball&Berry","Leuning"),
                            robust.nls=FALSE,nmin=40,fitg0=FALSE,g0=0,fitD0=FALSE,
                            D0=1.5,Gamma=50,constants=bigleaf.constants()){
@@ -564,3 +597,100 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP_nt",Gs=
   return(mod)
   
 }
+
+
+
+
+
+
+#' Ecosytem light response
+#' 
+#' @description calculates GPPmax at a reference (mostly saturating) PPFD and 
+#'              ecosystem quantum yield using a rectangular light response curve.
+#' 
+#' @param data      Data.frame or matrix containing all required columns
+#' @param NEE       Net ecosystem exchange (umol CO2 m-2 s-1)
+#' @param Reco      Ecosystem respiration (umol CO2 m-2 s-1)
+#' @param PPFD      Photosynthetic photon flux density (umol m-2 s-1)
+#' @param PPFD_ref  Reference PPFD (umol m-2 s-1) for which GPPmax is estimated.
+#'                  Default is 2000 umol m-2 s-1.
+#' 
+#' @details A rectangular light response curve is fitted to NEE data. The curve
+#'          takes the form as described in Falge et al. 2001:
+#'          
+#'          \deqn{NEE = \alpha PPFD / (1 - (PPFD / PPFD_ref) + \alpha 
+#'                       PPFD / GPPmax)- Reco}
+#'                       
+#'          where alpha is the ecosystem quantum yield (umol CO2 m-2 s-1) (umol quanta m-2 s-1)-1, 
+#'          representing the slope of the light response curve, and GPPmax is the 
+#'          GPP at the reference PPFD (usually at saturating light).
+#'          
+#'          The advantage of this equation over the standard rectangular light response
+#'          curve is that GPPmax at PPFD_ref is more readily interpretable
+#'          as it constitutes a value observed in the ecosystem, in contrast to 
+#'          GPPmax (mostly named 'beta') in the standard model that occurs at infinite light.
+#'          PPFD_ref defaults to 2000 umol m-2 s-1, but other values can be used.
+#' 
+#' @note   Note the sign convention. Negative NEE indicates that carbon is taken up
+#'         by the ecosystem. Reco has to be 0 or larger.
+#' 
+#' @return A nls model object containing estimates (+/- SE) for alpha and GPPmax.
+#' 
+#' @references Falge E., et al. 2001: Gap filling strategies for defensible annual
+#'             sums of net ecosystem exchange. Agricultural and Forest Meteorology 107,
+#'             43-69.
+#' 
+#' @importFrom stats nls
+#' 
+#' @export
+light.response <- function(data,NEE,Reco,PPFD,PPFD_ref=2000){
+
+  NEE  <- check.columns(data,NEE)
+  Reco <- check.columns(data,Reco)
+  PPFD <- check.columns(data,PPFD)
+  
+  mod <- nls(-NEE ~ alpha * PPFD / (1 - (PPFD / PPFD_ref) + (alpha * PPFD / GPP_max)) + Reco,
+             start=list(alpha=0.02,GPP_max=30))
+  
+  return(mod)
+}  
+
+
+  
+
+#' Light use efficiency (LUE)
+#' 
+#' @description amount of carbon fixed (GPP) per incoming light.
+#' 
+#' @param GPP     Gross ecosystem productivity (umol CO2 m-2 s-1)
+#' @param PPFD    Photosynthetic photon flux density (umol quanta m-2 s-1)
+#' 
+#' @details Light use efficiency is calculated as
+#'          
+#'          \deqn{LUE = sum(GPP)/sum(PPFD)}
+#'          
+#'          where both GPP and PPFD are in umol m-2 s-1. A more meaningful 
+#'          (as directly comparable across ecosystems) is to take absorbed PPFD
+#'          rather than incoming PPFD as used here.
+#' 
+#' @return \item{LUE -}{Light use efficiency (-)}
+#' 
+#' @examples
+#' light.use.efficiency(GPP=20,PPFD=1500)
+#' 
+#' @export 
+light.use.efficiency <- function(GPP,PPFD){
+  
+  comp <- complete.cases(GPP,PPFD)
+  
+  LUE <- sum(GPP[comp],na.rm=TRUE)/sum(PPFD[comp],na.rm=TRUE)
+  
+  return(c("LUE"=LUE))
+}
+  
+
+
+
+  
+  
+  

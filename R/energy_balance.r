@@ -10,7 +10,7 @@
 #' @param NEE     Net ecosystem exchange (umol CO2 m-2 s-1)
 #' @param alpha   Energy taken up/released by photosynthesis/respiration (J umol-1)
 #' 
-#' @details The following sign convention is employed: NEE is negative when carbon is taken up by the ecosystem.
+#' @details The following sign convention is employed: NEE is positive when carbon is taken up by the ecosystem.
 #'          Positive values of the resulting biochemical energy mean that energy is taken up by the ecosystem, 
 #'          negative ones that heat is released.
 #'          The value of alpha is taken from Nobel 1974 (see Meyers & Hollinger 2004), but other values
@@ -30,14 +30,46 @@
 #'             
 #' @examples 
 #' # Calculate biochemical energy taken up by the ecosystem with 
-#' # a measured NEE of -30umol CO2 m-2 s-1             
-#' biochemical.energy(NEE=-30)            
+#' # a measured NEE of 30umol CO2 m-2 s-1             
+#' biochemical.energy(NEE=30)            
 #'            
 #' @export 
 biochemical.energy <- function(NEE,alpha=0.422){
-  Sp <- -alpha*NEE
+  Sp <- alpha*NEE
   return(Sp)
 }
+
+
+
+
+#' Energy use efficiency (EUE)
+#' 
+#' @description Fraction of net radiation fixed by biochemical energy.
+#' 
+#' @param GPP     Gross ecosystem productivity (umol CO2 m-2 s-1)
+#' @param alpha   Energy taken up/released by photosynthesis/respiration (J umol-1)
+#' @param Rn      Net radiation (W m-2)
+#' 
+#' @return \item{EUE -}{Energy use efficiency (-)}
+#' 
+#' @examples
+#' energy.use.efficiency(GPP=20,Rn=500)
+#' 
+#' @export 
+energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
+  
+  Sp <- biochemical.energy(GPP,alpha)
+  
+  comp  <- complete.cases(Sp,Rn) 
+  
+  Sp_sum <- sum(Sp[comp],na.rm=T)
+  Rn_sum <- sum(Rn[comp],na.rm=T)
+  
+  EUE <- Sp_sum/Rn_sum
+  
+  return(c("EUE"=EUE))
+}
+
 
 
 

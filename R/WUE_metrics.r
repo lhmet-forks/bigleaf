@@ -59,7 +59,7 @@
 #'                                  filter.vals.min=c(5,200,0.2),
 #'                                  filter.vals.max=c(NA,NA,NA),NA.as.invalid=TRUE,
 #'                                  quality.ext="_qc",good.quality=c(0,1),
-#'                                  missing.qc.as.bad=TRUE,GPP="GPP_nt",doy="doy",
+#'                                  missing.qc.as.bad=TRUE,GPP="GPP",doy="doy",
 #'                                  year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
 #'                                  tprecip=0.1,precip.hours=24,records.per.hour=2)
 #' 
@@ -68,7 +68,7 @@
 #'                         
 #' @importFrom stats median                                     
 #' @export
-WUE.metrics <- function(data,GPP="GPP_nt",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
+WUE.metrics <- function(data,GPP="GPP",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
                         constants=bigleaf.constants()){
   
   GPP  <- check.columns(data,GPP)

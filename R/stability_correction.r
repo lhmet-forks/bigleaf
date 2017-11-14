@@ -74,11 +74,7 @@ MoninObukhov.length <- function(Tair,pressure,ustar,H,constants=bigleaf.constant
 stability.parameter <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",
                                 H="H",zr,d,constants=bigleaf.constants()){
   
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  ustar    <- check.columns(data,ustar)
-  H        <- check.columns(data,H)
-  check.length(Tair,pressure,ustar,H)
+  check.input(data,list(Tair,pressure,ustar,H))
   
   MOL  <- MoninObukhov.length(Tair,pressure,ustar,H,constants)
   zeta <- (zr - d) / MOL
@@ -142,7 +138,7 @@ stability.correction <- function(zeta,formulation=c("Dyer_1970","Businger_1971")
   
   formulation  <- match.arg(formulation)
   
-  zeta <- check.columns( ,zeta)
+  check.input( ,list(zeta))
   
   psi_h = psi_m <- numeric()
   

@@ -72,7 +72,7 @@
 #'  the argument \code{Rb_model}. The following options are implemented:
 #'  "Thom_1972" is an empirical formulation based on the friction velocity (ustar) (Thom 1972):
 #'  
-#'    \deqn{Rb = 0.67ustar^0.67}
+#'    \deqn{Rb = 6.2ustar^-0.667}
 #'    
 #'  The model by Choudhury 1988 ("Choudhury_1988"), calculates Rb
 #'  based on leaf width, LAI and ustar (Note that in the original formulation leaf width
@@ -154,12 +154,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
   Rb_model         <- match.arg(Rb_model)
   stab_formulation <- match.arg(stab_formulation)
   
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  wind     <- check.columns(data,wind)
-  ustar    <- check.columns(data,ustar)
-  H        <- check.columns(data,H)
-  check.length(Tair,pressure,wind,ustar,H)
+  check.input(data,list(Tair,pressure,wind,ustar,H))
   
   ## calculate boundary layer conductance
   if (Rb_model != "constant_kB"){

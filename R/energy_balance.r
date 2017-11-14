@@ -124,12 +124,10 @@ energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
 energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneous=FALSE,
                            missing.G.as.NA=FALSE,missing.S.as.NA=FALSE){
   
-  Rn <- check.columns(data,Rn)
-  LE <- check.columns(data,LE)
-  H  <- check.columns(data,H)
+  check.input(data,list(Rn,LE,H))
   
   if(!is.null(G)){
-    G <- check.columns(data,G)
+    check.input(data,list(G))
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
     warning("ground heat flux G is not provided and set to 0.")
@@ -137,10 +135,10 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
   }
   
   if(!is.null(S)){
-    S <- check.columns(data,S)
+    check.columns(data,list(S))
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
-    warning("Energy storage fluxes S are not provided and set to 0.")
+    warning("Energy storage fluxes S are not provided and set to 0.",call.=FALSE)
     S <- rep(0,ifelse(!missing(data),nrow(data),length(Rn)))
   }
   
@@ -200,17 +198,12 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
 isothermal.Rn <- function(data,Rn="Rn",Tair="Tair",Tsurf="Tsurf",emissivity,
                           constants=bigleaf.constants()){
   
-  if (!missing(data)){
-    Rn    <- check.columns(data,Rn)
-    Tair  <- check.columns(data,Tair)
-    Tsurf <- check.columns(data,Tsurf)
-  }
+  check.input(data,list(Rn,Tair,Tsurf))
   
   Tair  <- Tair + constants$Kelvin
   Tsurf <- Tsurf + constants$Kelvin
   
   Rni <- Rn + emissivity * constants$sigma * (Tsurf^4 - Tair^4)
-  
   
   return(Rni)
   

@@ -59,9 +59,9 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 #' @param pressure  Atmospheric pressure (kPa)
 #' @param wind      Wind speed at height zr (m s-1)
 #' @param ustar     Friction velocity (m s-1)
-#' @param H              Sensible heat flux (W m-2)
-#' @param d              Zero-plane displacement height (m); optional
-#' @param z0m            Roughness length for momentum (m); optional
+#' @param H         Sensible heat flux (W m-2)
+#' @param d         Zero-plane displacement height (m); optional
+#' @param z0m       Roughness length for momentum (m); optional
 #' @param stab_roughness   Should stability correction be considered? Default is TRUE
 #' @param stab_formulation Stability correction function used (If stab_correction is TRUE).
 #'                         Either "Dyer_1970" or "Businger_1971".
@@ -154,12 +154,7 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
     
   } else if (method == "wind_profile"){
     
-    Tair     <- check.columns(data,Tair)
-    pressure <- check.columns(data,pressure)
-    wind     <- check.columns(data,wind)
-    ustar    <- check.columns(data,ustar)
-    H        <- check.columns(data,H)
-    check.length(Tair,pressure,wind,ustar,H)
+    check.input(data,list(Tair,pressure,wind,ustar,H))
     
     if (is.null(d)){
       
@@ -208,7 +203,7 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 #'          can be approximated from \code{\link{roughness.parameters}}.
 #'          
 #' @param data      Data.frame or matrix containing all required variables
-#' @param heights   vector with heights for which wind speed is to be 
+#' @param heights   Vector with heights for which wind speed is to be 
 #'                  calculated.
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Atmospheric pressure (kPa)                                                                                  
@@ -248,11 +243,7 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
   
   stab_formulation <- match.arg(stab_formulation)
   
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  ustar    <- check.columns(data,ustar)
-  H        <- check.columns(data,H)
-  check.length(Tair,pressure,ustar,H)
+  check.input(data,list(Tair,pressure,ustar,H))
   
   wind_heights <- data.frame(matrix(NA,ncol=length(heights),nrow=length(Tair)))
   colnames(wind_heights) <- paste0(heights,"m")

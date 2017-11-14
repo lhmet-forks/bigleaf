@@ -68,17 +68,10 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
                                VPD="VPD",Ga="Ga",calc.Csurf=FALSE,Ca="Ca",Ga_CO2="Ga_CO2",
                                NEE="NEE",constants=bigleaf.constants()){
   
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  LE       <- check.columns(data,LE)
-  H        <- check.columns(data,H)
-  VPD      <- check.columns(data,VPD)
-  Ga       <- check.columns(data,Ga)
+  check.input(data,list(Tair,pressure,LE,H,VPD,Ga))
   
   if (calc.Csurf){
-    Ca       <- check.columns(data,Ca)
-    NEE      <- check.columns(data,NEE)
-    Ga_CO2   <- check.columns(data,Ga_CO2)
+    check.input(data,list(Ca,NEE,Ga_CO2))
   }
   
   rho   <- air.density(Tair,pressure)

@@ -43,23 +43,21 @@
 ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,alpha=1.26,
                    missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,constants=bigleaf.constants()){
   
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  Rn       <- check.columns(data,Rn)
+  check.input(data,list(Tair,pressure,Rn))
   
   if(!is.null(G)){
-    G <- check.columns(data,G)
+    check.input(data,list(G))
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
-    warning("ground heat flux G is not provided and set to 0.")
+    warning("ground heat flux G is not provided and set to 0.",call.=FALSE)
     G <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
   }
   
   if(!is.null(S)){
-    S <- check.columns(data,S)
+    check.input(data,list(S))
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
-    warning("Energy storage fluxes S are not provided and set to 0.")
+    warning("Energy storage fluxes S are not provided and set to 0.",call.=FALSE)
     S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
   }
   
@@ -130,14 +128,10 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
                    G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                    constants=bigleaf.constants()){
   
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  VPD      <- check.columns(data,VPD)
-  Rn       <- check.columns(data,Rn)
-  Ga       <- check.columns(data,Ga)
+  check.input(data,list(Tair,pressure,VPD,Rn,Ga))
   
   if(!is.null(G)){
-    G <- check.columns(data,G)
+    check.input(data,list(G))
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
     warning("ground heat flux G is not provided and set to 0.")
@@ -145,7 +139,7 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
   }
   
   if(!is.null(S)){
-    S <- check.columns(data,S)
+    check.input(data,list(S))
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
     warning("Energy storage fluxes S are not provided and set to 0.")
@@ -226,15 +220,10 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
                           Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                           constants=bigleaf.constants()){
   
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  VPD      <- check.columns(data,VPD)
-  Rn       <- check.columns(data,Rn)
-  Gs       <- check.columns(data,Gs)
-  check.length(Tair,pressure,VPD,Rn,Gs)
+  check.input(data,list(Tair,pressure,VPD,Rn,Gs))
   
   if(!is.null(G)){
-    G <- check.columns(data,G)
+    check.input(data,list(G))
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
     warning("ground heat flux G is not provided and set to 0.")
@@ -242,7 +231,7 @@ ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs"
   }
   
   if(!is.null(S)){
-    S <- check.columns(data,S)
+    check.input(data,list(S))
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
     warning("Energy storage fluxes S are not provided and set to 0.")

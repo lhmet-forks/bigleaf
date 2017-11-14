@@ -71,12 +71,7 @@
 WUE.metrics <- function(data,GPP="GPP",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
                         constants=bigleaf.constants()){
   
-  GPP  <- check.columns(data,GPP)
-  NEE  <- check.columns(data,NEE)
-  LE   <- check.columns(data,LE)
-  VPD  <- check.columns(data,VPD)
-  Tair <- check.columns(data,Tair)
-  check.length(GPP,NEE,LE,VPD,Tair)
+  check.input(data,list(GPP,NEE,LE,VPD,Tair))
   
   ET  <- LE.to.ET(LE,Tair)                 # kg H2O s-1
   GPP <- (GPP/1e06 * constants$Cmol)*1000  # gC m-2 s-1

@@ -67,10 +67,7 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
   
   approach    <- match.arg(approach)
   
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  Ga       <- check.columns(data,Ga)
-  Gs       <- check.columns(data,Gs)
+  check.input(data,list(Tair,pressure,Ga,Gs))
   
   Delta   <- Esat(Tair)[,"Delta"]
   gamma   <- psychrometric.constant(Tair,pressure,constants=constants)

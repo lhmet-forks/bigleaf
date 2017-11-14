@@ -95,10 +95,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
                                 VPD="VPD",LE="LE",Ga="Ga",missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                                 PM=TRUE,constants=bigleaf.constants()){ 
   
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  VPD      <- check.columns(data,VPD)
-  LE       <- check.columns(data,LE)
+  check.input(data,list(Tair,pressure,VPD,LE))
   
   if (!PM){
     
@@ -109,12 +106,10 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
     
   } else {
     
-    Rn       <- check.columns(data,Rn)
-    Ga       <- check.columns(data,Ga)
-    
-    
+    check.input(data,list(Rn,Ga))
+
     if(!is.null(G)){
-      G <- check.columns(data,G)
+      check.input(data,list(G))
       if (!missing.G.as.NA){G[is.na(G)] <- 0}
     } else {
       warning("Ground heat flux G is not provided and set to 0.")
@@ -122,13 +117,12 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
     }
     
     if(!is.null(S)){
-      S <- check.columns(data,S)
+      check.input(data,list(S))
       if(!missing.S.as.NA){S[is.na(S)] <- 0 }
     } else {
       warning("Energy storage fluxes S are not provided and set to 0.")
       S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
     }
-    
     
     Delta <- Esat(Tair)[,"Delta"]
     gamma <- psychrometric.constant(Tair,pressure)

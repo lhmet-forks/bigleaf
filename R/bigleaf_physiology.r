@@ -68,15 +68,11 @@ intercellular.CO2 <- function(data,Ca,GPP,Gs,Reco_Leaf=NULL,calc.Csurf=FALSE,
                               Ga_CO2=NULL,NEE=NULL,Tair=NULL,pressure=NULL,
                               constants=bigleaf.constants()){
   
-  Ca  <- check.columns(data,Ca)
-  GPP <- check.columns(data,GPP)
-  Gs  <- check.columns(data,Gs)
-  
+  check.input(data,list(Ca,GPP,Gs))
+
   if (calc.Csurf){
-    Tair     <- check.columns(data,Tair)
-    pressure <- check.columns(data,pressure)
-    Ga_CO2   <- check.columns(data,Ga_CO2)
-    NEE      <- check.columns(data,NEE)
+    
+    check.input(data,list(Tair,pressure,Ga_CO2,NEE))
     
     Ca <- Ca.surface(Ca,NEE,Ga_CO2,Tair,pressure)
   }
@@ -205,10 +201,7 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=10
                                Theta=0.7,alpha_canopy=0.8,
                                constants=bigleaf.constants()){
   
-  Temp <- check.columns(data,Temp)
-  GPP  <- check.columns(data,GPP)
-  Ci   <- check.columns(data,Ci)
-  PPFD <- check.columns(data,PPFD)
+  check.input(data,list(Temp,GPP,Ci,PPFD))
   
   Temp <- Temp + constants$Kelvin
   Tref <- 25.0 + constants$Kelvin
@@ -475,13 +468,8 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
   
   model <- match.arg(model)
   
-  Tair     <- check.columns(data,Tair)
-  pressure <- check.columns(data,pressure)
-  GPP      <- check.columns(data,GPP)
-  Gs       <- check.columns(data,Gs)
-  VPD      <- check.columns(data,VPD)
-  Ca       <- check.columns(data,Ca)
-  check.length(Tair,pressure,GPP,Gs,VPD,Ca)
+  check.input(data,list(Tair,pressure,GPP,Gs,VPD,Ca))
+  
   df <- data.frame(Tair,pressure,GPP,Gs,VPD,Ca)
   
   if (model == "Leuning"){
@@ -621,15 +609,17 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
 #'          \deqn{NEE = \alpha PPFD / (1 - (PPFD / PPFD_ref) + \alpha 
 #'                       PPFD / GPPmax)- Reco}
 #'                       
-#'          where alpha is the ecosystem quantum yield (umol CO2 m-2 s-1) (umol quanta m-2 s-1)-1, 
-#'          representing the slope of the light response curve, and GPPmax is the 
-#'          GPP at the reference PPFD (usually at saturating light).
+#'          where \code{\alpha} is the ecosystem quantum yield (umol CO2 m-2 s-1) (umol quanta m-2 s-1)-1, 
+#'          and GPPmax is the GPP at the reference PPFD (usually at saturating light). \code{\alpha} 
+#'          represents the slope of the light response curve, and is a measure for the light use
+#'          efficiency of the canopy. 
 #'          
 #'          The advantage of this equation over the standard rectangular light response
 #'          curve is that GPPmax at PPFD_ref is more readily interpretable
 #'          as it constitutes a value observed in the ecosystem, in contrast to 
 #'          GPPmax (mostly named 'beta') in the standard model that occurs at infinite light.
-#'          PPFD_ref defaults to 2000 umol m-2 s-1, but other values can be used.
+#'          PPFD_ref defaults to 2000 umol m-2 s-1, but other values can be used. For 
+#'          further details refer to Falge et al. 2001.
 #' 
 #' @note   Note the sign convention. Negative NEE indicates that carbon is taken up
 #'         by the ecosystem. Reco has to be 0 or larger.
@@ -645,9 +635,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
 #' @export
 light.response <- function(data,NEE,Reco,PPFD,PPFD_ref=2000){
 
-  NEE  <- check.columns(data,NEE)
-  Reco <- check.columns(data,Reco)
-  PPFD <- check.columns(data,PPFD)
+  check.input(data,list(NEE,Reco,PPFD))
   
   mod <- nls(-NEE ~ alpha * PPFD / (1 - (PPFD / PPFD_ref) + (alpha * PPFD / GPP_max)) + Reco,
              start=list(alpha=0.02,GPP_max=30))

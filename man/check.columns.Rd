@@ -4,14 +4,20 @@
 \alias{check.columns}
 \title{checks columns in a data frame}
 \usage{
-check.columns(data, column_name)
+check.columns(data, varname)
 }
 \arguments{
-\item{data}{a data.frame or a matrix}
+\item{data}{Input data.frame or a matrix}
 
-\item{column_name}{the column name}
+\item{varname}{Input variable. Must be a character}
 }
 \description{
 check if columns in a data.frame or matrix (or vector variables)
              exist and if they are of the right type (numeric).
+}
+\details{
+The Input variable 'varname' must be of type character. The function
+         searches for the object 'varname' in the parent environment and returns it.
+         The function then ensures that the requirements of the input variable (E.g. does
+         the column exist? Is the input numeric? etc.) is met.
 }

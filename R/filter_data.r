@@ -41,7 +41,13 @@
 #' @param precip.hours    Number of hours removed following a precipitation event (h).
 #'                        Ignored if \code{filter.precip} is FALSE
 #' @param records.per.hour Number of observations per hour. I.e. 2 for half-hourly data.
-#' 
+#' @param filtered.data.to.NA Logical. If TRUE (the default), all variables in the input
+#'                              data.frame/matrix are set to NA for the timestep where ANY of the
+#'                              \code{filter.vars} were beyond their acceptable range (as
+#'                              determined by \code{filter.vals.min} and \code{filter.vals.max}).
+#'                              If FALSE, values are not filtered, and an additional column 'valid'
+#'                              is added to the data.frame/matrix, indicating if any value of a row
+#'                              did (1) or did not fulfill the filter criteria (0).
 #' 
 #' @details This routine consists of two parts:
 #' 
@@ -60,13 +66,18 @@
 #'             or lower than the specified thresholds (\code{filter.vals.min} and \code{filter.vals.max})
 #'             are set to NA for all variables. If a threshold is set to NA, it will be ignored.
 #'          
-#' @return The same data frame as provided as first argument to the function
-#'         with an additional column "valid", which indicates whether the data fulfill 
-#'         the filtering criteria (1) or not (0).
+#' @return If \code{filtered.data.to.NA==TRUE} (default), the input data.frame/matrix with 
+#'         observations which did not fulfill the filter criteria set to NA. 
+#'         If \code{filtered.data.to.NA==FALSE}, the input data.frame/matrix with an additional 
+#'         column "valid", which indicates whether all the data of a timestep fulfill the 
+#'         filtering criteria (1) or not (0).
 #'         
 #' @note Variables considered of bad quality (as specified by the corresponding quality control variables)      
-#'       will be set to NA by this routine. Data that do not fulfill the filtering critera are not set to
-#'       NA but the corresponding "valid" entry is set to 0.
+#'       will be set to NA by this routine. Data that do not fulfill the filtering critera are set to
+#'       NA if \code{filtered.data.to.NA==TRUE}. Note that with this option *all* variables of the same
+#'       time step are set to NA. Alternatively, if \code{filtered.data.to.NA==FALSE} data are not set to NA,
+#'       and a new column "valid" is added to the data.frame/matrix, indicating if any value of a row
+#'       did (1) or did not fulfill the filter criteria (0).
 #' 
 #' @examples 
 #' # Example of data filtering; data are for a month within the growing season,
@@ -95,7 +106,8 @@ filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=F
                         quality.ext="_qc",good.quality=c(0,1),
                         missing.qc.as.bad=TRUE,GPP="GPP",doy="doy",
                         year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
-                        tprecip=0.01,precip.hours=24,records.per.hour=2){
+                        tprecip=0.01,precip.hours=24,records.per.hour=2,
+                        filtered.data.to.NA=TRUE){
   
   
   ### I) Quality control filter
@@ -138,7 +150,7 @@ filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=F
       
       cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) set to NA",fill=TRUE,sep="")
     }
-    cat("-------------------------------------",fill=TRUE)
+    cat("----------------------------------------------------------------",fill=TRUE)
   }
   
   
@@ -148,10 +160,8 @@ filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=F
   # 1) GPP
   growseas_invalid <- numeric()
   if(filter.growseas){
-    doy    <- check.columns(data,doy)
-    year   <- check.columns(data,year)
-    date <- strptime(paste0(year,"-",doy),format="%Y-%j")
-    GPP              <- check.columns(data,GPP)
+    check.input(data,doy,year,GPP)
+    date             <- strptime(paste0(year,"-",doy),format="%Y-%j")
     GPP_daily        <- aggregate(GPP,by=list(strftime(date)),mean,na.rm=TRUE)[,2]
     growing_season   <- filter.growing.season(GPP_daily,tGPP=tGPP,ws=ws,min.int=min.int)
     growseas_invalid <- which(sapply(growing_season,rep,48) == 0)
@@ -160,7 +170,7 @@ filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=F
   # 2) precipitation
   precip_invalid <- numeric()
   if (filter.precip){
-    precip <- check.columns(data,precip)
+    check.input(data,precip)
     if (NA.as.invalid){
       precip_events <- which(precip > tprecip | is.na(precip))
     } else {
@@ -169,7 +179,7 @@ filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=F
     precip_invalid <- unique(as.numeric(unlist(sapply(precip_events, function(x) x:(min(x+precip.hours*records.per.hour,nrow(data),na.rm=TRUE))))))
   }
   
-  # 3) all other filter variables (defined in filter.vars)
+  # 3) all other filter variables (as defined in filter.vars)
   invalids <- list(growseas_invalid,precip_invalid)
   
   if (!is.null(filter.vars)){
@@ -215,8 +225,13 @@ filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=F
   cat(nrow(data) - length(invalid)," valid data points (",100-excl_perc,"%) remaining.",fill=TRUE,sep="")
   
   
-  # 6) return input data frame with additional 'valid' column
-  data_filtered <- data.frame(data,valid)
+  # 6) return input data frame with filtered time steps set to NA or an additional 'valid' column
+  if (filtered.data.to.NA){
+    data_filtered <- data
+    data_filtered[valid < 1,] <- NA
+  } else {
+    data_filtered <- data.frame(data,valid)
+  }
   
   return(data_filtered)
 }

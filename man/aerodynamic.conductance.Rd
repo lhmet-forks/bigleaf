@@ -9,7 +9,7 @@ aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
   fc = NULL, LAI, Cd = 0.2, hs = 0.01, wind_profile = FALSE,
   stab_correction = TRUE, stab_formulation = c("Dyer_1970",
   "Businger_1971"), Rb_model = c("Thom_1972", "Choudhury_1988", "Su_2001",
-  "constant_kB"), kB = NULL, constants = bigleaf.constants())
+  "constant_kB-1"), kB = NULL, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
@@ -116,7 +116,7 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  the argument \code{Rb_model}. The following options are implemented:
  "Thom_1972" is an empirical formulation based on the friction velocity (ustar) (Thom 1972):
  
-   \deqn{Rb = 0.67ustar^0.67}
+   \deqn{Rb = 6.2ustar^-0.667}
    
  The model by Choudhury 1988 ("Choudhury_1988"), calculates Rb
  based on leaf width, LAI and ustar (Note that in the original formulation leaf width

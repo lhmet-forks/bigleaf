@@ -4,7 +4,7 @@
 \alias{stomatal.slope}
 \title{Stomatal slope parameter "g1"}
 \usage{
-stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP_nt",
+stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP",
   Gs = "Gs", VPD = "VPD", Ca = "Ca", model = c("USO", "Ball&Berry",
   "Leuning"), robust.nls = FALSE, nmin = 40, fitg0 = FALSE, g0 = 0,
   fitD0 = FALSE, D0 = 1.5, Gamma = 50, constants = bigleaf.constants())
@@ -115,14 +115,18 @@ mod_Leu <- stomatal.slope(DE_Tha_Jun_2014_2,model="Leuning",GPP="GPP_nt",Gs=Gs_P
 
 }
 \references{
-Medlyn, B.E., et al., 2011: Reconciling the optimal and empirical approaches to
+Medlyn B.E., et al., 2011: Reconciling the optimal and empirical approaches to
             modelling stomatal conductance. Global Change Biology 17, 2134-2144.
             
-            Ball, T.J., Woodrow, I.E., Berry, J.A. 1987: A model predicting stomatal conductance
+            Ball T.J., Woodrow I.E., Berry J.A. 1987: A model predicting stomatal conductance
             and its contribution to the control of photosynthesis under different environmental conditions.
             In: Progress in Photosynthesis Research, edited by J.Biggins, pp. 221-224, Martinus Nijhoff Publishers,
             Dordrecht, Netherlands.
             
-            Leuning, R., 1995: A critical appraisal of a combined stomatal-photosynthesis
+            Leuning R., 1995: A critical appraisal of a combined stomatal-photosynthesis
             model for C3 plants. Plant, Cell and Environment 18, 339-355.
+            
+            Knauer, J. et al., 2017: Towards physiologically meaningful water-
+            use efficiency estimates from eddy covariance data. Global Change Biology.
+            DOI: 10.1111/gcb.13893
 }

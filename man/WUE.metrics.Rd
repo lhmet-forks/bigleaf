@@ -4,7 +4,7 @@
 \alias{WUE.metrics}
 \title{Water-Use Efficiency metrics}
 \usage{
-WUE.metrics(data, GPP = "GPP_nt", NEE = "NEE", LE = "LE", VPD = "VPD",
+WUE.metrics(data, GPP = "GPP", NEE = "NEE", LE = "LE", VPD = "VPD",
   Tair = "Tair", constants = bigleaf.constants())
 }
 \arguments{
@@ -56,7 +56,7 @@ the following metrics are calculated:
 }
 \note{
 Units for VPD can also be hPa. Units change accordingly.
-      WUE_NEE is calculated based on the absolute value of NEE (the sign convention does not matter).
+      WUE_NEE is calculated based on the absolute value of NEE (the sign convention does not matter here).
 }
 \examples{
 ## filter data for dry periods and daytime at DE-Tha in June 2014
@@ -67,7 +67,7 @@ DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,
                                  filter.vals.min=c(5,200,0.2),
                                  filter.vals.max=c(NA,NA,NA),NA.as.invalid=TRUE,
                                  quality.ext="_qc",good.quality=c(0,1),
-                                 missing.qc.as.bad=TRUE,GPP="GPP_nt",doy="doy",
+                                 missing.qc.as.bad=TRUE,GPP="GPP",doy="doy",
                                  year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
                                  tprecip=0.1,precip.hours=24,records.per.hour=2)
 

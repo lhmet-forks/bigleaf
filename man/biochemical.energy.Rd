@@ -20,7 +20,7 @@ Radiant energy absorbed in photosynthesis or heat release by respiration calcula
 }
 \details{
 The following sign convention is employed: NEE is negative when carbon is taken up by the ecosystem.
-         Positive values of the resulting biochemical energy mean that energy is taken up by the ecosystem, 
+         Positive values of the resulting biochemical energy mean that energy (heat) is taken up by the ecosystem, 
          negative ones that heat is released.
          The value of alpha is taken from Nobel 1974 (see Meyers & Hollinger 2004), but other values
          have been used (e.g. Blanken et al., 1997)

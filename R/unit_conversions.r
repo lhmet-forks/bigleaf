@@ -5,7 +5,7 @@
 #' Conversion between latent heat flux and evapotranspiration
 #' 
 #' @description converts evporative water flux from mass (ET=evapotranspiration)
-#'              to energy (LE=latent heat) units, or vice versa.
+#'              to energy (LE=latent heat flux) units, or vice versa.
 #'              
 #' @aliases LE.to.ET ET.to.LE
 #' 
@@ -14,7 +14,7 @@
 #' @param Tair Air temperature (deg C)
 #' 
 #' @details 
-#' The conversion are given by:
+#' The conversions are given by:
 #' 
 #' \deqn{ET = LE/\lambda}
 #' 
@@ -27,16 +27,17 @@
 #' @export
 LE.to.ET <- function(LE,Tair){
   
-  Tair   <- Tair
   lambda <- LE.vaporization(Tair)
   ET     <- LE/lambda
   
   return(ET)
 }
 
+
+#' @rdname LE.to.ET
+#' @export
 ET.to.LE <- function(ET,Tair){
   
-  Tair   <- Tair
   lambda <- LE.vaporization(Tair)
   LE     <- ET*lambda
   
@@ -68,8 +69,6 @@ ET.to.LE <- function(ET,Tair){
 #' 
 #' where Tair is in Kelvin and pressure in Pa (converted internally)
 #' 
-#' @family conductance conversion
-#' 
 #' @references Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.
 #'             2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p
 #'             
@@ -88,7 +87,6 @@ ms.to.mol <- function(G_ms,Tair,pressure,constants=bigleaf.constants()){
 
 
 #' @rdname ms.to.mol
-#' @family conductance conversion
 #' @export
 mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
   Tair     <- Tair + constants$Kelvin
@@ -103,7 +101,8 @@ mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
 
 #' Conversions between humidity measures
 #' 
-#' @description Conversion between vapor pressure, vapor pressure deficit (VPD), specific humidity, and relative humidity.
+#' @description Conversion between vapor pressure (e), vapor pressure deficit (VPD), 
+#'              specific humidity (q), and relative humidity (rH).
 #' 
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Atmospheric pressure (kPa)

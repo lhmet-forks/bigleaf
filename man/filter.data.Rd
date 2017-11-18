@@ -10,7 +10,7 @@ filter.data(data, quality.control = TRUE, vars.qc = NULL,
   quality.ext = "_qc", good.quality = c(0, 1), missing.qc.as.bad = TRUE,
   GPP = "GPP", doy = "doy", year = "year", tGPP = 0.5, ws = 15,
   min.int = 5, precip = "precip", tprecip = 0.01, precip.hours = 24,
-  records.per.hour = 2)
+  records.per.hour = 2, filtered.data.to.NA = TRUE)
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required input variables in 
@@ -68,11 +68,21 @@ Ignored if \code{filter.precip} is FALSE}
 Ignored if \code{filter.precip} is FALSE}
 
 \item{records.per.hour}{Number of observations per hour. I.e. 2 for half-hourly data.}
+
+\item{filtered.data.to.NA}{Logical. If TRUE (the default), all variables in the input
+data.frame/matrix are set to NA for the timestep where ANY of the
+\code{filter.vars} were beyond their acceptable range (as
+determined by \code{filter.vals.min} and \code{filter.vals.max}).
+If FALSE, values are not filtered, and an additional column 'valid'
+is added to the data.frame/matrix, indicating if any value of a row
+did (1) or did not fulfill the filter criteria (0).}
 }
 \value{
-The same data frame as provided as first argument to the function
-        with an additional column "valid", which indicates whether the data fulfill 
-        the filtering criteria (1) or not (0).
+If \code{filtered.data.to.NA==TRUE} (default), the input data.frame/matrix with 
+        observations which did not fulfill the filter criteria set to NA. 
+        If \code{filtered.data.to.NA==FALSE}, the input data.frame/matrix with an additional 
+        column "valid", which indicates whether all the data of a timestep fulfill the 
+        filtering criteria (1) or not (0).
 }
 \description{
 Filters timeseries of EC data for high-quality values and specified
@@ -98,8 +108,11 @@ This routine consists of two parts:
 }
 \note{
 Variables considered of bad quality (as specified by the corresponding quality control variables)      
-      will be set to NA by this routine. Data that do not fulfill the filtering critera are not set to
-      NA but the corresponding "valid" entry is set to 0.
+      will be set to NA by this routine. Data that do not fulfill the filtering critera are set to
+      NA if \code{filtered.data.to.NA==TRUE}. Note that with this option *all* variables of the same
+      time step are set to NA. Alternatively, if \code{filtered.data.to.NA==FALSE} data are not set to NA,
+      and a new column "valid" is added to the data.frame/matrix, indicating if any value of a row
+      did (1) or did not fulfill the filter criteria (0).
 }
 \examples{
 # Example of data filtering; data are for a month within the growing season,

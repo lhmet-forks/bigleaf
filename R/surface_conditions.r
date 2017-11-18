@@ -44,6 +44,9 @@
 #'          only the turbulent conductance part), the results of the functions represent
 #'          conditions outside the canopy boundary layer, i.e. in the canopy airspace.
 #' 
+#' @note If \code{calc.Ca = TRUE} the following sign convention for NEE is employed: 
+#'       negative values of NEE denote net CO2 uptake by the ecosystem.
+#' 
 #' @return a data.frame with the following columns:
 #'         \item{Tsurf}{Surface temperature (deg C)} \cr
 #'         \item{esat_surf}{Saturation vapor pressure at the surface (kPa)} \cr
@@ -62,17 +65,17 @@
 #' # now calculate also surface CO2 concentration
 #' surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1),
 #'                    Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.Csurf=TRUE)
+#'                    
+#' @references Knauer, J. et al., 2017: Towards physiologically meaningful water-
+#'             use efficiency estimates from eddy covariance data. Global Change Biology.
+#'             DOI: 10.1111/gcb.13893
 #'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 #' @export 
 surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",
                                VPD="VPD",Ga="Ga",calc.Csurf=FALSE,Ca="Ca",Ga_CO2="Ga_CO2",
                                NEE="NEE",constants=bigleaf.constants()){
   
-  check.input(data,list(Tair,pressure,LE,H,VPD,Ga))
-  
-  if (calc.Csurf){
-    check.input(data,list(Ca,NEE,Ga_CO2))
-  }
+  check.input(data,Tair,pressure,LE,H,VPD,Ga)
   
   rho   <- air.density(Tair,pressure)
   gamma <- psychrometric.constant(Tair,pressure,constants)
@@ -90,9 +93,11 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
   rH_surf   <- VPD.to.rH(VPD_surf,Tsurf)
   
   # 3) CO2 concentration
-  Ca_surf <- as.numeric(rep(NA,length(Tsurf)))
   if (calc.Csurf){
+    check.input(data,Ca,NEE,Ga_CO2)
     Ca_surf <- Ca.surface(Ca,NEE,Ga_CO2,Tair,pressure)
+  } else {
+    Ca_surf <- as.numeric(rep(NA,length(Tair)))
   }
   
   return(data.frame(Tsurf,esat_surf,esurf,VPD_surf,qsurf,rH_surf,Ca_surf))
@@ -141,7 +146,7 @@ Ca.surface <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 #' @description Radiometric surface temperature from longwave upward radiation
 #'              measurements.
 #'              
-#' @param longwave.up longwave upward radiation (W m-2)
+#' @param longwave_up longwave upward radiation (W m-2)
 #' @param emissivity  infrared emissivity of the surface (-)
 #' @param constants   sigma - Stefan-Boltzmann constant (W m-2 K-4) \cr
 #'                    Kelvin - conversion degree Celsius to Kelvin 
@@ -160,9 +165,9 @@ Ca.surface <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 #' Trad.surface(400,0.98)
 #' 
 #' @export
-Trad.surface<- function(longwave.up,emissivity,constants=bigleaf.constants()){
+Trad.surface<- function(longwave_up,emissivity,constants=bigleaf.constants()){
   
-  Trad.K    <- (longwave.up / (constants$sigma * emissivity))^(1/4)
+  Trad.K    <- (longwave_up / (constants$sigma * emissivity))^(1/4)
   Trad.degC <- Trad.K - constants$Kelvin
   
   return(data.frame(Trad.K,Trad.degC))

@@ -4,12 +4,12 @@
 \alias{bigleaf.Vcmax.Jmax}
 \title{Bulk canopy biochemical parameters Vcmax and Jmax}
 \usage{
-bigleaf.Vcmax.Jmax(data, Temp, GPP, Ci, PPFD, PPFD_j = c(200, 500),
-  PPFD_c = 1000, Oi = 0.21, Kc25 = 404.9, Ko25 = 278.4, Gam25 = 42.75,
-  Kc_Ha = 79.43, Ko_Ha = 36.38, Gam_Ha = 37.83, Vcmax_Ha = 65.33,
-  Vcmax_Hd = 200, Vcmax_dS = 635, Jmax_Ha = 43.9, Jmax_Hd = 200,
-  Jmax_dS = 640, Theta = 0.7, alpha_canopy = 0.8,
-  constants = bigleaf.constants())
+bigleaf.Vcmax.Jmax(data, Temp, GPP, Ci, PPFD, PPFD_j = c(100, 400),
+  PPFD_c = 1000, Reco_Leaf = NULL, Oi = 0.21, Kc25 = 404.9,
+  Ko25 = 278.4, Gam25 = 42.75, Kc_Ha = 79.43, Ko_Ha = 36.38,
+  Gam_Ha = 37.83, Vcmax_Ha = 65.33, Vcmax_Hd = 200, Vcmax_dS = 635,
+  Jmax_Ha = 43.9, Jmax_Hd = 200, Jmax_dS = 640, Theta = 0.7,
+  alpha_canopy = 0.8, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.Frame or matrix with all required columns}
@@ -27,6 +27,8 @@ be RuBP regeneration limited. Defaults to 500 umol m-2 s-1.}
 
 \item{PPFD_c}{PPFD threshold, above which the canopy is considered to 
 be Rubisco limited. Defaults to 1000 umol m-2 s-1.}
+
+\item{Reco_Leaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 
 \item{Oi}{Intercellular O2 concentration (mol mol-1)}
 
@@ -108,7 +110,7 @@ The critical assumption is that bulk canopy photosynthesis is Rubisco-
         and growth conditions.
 }
 \examples{
-carbox.rate(Temp=20,GPP=15,Ci=300,PPFD=1000,PPFD_c=500)  
+bigleaf.Vcmax.Jmax(Temp=20,GPP=15,Ci=300,PPFD=1000,PPFD_j=c(100,400),PPFD_c=1000)  
                                       
 }
 \references{

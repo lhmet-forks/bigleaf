@@ -13,7 +13,7 @@ wind.profile(data, heights, Tair = "Tair", pressure = "pressure",
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
 
-\item{heights}{vector with heights for which wind speed is to be 
+\item{heights}{Vector with heights for which wind speed is to be 
 calculated.}
 
 \item{Tair}{Air temperature (deg C)}

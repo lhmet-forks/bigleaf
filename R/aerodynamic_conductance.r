@@ -148,16 +148,16 @@
 aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H="H",
                                     zr,zh,d,z0m,Dl,N,fc=NULL,LAI,Cd=0.2,hs=0.01,wind_profile=FALSE,
                                     stab_correction=TRUE,stab_formulation=c("Dyer_1970","Businger_1971"),
-                                    Rb_model=c("Thom_1972","Choudhury_1988","Su_2001","constant_kB"),
+                                    Rb_model=c("Thom_1972","Choudhury_1988","Su_2001","constant_kB-1"),
                                     kB=NULL,constants=bigleaf.constants()){
   
   Rb_model         <- match.arg(Rb_model)
   stab_formulation <- match.arg(stab_formulation)
   
-  check.input(data,list(Tair,pressure,wind,ustar,H))
+  check.input(data,Tair,pressure,wind,ustar,H)
   
-  ## calculate boundary layer conductance
-  if (Rb_model != "constant_kB"){
+  ## calculate boundary layer conductance (Gb)
+  if (Rb_model != "constant_kB-1"){
     
     if (Rb_model == "Thom_1972"){
       
@@ -183,7 +183,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
   } else {
     
     if(is.null(kB)){
-      stop("value of kB has to be specified if Rb_model is set to 'constant_kB'!")
+      stop("value of kB-1 has to be specified if Rb_model is set to 'constant_kB-1'!")
     } else {
       Rb     <- kB / (constants$k * ustar)
       Rb_CO2 <- constants$Rbwc * Rb
@@ -192,6 +192,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
     
   }
   
+  ## calculate aerodynamic conductance for momentum (Ga_m)
   if (wind_profile){
     
     if (stab_correction){
@@ -217,6 +218,10 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
       }
     
   } else {
+    
+    if (!missing(zr) | !missing(d) | !missing(z0m) & Rb_model %in% c("constant_kB-1","Thom_1972")){
+      warning("Provided roughness length parameters (zr,d,z0m) are not used if 'wind_profile==FALSE' (the default). Ra_m is calculated as wind / ustar^2")
+    }
     
     Ra_m <- wind / ustar^2
     zeta = psi_h <- rep(NA,length=length(Ra_m))

@@ -32,8 +32,8 @@ eps - ratio of the molecular weight of water vapor to dry air (-)}
 }
 \value{
 a data.frame with the following columns:
-        \item{ET_pot}{potential evapotranspiration (kg m-2 s-1)}
-        \item{LE_pot}{potential latent heat flux (W m-2)}
+        \item{ET_pot}{Potential evapotranspiration (kg m-2 s-1)}
+        \item{LE_pot}{Potential latent heat flux (W m-2)}
 }
 \description{
 Potential evapotranspiration ET_pot according to Priestley & Taylor 1972.

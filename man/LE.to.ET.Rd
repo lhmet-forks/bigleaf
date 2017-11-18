@@ -3,9 +3,12 @@
 \name{LE.to.ET}
 \alias{LE.to.ET}
 \alias{ET.to.LE}
+\alias{ET.to.LE}
 \title{Conversion between latent heat flux and evapotranspiration}
 \usage{
 LE.to.ET(LE, Tair)
+
+ET.to.LE(ET, Tair)
 }
 \arguments{
 \item{LE}{Latent heat flux (W m-2)}
@@ -16,10 +19,10 @@ LE.to.ET(LE, Tair)
 }
 \description{
 converts evporative water flux from mass (ET=evapotranspiration)
-             to energy (LE=latent heat) units, or vice versa.
+             to energy (LE=latent heat flux) units, or vice versa.
 }
 \details{
-The conversion are given by:
+The conversions are given by:
 
 \deqn{ET = LE/\lambda}
 

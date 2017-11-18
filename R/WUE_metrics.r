@@ -42,7 +42,7 @@
 #'         \item{uWUE}{Underlying water-use efficiency (gC kPa (kg H20)-1)}
 #' 
 #' @note Units for VPD can also be hPa. Units change accordingly.
-#'       WUE_NEE is calculated based on the absolute value of NEE (the sign convention does not matter).
+#'       WUE_NEE is calculated based on the absolute value of NEE (the sign convention does not matter here).
 #' 
 #' @references Beer, C., et al., 2009: Temporal and among-site variability of inherent
 #'             water use efficiency at the ecosystem level. Global Biogeochemical Cycles 23, GB2018.
@@ -71,7 +71,7 @@
 WUE.metrics <- function(data,GPP="GPP",NEE="NEE",LE="LE",VPD="VPD",Tair="Tair",
                         constants=bigleaf.constants()){
   
-  check.input(data,list(GPP,NEE,LE,VPD,Tair))
+  check.input(data,GPP,NEE,LE,VPD,Tair)
   
   ET  <- LE.to.ET(LE,Tair)                 # kg H2O s-1
   GPP <- (GPP/1e06 * constants$Cmol)*1000  # gC m-2 s-1

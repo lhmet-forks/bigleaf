@@ -4,9 +4,8 @@
 \alias{intercellular.CO2}
 \title{Bulk intercellular CO2 concentration}
 \usage{
-intercellular.CO2(data, Ca, GPP, Gs, RecoLeaf = NULL, calc.Csurf = FALSE,
-  Ga_CO2 = NULL, NEE = NULL, Tair = NULL, pressure = NULL,
-  constants = bigleaf.constants())
+intercellular.CO2(data, Ca, GPP, Gs, Reco_Leaf = NULL, calc.Csurf = FALSE,
+  Ga_CO2, NEE, Tair, pressure, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.Frame or matrix with all required columns}
@@ -17,7 +16,7 @@ intercellular.CO2(data, Ca, GPP, Gs, RecoLeaf = NULL, calc.Csurf = FALSE,
 
 \item{Gs}{Surface conductance to water vapor (mol m-2 s-1)}
 
-\item{RecoLeaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
+\item{Reco_Leaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 
 \item{calc.Csurf}{Should the derived surface CO2 concentration be used instead of 
 measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.}

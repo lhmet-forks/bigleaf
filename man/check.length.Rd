@@ -4,11 +4,16 @@
 \alias{check.length}
 \title{tests if variables have the same length}
 \usage{
-check.length(...)
+check.length(varlist)
 }
 \arguments{
-\item{...}{variables for which the length has to be compared}
+\item{varlist}{List of variables for which the length has to be compared}
 }
 \description{
 tests if variables have the same length
+}
+\note{
+This function only plays a role if no input data.frame or matrix are 
+      provided. In this case it ensures that provided vectors have the same
+      length to avoid trouble later up the function call.
 }

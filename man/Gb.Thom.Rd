@@ -48,3 +48,6 @@ Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
             Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
             Edition. Elsevier Academic Press, Burlington, USA.
 }
+\seealso{
+\code{\link{Gb.Choudhury}}, \code{\link{Gb.Su}}
+}

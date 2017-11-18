@@ -6,6 +6,7 @@
 #' 
 #' @description 
 #' 
+#' @param data      Data.frame or matrix containing all required variables
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Atmospheric pressure (kPa)
 #' @param ustar     Friction velocity (m s-1)
@@ -31,7 +32,9 @@
 #' MoninObukhov.length(Tair=25,pressure=100,ustar=seq(0.2,1,0.1),H=seq(40,200,20))
 #' 
 #' @export
-MoninObukhov.length <- function(Tair,pressure,ustar,H,constants=bigleaf.constants()){
+MoninObukhov.length <- function(data,Tair,pressure,ustar,H,constants=bigleaf.constants()){
+  
+  check.input(data,Tair,pressure,ustar,H)
   
   rho  <- air.density(Tair,pressure,constants=bigleaf.constants())
   Tair <- Tair + constants$Kelvin
@@ -74,9 +77,9 @@ MoninObukhov.length <- function(Tair,pressure,ustar,H,constants=bigleaf.constant
 stability.parameter <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",
                                 H="H",zr,d,constants=bigleaf.constants()){
   
-  check.input(data,list(Tair,pressure,ustar,H))
+  check.input(data,Tair,pressure,ustar,H)
   
-  MOL  <- MoninObukhov.length(Tair,pressure,ustar,H,constants)
+  MOL  <- MoninObukhov.length(data,Tair,pressure,ustar,H,constants)
   zeta <- (zr - d) / MOL
   
   return(zeta)
@@ -138,7 +141,7 @@ stability.correction <- function(zeta,formulation=c("Dyer_1970","Businger_1971")
   
   formulation  <- match.arg(formulation)
   
-  check.input( ,list(zeta))
+  check.input(NULL,zeta)
   
   psi_h = psi_m <- numeric()
   
@@ -163,8 +166,8 @@ stability.correction <- function(zeta,formulation=c("Dyer_1970","Businger_1971")
   unstable <- zeta < 0 | is.na(zeta)
   psi_h[unstable] <- 2 * log( (1 + y_h[unstable] ) / 2)
   psi_m[unstable] <- 2 * log( (1 + y_m[unstable] ) / 2) +
-    log( ( 1 + y_m[unstable]^2 ) / 2)
-  -2 * atan(y_m[unstable]) + pi/2
+                     log( ( 1 + y_m[unstable]^2 ) / 2)
+                     -2 * atan(y_m[unstable]) + pi/2
   
   return(data.frame(psi_h,psi_m))
   

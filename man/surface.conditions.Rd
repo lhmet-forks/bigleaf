@@ -72,6 +72,10 @@ Canopy surface temperature and humidity are calculated by inverting bulk transfe
          only the turbulent conductance part), the results of the functions represent
          conditions outside the canopy boundary layer, i.e. in the canopy airspace.
 }
+\note{
+If \code{calc.Ca = TRUE} the following sign convention for NEE is employed: 
+      negative values of NEE denote net CO2 uptake by the ecosystem.
+}
 \examples{
 # calculate surface temperature, water vapor, VPD etc. at the surface
 # for a given temperature and turbulent fluxes, and under different 
@@ -81,5 +85,10 @@ surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1)
 # now calculate also surface CO2 concentration
 surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1),
                    Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.Csurf=TRUE)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                   
+}
+\references{
+Knauer, J. et al., 2017: Towards physiologically meaningful water-
+            use efficiency estimates from eddy covariance data. Global Change Biology.
+            DOI: 10.1111/gcb.13893
 }

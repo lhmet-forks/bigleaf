@@ -36,6 +36,8 @@
 #'             Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
 #'             Edition. Elsevier Academic Press, Burlington, USA.
 #' 
+#' @seealso \code{\link{Gb.Choudhury}}, \code{\link{Gb.Su}}
+#' 
 #' @examples 
 #' Gb.Thom(seq(0.1,1.4,0.1))
 #' 
@@ -127,7 +129,7 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
   
   stab_formulation <- match.arg(stab_formulation)
   
-  check.input(data,list(Tair,pressure,wind,ustar,H))
+  check.input(data,Tair,pressure,wind,ustar,H)
   
   alpha   <- 4.39 - 3.97*exp(-0.258*LAI)
   wind_zh <- wind.profile(data=data,heights=zh,Tair=Tair,pressure=pressure,ustar=ustar,H=H,
@@ -248,7 +250,7 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
   
   stab_formulation <- match.arg(stab_formulation)
   
-  check.input(data,list(Tair,pressure,ustar,wind,H))
+  check.input(data,Tair,pressure,ustar,wind,H)
   
   if (is.null(fc)) {
     if (is.null(LAI)){

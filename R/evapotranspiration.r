@@ -23,8 +23,8 @@
 #'          \deqn{LE_pot = (\alpha * \Delta * (Rn - G - S)) / (\Delta + \gamma)}
 #'
 #' @return a data.frame with the following columns:
-#'         \item{ET_pot}{potential evapotranspiration (kg m-2 s-1)}
-#'         \item{LE_pot}{potential latent heat flux (W m-2)}
+#'         \item{ET_pot}{Potential evapotranspiration (kg m-2 s-1)}
+#'         \item{LE_pot}{Potential latent heat flux (W m-2)}
 #'         
 #' @note If the first argument 'data' is provided (either a matrix or a data.frame),
 #'       the following variables can be provided as character (in which case they are interpreted as
@@ -43,22 +43,20 @@
 ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,alpha=1.26,
                    missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,constants=bigleaf.constants()){
   
-  check.input(data,list(Tair,pressure,Rn))
+  check.input(data,Tair,pressure,Rn,G,S)
   
   if(!is.null(G)){
-    check.input(data,list(G))
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
-    warning("ground heat flux G is not provided and set to 0.",call.=FALSE)
-    G <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
+    warning("ground heat flux G is not provided and set to 0.")
+    G <- rep(0,length(Tair))
   }
   
   if(!is.null(S)){
-    check.input(data,list(S))
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
-    warning("Energy storage fluxes S are not provided and set to 0.",call.=FALSE)
-    S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
+    warning("Energy storage fluxes S are not provided and set to 0.")
+    S <- rep(0,length(Tair))
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
@@ -128,22 +126,20 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
                    G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                    constants=bigleaf.constants()){
   
-  check.input(data,list(Tair,pressure,VPD,Rn,Ga))
+  check.input(data,Tair,pressure,VPD,Rn,Ga,G,S)
   
   if(!is.null(G)){
-    check.input(data,list(G))
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
-    warning("ground heat flux G is not provided and set to 0.")
-    G <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
+    warning("Ground heat flux G is not provided and set to 0.")
+    G <- rep(0,length(Tair))
   }
   
   if(!is.null(S)){
-    check.input(data,list(S))
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
     warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
+    S <- rep(0,length(Tair))
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
@@ -151,7 +147,7 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
   rho    <- air.density(Tair,pressure)
   
   LE_ref <- (Delta * (Rn - G - S) + rho * constants$cp * VPD * Ga) / 
-    (Delta + gamma * (1 + Ga / Gs))
+            (Delta + gamma * (1 + Ga / Gs))
   
   ET_ref <- LE.to.ET(LE_ref,Tair)
   
@@ -195,14 +191,14 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #'          
 #'          \deqn{ET_imp = (\rho * cp * VPD * Gs * \lambda) / \gamma}
 #' 
-#' @note Surface conductance (Gs) is calculated with \code{\link{surface.conductance}}.
+#' @note Surface conductance (Gs) can be calculated with \code{\link{surface.conductance}}.
 #'       Aerodynamic conductance (Ga) can be calculated using \code{\link{aerodynamic.conductance}}.
 #'       
 #' @return a data.frame with the following columns:
-#'         \item{ET_eq}{equilibrium ET (kg m-2 s-1)}
-#'         \item{ET_imp}{imposed ET (kg m-2 s-1)}
-#'         \item{LE_eq}{equilibrium LE (W m-2)}
-#'         \item{LE_imp}{imposed LE (W m-2)}      
+#'         \item{ET_eq}{Equilibrium ET (kg m-2 s-1)}
+#'         \item{ET_imp}{Imposed ET (kg m-2 s-1)}
+#'         \item{LE_eq}{Equilibrium LE (W m-2)}
+#'         \item{LE_imp}{Imposed LE (W m-2)}      
 #' 
 #' @references Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
 #'             scaling up from leaf to region. Advances in Ecological Research 15, 1-49.
@@ -213,29 +209,27 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #' @examples 
 #' df <- data.frame(Tair=20,pressure=100,VPD=seq(0.5,4,0.5),
 #'                  Gs=seq(0.01,0.002,length.out=8),Rn=seq(50,400,50))            
-#' ET.components(df)            
+#' ET.eq.imp(df)            
 #'             
 #' @export
-ET.components <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
+ET.eq.imp <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
                           Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                           constants=bigleaf.constants()){
   
-  check.input(data,list(Tair,pressure,VPD,Rn,Gs))
+  check.input(data,Tair,pressure,VPD,Rn,Gs,G,S)
   
   if(!is.null(G)){
-    check.input(data,list(G))
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
     warning("ground heat flux G is not provided and set to 0.")
-    G <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
+    G <- rep(0,length(Tair))
   }
   
   if(!is.null(S)){
-    check.input(data,list(S))
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
     warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,ifelse(!missing(data),nrow(data),length(Tair)))
+    S <- rep(0,length(Tair))
   }
   
   rho    <- air.density(Tair,pressure)

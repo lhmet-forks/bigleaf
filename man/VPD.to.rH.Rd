@@ -43,7 +43,8 @@ VPD.to.q(VPD, Tair, pressure, constants = bigleaf.constants())
 \item{q}{Specific humidity (kg kg-1)}
 }
 \description{
-Conversion between vapor pressure, vapor pressure deficit (VPD), specific humidity, and relative humidity.
+Conversion between vapor pressure (e), vapor pressure deficit (VPD), 
+             specific humidity (q), and relative humidity (rH).
 }
 \references{
 Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.

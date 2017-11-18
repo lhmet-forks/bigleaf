@@ -4,9 +4,12 @@
 \alias{MoninObukhov.length}
 \title{Monin-Obukhov length}
 \usage{
-MoninObukhov.length(Tair, pressure, ustar, H, constants = bigleaf.constants())
+MoninObukhov.length(data, Tair, pressure, ustar, H,
+  constants = bigleaf.constants())
 }
 \arguments{
+\item{data}{Data.frame or matrix containing all required variables}
+
 \item{Tair}{Air temperature (deg C)}
 
 \item{pressure}{Atmospheric pressure (kPa)}

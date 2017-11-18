@@ -4,10 +4,10 @@
 \alias{Trad.surface}
 \title{Radiometric surface temperature}
 \usage{
-Trad.surface(longwave.up, emissivity, constants = bigleaf.constants())
+Trad.surface(longwave_up, emissivity, constants = bigleaf.constants())
 }
 \arguments{
-\item{longwave.up}{longwave upward radiation (W m-2)}
+\item{longwave_up}{longwave upward radiation (W m-2)}
 
 \item{emissivity}{infrared emissivity of the surface (-)}
 

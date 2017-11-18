@@ -65,15 +65,12 @@
 #' 
 #' @export
 intercellular.CO2 <- function(data,Ca,GPP,Gs,Reco_Leaf=NULL,calc.Csurf=FALSE,
-                              Ga_CO2=NULL,NEE=NULL,Tair=NULL,pressure=NULL,
-                              constants=bigleaf.constants()){
+                              Ga_CO2,NEE,Tair,pressure,constants=bigleaf.constants()){
   
-  check.input(data,list(Ca,GPP,Gs))
-
+  check.input(data,Ca,GPP,Gs)
+  
   if (calc.Csurf){
-    
-    check.input(data,list(Tair,pressure,Ga_CO2,NEE))
-    
+    check.input(data,Ca,GPP,Gs,Tair,pressure,Ga_CO2,NEE)
     Ca <- Ca.surface(Ca,NEE,Ga_CO2,Tair,pressure)
   }
   
@@ -201,7 +198,7 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=10
                                Theta=0.7,alpha_canopy=0.8,
                                constants=bigleaf.constants()){
   
-  check.input(data,list(Temp,GPP,Ci,PPFD))
+  check.input(data,Temp,GPP,Ci,PPFD)
   
   Temp <- Temp + constants$Kelvin
   Tref <- 25.0 + constants$Kelvin
@@ -418,6 +415,10 @@ Arrhenius.temp.response <- function(param,Temp,Ha=NULL,Hd=NULL,dS=NULL,
 #'             
 #'             Leuning R., 1995: A critical appraisal of a combined stomatal-photosynthesis
 #'             model for C3 plants. Plant, Cell and Environment 18, 339-355.
+#'             
+#'             Knauer, J. et al., 2017: Towards physiologically meaningful water-
+#'             use efficiency estimates from eddy covariance data. Global Change Biology.
+#'             DOI: 10.1111/gcb.13893
 #' 
 #' @examples 
 #' ## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
@@ -635,7 +636,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
 #' @export
 light.response <- function(data,NEE,Reco,PPFD,PPFD_ref=2000){
 
-  check.input(data,list(NEE,Reco,PPFD))
+  check.input(data,NEE,Reco,PPFD)
   
   mod <- nls(-NEE ~ alpha * PPFD / (1 - (PPFD / PPFD_ref) + (alpha * PPFD / GPP_max)) + Reco,
              start=list(alpha=0.02,GPP_max=30))

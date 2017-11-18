@@ -4,7 +4,7 @@
 \alias{Arrhenius.temp.response}
 \title{(Modified) Arrhenius temperature response function}
 \usage{
-Arrhenius.temp.response(param, Temp, Ha, Hd = NULL, dS = NULL,
+Arrhenius.temp.response(param, Temp, Ha = NULL, Hd = NULL, dS = NULL,
   constants = bigleaf.constants())
 }
 \arguments{
@@ -25,20 +25,37 @@ Rgas - universal gas constant (J mol-1 K-1)}
 param25 - value of the input parameter at the reference temperature of 25degC (umol m-2 s-1)
 }
 \description{
-Common or modified (i.e. with temperature optimum - if the deactivation
-             energy and entropy term are provided) Arrhenius function describing
+(Modified) Arrhenius function describing
              the temperature response of biochemical parameters.
 }
 \details{
-\deqn{Vcmax25 = Vcmax / 
-                            ( exp(Vcmax_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
-                            (1 + exp((Tref*dS - Vcmax_Hd) / (Tref * constants$Rgas))) /
-                            (1 + exp((Temp*dS - Vcmax_Hd) / (Temp * constants$Rgas)))
-                            )
-               }
+The temperature response is given by a modified form of the Arrhenius
+         function:
+
+            \deqn{param25 = param / 
+                        ( exp(Ha * (Temp - Tref) / (Tref*Rgas*Temp)) *
+                        (1 + exp((Tref*dS - Hd) / (Tref * Rgas))) /
+                        (1 + exp((Temp*dS - Hd) / (Temp * Rgas)))
+                        )
+                 }
+                 
+         where param is the value/rate of the parameter at measurement temperature,
+         Temp is temperature in K, Tref is reference temperature (298.15K), and Rgas
+         is the universal gas constant (8.314 J K-1 mol-1). Ha is the activation
+         energy (kJ mol-1), Hd is the deactivation energy (kJ mol-1), and dS the
+         entropy term (J mol-1 K-1) of the respective parameter.
+         
+         If either Hd or dS or both are not provided, the equation above reduces
+         to the first term (i.e. the common Arrhenius equation without the deactivation
+         term.)
 }
 \references{
-Kattge J., Knorr W., 2007: Temperature acclimation in a biochemical
+Johnson F.H., Eyring H., Williams R.W. 1942: 
+            The nature of enzyme inhibitions in bacterial luminescence: sulfanilamide,
+            urethane, temperature and pressure. Journal of cellular and comparative
+            physiology 20, 247-268.
+
+            Kattge J., Knorr W., 2007: Temperature acclimation in a biochemical
             model of photosynthesis: a reanalysis of data from 36 species.
             Plant, Cell and Environment 30, 1176-1190.
 }

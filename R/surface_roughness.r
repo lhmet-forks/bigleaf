@@ -2,7 +2,6 @@
 #### Surface roughness ####
 ###########################
 
-
 #' Roughness Reynolds Number
 #' 
 #' @description calculates the Roughness Reynolds Number.
@@ -18,6 +17,8 @@
 #' @details The Roughness Reynolds Number is calculated as in Massman 1999a:
 #'          
 #'          \deqn{Re = z0m * ustar / v}
+#'          
+#'          where v is the kinematic viscosity (m2 s-1).
 #'          
 #' @return \item{Re -}{Roughness Reynolds Number (-)}
 #' 
@@ -154,7 +155,7 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
     
   } else if (method == "wind_profile"){
     
-    check.input(data,list(Tair,pressure,wind,ustar,H))
+    check.input(data,Tair,pressure,wind,ustar,H)
     
     if (is.null(d)){
       
@@ -243,7 +244,7 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
   
   stab_formulation <- match.arg(stab_formulation)
   
-  check.input(data,list(Tair,pressure,ustar,H))
+  check.input(data,Tair,pressure,ustar,H)
   
   wind_heights <- data.frame(matrix(NA,ncol=length(heights),nrow=length(Tair)))
   colnames(wind_heights) <- paste0(heights,"m")

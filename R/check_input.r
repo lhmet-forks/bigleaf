@@ -7,18 +7,23 @@
 #' @description Checks length and type of the provided input variables.
 #' 
 #' @param data   Input data.frame or matrix
-#' @param vars   Input variables. MUST be a list, provided as list(...)
+#' @param ...    Input variables. Either a list or individual vectors
 #' 
 #' 
-check.input <- function(data,vars){
+check.input <- function(data,...){
+
+  check.length(list(...))
   
-  check.length(vars)
+  if (missing(data)){
+    data <- NULL
+  }
   
-  arg       <- deparse(substitute(vars))
-  var_names <- trimws(unlist(strsplit(substr(arg,6,nchar(arg)-1),",")))
-  
-  for (i in seq_along(vars)){
-    assign(var_names[i],check.columns(data,vars[[i]],var_names[i]),envir=sys.frame(-1))
+  varlist  <- match.call()[-c(1,2)]
+  varnames <- c(unlist(sapply(varlist,as.character)))
+  varnames <- varnames[!varnames %in% c("c","list")]
+
+  for (i in seq_along(varnames)){
+    assign(varnames[i],check.columns(data,varnames[i]),envir=sys.frame(-1))
   } 
   
 }
@@ -30,45 +35,58 @@ check.input <- function(data,vars){
 #'              exist and if they are of the right type (numeric).
 #' 
 #' @param data     Input data.frame or a matrix
-#' @param var      Input variable 
-#' @param var_name Name of the input variable
+#' @param varname  Input variable. Must be a character 
 #' 
-#' @details The Input variable can be of type character or numeric. If character,
-#'          it is interpreted as the column name of the input data.frame / matrix.
-#'          If numeric, it is interpreted as a direct input to the function.
-#'          In both cases, the requirements of the input is checked (E.g. does
-#'          the column exist? Is the input numeric? etc.)
-check.columns <- function(data,var,var_name){
+#' @details The Input variable 'varname' must be of type character. The function
+#'          searches for the object 'varname' in the parent environment and returns it.
+#'          The function then ensures that the requirements of the input variable (E.g. does
+#'          the column exist? Is the input numeric? etc.) is met.
+#'          
+check.columns <- function(data,varname){
   
-  if (missing(var_name)){
-    var_name <- ""
+  n <- -3
+  
+  var <- get0(varname,envir=sys.frame(n),ifnotfound="notfound")
+  
+  if (length(var) < 2){
+    if (is.null(var)){
+      return()
+    } else if (is.na(var)){
+      return()
+    } else if (var == "notfound"){  # required for standalone check.columns() call
+      var <- varname
+    }
   }
   
   if (is.character(var)){
-    if (!missing(data)){
+    if (!missing(data) & !is.null(data)){
       if (length(var) == 1){
         if (var %in% colnames(data)){
           var <- data[,var]
           if (is.numeric(var)){
             return(unname(var))
           } else {
-            stop("variable '",var_name,"' must be numeric",call.=FALSE)
+            stop("variable '",var,"' must be numeric",call.=FALSE)
           }
         } else {
-          stop ("variable '",var_name,"' does not exist in the input matrix/data.frame",call.=FALSE)
+          stop ("variable '",var,"' does not exist in the input matrix/data.frame",call.=FALSE)
         }
       } else {
-        stop("name of variable '",var_name,"' must have length 1",call.=FALSE)
+        stop("name of variable '",var,"' must have length 1",call.=FALSE)
       } 
     } else {
-      if ("data" %in% names(formals(sys.function(which=-2)))){
-        stop("variable '",var_name,"' is of type character and interpreted as a column name, but no input matrix/data.frame is provided. Provide '",var_name,"' as a numeric vector, or an input matrix/data.frame with a column named '",var_name,"'",call.=FALSE)
+      if ("data" %in% names(formals(sys.function(which=n)))){
+        if (var %in% as.character(unlist(match.call(def=sys.function(n),call=sys.call(n))[-1]))){
+          stop("variable '",var,"' is of type character and interpreted as a column name, but no input matrix/data.frame is provided. Provide '",var,"' as a numeric vector, or an input matrix/data.frame with a column named '",var,"'",call.=FALSE)
+        } else {
+          stop("variable '",var,"' is not provided",call.=FALSE)
+        }
       } else {
-        stop("variable '",var_name,"' must be numeric",call.=FALSE)
+        stop("variable '",varname,"' must be numeric",call.=FALSE)
       }
     }
   } else {
-    if (!missing(data)){
+    if (!missing(data) & !is.null(data)){
       if (is.numeric(var) & length(var) == nrow(data)){
         return(unname(var))
       } else if (is.numeric(var) & length(var) != nrow(data)) {
@@ -76,16 +94,16 @@ check.columns <- function(data,var,var_name){
           var <- rep(var,length=nrow(data))
           return(unname(var))
         } else {
-          stop("variable '",var_name,"' must have the same number of observations as the input matrix/data.frame or length 1",call.=FALSE)
+          stop("variable '",varname,"' must have the same length as the input matrix/data.frame or length 1. Do NOT provide an input matrix/data.frame if none of its variables are used!",call.=FALSE)
         }
       } else if (!is.numeric(var)){
-        stop("variable '",var_name,"' must be numeric",call.=FALSE)
+        stop("variable '",varname,"' must be numeric",call.=FALSE)
       }
     } else {
       if (is.numeric(var)){
         return(unname(var))
       } else {
-        stop("variable '",var_name,"' must be numeric",call.=FALSE)
+        stop("variable '",varname,"' must be numeric",call.=FALSE)
       } 
     } 
   }
@@ -94,20 +112,24 @@ check.columns <- function(data,var,var_name){
 
 #' tests if variables have the same length
 #' 
-#' @param input_list List of variables for which the length has to be compared
+#' @param varlist List of variables for which the length has to be compared
 #' 
 #' @note This function only plays a role if no input data.frame or matrix are 
 #'       provided. In this case it ensures that provided vectors have the same
 #'       length to avoid trouble later up the function call.
 #'       
-check.length <- function(input_list){
+check.length <- function(varlist){
   
-  length.vars <- sapply(input_list,length)
+  if (is.list(unlist(varlist,recursive=FALSE))){
+    varlist <- unlist(varlist,recursive=FALSE)
+  }
+  
+  length.vars <- sapply(varlist,length)
+  length.vars <- length.vars[length.vars > 0]
   
   if (length(unique(length.vars)) >= 2){
-    if (unique(length.vars)[1] != 1 | length(unique(length.vars)) > 2){
-      stop("All input variables must have the same length or have a length of 1!",call.=FALSE)
+    if (sort(unique(length.vars))[1] != 1 | length(unique(length.vars)) > 2){
+      stop("All input variables must have the same length or a length of 1!",call.=FALSE)
     }
   }
 }
-

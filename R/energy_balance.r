@@ -10,8 +10,8 @@
 #' @param NEE     Net ecosystem exchange (umol CO2 m-2 s-1)
 #' @param alpha   Energy taken up/released by photosynthesis/respiration (J umol-1)
 #' 
-#' @details The following sign convention is employed: NEE is positive when carbon is taken up by the ecosystem.
-#'          Positive values of the resulting biochemical energy mean that energy is taken up by the ecosystem, 
+#' @details The following sign convention is employed: NEE is negative when carbon is taken up by the ecosystem.
+#'          Positive values of the resulting biochemical energy mean that energy (heat) is taken up by the ecosystem, 
 #'          negative ones that heat is released.
 #'          The value of alpha is taken from Nobel 1974 (see Meyers & Hollinger 2004), but other values
 #'          have been used (e.g. Blanken et al., 1997)
@@ -30,12 +30,12 @@
 #'             
 #' @examples 
 #' # Calculate biochemical energy taken up by the ecosystem with 
-#' # a measured NEE of 30umol CO2 m-2 s-1             
-#' biochemical.energy(NEE=30)            
+#' # a measured NEE of -30umol CO2 m-2 s-1             
+#' biochemical.energy(NEE=-30)            
 #'            
 #' @export 
 biochemical.energy <- function(NEE,alpha=0.422){
-  Sp <- alpha*NEE
+  Sp <- alpha*-NEE
   return(Sp)
 }
 
@@ -124,21 +124,19 @@ energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
 energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneous=FALSE,
                            missing.G.as.NA=FALSE,missing.S.as.NA=FALSE){
   
-  check.input(data,list(Rn,LE,H))
+  check.input(data,Rn,LE,H,G,S)
   
   if(!is.null(G)){
-    check.input(data,list(G))
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
-    warning("ground heat flux G is not provided and set to 0.")
+    warning("Ground heat flux G is not provided and set to 0.")
     G <- rep(0,ifelse(!missing(data),nrow(data),length(Rn)))
   }
   
   if(!is.null(S)){
-    check.columns(data,list(S))
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
-    warning("Energy storage fluxes S are not provided and set to 0.",call.=FALSE)
+    warning("Energy storage fluxes S are not provided and set to 0.")
     S <- rep(0,ifelse(!missing(data),nrow(data),length(Rn)))
   }
   
@@ -198,7 +196,7 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
 isothermal.Rn <- function(data,Rn="Rn",Tair="Tair",Tsurf="Tsurf",emissivity,
                           constants=bigleaf.constants()){
   
-  check.input(data,list(Rn,Tair,Tsurf))
+  check.input(data,Rn,Tair,Tsurf)
   
   Tair  <- Tair + constants$Kelvin
   Tsurf <- Tsurf + constants$Kelvin

@@ -44,9 +44,17 @@ check.input <- function(data,...){
 #'          
 check.columns <- function(data,varname){
   
-  n <- -3
+  
+  if (sys.call(-2)[[1]] == "check.input"){
+    n <- -3
+  } else if (sys.call(-2)[[1]] != "check.input" & sys.call(-1)[[1]] == "assign"){
+    n <- -2
+  } else {
+    n <- -1
+  }
   
   var <- get0(varname,envir=sys.frame(n),ifnotfound="notfound")
+  
   
   if (length(var) < 2){
     if (is.null(var)){
@@ -94,6 +102,8 @@ check.columns <- function(data,varname){
           var <- rep(var,length=nrow(data))
           return(unname(var))
         } else {
+          cat(nrow(data),fill=T)
+          cat(length(var))
           stop("variable '",varname,"' must have the same length as the input matrix/data.frame or length 1. Do NOT provide an input matrix/data.frame if none of its variables are used!",call.=FALSE)
         }
       } else if (!is.numeric(var)){

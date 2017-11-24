@@ -609,8 +609,8 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
 #'          \deqn{NEE = \alpha PPFD / (1 - (PPFD / PPFD_ref) + \alpha 
 #'                       PPFD / GPPmax)- Reco}
 #'                       
-#'          where \code{\alpha} is the ecosystem quantum yield (umol CO2 m-2 s-1) (umol quanta m-2 s-1)-1, 
-#'          and GPPmax is the GPP at the reference PPFD (usually at saturating light). \code{\alpha} 
+#'          where \eqn{\alpha} is the ecosystem quantum yield (umol CO2 m-2 s-1) (umol quanta m-2 s-1)-1, 
+#'          and GPPmax is the GPP at the reference PPFD (usually at saturating light). \eqn{\alpha} 
 #'          represents the slope of the light response curve, and is a measure for the light use
 #'          efficiency of the canopy. 
 #'          

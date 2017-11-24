@@ -36,8 +36,8 @@
 #' 
 #'  \deqn{Gs = ( LE * Ga * \gamma ) / ( \Delta * A + \rho * cp * Ga * VPD - LE * ( \Delta + \gamma ) )}
 #'  
-#'  Where \code{\gamma} is the psychrometric constant (kPa K-1), \code{\Delta} is the slope of the 
-#'  saturation vapor pressure curve (kPa K-1), and \code{\rho} is air density (kg m-3).
+#'  Where \eqn{\gamma} is the psychrometric constant (kPa K-1), \eqn{\Delta} is the slope of the 
+#'  saturation vapor pressure curve (kPa K-1), and \eqn{\rho} is air density (kg m-3).
 #'  Available energy (A) is defined as A = Rn - G - S. If G and/or S are not provided, A = Rn.
 #'  
 #'  By default, any missing data in G and S are set to 0. If arguments \code{missing.S.as.NA} or \code{missing.S.as.NA} are 

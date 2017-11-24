@@ -76,7 +76,7 @@ check.columns <- function(data,varname){
       } 
     } else {
       if ("data" %in% names(formals(sys.function(which=n)))){
-        if (var %in% as.character(unlist(match.call(def=sys.function(n),call=sys.call(n))[-1]))){
+        if (var %in% as.character(unlist(match.call(definition=sys.function(n),call=sys.call(n))[-1]))){
           stop("variable '",var,"' is of type character and interpreted as a column name, but no input matrix/data.frame is provided. Provide '",var,"' as a numeric vector, or an input matrix/data.frame with a column named '",var,"'",call.=FALSE)
         } else {
           stop("variable '",var,"' is not provided",call.=FALSE)

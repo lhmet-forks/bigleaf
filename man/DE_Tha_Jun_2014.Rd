@@ -34,7 +34,7 @@
    \item{NEE}{Net ecosystem exchange (umol m-2 s-1)}
    \item{NEE_qc}{Quality control of \code{NEE}}
    \item{GPP}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}
-   \item{GPP_qc}{Quality control of \code{GPP_nt}}
+   \item{GPP_qc}{Quality control of \code{GPP}}
  }}
 \source{
 original data were downloaded from

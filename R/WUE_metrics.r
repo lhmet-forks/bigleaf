@@ -64,7 +64,7 @@
 #'                                  tprecip=0.1,precip.hours=24,records.per.hour=2)
 #' 
 #' ## calculate WUE metrics in the filtered periods
-#' WUE.metrics(DE_Tha_Jun_2014_2[DE_Tha_Jun_2014_2[,"valid"] > 0,])
+#' WUE.metrics(DE_Tha_Jun_2014_2)
 #'                         
 #' @importFrom stats median                                     
 #' @export

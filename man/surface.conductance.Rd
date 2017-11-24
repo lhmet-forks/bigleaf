@@ -92,13 +92,13 @@ DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,
                                  filter.vals.min=c(5,200,0.2,0),
                                  filter.vals.max=c(NA,NA,NA,NA),NA.as.invalid=TRUE,
                                  quality.ext="_qc",good.quality=c(0,1),
-                                 missing.qc.as.bad=TRUE,GPP="GPP_nt",doy="doy",
+                                 missing.qc.as.bad=TRUE,GPP="GPP",doy="doy",
                                  year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
                                  tprecip=0.1,precip.hours=24,records.per.hour=2)
 
 # calculate Gs based on a simple gradient approach
 Gs_gradient <- surface.conductance(DE_Tha_Jun_2014_2,Tair="Tair",pressure="pressure",
-                                   VPD="VPD",PM=FALSE)
+                                   VPD="VPD",formulation="FluxGradient")
 summary(Gs_gradient)
 
 # calculate Gs from the the inverted PM equation (now Rn, and Ga are needed),

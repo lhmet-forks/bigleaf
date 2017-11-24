@@ -254,7 +254,7 @@ LE.vaporization <- function(Tair) {
 wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
   
   gamma  <- psychrometric.constant(Tair,pressure)
-  ea     <- VPD.to.e(VPD,pressure,Tair)
+  ea     <- VPD.to.e(VPD,Tair)
   
   wetbulb <- function(ea,gamma,Tair){
     mod <- nls(ea ~ Esat(Tw)[,"Esat"] - 0.93*gamma*(Tair - Tw),start=list(Tw=Tair),algorithm="port")
@@ -275,7 +275,6 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #'              cooled to become saturated (i.e. e = esat(Td))
 #'
 #' @param Tair     Air temperature (degC)
-#' @param pressure Atmospheric pressure (kPa)                           
 #' @param VPD      Vapor pressure deficit (kPa)
 #' 
 #' @details Dew point temperature (Td) is defined by:
@@ -290,13 +289,13 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #'             3rd edition. Academic Press, London.
 #'             
 #' @examples
-#' dew.point(25,100,1.5)                
+#' dew.point(25,1.5)                
 #' 
 #' @importFrom stats nls 
 #' @export              
-dew.point <- function(Tair,pressure,VPD){
+dew.point <- function(Tair,VPD){
   
-  ea     <- VPD.to.e(VPD,pressure,Tair)
+  ea     <- VPD.to.e(VPD,Tair)
   
   dewpoint <- function(ea,Tair){
     mod <- nls(ea ~ Esat(Td)[,"Esat"],start=list(Td=Tair),algorithm="port")
@@ -339,7 +338,7 @@ dew.point <- function(Tair,pressure,VPD){
 #' @export
 virtual.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
   
-  e    <- VPD.to.e(VPD,pressure,Tair)
+  e    <- VPD.to.e(VPD,Tair)
   Tair <- Tair + constants$Kelvin
   
   Tv <- Tair / (1 - (1 - constants$eps) * e/pressure) 

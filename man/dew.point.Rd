@@ -4,12 +4,10 @@
 \alias{dew.point}
 \title{Dew point}
 \usage{
-dew.point(Tair, pressure, VPD)
+dew.point(Tair, VPD)
 }
 \arguments{
 \item{Tair}{Air temperature (degC)}
-
-\item{pressure}{Atmospheric pressure (kPa)}
 
 \item{VPD}{Vapor pressure deficit (kPa)}
 }
@@ -28,7 +26,7 @@ Dew point temperature (Td) is defined by:
          which is solved for Td using \code{\link[stats]{nls}}.
 }
 \examples{
-dew.point(25,100,1.5)                
+dew.point(25,1.5)                
 
 }
 \references{

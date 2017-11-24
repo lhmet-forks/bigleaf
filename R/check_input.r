@@ -22,9 +22,8 @@ check.input <- function(data,...){
   varnames <- c(unlist(sapply(varlist,as.character)))
   varnames <- varnames[!varnames %in% c("c","list")]
 
-  for (i in seq_along(varnames)){
-    assign(varnames[i],check.columns(data,varnames[i]),envir=sys.frame(-1))
-  } 
+  invisible(mapply(assign,varnames,check.columns(data,varnames),
+                   MoreArgs=list(envir=sys.frame(-1))))
   
 }
 
@@ -102,8 +101,6 @@ check.columns <- function(data,varname){
           var <- rep(var,length=nrow(data))
           return(unname(var))
         } else {
-          cat(nrow(data),fill=T)
-          cat(length(var))
           stop("variable '",varname,"' must have the same length as the input matrix/data.frame or length 1. Do NOT provide an input matrix/data.frame if none of its variables are used!",call.=FALSE)
         }
       } else if (!is.numeric(var)){

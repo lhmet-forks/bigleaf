@@ -22,8 +22,8 @@ check.input <- function(data,...){
   varnames <- c(unlist(sapply(varlist,as.character)))
   varnames <- varnames[!varnames %in% c("c","list")]
 
-  invisible(mapply(assign,varnames,check.columns(data,varnames),
-                   MoreArgs=list(envir=sys.frame(-1))))
+  invisible(mapply(assign,varnames,list(check.columns(data,varnames)),
+                  MoreArgs=list(envir=sys.frame(-1))))
   
 }
 
@@ -51,7 +51,7 @@ check.columns <- function(data,varname){
   } else {
     n <- -1
   }
-  
+
   var <- get0(varname,envir=sys.frame(n),ifnotfound="notfound")
   
   

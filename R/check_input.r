@@ -40,13 +40,13 @@ check.input <- function(data,...){
             if (is.numeric(var)){
               assign(varname,var,pos=sys.frame(-1))
             } else {
-              stop("variable '",var,"' must be numeric",call.=FALSE)
+              stop("column representing '",varname,"' in the input matrix/data.frame must be numeric",call.=FALSE)
             }
           } else {
-            stop ("variable '",var,"' does not exist in the input matrix/data.frame",call.=FALSE)
+            stop ("there is no column named '",var,"' in the input matrix/data.frame",call.=FALSE)
           }
         } else {
-          stop("name of variable '",var,"' must have length 1",call.=FALSE)
+          stop("name of variable '",varname,"' must have length 1",call.=FALSE)
         }
       } else {
         if ("data" %in% names(formals(sys.function(which=-1)))){

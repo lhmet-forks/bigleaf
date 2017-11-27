@@ -40,23 +40,23 @@ check.input <- function(data,...){
             if (is.numeric(var)){
               assign(varname,var,pos=sys.frame(-1))
             } else {
-              stop("variable '",varname,"' must be numeric",call.=FALSE)
+              stop("variable '",var,"' must be numeric",call.=FALSE)
             }
           } else {
-            stop ("variable '",varname,"' does not exist in the input matrix/data.frame",call.=FALSE)
+            stop ("variable '",var,"' does not exist in the input matrix/data.frame",call.=FALSE)
           }
         } else {
-          stop("name of variable '",varname,"' must have length 1",call.=FALSE)
+          stop("name of variable '",var,"' must have length 1",call.=FALSE)
         }
       } else {
         if ("data" %in% names(formals(sys.function(which=-1)))){
           if (var %in% as.character(unlist(match.call(definition=sys.function(-1),call=sys.call(-1))[-1]))){
-            stop("variable '",varname,"' is of type character and interpreted as a column name, but no input matrix/data.frame is provided. Provide '",varname,"' as a numeric vector, or an input matrix/data.frame with a column named '",varname,"'",call.=FALSE)
+            stop("variable '",var,"' is of type character and interpreted as a column name, but no input matrix/data.frame is provided. Provide '",var,"' as a numeric vector, or an input matrix/data.frame with a column named '",var,"'",call.=FALSE)
           } else {
-            stop("variable '",varname,"' is not provided",call.=FALSE)
+            stop("variable '",var,"' is not provided",call.=FALSE)
           }
         } else {
-          stop("variable '",varname,"' must be numeric",call.=FALSE)
+          stop("variable '",var,"' must be numeric",call.=FALSE)
         }
       }
     } else {

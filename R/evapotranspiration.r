@@ -43,7 +43,7 @@
 ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,alpha=1.26,
                    missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,constants=bigleaf.constants()){
   
-  check.input(data,Tair,pressure,Rn,G,S)
+  check.input(data,list(Tair,pressure,Rn,G,S))
   
   if(!is.null(G)){
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
@@ -126,7 +126,7 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
                    G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                    constants=bigleaf.constants()){
   
-  check.input(data,Tair,pressure,VPD,Rn,Ga,G,S)
+  check.input(data,list(Tair,pressure,VPD,Rn,Ga,G,S))
   
   if(!is.null(G)){
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
@@ -216,7 +216,7 @@ ET.eq.imp <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
                           Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                           constants=bigleaf.constants()){
   
-  check.input(data,Tair,pressure,VPD,Rn,Gs,G,S)
+  check.input(data,list(Tair,pressure,VPD,Rn,Gs,G,S))
   
   if(!is.null(G)){
     if (!missing.G.as.NA){G[is.na(G)] <- 0}

@@ -124,7 +124,7 @@ energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
 energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneous=FALSE,
                            missing.G.as.NA=FALSE,missing.S.as.NA=FALSE){
   
-  check.input(data,Rn,LE,H,G,S)
+  check.input(data,list(Rn,LE,H,G,S))
   
   if(!is.null(G)){
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
@@ -196,7 +196,7 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
 isothermal.Rn <- function(data,Rn="Rn",Tair="Tair",Tsurf="Tsurf",emissivity,
                           constants=bigleaf.constants()){
   
-  check.input(data,Rn,Tair,Tsurf)
+  check.input(data,list(Rn,Tair,Tsurf))
   
   Tair  <- Tair + constants$Kelvin
   Tsurf <- Tsurf + constants$Kelvin

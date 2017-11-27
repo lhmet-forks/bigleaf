@@ -151,9 +151,10 @@ filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=F
     ## data quality
     cat("Quality control:",fill=TRUE)
     for (var in vars.qc){
-      assign(var,check.columns(data,var))
-      assign(paste0(var,quality.ext),check.columns(data,paste0(var,quality.ext))) # create variable "*_qc", make quality check before
-      
+      var_qc <- paste0(var,quality.ext)
+      check.input(data,var)
+      check.input(data,var_qc)
+
       if (missing.qc.as.bad){
         data[get(paste0(var,quality.ext)) > max(good.quality) | is.na(get(paste0(var,quality.ext))),var] <- NA   # exclude bad quality data or those where qc flag is not available
         qc_invalid      <- sum(get(paste0(var,quality.ext)) > max(good.quality) | is.na(get(paste0(var,quality.ext)))) # count & report
@@ -182,7 +183,7 @@ filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=F
     growing_season   <- filter.growing.season(GPP_daily,tGPP=tGPP,ws=ws,min.int=min.int)
     growseas_invalid <- which(sapply(growing_season,rep,48) == 0)
   }
-  
+
   # 2) precipitation
   precip_invalid <- numeric()
   if (filter.precip){
@@ -194,7 +195,7 @@ filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=F
     }
     precip_invalid <- unique(as.numeric(unlist(sapply(precip_events, function(x) x:(min(x+precip.hours*records.per.hour,nrow(data),na.rm=TRUE))))))
   }
-  
+
   # 3) all other filter variables (as defined in filter.vars)
   invalids <- list(growseas_invalid,precip_invalid)
   
@@ -202,7 +203,7 @@ filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=F
     for (var in filter.vars){
       v  <- which(filter.vars == var)
       vf <- v + 2
-      assign(var,check.columns(data,var))
+      check.input(data,var)
       if (NA.as.invalid){
         invalids[[vf]] <- which(get(var) < filter.vals.min[v] | get(var) > filter.vals.max[v] | is.na(get(var)))
       } else {

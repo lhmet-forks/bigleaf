@@ -118,14 +118,14 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
   
   if (formulation == "FluxGradient"){
   
-    check.input(data,Tair,pressure,VPD,LE)
+    check.input(data,list(Tair,pressure,VPD,LE))
     
     Gs_mol <- (LE.to.ET(LE,Tair)/constants$Mw) * pressure / VPD
     Gs_ms  <- mol.to.ms(Gs_mol,Tair,pressure)
     
   } else if (formulation == "PenmanMonteith"){
     
-    check.input(data,Tair,pressure,VPD,LE,Rn,Ga,G,S)
+    check.input(data,list(Tair,pressure,VPD,LE,Rn,Ga,G,S))
     
     if(!is.null(G)){
       if (!missing.G.as.NA){G[is.na(G)] <- 0}

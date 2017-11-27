@@ -34,7 +34,7 @@
 #' @export
 MoninObukhov.length <- function(data,Tair,pressure,ustar,H,constants=bigleaf.constants()){
   
-  check.input(data,Tair,pressure,ustar,H)
+  check.input(data,list(Tair,pressure,ustar,H))
   
   rho  <- air.density(Tair,pressure,constants=bigleaf.constants())
   Tair <- Tair + constants$Kelvin
@@ -77,7 +77,7 @@ MoninObukhov.length <- function(data,Tair,pressure,ustar,H,constants=bigleaf.con
 stability.parameter <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",
                                 H="H",zr,d,constants=bigleaf.constants()){
   
-  check.input(data,Tair,pressure,ustar,H)
+  check.input(data,list(Tair,pressure,ustar,H))
   
   MOL  <- MoninObukhov.length(data,Tair,pressure,ustar,H,constants)
   zeta <- (zr - d) / MOL

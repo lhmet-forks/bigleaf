@@ -75,7 +75,7 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
                                VPD="VPD",Ga="Ga",calc.Csurf=FALSE,Ca="Ca",Ga_CO2="Ga_CO2",
                                NEE="NEE",constants=bigleaf.constants()){
   
-  check.input(data,Tair,pressure,LE,H,VPD,Ga)
+  check.input(data,list(Tair,pressure,LE,H,VPD,Ga))
   
   rho   <- air.density(Tair,pressure)
   gamma <- psychrometric.constant(Tair,pressure,constants)

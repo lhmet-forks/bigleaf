@@ -154,8 +154,8 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
   Rb_model         <- match.arg(Rb_model)
   stab_formulation <- match.arg(stab_formulation)
   
-  check.input(data,Tair,pressure,wind,ustar,H)
-  
+  check.input(data,list(Tair,pressure,wind,ustar,H))
+
   ## calculate boundary layer conductance (Gb)
   if (Rb_model != "constant_kB-1"){
     

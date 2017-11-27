@@ -67,10 +67,10 @@
 intercellular.CO2 <- function(data,Ca,GPP,Gs,Reco_Leaf=NULL,calc.Csurf=FALSE,
                               Ga_CO2,NEE,Tair,pressure,constants=bigleaf.constants()){
   
-  check.input(data,Ca,GPP,Gs)
+  check.input(data,list(Ca,GPP,Gs))
   
   if (calc.Csurf){
-    check.input(data,Ca,GPP,Gs,Tair,pressure,Ga_CO2,NEE)
+    check.input(data,list(Ca,GPP,Gs,Tair,pressure,Ga_CO2,NEE))
     Ca <- Ca.surface(Ca,NEE,Ga_CO2,Tair,pressure)
   }
   
@@ -198,7 +198,7 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=10
                                Theta=0.7,alpha_canopy=0.8,
                                constants=bigleaf.constants()){
   
-  check.input(data,Temp,GPP,Ci,PPFD)
+  check.input(data,list(Temp,GPP,Ci,PPFD))
   
   Temp <- Temp + constants$Kelvin
   Tref <- 25.0 + constants$Kelvin
@@ -469,7 +469,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
   model <- match.arg(model)
   
   check.input(data,list(Tair,pressure,GPP,Gs,VPD,Ca))
-  
+
   df <- data.frame(Tair,pressure,GPP,Gs,VPD,Ca)
   
   if (model == "Leuning"){
@@ -635,7 +635,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
 #' @export
 light.response <- function(data,NEE,Reco,PPFD,PPFD_ref=2000){
 
-  check.input(data,NEE,Reco,PPFD)
+  check.input(data,list(NEE,Reco,PPFD))
   
   mod <- nls(-NEE ~ alpha * PPFD / (1 - (PPFD / PPFD_ref) + (alpha * PPFD / GPP_max)) + Reco,
              start=list(alpha=0.02,GPP_max=30))

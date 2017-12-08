@@ -15,6 +15,7 @@
 #'       vector. In the latter case, the input variable has to be named as "var" or
 #'       "var_qc".
 #' 
+#' @keywords internal
 check.input <- function(data,...){
 
   vars <- check.length(list(...))
@@ -100,7 +101,8 @@ check.input <- function(data,...){
 #' @note This function only plays a role if no input data.frame or matrix are 
 #'       provided. In this case it ensures that provided vectors have the same
 #'       length to avoid trouble later up the function call.
-#'   
+#'       
+#' @keywords internal
 check.length <- function(varlist){
   
   if (is.list(unlist(varlist,recursive=FALSE))){

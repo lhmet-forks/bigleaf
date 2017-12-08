@@ -4,12 +4,12 @@
 \alias{bigleaf.Vcmax.Jmax}
 \title{Bulk canopy biochemical parameters Vcmax and Jmax}
 \usage{
-bigleaf.Vcmax.Jmax(data, Temp, GPP, Ci, PPFD, PPFD_j = c(100, 400),
-  PPFD_c = 1000, Reco_Leaf = NULL, Oi = 0.21, Kc25 = 404.9,
-  Ko25 = 278.4, Gam25 = 42.75, Kc_Ha = 79.43, Ko_Ha = 36.38,
-  Gam_Ha = 37.83, Vcmax_Ha = 65.33, Vcmax_Hd = 200, Vcmax_dS = 635,
-  Jmax_Ha = 43.9, Jmax_Hd = 200, Jmax_dS = 640, Theta = 0.7,
-  alpha_canopy = 0.8, constants = bigleaf.constants())
+bigleaf.Vcmax.Jmax(data, Temp, GPP = "GPP", Ci, PPFD = "PPFD",
+  PPFD_j = c(100, 400), PPFD_c = 1000, Reco_Leaf = NULL, Oi = 0.21,
+  Kc25 = 404.9, Ko25 = 278.4, Gam25 = 42.75, Kc_Ha = 79.43,
+  Ko_Ha = 36.38, Gam_Ha = 37.83, Vcmax_Ha = 65.33, Vcmax_Hd = 200,
+  Vcmax_dS = 0.635, Jmax_Ha = 43.9, Jmax_Hd = 200, Jmax_dS = 0.64,
+  Theta = 0.7, alpha_canopy = 0.8, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.Frame or matrix with all required columns}
@@ -49,13 +49,13 @@ at 25 degC (umol mol-1)}
 
 \item{Vcmax_Hd}{Deactivation energy for Vcmax (kJ mol-1)}
 
-\item{Vcmax_dS}{Entropy term for Vcmax (J mol-1 K-1)}
+\item{Vcmax_dS}{Entropy term for Vcmax (kJ mol-1 K-1)}
 
 \item{Jmax_Ha}{Activation energy for Jmax (kJ mol-1)}
 
 \item{Jmax_Hd}{Deactivation energy for Jmax (kJ mol-1)}
 
-\item{Jmax_dS}{Entropy term for Jmax (J mol-1 K-1)}
+\item{Jmax_dS}{Entropy term for Jmax (kJ mol-1 K-1)}
 
 \item{Theta}{Curvature term in the light response function of J (-)}
 

@@ -15,9 +15,10 @@ check.input(data, ...)
 Checks length and type of the provided input variables.
 }
 \note{
-this function can be run for named variables (in which case the return
+This function can be run for named variables (in which case the return
       value will be named according to the given name), or for placeholder
       variables that are assigned and named according to e.g. entries of a character 
       vector. In the latter case, the input variable has to be named as "var" or
       "var_qc".
 }
+\keyword{internal}

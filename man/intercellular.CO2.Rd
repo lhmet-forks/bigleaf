@@ -4,8 +4,9 @@
 \alias{intercellular.CO2}
 \title{Bulk intercellular CO2 concentration}
 \usage{
-intercellular.CO2(data, Ca, GPP, Gs, Reco_Leaf = NULL, calc.Csurf = FALSE,
-  Ga_CO2, NEE, Tair, pressure, constants = bigleaf.constants())
+intercellular.CO2(data, Ca = "Ca", GPP = "GPP", Gs = "Gs",
+  Reco_Leaf = NULL, calc.Csurf = FALSE, Ga_CO2, NEE = "NEE",
+  Tair = "Tair", pressure = "pressure", constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.Frame or matrix with all required columns}

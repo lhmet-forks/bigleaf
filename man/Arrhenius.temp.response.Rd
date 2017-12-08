@@ -4,7 +4,7 @@
 \alias{Arrhenius.temp.response}
 \title{(Modified) Arrhenius temperature response function}
 \usage{
-Arrhenius.temp.response(param, Temp, Ha = NULL, Hd = NULL, dS = NULL,
+Arrhenius.temp.response(param, Temp, Ha, Hd, dS,
   constants = bigleaf.constants())
 }
 \arguments{
@@ -16,7 +16,7 @@ Arrhenius.temp.response(param, Temp, Ha = NULL, Hd = NULL, dS = NULL,
 
 \item{Hd}{Deactivation energy for param (kJ mol-1)}
 
-\item{dS}{Entropy term for param (J mol-1 K-1)}
+\item{dS}{Entropy term for param (kJ mol-1 K-1)}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 Rgas - universal gas constant (J mol-1 K-1)}
@@ -29,7 +29,9 @@ param25 - value of the input parameter at the reference temperature of 25degC (u
              the temperature response of biochemical parameters.
 }
 \details{
-The temperature response is given by a modified form of the Arrhenius
+The function returns the biochemical rate at a reference
+         temperature of 25degC given a predefined temperature response function.
+         This temperature response is given by a modified form of the Arrhenius
          function:
 
             \deqn{param25 = param / 
@@ -43,7 +45,7 @@ The temperature response is given by a modified form of the Arrhenius
          Temp is temperature in K, Tref is reference temperature (298.15K), and Rgas
          is the universal gas constant (8.314 J K-1 mol-1). Ha is the activation
          energy (kJ mol-1), Hd is the deactivation energy (kJ mol-1), and dS the
-         entropy term (J mol-1 K-1) of the respective parameter.
+         entropy term (kJ mol-1 K-1) of the respective parameter.
          
          If either Hd or dS or both are not provided, the equation above reduces
          to the first term (i.e. the common Arrhenius equation without the deactivation

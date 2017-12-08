@@ -7,7 +7,7 @@
 energy.use.efficiency(GPP, alpha = 0.422, Rn)
 }
 \arguments{
-\item{GPP}{Gross ecosystem productivity (umol CO2 m-2 s-1)}
+\item{GPP}{Gross primary productivity exchange (umol CO2 m-2 s-1)}
 
 \item{alpha}{Energy taken up/released by photosynthesis/respiration (J umol-1)}
 
@@ -17,7 +17,15 @@ energy.use.efficiency(GPP, alpha = 0.422, Rn)
 \item{EUE -}{Energy use efficiency (-)}
 }
 \description{
-Fraction of net radiation fixed by biochemical energy.
+Fraction of net radiation fixed by primary productivity.
+}
+\details{
+Energy use efficiency is calculated as:
+
+         \deqn{EUE = sum(GPP)/sum(Rn)}
+         
+         where the sums are calculated for complete cases of GPP and Rn over
+         the entire time period.
 }
 \examples{
 energy.use.efficiency(GPP=20,Rn=500)

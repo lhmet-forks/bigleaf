@@ -64,8 +64,9 @@
 #' # note the sign convention for NEE
 #' 
 #' @export
-intercellular.CO2 <- function(data,Ca,GPP,Gs,Reco_Leaf=NULL,calc.Csurf=FALSE,
-                              Ga_CO2,NEE,Tair,pressure,constants=bigleaf.constants()){
+intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Reco_Leaf=NULL,calc.Csurf=FALSE,
+                              Ga_CO2,NEE="NEE",Tair="Tair",pressure="pressure",
+                              constants=bigleaf.constants()){
   
   check.input(data,list(Ca,GPP,Gs))
   
@@ -113,10 +114,10 @@ intercellular.CO2 <- function(data,Ca,GPP,Gs,Reco_Leaf=NULL,calc.Csurf=FALSE,
 #' @param Gam_Ha     Activation energy for Gam (kJ mol-1)
 #' @param Vcmax_Ha   Activation energy for Vcmax (kJ mol-1)
 #' @param Vcmax_Hd   Deactivation energy for Vcmax (kJ mol-1)
-#' @param Vcmax_dS   Entropy term for Vcmax (J mol-1 K-1)
+#' @param Vcmax_dS   Entropy term for Vcmax (kJ mol-1 K-1)
 #' @param Jmax_Ha    Activation energy for Jmax (kJ mol-1)
 #' @param Jmax_Hd    Deactivation energy for Jmax (kJ mol-1)
-#' @param Jmax_dS    Entropy term for Jmax (J mol-1 K-1)
+#' @param Jmax_dS    Entropy term for Jmax (kJ mol-1 K-1)
 #' @param Theta      Curvature term in the light response function of J (-)
 #' @param alpha_canopy Canopy absorptance (-)
 #' @param constants    Kelvin - conversion degree Celsius to Kelvin \cr
@@ -191,10 +192,10 @@ intercellular.CO2 <- function(data,Ca,GPP,Gs,Reco_Leaf=NULL,calc.Csurf=FALSE,
 #' bigleaf.Vcmax.Jmax(Temp=20,GPP=15,Ci=300,PPFD=1000,PPFD_j=c(100,400),PPFD_c=1000)  
 #'                                       
 #' @export                  
-bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=1000,
+bigleaf.Vcmax.Jmax <- function(data,Temp,GPP="GPP",Ci,PPFD="PPFD",PPFD_j=c(100,400),PPFD_c=1000,
                                Reco_Leaf=NULL,Oi=0.21,Kc25=404.9,Ko25=278.4,Gam25=42.75,
                                Kc_Ha=79.43,Ko_Ha=36.38,Gam_Ha=37.83,Vcmax_Ha=65.33,Vcmax_Hd=200,
-                               Vcmax_dS=635,Jmax_Ha=43.9,Jmax_Hd=200,Jmax_dS=640,
+                               Vcmax_dS=0.635,Jmax_Ha=43.9,Jmax_Hd=200,Jmax_dS=0.640,
                                Theta=0.7,alpha_canopy=0.8,
                                constants=bigleaf.constants()){
   
@@ -206,16 +207,12 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=10
   Kc_Ha    <- Kc_Ha * 1000
   Ko_Ha    <- Ko_Ha * 1000
   Gam_Ha   <- Gam_Ha * 1000
-  Vcmax_Ha <- Vcmax_Ha * 1000
-  Vcmax_Hd <- Vcmax_Hd * 1000
-  Jmax_Ha  <- Jmax_Ha * 1000
-  Jmax_Hd  <- Jmax_Hd * 1000
-  
+
   # Temperature dependencies of photosynthetic parameters 
   Kc  <- Kc25 * exp(Kc_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
   Ko  <- Ko25 * exp(Ko_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
   Gam <- Gam25 * exp(Gam_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
-  Ko <- Ko / 1000
+  Ko  <- Ko / 1000
   
   # Presumed limitation states 
   GPPc = GPPj <- GPP
@@ -233,8 +230,9 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=10
 
   # calculate Jmax from J
   APPFD_PSII <- PPFD * alpha_canopy * 0.85 * 0.5
-  dat <- data.frame(J,APPFD_PSII)
-  dat <- dat[complete.cases(dat),]
+  dat        <- data.frame(J,APPFD_PSII)
+  complete   <- complete.cases(dat)
+  dat        <- dat[complete.cases(dat),]
   if (nrow(dat) > 0){
     Jmax <- sapply(c(1:nrow(dat)), function(x) tryCatch(summary(nls(J ~ c((APPFD_PSII + Jmax - 
                                                             sqrt((APPFD_PSII + Jmax)^2 - 
@@ -251,19 +249,24 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=10
   }
   
   # calculate Vcmax25 and Jmax25
-  Vcmax25 <- Arrhenius.temp.response(Vcmax,Temp-constants$Kelvin,Ha=Vcmax_Ha/1000,
-                                     Hd=Vcmax_Hd/1000,dS=Vcmax_dS,constants=constants)
+  Vcmax25 <- Arrhenius.temp.response(Vcmax,Temp-constants$Kelvin,Ha=Vcmax_Ha,
+                                     Hd=Vcmax_Hd,dS=Vcmax_dS,constants=constants)
   
-  Jmax25 <- Arrhenius.temp.response(Jmax,Temp-constants$Kelvin,Ha=Jmax_Ha/1000,
-                                    Hd=Jmax_Hd/1000,dS=Jmax_dS,constants=constants)
+  Jmax25 <- Arrhenius.temp.response(Jmax,Temp[complete]-constants$Kelvin,Ha=Jmax_Ha,
+                                    Hd=Jmax_Hd,dS=Jmax_dS,constants=constants)
   
-  Vcmax25_MEAN <- mean(Vcmax25,na.rm=T)
-  Vcmax25_SE   <- sd(Vcmax25)/sqrt((sum(!is.na(Vcmax25))))
-  Jmax25_MEAN  <- mean(Jmax25,na.rm=T)
-  Jmax25_SE    <- sd(Jmax25)/sqrt((sum(!is.na(Jmax25))))
+  # remove extreme outliers
+  Vcmax25[abs(Vcmax25) > 2*sd(Vcmax25,na.rm=TRUE) | is.na(Vcmax25)] <- NA
+  Jmax25[abs(Jmax25) > 2*sd(Jmax25,na.rm=TRUE) | is.na(Jmax25)] <- NA
   
-  return(c("Vcmax25_MEAN"=Vcmax25_MEAN,"Vcmax25_SE"=Vcmax25_SE,
-           "Jmax25_MEAN"=Jmax25_MEAN,"Jmax25_SE"=Jmax25_SE))
+  # calculate medians and standard errors of the median
+  Vcmax25_Mean <- median(Vcmax25,na.rm=TRUE)
+  Vcmax25_SE   <- 1.253 * sd(Vcmax25,na.rm=TRUE)/sqrt((sum(!is.na(Vcmax25))))
+  Jmax25_Mean  <- median(Jmax25,na.rm=TRUE)
+  Jmax25_SE    <- 1.253 * sd(Jmax25,na.rm=TRUE)/sqrt((sum(!is.na(Jmax25))))
+  
+  return(c("Vcmax25_Mean"=Vcmax25_Mean,"Vcmax25_SE"=Vcmax25_SE,
+           "Jmax25_Mean"=Jmax25_Mean,"Jmax25_SE"=Jmax25_SE))
 }
 
 
@@ -278,11 +281,13 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=10
 #' @param Temp  Measurement temperature (degC)
 #' @param Ha    Activation energy for param (kJ mol-1)
 #' @param Hd    Deactivation energy for param (kJ mol-1)
-#' @param dS    Entropy term for param (J mol-1 K-1)
+#' @param dS    Entropy term for param (kJ mol-1 K-1)
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
 #'                  Rgas - universal gas constant (J mol-1 K-1)
 #'                  
-#' @details The temperature response is given by a modified form of the Arrhenius
+#' @details The function returns the biochemical rate at a reference
+#'          temperature of 25degC given a predefined temperature response function.
+#'          This temperature response is given by a modified form of the Arrhenius
 #'          function:
 #' 
 #'             \deqn{param25 = param / 
@@ -296,7 +301,7 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=10
 #'          Temp is temperature in K, Tref is reference temperature (298.15K), and Rgas
 #'          is the universal gas constant (8.314 J K-1 mol-1). Ha is the activation
 #'          energy (kJ mol-1), Hd is the deactivation energy (kJ mol-1), and dS the
-#'          entropy term (J mol-1 K-1) of the respective parameter.
+#'          entropy term (kJ mol-1 K-1) of the respective parameter.
 #'          
 #'          If either Hd or dS or both are not provided, the equation above reduces
 #'          to the first term (i.e. the common Arrhenius equation without the deactivation
@@ -312,35 +317,37 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP,Ci,PPFD,PPFD_j=c(100,400),PPFD_c=10
 #'             Kattge J., Knorr W., 2007: Temperature acclimation in a biochemical
 #'             model of photosynthesis: a reanalysis of data from 36 species.
 #'             Plant, Cell and Environment 30, 1176-1190.
-Arrhenius.temp.response <- function(param,Temp,Ha=NULL,Hd=NULL,dS=NULL,
-                                    constants=bigleaf.constants()){
+#'             
+#' @export             
+Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.constants()){
   
   Temp <- Temp + constants$Kelvin
   Tref <- 25.0 + constants$Kelvin
   
-  Ha <- Ha * 1000
-  Hd <- Hd * 1000
+  Ha <- ifelse(missing(Ha),NA,Ha*1000)
+  Hd <- ifelse(missing(Hd),NA,Hd*1000)
+  dS <- ifelse(missing(dS),NA,dS*1000)
   
-  if (is.null(Ha)){
+  if (is.na(Ha)){
     
     stop("Activation energy (Ha) has to be provided!")
     
   }
   
-  if (is.null(Hd) & is.null(dS)){
+  if (is.na(Hd) & is.na(dS)){
     
     param25 <- param / exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
   
-  } else if (!is.null(Hd) & !is.null(dS)){
+  } else if (!is.na(Hd) & !is.na(dS)){
     
-    param25 <- param / 
+    param25 <- param /
       ( exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
-          (1 + exp((Tref*dS - Hd) / (Tref * constants$Rgas))) /
-          (1 + exp((Temp*dS - Hd) / (Temp * constants$Rgas)))
+        (1 + exp((Tref*dS - Hd) / (Tref * constants$Rgas))) /
+        (1 + exp((Temp*dS - Hd) / (Temp * constants$Rgas)))
       )
     
-  } else if ((!is.null(Hd) & is.null(dS)) | (is.null(Hd) & !is.null(dS)) ){
-    
+  } else if ((!is.na(Hd) & is.na(dS)) | (is.na(Hd) & !is.na(dS)) ){
+
     warning("Both Hd and dS have to be provided for a temperature response
              that considers a temperature optimum and a deactivation term!
              Continue considering activation energy (Ha) only...")
@@ -633,7 +640,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
 #' @importFrom stats nls
 #' 
 #' @export
-light.response <- function(data,NEE,Reco,PPFD,PPFD_ref=2000){
+light.response <- function(data,NEE="NEE",Reco="Reco",PPFD="PPFD",PPFD_ref=2000){
 
   check.input(data,list(NEE,Reco,PPFD))
   

@@ -44,11 +44,18 @@ biochemical.energy <- function(NEE,alpha=0.422){
 
 #' Energy use efficiency (EUE)
 #' 
-#' @description Fraction of net radiation fixed by biochemical energy.
+#' @description Fraction of net radiation fixed by primary productivity.
 #' 
-#' @param GPP     Gross ecosystem productivity (umol CO2 m-2 s-1)
+#' @param GPP     Gross primary productivity exchange (umol CO2 m-2 s-1)
 #' @param alpha   Energy taken up/released by photosynthesis/respiration (J umol-1)
 #' @param Rn      Net radiation (W m-2)
+#' 
+#' @details Energy use efficiency is calculated as:
+#' 
+#'          \deqn{EUE = sum(GPP)/sum(Rn)}
+#'          
+#'          where the sums are calculated for complete cases of GPP and Rn over
+#'          the entire time period.
 #' 
 #' @return \item{EUE -}{Energy use efficiency (-)}
 #' 
@@ -58,7 +65,7 @@ biochemical.energy <- function(NEE,alpha=0.422){
 #' @export 
 energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
   
-  Sp <- biochemical.energy(GPP,alpha)
+  Sp <- biochemical.energy(-GPP,alpha)
   
   comp  <- complete.cases(Sp,Rn) 
   

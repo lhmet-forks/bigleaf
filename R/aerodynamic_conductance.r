@@ -219,7 +219,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
     
   } else {
     
-    if (!missing(zr) | !missing(d) | !missing(z0m) & Rb_model %in% c("constant_kB-1","Thom_1972")){
+    if ((!missing(zr) | !missing(d) | !missing(z0m)) & Rb_model %in% c("constant_kB-1","Thom_1972")){
       warning("Provided roughness length parameters (zr,d,z0m) are not used if 'wind_profile==FALSE' (the default). Ra_m is calculated as wind / ustar^2")
     }
     

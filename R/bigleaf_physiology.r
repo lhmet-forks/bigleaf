@@ -260,13 +260,13 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP="GPP",Ci,PPFD="PPFD",PPFD_j=c(100,4
   Jmax25[abs(Jmax25) > 2*sd(Jmax25,na.rm=TRUE) | is.na(Jmax25)] <- NA
   
   # calculate medians and standard errors of the median
-  Vcmax25_Mean <- median(Vcmax25,na.rm=TRUE)
-  Vcmax25_SE   <- 1.253 * sd(Vcmax25,na.rm=TRUE)/sqrt((sum(!is.na(Vcmax25))))
-  Jmax25_Mean  <- median(Jmax25,na.rm=TRUE)
-  Jmax25_SE    <- 1.253 * sd(Jmax25,na.rm=TRUE)/sqrt((sum(!is.na(Jmax25))))
+  Vcmax25_Median <- median(Vcmax25,na.rm=TRUE)
+  Vcmax25_SE     <- 1.253 * sd(Vcmax25,na.rm=TRUE)/sqrt((sum(!is.na(Vcmax25))))
+  Jmax25_Median  <- median(Jmax25,na.rm=TRUE)
+  Jmax25_SE      <- 1.253 * sd(Jmax25,na.rm=TRUE)/sqrt((sum(!is.na(Jmax25))))
   
-  return(c("Vcmax25_Mean"=Vcmax25_Mean,"Vcmax25_SE"=Vcmax25_SE,
-           "Jmax25_Mean"=Jmax25_Mean,"Jmax25_SE"=Jmax25_SE))
+  return(c("Vcmax25"=Vcmax25_Mean,"Vcmax25_SE"=Vcmax25_SE,
+           "Jmax25"=Jmax25_Mean,"Jmax25_SE"=Jmax25_SE))
 }
 
 

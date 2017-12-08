@@ -213,7 +213,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
       } else {
         
         Ra_m  <- pmax((log((zr - d)/z0m)),0) / (constants$k*ustar)
-        zeta = psi_h <- rep(NA,length=length(Ra_m))
+        zeta = psi_h <- rep(NA_integer_,length=length(Ra_m))
         
       }
     
@@ -224,7 +224,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
     }
     
     Ra_m <- wind / ustar^2
-    zeta = psi_h <- rep(NA,length=length(Ra_m))
+    zeta = psi_h <- rep(NA_integer_,length=length(Ra_m))
     
   }
   

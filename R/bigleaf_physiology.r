@@ -265,8 +265,8 @@ bigleaf.Vcmax.Jmax <- function(data,Temp,GPP="GPP",Ci,PPFD="PPFD",PPFD_j=c(100,4
   Jmax25_Median  <- median(Jmax25,na.rm=TRUE)
   Jmax25_SE      <- 1.253 * sd(Jmax25,na.rm=TRUE)/sqrt((sum(!is.na(Jmax25))))
   
-  return(c("Vcmax25"=Vcmax25_Mean,"Vcmax25_SE"=Vcmax25_SE,
-           "Jmax25"=Jmax25_Mean,"Jmax25_SE"=Jmax25_SE))
+  return(c("Vcmax25"=Vcmax25_Median,"Vcmax25_SE"=Vcmax25_SE,
+           "Jmax25"=Jmax25_Median,"Jmax25_SE"=Jmax25_SE))
 }
 
 

@@ -15,7 +15,7 @@ light.use.efficiency(GPP, PPFD)
 \item{LUE -}{Light use efficiency (-)}
 }
 \description{
-amount of carbon fixed (GPP) per incoming light.
+Amount of carbon fixed (GPP) per incoming light.
 }
 \details{
 Light use efficiency is calculated as

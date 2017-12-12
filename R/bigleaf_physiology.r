@@ -655,7 +655,7 @@ light.response <- function(data,NEE="NEE",Reco="Reco",PPFD="PPFD",PPFD_ref=2000)
 
 #' Light use efficiency (LUE)
 #' 
-#' @description amount of carbon fixed (GPP) per incoming light.
+#' @description Amount of carbon fixed (GPP) per incoming light.
 #' 
 #' @param GPP     Gross ecosystem productivity (umol CO2 m-2 s-1)
 #' @param PPFD    Photosynthetic photon flux density (umol quanta m-2 s-1)
@@ -683,6 +683,45 @@ light.use.efficiency <- function(GPP,PPFD){
   return(c("LUE"=LUE))
 }
   
+
+
+#' Stomatal sensitivity to VPD
+#' 
+#' @description Sensitivity of surface conductance to vapor pressure deficit.
+#' 
+#' @param data  Data.frame or matrix containing all required columns
+#' @param Gs    Surface conductance (mol m-2 s-1)
+#' @param VPD   Vapor pressure deficit (kPa)
+#' 
+#' @details The function fits the following equation (Oren et al. 1999):
+#' 
+#'          \deqn{Gs = -m ln(VPD) + b}
+#'
+#'          where b is the reference surface conductance (Gs) at VPD=1kPa (in mol m-2 s-1),
+#'          and m is the sensitvity parameter of Gs to VPD (in mol m-2 s-1 log(kPa)-1).
+#'          The two parameters b and m are fitted using \code{nls}.
+#'          
+#' @return An nls model object containing (amongst others), estimates for the mean
+#'         and standard errors of the parameters m and b.
+#' 
+#' @references Oren R., et al. 1999: Survey and synthesis of intra- and interspecific
+#'             variation in stomatal sensitivity to vapour pressure deficit. Plant,
+#'             Cell & Environment 22, 1515-1526. 
+#'             
+#'             Novick K.A., et al. 2016: The increasing importance of atmospheric demand
+#'             for ecosystem water and carbon fluxes. Nature Climate Change 6, 1023 - 1027.
+#'          
+#' @importFrom stats nls
+#' 
+#' @export
+stomatal.sensitivity <- function(data,Gs="Gs",VPD="VPD"){
+  
+  check.input(data,list(Gs,VPD))
+  
+  mod <- nls(Gs ~ -m * log(VPD) + b,start=list(m=0.1,b=0.2))
+  
+  return(mod)
+}
 
 
 

@@ -5,7 +5,7 @@
 \title{Bulk intercellular CO2 concentration}
 \usage{
 intercellular.CO2(data, Ca = "Ca", GPP = "GPP", Gs = "Gs",
-  Reco_Leaf = NULL, calc.Csurf = FALSE, Ga_CO2, NEE = "NEE",
+  Reco_Leaf = NULL, calc.Csurf = FALSE, Ga_CO2 = "Ga_CO2", NEE = "NEE",
   Tair = "Tair", pressure = "pressure", constants = bigleaf.constants())
 }
 \arguments{

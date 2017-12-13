@@ -14,7 +14,7 @@ stomatal.sensitivity(data, Gs = "Gs", VPD = "VPD")
 \item{VPD}{Vapor pressure deficit (kPa)}
 }
 \value{
-An nls model object containing (amongst others), estimates for the mean
+An nls model object containing (amongst others) estimates for the mean
         and standard errors of the parameters m and b.
 }
 \description{
@@ -27,7 +27,9 @@ The function fits the following equation (Oren et al. 1999):
 
          where b is the reference surface conductance (Gs) at VPD=1kPa (in mol m-2 s-1),
          and m is the sensitvity parameter of Gs to VPD (in mol m-2 s-1 log(kPa)-1).
-         The two parameters b and m are fitted using \code{nls}.
+         The two parameters b and m are fitted using \code{\link[stats]{nls}}.
+         VPD can be the one directly measured at instrument height, or the
+         one at the surface, as returned by \code{\link{surface.conditions}}.
 }
 \references{
 Oren R., et al. 1999: Survey and synthesis of intra- and interspecific

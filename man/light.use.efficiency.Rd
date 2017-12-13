@@ -23,8 +23,8 @@ Light use efficiency is calculated as
          \deqn{LUE = sum(GPP)/sum(PPFD)}
          
          where both GPP and PPFD are in umol m-2 s-1. A more meaningful 
-         (as directly comparable across ecosystems) is to take absorbed PPFD
-         rather than incoming PPFD as used here.
+         (as directly comparable across ecosystems) approach is to take 
+         absorbed PPFD rather than incoming PPFD as used here.
 }
 \examples{
 light.use.efficiency(GPP=20,PPFD=1500)

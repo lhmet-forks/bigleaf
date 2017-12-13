@@ -154,7 +154,10 @@ The roughness length for water and heat (z0h) is not returned by this function, 
       
       z0h = z0m / exp(kB-1)    
       
-      kB-1 is an output of this function
+      kB-1 is an output of this function.
+      
+      Note that input variables such as LAI, Dl, or zh can be either constants, or
+      time varying (i.e. vectors of the same length as \code{data}).
 }
 \examples{
 df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250))   

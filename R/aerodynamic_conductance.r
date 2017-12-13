@@ -124,7 +124,10 @@
 #'       
 #'       z0h = z0m / exp(kB-1)    
 #'       
-#'       kB-1 is an output of this function
+#'       kB-1 is an output of this function.
+#'       
+#'       Note that input variables such as LAI, Dl, or zh can be either constants, or
+#'       time varying (i.e. vectors of the same length as \code{data}).
 #'         
 #' @references Verma, S., 1989: Aerodynamic resistances to transfers of heat, mass and momentum.
 #'             In: Estimation of areal evapotranspiration, IAHS Pub, 177, 13-20.

@@ -65,7 +65,7 @@
 #' 
 #' @export
 intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Reco_Leaf=NULL,calc.Csurf=FALSE,
-                              Ga_CO2,NEE="NEE",Tair="Tair",pressure="pressure",
+                              Ga_CO2="Ga_CO2",NEE="NEE",Tair="Tair",pressure="pressure",
                               constants=bigleaf.constants()){
   
   check.input(data,list(Ca,GPP,Gs))
@@ -665,8 +665,8 @@ light.response <- function(data,NEE="NEE",Reco="Reco",PPFD="PPFD",PPFD_ref=2000)
 #'          \deqn{LUE = sum(GPP)/sum(PPFD)}
 #'          
 #'          where both GPP and PPFD are in umol m-2 s-1. A more meaningful 
-#'          (as directly comparable across ecosystems) is to take absorbed PPFD
-#'          rather than incoming PPFD as used here.
+#'          (as directly comparable across ecosystems) approach is to take 
+#'          absorbed PPFD rather than incoming PPFD as used here.
 #' 
 #' @return \item{LUE -}{Light use efficiency (-)}
 #' 
@@ -685,6 +685,7 @@ light.use.efficiency <- function(GPP,PPFD){
   
 
 
+
 #' Stomatal sensitivity to VPD
 #' 
 #' @description Sensitivity of surface conductance to vapor pressure deficit.
@@ -699,9 +700,11 @@ light.use.efficiency <- function(GPP,PPFD){
 #'
 #'          where b is the reference surface conductance (Gs) at VPD=1kPa (in mol m-2 s-1),
 #'          and m is the sensitvity parameter of Gs to VPD (in mol m-2 s-1 log(kPa)-1).
-#'          The two parameters b and m are fitted using \code{nls}.
+#'          The two parameters b and m are fitted using \code{\link[stats]{nls}}.
+#'          VPD can be the one directly measured at instrument height, or the
+#'          one at the surface, as returned by \code{\link{surface.conditions}}.
 #'          
-#' @return An nls model object containing (amongst others), estimates for the mean
+#' @return An nls model object containing (amongst others) estimates for the mean
 #'         and standard errors of the parameters m and b.
 #' 
 #' @references Oren R., et al. 1999: Survey and synthesis of intra- and interspecific

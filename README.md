@@ -1,6 +1,6 @@
 # bigleaf #
 
-**bigleaf** is an R package for the calculation of of physical (e.g. aerodynamic conductance, surface temperature) and physiological
+**bigleaf** is an R package for the calculation of physical (e.g. aerodynamic conductance, surface temperature) and physiological
 (e.g. canopy conductance, water-use efficiency) ecosystem properties from eddy covariance data and accompanying meteorological measurements. 
 All calculations are based on a 'big-leaf' representation of the vegetation, in which vertical meteorological variations within the canopy
 are ignored and all fluxes are assumed to originate from a single horizontal plane within the canopy.
@@ -56,7 +56,7 @@ The package provides the following functionalities:
 - wind speed at given height from wind profile equation
 
 ## Surface conditions
-- VPD, Ca, Temperature, vapor pressure, specific humidity at the big-leaf surface
+- VPD, CO2 concentration, temperature, vapor pressure, specific humidity at the big-leaf surface
 
 ## Evapotranspiration (ET) and water-use efficiency (WUE)
 - potential ET (Priestley-Taylor equation)
@@ -66,7 +66,7 @@ The package provides the following functionalities:
 
 ## Physiological variables:
 - canopy conductance (inverted Penman-Monteith equation)
-- bulk intercellulary CO2 concentrtation (Ci)
+- bulk intercellular CO2 concentration (Ci)
 - bulk photosynthetic capacity (Vcmax25 and Jmax25)
 - stomatal slope g1 (USO, Ball&Berry, Leuning models)
 - stomatal sensitivity to VPD
@@ -74,8 +74,7 @@ The package provides the following functionalities:
 
 ## Energy balance
 - biochemical energy
-- energy balance ratio (EBR)
-- "missing" energy
+- energy balance closure (EBR and slope method)
 
 ## Unit conversions
 - conductance conversion from ms-1 to mol m-2 s-1

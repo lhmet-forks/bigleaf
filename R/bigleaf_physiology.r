@@ -567,7 +567,7 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'                           robust.nls=FALSE,nmin=40,fitg0=FALSE,D0=1.5,fitD0=FALSE)
 #' 
 #' @importFrom stats nls na.exclude
-#' @importFrom robustbase nlrob 
+#' @importFrom robustbase nlrob
 #' 
 #' @export 
 stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs",

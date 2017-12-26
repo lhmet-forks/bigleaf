@@ -9,7 +9,8 @@ Authors@R: c( person("Juergen", "Knauer", role=c("aut","cre"), email="jknauer@bg
 			)	
 Description: Calculation of meteorological, aerodynamic, and physiological ecosystem properties
              based on measured fluxes with the eddy-covariance technique and meteorological data.
-			 Calculations assume the surface to behave like a 'big-leaf'.
+			 Calculations assume the land surface to behave like a 'big-leaf'.
+URL: https://bitbucket.org/juergenknauer/bigleaf/overview
 Depends: R (>= 2.10)
 Imports: robustbase
 License: GPL (>= 2)

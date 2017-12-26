@@ -173,7 +173,7 @@ Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
 #'  \deqn{\gamma = cp * pressure / (eps * \lambda)},
 #'  
 #'  where \eqn{\lambda} is the latent heaf of vaporization (J kg-1), 
-#'  as calculated with \code{\link{LE.vaporization}}.
+#'  as calculated with \code{\link{latent.heat.vaporization}}.
 #'  
 #' @return \item{\eqn{\gamma} -}{the psychrometric constant (kPa K-1)}
 #'  
@@ -186,7 +186,7 @@ Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
 #' @export
 psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
   
-  lambda <- LE.vaporization(Tair)
+  lambda <- latent.heat.vaporization(Tair)
   gamma  <- (constants$cp * pressure) / (constants$eps * lambda)
   
   return(gamma)
@@ -210,10 +210,10 @@ psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
 #'             Kluwer Academic Publishers, Dordrecht, Netherlands
 #' 
 #' @examples 
-#' LE.vaporization(seq(5,45,5))             
+#' latent.heat.vaporization(seq(5,45,5))             
 #'             
 #' @export
-LE.vaporization <- function(Tair) {
+latent.heat.vaporization <- function(Tair) {
   k1 <- 2.501
   k2 <- 0.00237
   lambda <- ( k1 - k2 * Tair ) * 1e+06

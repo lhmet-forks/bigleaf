@@ -136,15 +136,15 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
   if(!is.null(G)){
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
-    warning("Ground heat flux G is not provided and set to 0.")
-    G <- rep(0,ifelse(!missing(data),nrow(data),length(Rn)))
+    cat("Ground heat flux G is not provided and set to 0.",fill=TRUE)
+    G <- 0
   }
   
   if(!is.null(S)){
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
-    warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,ifelse(!missing(data),nrow(data),length(Rn)))
+    cat("Energy storage fluxes S are not provided and set to 0.",fill=TRUE)
+    S <- 0
   }
   
   if (!instantaneous){

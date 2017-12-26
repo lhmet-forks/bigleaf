@@ -20,6 +20,9 @@
 #' 
 #' \deqn{LE = \lambda ET}
 #' 
+#' where \eqn{\lambda} is the latent heat of vaporization (J kg-1) as calculated by
+#' \code{\link{latent.heat.vaporization}}.
+#' 
 #' @examples 
 #' # LE of 200 Wm-2 and air temperature of 25degC
 #' LE.to.ET(200,25)
@@ -27,7 +30,7 @@
 #' @export
 LE.to.ET <- function(LE,Tair){
   
-  lambda <- LE.vaporization(Tair)
+  lambda <- latent.heat.vaporization(Tair)
   ET     <- LE/lambda
   
   return(ET)
@@ -38,7 +41,7 @@ LE.to.ET <- function(LE,Tair){
 #' @export
 ET.to.LE <- function(ET,Tair){
   
-  lambda <- LE.vaporization(Tair)
+  lambda <- latent.heat.vaporization(Tair)
   LE     <- ET*lambda
   
   return(LE)
@@ -128,6 +131,9 @@ VPD.to.rH <- function(VPD,Tair){
 #' @family humidity conversion
 #' @export
 rH.to.VPD <- function(rH,Tair){
+  if(rH > 1){
+    warning("relative humidity (rH) has to be between 0-1.")
+  }
   esat <- Esat(Tair)[,"Esat"]
   VPD  <- esat - rH*esat
   return(VPD)

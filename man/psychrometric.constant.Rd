@@ -26,7 +26,7 @@ The psychrometric constant (\eqn{\gamma}) is given as:
  \deqn{\gamma = cp * pressure / (eps * \lambda)},
  
  where \eqn{\lambda} is the latent heaf of vaporization (J kg-1), 
- as calculated with \code{\link{LE.vaporization}}.
+ as calculated with \code{\link{latent.heat.vaporization}}.
 }
 \examples{
 psychrometric.constant(seq(5,45,5),100)

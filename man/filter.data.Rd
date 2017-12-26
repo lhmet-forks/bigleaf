@@ -4,9 +4,9 @@
 \alias{filter.data}
 \title{Basic data filtering}
 \usage{
-filter.data(data, quality.control = TRUE, vars.qc = NULL,
-  filter.growseas = FALSE, filter.precip = FALSE, filter.vars = NULL,
-  filter.vals.min, filter.vals.max, NA.as.invalid = TRUE,
+filter.data(data, quality.control = TRUE, filter.growseas = FALSE,
+  filter.precip = FALSE, filter.vars = NULL, filter.vals.min,
+  filter.vals.max, NA.as.invalid = TRUE, vars.qc = NULL,
   quality.ext = "_qc", good.quality = c(0, 1), missing.qc.as.bad = TRUE,
   GPP = "GPP", doy = "doy", year = "year", tGPP = 0.5, ws = 15,
   min.int = 5, precip = "precip", tprecip = 0.01, precip.hours = 24,
@@ -17,9 +17,6 @@ filter.data(data, quality.control = TRUE, vars.qc = NULL,
 half-hourly or hourly resolution. Including year, month, day information}
 
 \item{quality.control}{Should quality control be applied? Defaults to TRUE.}
-
-\item{vars.qc}{Character vector indicating the variables for which quality filter should 
-be applied. Ignored if \code{quality.control} is FALSE.}
 
 \item{filter.growseas}{Should data be filtered for growing season? Defaults to FALSE.}
 
@@ -34,6 +31,9 @@ the same length than \code{filter.vars}. Set to NA to be ignored.}
 the same length than \code{filter.vars}. Set to NA to be ignored.}
 
 \item{NA.as.invalid}{If TRUE (the default) missing data are filtered out (applies to all variables).}
+
+\item{vars.qc}{Character vector indicating the variables for which quality filter should 
+be applied. Ignored if \code{quality.control} is FALSE.}
 
 \item{quality.ext}{The extension to the variables' names that marks them as 
 quality control variables. Ignored if \code{quality.control} is FALSE.}
@@ -107,7 +107,12 @@ This routine consists of two parts:
             are set to NA for all variables. If a threshold is set to NA, it will be ignored.
 }
 \note{
-Variables considered of bad quality (as specified by the corresponding quality control variables)      
+The thresholds set with \code{filter.vals.min} and \code{filter.vals.max} filter all data
+      that are smaller than ("<"), or greater than (">") the specified thresholds. That means
+      if a variable has exactly the same value as the threshold, it will not be filtered. Likewise,
+      \code{tprecip} filters all data that are greater than \code{tprecip}. 
+
+      Variables considered of bad quality (as specified by the corresponding quality control variables)      
       will be set to NA by this routine. Data that do not fulfill the filtering critera are set to
       NA if \code{filtered.data.to.NA==TRUE}. Note that with this option *all* variables of the same
       time step are set to NA. Alternatively, if \code{filtered.data.to.NA==FALSE} data are not set to NA,

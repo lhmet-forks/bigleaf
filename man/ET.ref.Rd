@@ -53,8 +53,10 @@ Reference evapotranspiration is calculated according to the Penman-Monteith
 
          \deqn{LE_0 = (\Delta * (Rn - G - S) * \rho * cp * VPD * Ga) / (\Delta + \gamma * (1 + Ga/Gs)}
          
+         where \eqn{\Delta} is the slope of the saturation vapor pressure curve (kPa K-1),
+         \eqn{\rho} is the air density (kg m-3), and \eqn{\gamma} is the psychrometric constant (kPa K-1).
          The reference evapotranspiration is calculated with respect to a 'reference surface',
-         which is typically a well-watered grass/crop of 0.12 height, an albedo of 0.23 and 
+         which is typically a well-watered grass/crop of 0.12m height, an albedo of 0.23 and 
          a surface conductance of ~ 0.6 mol m-2 s-1 (Allen et al. 1998), but can be calculated for any other
          surface.
 }

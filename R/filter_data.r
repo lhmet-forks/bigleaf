@@ -10,8 +10,6 @@
 #' @param data            Data.frame or matrix containing all required input variables in 
 #'                        half-hourly or hourly resolution. Including year, month, day information
 #' @param quality.control Should quality control be applied? Defaults to TRUE.
-#' @param vars.qc         Character vector indicating the variables for which quality filter should 
-#'                        be applied. Ignored if \code{quality.control} is FALSE.
 #' @param filter.growseas Should data be filtered for growing season? Defaults to FALSE.
 #' @param filter.precip   Should precipitation filtering be applied? Defaults to FALSE.
 #' @param filter.vars     Additional variables to be filtered. Vector of type character.
@@ -20,6 +18,8 @@
 #' @param filter.vals.max Maximum values of the variables to be filtered. Numeric vector of 
 #'                        the same length than \code{filter.vars}. Set to NA to be ignored.
 #' @param NA.as.invalid   If TRUE (the default) missing data are filtered out (applies to all variables).
+#' @param vars.qc         Character vector indicating the variables for which quality filter should 
+#'                        be applied. Ignored if \code{quality.control} is FALSE.
 #' @param quality.ext     The extension to the variables' names that marks them as 
 #'                        quality control variables. Ignored if \code{quality.control} is FALSE.                       
 #' @param good.quality    Which values indicate good quality (i.e. not to be filtered) 
@@ -72,12 +72,18 @@
 #'         column "valid", which indicates whether all the data of a timestep fulfill the 
 #'         filtering criteria (1) or not (0).
 #'         
-#' @note Variables considered of bad quality (as specified by the corresponding quality control variables)      
+#' @note The thresholds set with \code{filter.vals.min} and \code{filter.vals.max} filter all data
+#'       that are smaller than ("<"), or greater than (">") the specified thresholds. That means
+#'       if a variable has exactly the same value as the threshold, it will not be filtered. Likewise,
+#'       \code{tprecip} filters all data that are greater than \code{tprecip}. 
+#' 
+#'       Variables considered of bad quality (as specified by the corresponding quality control variables)      
 #'       will be set to NA by this routine. Data that do not fulfill the filtering critera are set to
 #'       NA if \code{filtered.data.to.NA==TRUE}. Note that with this option *all* variables of the same
 #'       time step are set to NA. Alternatively, if \code{filtered.data.to.NA==FALSE} data are not set to NA,
 #'       and a new column "valid" is added to the data.frame/matrix, indicating if any value of a row
 #'       did (1) or did not fulfill the filter criteria (0).
+#'       
 #' 
 #' @examples 
 #' # Example of data filtering; data are for a month within the growing season,
@@ -116,10 +122,10 @@
 #'   
 #' @importFrom stats aggregate
 #' @export                     
-filter.data <- function(data,quality.control=TRUE,vars.qc=NULL,filter.growseas=FALSE,
+filter.data <- function(data,quality.control=TRUE,filter.growseas=FALSE,
                         filter.precip=FALSE,filter.vars=NULL,
                         filter.vals.min,filter.vals.max,NA.as.invalid=TRUE,
-                        quality.ext="_qc",good.quality=c(0,1),
+                        vars.qc=NULL,quality.ext="_qc",good.quality=c(0,1),
                         missing.qc.as.bad=TRUE,GPP="GPP",doy="doy",
                         year="year",tGPP=0.5,ws=15,min.int=5,precip="precip",
                         tprecip=0.01,precip.hours=24,records.per.hour=2,

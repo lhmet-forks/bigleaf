@@ -27,6 +27,9 @@ The conversions are given by:
 \deqn{ET = LE/\lambda}
 
 \deqn{LE = \lambda ET}
+
+where \eqn{\lambda} is the latent heat of vaporization (J kg-1) as calculated by
+\code{\link{latent.heat.vaporization}}.
 }
 \examples{
 # LE of 200 Wm-2 and air temperature of 25degC

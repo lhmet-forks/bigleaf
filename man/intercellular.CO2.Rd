@@ -4,9 +4,10 @@
 \alias{intercellular.CO2}
 \title{Bulk intercellular CO2 concentration}
 \usage{
-intercellular.CO2(data, Ca = "Ca", GPP = "GPP", Gs = "Gs",
-  Reco_Leaf = NULL, calc.Csurf = FALSE, Ga_CO2 = "Ga_CO2", NEE = "NEE",
-  Tair = "Tair", pressure = "pressure", constants = bigleaf.constants())
+intercellular.CO2(data, Ca = "Ca", GPP = "GPP", Gs = "Gs", Rleaf = NULL,
+  calc.Csurf = FALSE, Ga_CO2 = "Ga_CO2", NEE = "NEE", Tair = "Tair",
+  pressure = "pressure", missing.Rleaf.as.NA = FALSE,
+  constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.Frame or matrix with all required columns}
@@ -17,7 +18,7 @@ intercellular.CO2(data, Ca = "Ca", GPP = "GPP", Gs = "Gs",
 
 \item{Gs}{Surface conductance to water vapor (mol m-2 s-1)}
 
-\item{Reco_Leaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
+\item{Rleaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 
 \item{calc.Csurf}{Should the derived surface CO2 concentration be used instead of 
 measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.}
@@ -43,7 +44,7 @@ Bulk canopy intercellular CO2 concentration (Ci) calculated based on Fick's law
 \details{
 Bulk intercellular CO2 concentration (Ci) is given by:
 
-         \deqn{Ci = Ca - (GPP - Reco_Leaf)/(Gs/1.6)}
+         \deqn{Ci = Ca - (GPP - Rleaf)/(Gs/1.6)}
          
          where Gs/1.6 (mol m-2 s-1) represents the surface conductance to CO2.
          Note that Gs is required in mol m-2 s-1 for water vapor. Gs is converted to

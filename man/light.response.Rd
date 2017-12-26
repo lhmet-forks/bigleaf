@@ -5,7 +5,7 @@
 \title{Ecosytem light response}
 \usage{
 light.response(data, NEE = "NEE", Reco = "Reco", PPFD = "PPFD",
-  PPFD_ref = 2000)
+  PPFD_ref = 2000, ...)
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required columns}
@@ -18,6 +18,8 @@ light.response(data, NEE = "NEE", Reco = "Reco", PPFD = "PPFD",
 
 \item{PPFD_ref}{Reference PPFD (umol m-2 s-1) for which GPPmax is estimated.
 Default is 2000 umol m-2 s-1.}
+
+\item{...}{Additional arguments to \code{\link[stats]{nls}}}
 }
 \value{
 A nls model object containing estimates (+/- SE) for alpha and GPPmax.
@@ -42,7 +44,7 @@ A rectangular light response curve is fitted to NEE data. The curve
          curve is that GPPmax at PPFD_ref is more readily interpretable
          as it constitutes a value observed in the ecosystem, in contrast to 
          GPPmax (mostly named 'beta') in the standard model that occurs at infinite light.
-         PPFD_ref defaults to 2000 umol m-2 s-1, but other values can be used. For 
+         \code{PPFD_ref} defaults to 2000 umol m-2 s-1, but other values can be used. For 
          further details refer to Falge et al. 2001.
 }
 \note{

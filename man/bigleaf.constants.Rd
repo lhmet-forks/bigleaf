@@ -32,5 +32,10 @@ Constants used in the bigleaf package
 \note{
 Constants contained within this function can be changed permanently (which
       makes sense for some of them, e.g. for the von Karman constant), by using
-      the command \code{\link[base]{fix}}
+      the command \code{\link[utils]{fixInNamespace}}. E.g.
+      
+      \code{fixInNamespace(bigleaf.constants,ns="bigleaf")}
+      
+      Note that this has to be repeated every time the package is newly installed/loaded.
+      It might thus be easier to change it directly in the source files.
 }

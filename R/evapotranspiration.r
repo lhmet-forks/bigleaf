@@ -48,15 +48,15 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
   if(!is.null(G)){
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
-    warning("ground heat flux G is not provided and set to 0.")
-    G <- rep(0,length(Tair))
+    cat("Ground heat flux G is not provided and set to 0.",fill=TRUE)
+    G <- 0
   }
   
   if(!is.null(S)){
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
-    warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,length(Tair))
+    cat("Energy storage fluxes S are not provided and set to 0.",fill=TRUE)
+    S <- 0
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
@@ -98,8 +98,10 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #' 
 #'          \deqn{LE_0 = (\Delta * (Rn - G - S) * \rho * cp * VPD * Ga) / (\Delta + \gamma * (1 + Ga/Gs)}
 #'          
+#'          where \eqn{\Delta} is the slope of the saturation vapor pressure curve (kPa K-1),
+#'          \eqn{\rho} is the air density (kg m-3), and \eqn{\gamma} is the psychrometric constant (kPa K-1).
 #'          The reference evapotranspiration is calculated with respect to a 'reference surface',
-#'          which is typically a well-watered grass/crop of 0.12 height, an albedo of 0.23 and 
+#'          which is typically a well-watered grass/crop of 0.12m height, an albedo of 0.23 and 
 #'          a surface conductance of ~ 0.6 mol m-2 s-1 (Allen et al. 1998), but can be calculated for any other
 #'          surface.
 #'
@@ -131,15 +133,15 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
   if(!is.null(G)){
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
-    warning("Ground heat flux G is not provided and set to 0.")
-    G <- rep(0,length(Tair))
+    cat("Ground heat flux G is not provided and set to 0.",fill=TRUE)
+    G <- 0
   }
   
   if(!is.null(S)){
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
-    warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,length(Tair))
+    cat("Energy storage fluxes S are not provided and set to 0.",fill=TRUE)
+    S <- 0
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
@@ -180,16 +182,22 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #' 
 #'          \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
 #'          
-#'          where ET_eq is the equilibrium evapotranspiration rate, the ET rate 
-#'          that would occur under uncoupled conditions, where the heat budget
-#'          is dominated by radiation (when Ga -> 0).
+#'          where \eqn{\Omega} is the decoupling coefficient as calculated from
+#'          \code{\link{decoupling}}. \code{ET_eq} is the equilibrium evapotranspiration rate,
+#'          the ET rate that would occur under uncoupled conditions, where the heat budget
+#'          is dominated by radiation (when Ga -> 0):
 #'          
 #'          \deqn{ET_eq = (\Delta * (Rn - G - S) * \lambda) / (\Delta + \gamma)}
 #'          
-#'          and ET_imp is the imposed evapotranspiration rate, the ET rate
+#'          where \eqn{\Delta} is the slope of the saturation vapor pressure curve (kPa K-1),
+#'          \eqn{\lambda} is the latent heat of vaporization (J kg-1), and \eqn{\gamma}
+#'          is the psychrometric constant (kPa K-1).
+#'          \code{ET_imp} is the imposed evapotranspiration rate, the ET rate
 #'          that would occur under fully coupled conditions (when Ga -> inf):
 #'          
 #'          \deqn{ET_imp = (\rho * cp * VPD * Gs * \lambda) / \gamma}
+#'          
+#'          where \eqn{\rho} is the air density (kg m-3).
 #' 
 #' @note Surface conductance (Gs) can be calculated with \code{\link{surface.conductance}}.
 #'       Aerodynamic conductance (Ga) can be calculated using \code{\link{aerodynamic.conductance}}.
@@ -221,15 +229,15 @@ ET.eq.imp <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
   if(!is.null(G)){
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
-    warning("ground heat flux G is not provided and set to 0.")
-    G <- rep(0,length(Tair))
+    cat("ground heat flux G is not provided and set to 0.",fill=TRUE)
+    G <- 0
   }
   
   if(!is.null(S)){
     if(!missing.S.as.NA){S[is.na(S)] <- 0 }
   } else {
-    warning("Energy storage fluxes S are not provided and set to 0.")
-    S <- rep(0,length(Tair))
+    cat("Energy storage fluxes S are not provided and set to 0.",fill=TRUE)
+    S <- 0
   }
   
   rho    <- air.density(Tair,pressure)

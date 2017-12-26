@@ -130,15 +130,15 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
     if(!is.null(G)){
       if (!missing.G.as.NA){G[is.na(G)] <- 0}
     } else {
-      warning("Ground heat flux G is not provided and set to 0.")
-      G <- rep(0,length(Tair))
+      cat("Ground heat flux G is not provided and set to 0.",fill=TRUE)
+      G <- 0
     }
     
     if(!is.null(S)){
       if(!missing.S.as.NA){S[is.na(S)] <- 0 }
     } else {
-      warning("Energy storage fluxes S are not provided and set to 0.")
-      S <- rep(0,length(Tair))
+      cat("Energy storage fluxes S are not provided and set to 0.",fill=TRUE)
+      S <- 0
     }
     
     Delta <- Esat(Tair)[,"Delta"]

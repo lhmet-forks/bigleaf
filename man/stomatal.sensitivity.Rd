@@ -4,7 +4,7 @@
 \alias{stomatal.sensitivity}
 \title{Stomatal sensitivity to VPD}
 \usage{
-stomatal.sensitivity(data, Gs = "Gs", VPD = "VPD")
+stomatal.sensitivity(data, Gs = "Gs", VPD = "VPD", ...)
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required columns}
@@ -12,6 +12,8 @@ stomatal.sensitivity(data, Gs = "Gs", VPD = "VPD")
 \item{Gs}{Surface conductance (mol m-2 s-1)}
 
 \item{VPD}{Vapor pressure deficit (kPa)}
+
+\item{...}{Additional arguments to \code{\link[stats]{nls}}}
 }
 \value{
 An nls model object containing (amongst others) estimates for the mean

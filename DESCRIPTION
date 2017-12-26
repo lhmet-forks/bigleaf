@@ -1,7 +1,7 @@
 Package: bigleaf
 Type: Package
-Version: 0.0.5
-Date: 2017-11-24
+Version: 0.0.6
+Date: 2017-12-26
 Title: Physical and physiological ecosystem properties from eddy covariance data
 Authors@R: c( person("Juergen", "Knauer", role=c("aut","cre"), email="jknauer@bgc-jena.mpg.de"),
               person("Soenke", "Zaehle", role=c("aut"), email="szaehle@bgc-jena.mpg.de"),

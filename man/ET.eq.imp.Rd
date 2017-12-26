@@ -47,16 +47,22 @@ Total evapotranspiration can be written in the form:
 
          \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
          
-         where ET_eq is the equilibrium evapotranspiration rate, the ET rate 
-         that would occur under uncoupled conditions, where the heat budget
-         is dominated by radiation (when Ga -> 0).
+         where \eqn{\Omega} is the decoupling coefficient as calculated from
+         \code{\link{decoupling}}. \code{ET_eq} is the equilibrium evapotranspiration rate,
+         the ET rate that would occur under uncoupled conditions, where the heat budget
+         is dominated by radiation (when Ga -> 0):
          
          \deqn{ET_eq = (\Delta * (Rn - G - S) * \lambda) / (\Delta + \gamma)}
          
-         and ET_imp is the imposed evapotranspiration rate, the ET rate
+         where \eqn{\Delta} is the slope of the saturation vapor pressure curve (kPa K-1),
+         \eqn{\lambda} is the latent heat of vaporization (J kg-1), and \eqn{\gamma}
+         is the psychrometric constant (kPa K-1).
+         \code{ET_imp} is the imposed evapotranspiration rate, the ET rate
          that would occur under fully coupled conditions (when Ga -> inf):
          
          \deqn{ET_imp = (\rho * cp * VPD * Gs * \lambda) / \gamma}
+         
+         where \eqn{\rho} is the air density (kg m-3).
 }
 \note{
 Surface conductance (Gs) can be calculated with \code{\link{surface.conductance}}.

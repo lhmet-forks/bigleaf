@@ -25,6 +25,8 @@ stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP",
 
 \item{Ca}{Atmospheric CO2 concentration (umol mol-1)}
 
+\item{Rleaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
+
 \item{model}{Stomatal model used. One of c("USO","Ball&Berry","Leuning")}
 
 \item{robust.nls}{Use robust nonlinear regression (\code{\link[robustbase]{nlrob}})? Default is FALSE.}
@@ -41,6 +43,9 @@ stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP",
 
 \item{Gamma}{Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning". 
 Can be a constant or a variable. Defaults to 50 umol mol-1.}
+
+\item{missing.Rleaf.as.NA}{if Rleaf is provided, should missing values be treated as NA (TRUE)
+or set to 0 (FALSE, the default)?}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 Rgas - universal gas constant (J mol-1 K-1)}

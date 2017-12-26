@@ -64,6 +64,9 @@ at 25 degC (umol mol-1)}
 
 \item{alpha_canopy}{Canopy absorptance (-)}
 
+\item{missing.Rleaf.as.NA}{if Rleaf is provided, should missing values be treated as NA (TRUE)
+or set to 0 (FALSE, the default)?}
+
 \item{Ci_C4}{intercellular CO2 concentration below which photosynthesis
 is considered to be CO2-limited (umol mol-1), ignored
 if \code{C3=TRUE}.}

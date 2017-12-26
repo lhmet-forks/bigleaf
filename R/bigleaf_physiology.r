@@ -19,6 +19,8 @@
 #' @param NEE        Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem
 #' @param Tair       Air temperature (degC); ignored if \code{calc.Csurf} is FALSE
 #' @param pressure   Atmospheric pressure (kPa); ignored if \code{calc.Csurf} is FALSE
+#' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as NA (TRUE)
+#'                            or set to 0 (FALSE, the default)?
 #' @param constants  DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
 #' 
 #' @details Bulk intercellular CO2 concentration (Ci) is given by:
@@ -118,6 +120,8 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #' @param Jmax_dS   Entropy term for Jmax (kJ mol-1 K-1)
 #' @param Theta     Curvature term in the light response function of J (-)
 #' @param alpha_canopy Canopy absorptance (-)
+#' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as NA (TRUE)
+#'                            or set to 0 (FALSE, the default)?
 #' @param Ci_C4        intercellular CO2 concentration below which photosynthesis
 #'                     is considered to be CO2-limited (umol mol-1), ignored
 #'                     if \code{C3=TRUE}. 
@@ -468,6 +472,7 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #' @param Gs         Surface conductance to water vapor (mol m-2 s-1)
 #' @param VPD        Vapor pressure deficit (kPa)
 #' @param Ca         Atmospheric CO2 concentration (umol mol-1)
+#' @param Rleaf      Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0 
 #' @param model      Stomatal model used. One of c("USO","Ball&Berry","Leuning")
 #' @param robust.nls Use robust nonlinear regression (\code{\link[robustbase]{nlrob}})? Default is FALSE.
 #' @param nmin       Minimum number of data required to perform the fit; defaults to 40.
@@ -479,6 +484,8 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'                   Can be a constant or a variable. Defaults to 50 umol mol-1.
 #' @param constants  Kelvin - conversion degree Celsius to Kelvin \cr
 #'                   Rgas - universal gas constant (J mol-1 K-1)
+#' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as NA (TRUE)
+#'                            or set to 0 (FALSE, the default)?
 #' @param ...        Additional arguments to \code{\link[stats]{nls}} or \code{\link[robustbase]{nlrob}} if \code{robust.nls} is TRUE
 #' 
 #' @details All stomatal models were developed at leaf-level, but its parameters 

@@ -31,6 +31,9 @@ measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.}
 
 \item{pressure}{Atmospheric pressure (kPa); ignored if \code{calc.Csurf} is FALSE}
 
+\item{missing.Rleaf.as.NA}{if Rleaf is provided, should missing values be treated as NA (TRUE)
+or set to 0 (FALSE, the default)?}
+
 \item{constants}{DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)}
 }
 \value{

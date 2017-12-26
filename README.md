@@ -80,3 +80,6 @@ The package provides the following functionalities:
 - conductance conversion from ms-1 to mol m-2 s-1
 - conversions between humidity measures vapor pressure, specific humidity, relative humidity, and VPD
 - conversion between laten heat flux and evapotranspiration
+
+# Contact
+For questions, remarks, and suggestions please contact jknauer@bgc-jena.mpg.de

@@ -12,6 +12,13 @@ The bigleaf R package is on CRAN and can be installed using:
 install.packages("bigleaf")
 ```
 
+The development version can be directly installed from this bitbucket repository: 
+```
+library(devtools)
+install_bitbucket("juergenknauer/bigleaf")
+```
+
+
 # Usage
 Most functions work by providing a data.frame or matrix which contains all required variables:
 For example, surface conductance for the spruce forest in Tharandt, Germany (DE-Tha) can be calculated with 

@@ -25,12 +25,12 @@
    \item{Ca}{CO2 concentration (ppm)}
    \item{Ca_qc}{Quality control of \code{Ca}}
    \item{Rn}{Net radiation (Wm-2)}
-   \item{G}{Ground heat flux (Wm-2)}
-   \item{G_qc}{Quality control of \code{G}}
    \item{LE}{Latent heat flux (Wm-2)}
    \item{LE_qc}{Quality control of \code{LE}}
    \item{H}{Sensible heat flux (Wm-2)}
    \item{H_qc}{Quality control of \code{H}}
+   \item{G}{Ground heat flux (Wm-2)}
+   \item{G_qc}{Quality control of \code{G}}
    \item{NEE}{Net ecosystem exchange (umol m-2 s-1)}
    \item{NEE_qc}{Quality control of \code{NEE}}
    \item{GPP}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}

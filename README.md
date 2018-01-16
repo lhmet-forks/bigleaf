@@ -2,8 +2,7 @@
 
 **bigleaf** is an R package for the calculation of physical (e.g. aerodynamic conductance, surface temperature) and physiological
 (e.g. canopy conductance, water-use efficiency) ecosystem properties from eddy covariance data and accompanying meteorological measurements. 
-All calculations are based on a 'big-leaf' representation of the vegetation, in which vertical meteorological variations within the canopy
-are ignored and all fluxes are assumed to originate from a single horizontal plane within the canopy.
+All calculations are based on a 'big-leaf' representation of the vegetation and return representative bulk ecosystem/canopy variables.
 
 
 # Installation
@@ -24,13 +23,17 @@ Most functions work by providing a data.frame or matrix which contains all requi
 For example, surface conductance for the spruce forest in Tharandt, Germany (DE-Tha) can be calculated with 
 the following commands:
 ```
+DE_Tha_June_2014$Ga <- aerodynamic.conductance(DE_Tha_June_2014,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar")[,"Ga_h"]
 surface.conductance(DE_Tha_June_2014,Tair="Tair",pressure="pressure",Rn="Rn",VPD="VPD",LE="LE",Ga="Ga")
 surface.conductance(DE_Tha_June_2014,Tair="Tair",pressure="pressure",Rn="Rn",VPD="VPD",LE="LE",Ga=0.1)
 ```
-
 Here, DE_Tha_June_2014 denotes the input data.frame/matrix. Note that input variables can be provided as column names of the 
-input data.frame/matrix (as argument Ga in line 1 above), or alternatively, as vectors with the same length as the input data.frame/matrix
-or of length 1 (as argument Ga in line 2 above).
+input data.frame/matrix (as argument Ga in line 2 above), or alternatively, as vectors with the same length as the input data.frame/matrix
+or of length 1 (as argument Ga in line 3 above). If variables are provided in the default column names (as above), the command can 
+be shortened to:
+```
+surface.conductance(DE_Tha_June_2014,Ga=0.1)
+```
 Important: please ensure that all input variables are in the correct units as described on the help pages.
 
 
@@ -52,18 +55,21 @@ The package provides the following functionalities:
 - slope of saturation vapor pressure curve
 
 ## Aerodynamic properties:
-- aerodynamic conductance (different versions) for water, heat, momentum, and CO2
-- Canopy boundary-layer conductance (Rb and kB-1 parameter; different models)
+- aerodynamic conductance (different versions) for momentum, water, heat, and CO2
+- Canopy boundary-layer conductance (Rb and kB-1 parameter; empirical and physically-based models)
 - Monin-Obhukov length
 - stability parameter zeta
 - stability correction functions (different versions)
-- roughness length for momentum (z0m) estimation
+- roughness length for momentum (z0m) and heat (z0h)
 - decoupling coefficient 'omega'
 - Reynolds number
-- wind speed at given height from wind profile equation
+- wind speed at a given height from the logarithmic wind profile equation
 
 ## Surface conditions
-- VPD, CO2 concentration, temperature, vapor pressure, specific humidity at the big-leaf surface
+- vapor pressure, specific humidity, and VPD at the big-leaf surface
+- CO2 concentration at the big-leaf surface
+- aerodynamic surface temperature
+- radiometric surface temperature 
 
 ## Evapotranspiration (ET) and water-use efficiency (WUE)
 - potential ET (Priestley-Taylor equation)
@@ -80,13 +86,15 @@ The package provides the following functionalities:
 - ecosystem light response, light-use efficiency
 
 ## Energy balance
-- biochemical energy
 - energy balance closure (EBR and slope method)
+- biochemical energy
+- energy-use efficiency
 
 ## Unit conversions
-- conductance conversion from ms-1 to mol m-2 s-1
+- conductance conversion from m s-1 to mol m-2 s-1
 - conversions between humidity measures vapor pressure, specific humidity, relative humidity, and VPD
-- conversion between laten heat flux and evapotranspiration
+- conversion between latent heat flux (W m-2) and evapotranspiration (kg m-2 s-1)
+- conversion between radiation in W m-2 and umol m-2 s-1
 
 # Contact
 For questions, remarks, and suggestions please contact jknauer@bgc-jena.mpg.de

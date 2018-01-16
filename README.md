@@ -23,7 +23,7 @@ Most functions work by providing a data.frame or matrix which contains all requi
 For example, surface conductance for the spruce forest in Tharandt, Germany (DE-Tha) can be calculated with 
 the following commands:
 ```
-DE_Tha_June_2014$Ga <- aerodynamic.conductance(DE_Tha_June_2014,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar")
+DE_Tha_June_2014$Ga <- aerodynamic.conductance(DE_Tha_June_2014,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar")[,"Ga_h"]
 surface.conductance(DE_Tha_June_2014,Tair="Tair",pressure="pressure",Rn="Rn",VPD="VPD",LE="LE",Ga="Ga")
 surface.conductance(DE_Tha_June_2014,Tair="Tair",pressure="pressure",Rn="Rn",VPD="VPD",LE="LE",Ga=0.1)
 ```

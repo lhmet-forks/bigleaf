@@ -8,7 +8,7 @@
 #'              from net ecosystem exchange of CO2 (NEE).  
 #' 
 #' @param NEE     Net ecosystem exchange (umol CO2 m-2 s-1)
-#' @param alpha   Energy taken up/released by photosynthesis/respiration (J umol-1)
+#' @param alpha   Energy taken up/released by photosynthesis/respiration per mol CO2 fixed/respired (J umol-1)
 #' 
 #' @details The following sign convention is employed: NEE is negative when carbon is taken up by the ecosystem.
 #'          Positive values of the resulting biochemical energy mean that energy (heat) is taken up by the ecosystem, 

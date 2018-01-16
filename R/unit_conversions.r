@@ -70,7 +70,7 @@ ET.to.LE <- function(ET,Tair){
 #' 
 #' \deqn{G_ms = G_mol * (Rgas * Tair) / pressure}
 #' 
-#' where Tair is in Kelvin and pressure in Pa (converted internally)
+#' where \code{Tair} is in Kelvin and \code{pressure} in Pa (converted internally)
 #' 
 #' @references Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.
 #'             2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p
@@ -80,6 +80,7 @@ ET.to.LE <- function(ET,Tair){
 #'             
 #' @export
 ms.to.mol <- function(G_ms,Tair,pressure,constants=bigleaf.constants()){
+  
   Tair     <- Tair + constants$Kelvin
   pressure <- pressure * 1000
   
@@ -92,6 +93,7 @@ ms.to.mol <- function(G_ms,Tair,pressure,constants=bigleaf.constants()){
 #' @rdname ms.to.mol
 #' @export
 mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
+  
   Tair     <- Tair + constants$Kelvin
   pressure <- pressure * 1000
   
@@ -132,7 +134,7 @@ VPD.to.rH <- function(VPD,Tair){
 #' @export
 rH.to.VPD <- function(rH,Tair){
   if(rH > 1){
-    warning("relative humidity (rH) has to be between 0-1.")
+    warning("relative humidity (rH) has to be between 0 and 1.")
   }
   esat <- Esat(Tair)[,"Esat"]
   VPD  <- esat - rH*esat
@@ -218,7 +220,7 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 #' 
 #'  \deqn{PPFD = Rg * frac_PAR * J_to_mol}
 #'  
-#' by default, the combined conversion factor (frac_PAR * J_to_mol) is 2.3
+#' by default, the combined conversion factor (\code{frac_PAR * J_to_mol}) is 2.3
 #'
 #' @examples 
 #' # convert a measured incoming short-wave radiation of 500 Wm-2 to 
@@ -243,12 +245,12 @@ PPFD.to.Rg <- function(PPFD,J_to_mol=4.6,frac_PAR=0.5){
 
 
 
-#' Conversion between mass and molar units of C and CO2
+#' Conversion between mass and molar units of Carbon and CO2
 #' 
-#' @description Converts CO2 quantities from umol CO2 m-2 s-1 to gC and vice versa.
+#' @description Converts CO2 quantities from umol CO2 m-2 s-1 to g C m-2 s-1 and vice versa.
 #' 
 #' @param CO2_flux  CO2 flux (umol CO2 m-2 s-1)
-#' @param C_flux    C flux (gC m-2 s-1)
+#' @param C_flux    Carbon (C) flux (gC m-2 s-1)
 #' @param constants Cmol - molar mass of carbon (kg mol-1)
 #' 
 #' @examples 

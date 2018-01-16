@@ -52,9 +52,9 @@ Defaults to FALSE.}
 \item{stab_formulation}{Stability correction function. Either "Dyer_1970" (default) or
 "Businger_1971". Ignored if one of \code{wind_profile} and \code{stab_correction} is FALSE}
 
-\item{Rb_model}{Boundary layer resistance formulation. One of c("Thom_1972","Choudhury_1988","Su_2001).}
+\item{Rb_model}{Boundary layer resistance formulation. One of c("Thom_1972","Choudhury_1988","Su_2001","constant_kB-1").}
 
-\item{kB}{kB-1 value; only used if \code{Rb_model = "constant_kB"}}
+\item{kB}{kB-1 value; only used if \code{Rb_model = "constant_kB-1"}}
 
 \item{constants}{k - von Karman constant (-) \cr
 Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-) \cr
@@ -86,14 +86,14 @@ Bulk aerodynamic conductance, including options for the boundary layer conductan
 \details{
 Aerodynamic conductance for heat (Ga_h) is calculated as:
 
- Ga_h = 1 / (Ra_m + Rb)
+    \deqn{Ga_h = 1 / (Ra_m + Rb)}
  
  where Ra_m is the aerodynamic resistance for momentum and Rb the canopy boundary
  layer resistance ('excess resistance').
  
  The aerodynamic resistance for momentum Ra_m is given by:
  
- \deqn{Ra_m = u/ustar^2}
+    \deqn{Ra_m = u/ustar^2}
  
  Note that this formulation accounts for changes in atmospheric stability, and does not require an
  additional stability correction function. 
@@ -101,7 +101,7 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  An alternative method to calculate Ra_m is provided
  (calculated if \code{wind_profile} set to TRUE):
  
- \deqn{Ra_m = (ln((zr - d)/z0m) - psi_h) / (k ustar)}
+    \deqn{Ra_m = (ln((zr - d)/z0m) - psi_h) / (k ustar)}
  
  If the roughness parameters z0m and d are unknown, they can be estimated using
  \code{\link{roughness.parameters}}. The argument \code{stab_formulation} determines the stability correction function used 
@@ -110,15 +110,15 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
  calculated with \code{\link{MoninObukhov.length}}
  The Stability correction function is chosen by the argument \code{stab_formulation}. Options are 
- Dyer_1970" and "Businger_1971".
+ \code{Dyer_1970"} and \code{"Businger_1971"}.
  
  The model used to determine the canopy boundary layer resistance (Rb) is specified by 
  the argument \code{Rb_model}. The following options are implemented:
- "Thom_1972" is an empirical formulation based on the friction velocity (ustar) (Thom 1972):
+ \code{"Thom_1972"} is an empirical formulation based on the friction velocity (ustar) (Thom 1972):
  
    \deqn{Rb = 6.2ustar^-0.667}
    
- The model by Choudhury 1988 ("Choudhury_1988"), calculates Rb
+ The model by Choudhury 1988 (\code{"Choudhury_1988"}), calculates Rb
  based on leaf width, LAI and ustar (Note that in the original formulation leaf width
  instead of the characteristic leaf dimension (Dl) is taken):
   
@@ -137,7 +137,7 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  
  Rb (and Gb) for water vapor and heat are assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
  
- \deqn{Rb_CO2 = 1.37 * Rb}
+    \deqn{Rb_CO2 = 1.37 * Rb}
  
  The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
  It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
@@ -148,13 +148,13 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
 The roughness length for water and heat (z0h) is not returned by this function, but 
       it can be calculated from the following relationship (e.g. Verma 1989):
       
-      kB-1 = ln(z0m/z0h) 
+      \deqn{kB-1 = ln(z0m/z0h)} 
       
       it follows:
       
-      z0h = z0m / exp(kB-1)    
+      \deqn{z0h = z0m / exp(kB-1)}
       
-      kB-1 is an output of this function.
+      \code{kB-1} is an output of this function.
       
       Note that input variables such as LAI, Dl, or zh can be either constants, or
       time varying (i.e. vectors of the same length as \code{data}).
@@ -178,4 +178,10 @@ Verma, S., 1989: Aerodynamic resistances to transfers of heat, mass and momentum
             
             Verhoef, A., De Bruin, H., Van Den Hurk, B., 1997: Some practical notes on the parameter kB-1
             for sparse vegetation. Journal of Applied Meteorology, 36, 560-572.
+            
+            Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
+            Edition. Elsevier Academic Press, Burlington, USA.
+            
+            Monteith, J.L., Unsworth, M.H., 2008: Principles of environmental physics.
+            Third Edition. Elsevier Academic Press, Burlington, USA.
 }

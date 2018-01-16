@@ -33,7 +33,7 @@ The conversions are given by:
 
 \deqn{G_ms = G_mol * (Rgas * Tair) / pressure}
 
-where Tair is in Kelvin and pressure in Pa (converted internally)
+where \code{Tair} is in Kelvin and \code{pressure} in Pa (converted internally)
 }
 \examples{
 ms.to.mol(0.005,25,100)

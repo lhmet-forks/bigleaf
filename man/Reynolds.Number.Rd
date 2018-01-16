@@ -30,7 +30,7 @@ The Roughness Reynolds Number is calculated as in Massman 1999a:
          
          \deqn{Re = z0m * ustar / v}
          
-         where v is the kinematic viscosity (m2 s-1).
+         where \code{v} is the kinematic viscosity (m2 s-1).
 }
 \examples{
 Reynolds.Number(25,100,0.5,z0m=0.5)                             

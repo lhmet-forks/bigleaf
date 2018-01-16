@@ -3,7 +3,7 @@
 \name{umolCO2.to.gC}
 \alias{umolCO2.to.gC}
 \alias{gC.to.umolCO2}
-\title{Conversion between mass and molar units of C and CO2}
+\title{Conversion between mass and molar units of Carbon and CO2}
 \usage{
 umolCO2.to.gC(CO2_flux, constants = bigleaf.constants())
 
@@ -14,10 +14,10 @@ gC.to.umolCO2(C_flux, constants = bigleaf.constants())
 
 \item{constants}{Cmol - molar mass of carbon (kg mol-1)}
 
-\item{C_flux}{C flux (gC m-2 s-1)}
+\item{C_flux}{Carbon (C) flux (gC m-2 s-1)}
 }
 \description{
-Converts CO2 quantities from umol CO2 m-2 s-1 to gC and vice versa.
+Converts CO2 quantities from umol CO2 m-2 s-1 to g C m-2 s-1 and vice versa.
 }
 \examples{
 gC_s <- umolCO2.to.gC(20)  # gC m-2 s-1

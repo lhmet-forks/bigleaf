@@ -25,13 +25,31 @@ Sensitivity of surface conductance to vapor pressure deficit.
 \details{
 The function fits the following equation (Oren et al. 1999):
 
-         \deqn{Gs = -m ln(VPD) + b}
+            \deqn{Gs = -m ln(VPD) + b}
 
          where b is the reference surface conductance (Gs) at VPD=1kPa (in mol m-2 s-1),
          and m is the sensitvity parameter of Gs to VPD (in mol m-2 s-1 log(kPa)-1).
          The two parameters b and m are fitted using \code{\link[stats]{nls}}.
          VPD can be the one directly measured at instrument height, or the
          one at the surface, as returned by \code{\link{surface.conditions}}.
+}
+\examples{
+## calculate Ga, Gs, and the stomatal sensitivity to VPD for the site FR-Pue in
+## May 2012. Data are filtered for daytime, sufficiently high ustar, etc.
+FR_Pue_May_2012_2 <- filter.data(FR_Pue_May_2012,quality.control=TRUE,
+                                 vars.qc=c("Tair","precip","H","LE"),
+                                 filter.growseas=FALSE,filter.precip=TRUE,
+                                 filter.vars=c("Tair","PPFD","ustar","VPD"),
+                                 filter.vals.min=c(5,200,0.2,0.3),
+                                 filter.vals.max=c(NA,NA,NA,NA),
+                                 NA.as.invalid=TRUE,quality.ext="_qc",
+                                 good.quality=c(0,1),missing.qc.as.bad=TRUE,
+                                 precip="precip",tprecip=0.1,precip.hours=24,
+                                 records.per.hour=2)
+Ga <- aerodynamic.conductance(FR_Pue_May_2012_2)
+Gs <- surface.conductance(FR_Pue_May_2012_2,Ga=Ga[,"Ga_h"])
+stomatal.sensitivity(FR_Pue_May_2012_2,Gs=Gs[,"Gs_mol"],VPD="VPD")
+
 }
 \references{
 Oren R., et al. 1999: Survey and synthesis of intra- and interspecific

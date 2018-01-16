@@ -9,7 +9,7 @@ biochemical.energy(NEE, alpha = 0.422)
 \arguments{
 \item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1)}
 
-\item{alpha}{Energy taken up/released by photosynthesis/respiration (J umol-1)}
+\item{alpha}{Energy taken up/released by photosynthesis/respiration per mol CO2 fixed/respired (J umol-1)}
 }
 \value{
 \item{Sp -}{biochemical energy (W m-2)}

@@ -20,9 +20,9 @@
 #'                         Only used if \code{formulation="PenmanMonteith"}.
 #' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0. 
 #'                          Only used if \code{formulation="PenmanMonteith"}.
-#' @param formulation Formulation used. Either "PenmanMonteith" (the default) 
-#'                    using the inverted Penman-Monteith equation, or "FluxGradient",
-#'                    for a simple flux-gradient approach requiring ET and VPD only. 
+#' @param formulation Formulation used. Either \code{"PenmanMonteith"} (the default) 
+#'                    using the inverted Penman-Monteith equation, or \code{"FluxGradient"},
+#'                    for a simple flux-gradient approach requiring ET, pressure, and VPD only. 
 #' @param constants   cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                    eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 #'                    Rd - gas constant of dry air (J kg-1 K-1) \cr
@@ -34,7 +34,7 @@
 #' @details If \code{formulation="PenmanMonteith"} (the default), surface conductance (Gs) in ms-1 
 #'          is calculated from the inverted Penman-Monteith equation:
 #' 
-#'  \deqn{Gs = ( LE * Ga * \gamma ) / ( \Delta * A + \rho * cp * Ga * VPD - LE * ( \Delta + \gamma ) )}
+#'     \deqn{Gs = ( LE * Ga * \gamma ) / ( \Delta * A + \rho * cp * Ga * VPD - LE * ( \Delta + \gamma ) )}
 #'  
 #'  Where \eqn{\gamma} is the psychrometric constant (kPa K-1), \eqn{\Delta} is the slope of the 
 #'  saturation vapor pressure curve (kPa K-1), and \eqn{\rho} is air density (kg m-3).
@@ -45,14 +45,14 @@
 #'  
 #'  If \code{formulation="FluxGradient"}, Gs (in mol m-2 s-1) is calculated from VPD and ET only:
 #'  
-#'  \deqn{Gs = ET/pressure * VPD}
+#'     \deqn{Gs = ET/pressure * VPD}
 #'  
 #'  where ET is in mol m-2 s-1. Note that this formulation assumes fully coupled conditions (i.e. Ga = inf).
 #'  This formulation is equivalent to the inverted form of Eq.6 in McNaughton & Black 1973:
 #'  
-#'  \deqn{Gs = LE * \gamma / (\rho * cp * VPD)}
+#'     \deqn{Gs = LE * \gamma / (\rho * cp * VPD)}
 #'  
-#'  which gives Gs in ms-1. Note that Gs > Gc (canopy conductance) under conditions 
+#'  which gives Gs in m s-1. Note that Gs > Gc (canopy conductance) under conditions 
 #'  when a significant fraction of ET comes from interception or soil evaporation. 
 #'  
 #'  If \code{pressure} is not available, it can be approximated by elevation using the 

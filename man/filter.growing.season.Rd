@@ -9,7 +9,7 @@ filter.growing.season(GPPd, tGPP, ws = 15, min.int = 5)
 \arguments{
 \item{GPPd}{daily GPP (any unit)}
 
-\item{tGPP}{GPP threshold (fraction of 95% quantile of the GPP time series).
+\item{tGPP}{GPP threshold (fraction of 95% percentile of the GPP time series).
 Takes values between 0 and 1.}
 
 \item{ws}{window size used for GPP time series smoothing}

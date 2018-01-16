@@ -50,7 +50,7 @@ treated as bad quality? Defaults to TRUE. Ignored if \code{quality.control} is F
 
 \item{year}{Year; Ignored if \code{filter.growseas} is FALSE.}
 
-\item{tGPP}{GPP threshold (fraction of 95% quantile of the GPP time series).
+\item{tGPP}{GPP threshold (fraction of 95% percentile of the GPP time series).
 Must be between 0 and 1. Ignored if \code{filter.growseas} is FALSE.}
 
 \item{ws}{Window size used for GPP time series smoothing. 

@@ -18,7 +18,7 @@
 #'          
 #'          \deqn{Re = z0m * ustar / v}
 #'          
-#'          where v is the kinematic viscosity (m2 s-1).
+#'          where \code{v} is the kinematic viscosity (m2 s-1).
 #'          
 #' @return \item{Re -}{Roughness Reynolds Number (-)}
 #' 
@@ -93,13 +93,13 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 #'          z0m = hs + 0.3 * zh * X^(1/2)  for 0 <= X <= 0.2
 #'          z0m = hs * zh * (1 - d/zh)     for 0.2 < X 
 #'          
-#'          If \code{method} is \code{wind_profile}, z0m is estimated by solving
-#'          the windspeed profile for z0m:
+#'          If \code{method} is \code{wind_profile}, \code{z0m} is estimated by solving
+#'          the windspeed profile for \code{z0m}:
 #'          
 #'          \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
 #'                  
 #'          By default, d in this equation is fixed to 0.7zh, but can be set to any
-#'          other value. psi_m is 0 if \code{stab_roughness=FALSE} (the default).       
+#'          other value. \code{psi_m} is 0 if \code{stab_roughness=FALSE} (the default).       
 #' 
 #' @return a data.frame with the following columns:
 #'         \item{d}{Zero-plane displacement height (m)}
@@ -230,7 +230,7 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 #'       meaningful to calculate values closely above d + z0m. All values in \code{heights}
 #'       smaller than d + z0m will return 0.                                 
 #'                                  
-#' @return a data.frame with rows representing time and columns representing heights as specified in \code{heights}.
+#' @return A data.frame with rows representing time and columns representing heights as specified in \code{heights}.
 #' 
 #' @examples 
 #' df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 

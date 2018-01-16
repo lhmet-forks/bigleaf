@@ -493,15 +493,15 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'          
 #'          The unified stomatal optimization (USO) model is given as (Medlyn et al. 2011):
 #'      
-#'          \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
+#'             \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
 #'          
 #'          The semi-empirical model by Ball et al. 1987 is defined as:
 #'          
-#'          \deqn{gs = g0 + g1* ((An * rH) / Ca)}
+#'             \deqn{gs = g0 + g1* ((An * rH) / Ca)}
 #'          
 #'          Leuning 1995 suggested a revised version of the Ball&Berry model:
 #'          
-#'          \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
+#'             \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
 #'          
 #'          The parameters in the models are estimated using nonlinear regression (\code{\link[stats]{nls}}) if
 #'          \code{robust.nls == FALSE} and weighted nonlinear regression if \code{robust.nls == TRUE}.
@@ -726,8 +726,8 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
 #' @details A rectangular light response curve is fitted to NEE data. The curve
 #'          takes the form as described in Falge et al. 2001:
 #'          
-#'          \deqn{NEE = \alpha PPFD / (1 - (PPFD / PPFD_ref) + \alpha 
-#'                       PPFD / GPPmax)- Reco}
+#'             \deqn{NEE = \alpha PPFD / (1 - (PPFD / PPFD_ref) + \alpha 
+#'                         PPFD / GPPmax)- Reco}
 #'                       
 #'          where \eqn{\alpha} is the ecosystem quantum yield (umol CO2 m-2 s-1) (umol quanta m-2 s-1)-1, 
 #'          and GPPmax is the GPP at the reference PPFD (usually at saturating light). \eqn{\alpha} 
@@ -775,7 +775,7 @@ light.response <- function(data,NEE="NEE",Reco="Reco",PPFD="PPFD",PPFD_ref=2000,
 #' 
 #' @details Light use efficiency is calculated as
 #'          
-#'          \deqn{LUE = sum(GPP)/sum(PPFD)}
+#'             \deqn{LUE = sum(GPP)/sum(PPFD)}
 #'          
 #'          where both GPP and PPFD are in umol m-2 s-1. A more meaningful 
 #'          (as directly comparable across ecosystems) approach is to take 
@@ -810,7 +810,7 @@ light.use.efficiency <- function(GPP,PPFD){
 #' 
 #' @details The function fits the following equation (Oren et al. 1999):
 #' 
-#'          \deqn{Gs = -m ln(VPD) + b}
+#'             \deqn{Gs = -m ln(VPD) + b}
 #'
 #'          where b is the reference surface conductance (Gs) at VPD=1kPa (in mol m-2 s-1),
 #'          and m is the sensitvity parameter of Gs to VPD (in mol m-2 s-1 log(kPa)-1).
@@ -829,6 +829,23 @@ light.use.efficiency <- function(GPP,PPFD){
 #'             for ecosystem water and carbon fluxes. Nature Climate Change 6, 1023 - 1027.
 #'          
 #' @importFrom stats nls
+#' 
+#' @examples
+#' ## calculate Ga, Gs, and the stomatal sensitivity to VPD for the site FR-Pue in
+#' ## May 2012. Data are filtered for daytime, sufficiently high ustar, etc.
+#' FR_Pue_May_2012_2 <- filter.data(FR_Pue_May_2012,quality.control=TRUE,
+#'                                  vars.qc=c("Tair","precip","H","LE"),
+#'                                  filter.growseas=FALSE,filter.precip=TRUE,
+#'                                  filter.vars=c("Tair","PPFD","ustar","VPD"),
+#'                                  filter.vals.min=c(5,200,0.2,0.3),
+#'                                  filter.vals.max=c(NA,NA,NA,NA),
+#'                                  NA.as.invalid=TRUE,quality.ext="_qc",
+#'                                  good.quality=c(0,1),missing.qc.as.bad=TRUE,
+#'                                  precip="precip",tprecip=0.1,precip.hours=24,
+#'                                  records.per.hour=2)
+#' Ga <- aerodynamic.conductance(FR_Pue_May_2012_2)
+#' Gs <- surface.conductance(FR_Pue_May_2012_2,Ga=Ga[,"Ga_h"])
+#' stomatal.sensitivity(FR_Pue_May_2012_2,Gs=Gs[,"Gs_mol"],VPD="VPD")
 #' 
 #' @export
 stomatal.sensitivity <- function(data,Gs="Gs",VPD="VPD",...){

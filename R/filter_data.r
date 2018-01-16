@@ -30,7 +30,7 @@
 #' @param GPP             Gross primary productivity (umol m-2 s-1); Ignored if \code{filter.growseas} is FALSE.
 #' @param doy             Day of year; Ignored if \code{filter.growseas} is FALSE.
 #' @param year            Year; Ignored if \code{filter.growseas} is FALSE.
-#' @param tGPP            GPP threshold (fraction of 95% quantile of the GPP time series).
+#' @param tGPP            GPP threshold (fraction of 95% percentile of the GPP time series).
 #'                        Must be between 0 and 1. Ignored if \code{filter.growseas} is FALSE.
 #' @param ws              Window size used for GPP time series smoothing. 
 #'                        Ignored if \code{filter.growseas} is FALSE.
@@ -268,7 +268,7 @@ filter.data <- function(data,quality.control=TRUE,filter.growseas=FALSE,
 #' @description Filters annual time series for growing season based on smoothed daily GPP data.
 #' 
 #' @param GPPd    daily GPP (any unit) 
-#' @param tGPP    GPP threshold (fraction of 95% quantile of the GPP time series).
+#' @param tGPP    GPP threshold (fraction of 95% percentile of the GPP time series).
 #'                Takes values between 0 and 1. 
 #' @param ws      window size used for GPP time series smoothing
 #' @param min.int minimum time interval in days for a given state of growing season

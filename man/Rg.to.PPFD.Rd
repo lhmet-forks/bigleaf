@@ -27,7 +27,7 @@ The conversion is given by:
 
  \deqn{PPFD = Rg * frac_PAR * J_to_mol}
  
-by default, the combined conversion factor (frac_PAR * J_to_mol) is 2.3
+by default, the combined conversion factor (\code{frac_PAR * J_to_mol}) is 2.3
 }
 \examples{
 # convert a measured incoming short-wave radiation of 500 Wm-2 to 

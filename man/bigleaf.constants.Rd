@@ -10,7 +10,7 @@ bigleaf.constants()
 This function defines the following constants:
 \item{cp}{specific heat of air for constant pressure (J K-1 kg-1)}
 \item{Rgas}{universal gas constant (J mol-1 K-1)}
-\item{Rv}{gas constant of water vapor (J kg-1 K-1) (Stull_1988 p.641)}
+\item{Rv}{gas constant of water vapor (J kg-1 K-1) (Stull 1988 p.641)}
 \item{Rd}{gas constant of dry air (J kg-1 K-1) (Foken p. 245)}
 \item{Md}{molar mass of dry air [kg mol-1]}
 \item{Mw}{molar mass of water vapor (kg mol-1)}

@@ -20,7 +20,7 @@ Amount of carbon fixed (GPP) per incoming light.
 \details{
 Light use efficiency is calculated as
          
-         \deqn{LUE = sum(GPP)/sum(PPFD)}
+            \deqn{LUE = sum(GPP)/sum(PPFD)}
          
          where both GPP and PPFD are in umol m-2 s-1. A more meaningful 
          (as directly comparable across ecosystems) approach is to take 

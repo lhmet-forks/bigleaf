@@ -89,13 +89,13 @@ The two main roughness parameters, the displacement height (d)
          z0m = hs + 0.3 * zh * X^(1/2)  for 0 <= X <= 0.2
          z0m = hs * zh * (1 - d/zh)     for 0.2 < X 
          
-         If \code{method} is \code{wind_profile}, z0m is estimated by solving
-         the windspeed profile for z0m:
+         If \code{method} is \code{wind_profile}, \code{z0m} is estimated by solving
+         the windspeed profile for \code{z0m}:
          
          \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
                  
          By default, d in this equation is fixed to 0.7zh, but can be set to any
-         other value. psi_m is 0 if \code{stab_roughness=FALSE} (the default).
+         other value. \code{psi_m} is 0 if \code{stab_roughness=FALSE} (the default).
 }
 \examples{
 # estimate d and z0m from canopy height for a dense (LAI=5) and open (LAI=2) canopy

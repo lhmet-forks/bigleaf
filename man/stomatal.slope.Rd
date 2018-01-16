@@ -66,15 +66,15 @@ All stomatal models were developed at leaf-level, but its parameters
          
          The unified stomatal optimization (USO) model is given as (Medlyn et al. 2011):
      
-         \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
+            \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
          
          The semi-empirical model by Ball et al. 1987 is defined as:
          
-         \deqn{gs = g0 + g1* ((An * rH) / Ca)}
+            \deqn{gs = g0 + g1* ((An * rH) / Ca)}
          
          Leuning 1995 suggested a revised version of the Ball&Berry model:
          
-         \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
+            \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
          
          The parameters in the models are estimated using nonlinear regression (\code{\link[stats]{nls}}) if
          \code{robust.nls == FALSE} and weighted nonlinear regression if \code{robust.nls == TRUE}.

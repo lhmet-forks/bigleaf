@@ -2,7 +2,7 @@
 
 **bigleaf** is an R package for the calculation of physical (e.g. aerodynamic conductance, surface temperature) and physiological
 (e.g. canopy conductance, water-use efficiency) ecosystem properties from eddy covariance data and accompanying meteorological measurements. 
-All calculations are based on a 'big-leaf' representation of the vegetation which return representative bulk ecosystem/canopy variables.
+All calculations are based on a 'big-leaf' representation of the vegetation and return representative bulk ecosystem/canopy variables.
 
 
 # Installation

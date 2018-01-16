@@ -66,7 +66,7 @@
 #'  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
 #'  calculated with \code{\link{MoninObukhov.length}}
 #'  The Stability correction function is chosen by the argument \code{stab_formulation}. Options are 
-#'  \code{Dyer_1970"} and \code{"Businger_1971"}.
+#'  \code{"Dyer_1970"} and \code{"Businger_1971"}.
 #'  
 #'  The model used to determine the canopy boundary layer resistance (Rb) is specified by 
 #'  the argument \code{Rb_model}. The following options are implemented:

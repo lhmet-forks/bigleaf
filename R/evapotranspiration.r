@@ -22,7 +22,7 @@
 #' 
 #'            \deqn{LE_pot = (\alpha * \Delta * (Rn - G - S)) / (\Delta + \gamma)}
 #'
-#'          \alpha is the Priestley-Taylor coefficient, \eqn{\Delta} is the slope 
+#'          \eqn{\alpha} is the Priestley-Taylor coefficient, \eqn{\Delta} is the slope 
 #'          of the saturation vapor pressure curve (kPa K-1),
 #'          and \eqn{\gamma} is the psychrometric constant (kPa K-1).
 #'          

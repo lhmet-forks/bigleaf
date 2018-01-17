@@ -13,7 +13,7 @@
 #' 
 #' @details Air density (\eqn{\rho}) is calculated as:
 #' 
-#'   \deqn{\rho = pressure / Rd * Tair}
+#'   \deqn{\rho = pressure / (Rd * Tair)}
 #' 
 #' @return \item{\eqn{\rho}}{air density (kg m-3)}
 #' 

@@ -52,12 +52,14 @@ biochemical.energy <- function(NEE,alpha=0.422){
 #' 
 #' @details Energy use efficiency is calculated as:
 #' 
-#'          \deqn{EUE = sum(GPP)/sum(Rn)}
+#'            \deqn{EUE = sum(GPP)/sum(Rn)}
 #'          
 #'          where the sums are calculated for complete cases of GPP and Rn over
 #'          the entire time period.
 #' 
 #' @return \item{EUE -}{Energy use efficiency (-)}
+#' 
+#' @seealso \code{\link{light.use.efficiency}}
 #' 
 #' @examples
 #' energy.use.efficiency(GPP=20,Rn=500)
@@ -86,22 +88,22 @@ energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
 #' @description Calculates the degree of the energy balance non-closure for the entire timespan
 #'              based on the ratio of two sums (energy balance ratio), and ordinary least squares (OLS).
 #' 
-#' @param data  Data.frame or matrix containing all required variables
+#' @param data  Data.frame or matrix containing all required variables.
 #' @param Rn    Net radiation (W m-2)
 #' @param G     Ground heat flux (W m-2); optional
 #' @param S     Sum of all storage fluxes (W m-2); optional
 #' @param LE    Latent heat flux (W m-2)
 #' @param H     Sensible heat flux (W m-2)
 #' @param instantaneous    should the energy balance be calculated at the timestep 
-#'                         of the observations (TRUE), or over the entire timeperiod
-#'                         provided as input (FALSE)
-#' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
-#' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0.
+#'                         of the observations (\code{TRUE}), or over the entire timeperiod
+#'                         provided as input (\code{FALSE})
+#' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s ,otherwise set to 0. 
+#' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.
 #' 
 #' 
 #' @details The energy balance ratio (EBR) is calculated as:
 #'          
-#'          \deqn{EBR = sum(LE + H)/sum(Rn - G - S)}
+#'            \deqn{EBR = sum(LE + H)/sum(Rn - G - S)}
 #'          
 #'          the sum is taken for all timesteps with complete observations (i.e. where
 #'          all energy balance terms are available).
@@ -113,7 +115,7 @@ energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
 #'         \item{r_squared}{r^2 of the OLS regression}
 #'         \item{EBR}{energy balance ratio}
 #'         
-#'         if \code{instantaneous} is TRUE, only \code{EBR} is returned.
+#'         if \code{instantaneous = TRUE}, only \code{EBR} is returned.
 #' 
 #' @references Wilson K., et al. 2002: Energy balance closure at FLUXNET sites.
 #'             Agricultural and Forest Meteorology 113, 223-243.
@@ -186,9 +188,10 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
 #'
 #' @details The isothermal net radiation (Rni) is given by:
 #'          
-#'          \deqn{Rni = Rn + \epsilon * \sigma * (Tsurf^4 - Tair^4)}
+#'            \deqn{Rni = Rn + \epsilon * \sigma * (Tsurf^4 - Tair^4)}
 #'          
-#'          with Tsurf and Tair in Kelvin.
+#'          where \eqn{\epsilon} is the emissivity of the surface. Tsurf and Tair
+#'          are in Kelvin.
 #'          
 #' @return \item{Rni -}{isothermal net radiation (W m-2)}
 #' 

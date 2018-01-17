@@ -51,12 +51,12 @@ ET.to.LE <- function(ET,Tair){
 
 #' Conversion between conductance units
 #' 
-#' @description Converts conductances from mass (ms-1)
+#' @description Converts conductances from mass (m s-1)
 #'              to molar units (mol m-2 s-1), or vice versa.
 #' 
 #' @aliases ms.to.mol mol.to.ms
 #' 
-#' @param G_ms       Conductance (ms-1)
+#' @param G_ms       Conductance (m s-1)
 #' @param G_mol      Conductance (mol m-2 s-1)
 #' @param Tair       Air temperature (deg C)
 #' @param pressure   Atmospheric pressure (kPa)
@@ -70,7 +70,7 @@ ET.to.LE <- function(ET,Tair){
 #' 
 #' \deqn{G_ms = G_mol * (Rgas * Tair) / pressure}
 #' 
-#' where \code{Tair} is in Kelvin and \code{pressure} in Pa (converted internally)
+#' where Tair is in Kelvin and pressure in Pa (converted from kPa internally)
 #' 
 #' @references Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.
 #'             2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p
@@ -211,7 +211,7 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 #' 
 #' @param Rg       Global radiation = incoming short-wave radiation at the surface (W m-2)
 #' @param PPFD     Photosynthetic photon flux density (umol m-2 s-1)
-#' @param J_to_mol Conversion factor from J m-2 s-1 (=W m-2) to umol (quanta) m-2 s-1
+#' @param J_to_mol Conversion factor from J m-2 s-1 (= W m-2) to umol (quanta) m-2 s-1
 #' @param frac_PAR Fraction of incoming solar irradiance that is photosynthetically 
 #'                 active radiation (PAR); defaults to 0.5
 #'                 

@@ -9,7 +9,7 @@ energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
   missing.S.as.NA = FALSE)
 }
 \arguments{
-\item{data}{Data.frame or matrix containing all required variables}
+\item{data}{Data.frame or matrix containing all required variables.}
 
 \item{Rn}{Net radiation (W m-2)}
 
@@ -22,12 +22,12 @@ energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
 \item{H}{Sensible heat flux (W m-2)}
 
 \item{instantaneous}{should the energy balance be calculated at the timestep 
-of the observations (TRUE), or over the entire timeperiod
-provided as input (FALSE)}
+of the observations (\code{TRUE}), or over the entire timeperiod
+provided as input (\code{FALSE})}
 
-\item{missing.G.as.NA}{if TRUE, missing G are treated as NA,otherwise set to 0.}
+\item{missing.G.as.NA}{if \code{TRUE}, missing G are treated as \code{NA}s ,otherwise set to 0.}
 
-\item{missing.S.as.NA}{if TRUE, missing S are treated as NA,otherwise set to 0.}
+\item{missing.S.as.NA}{if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.}
 }
 \value{
 a named vector containing:
@@ -37,7 +37,7 @@ a named vector containing:
         \item{r_squared}{r^2 of the OLS regression}
         \item{EBR}{energy balance ratio}
         
-        if \code{instantaneous} is TRUE, only \code{EBR} is returned.
+        if \code{instantaneous = TRUE}, only \code{EBR} is returned.
 }
 \description{
 Calculates the degree of the energy balance non-closure for the entire timespan
@@ -46,7 +46,7 @@ Calculates the degree of the energy balance non-closure for the entire timespan
 \details{
 The energy balance ratio (EBR) is calculated as:
          
-         \deqn{EBR = sum(LE + H)/sum(Rn - G - S)}
+           \deqn{EBR = sum(LE + H)/sum(Rn - G - S)}
          
          the sum is taken for all timesteps with complete observations (i.e. where
          all energy balance terms are available).

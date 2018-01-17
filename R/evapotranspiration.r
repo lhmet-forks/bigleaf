@@ -4,7 +4,7 @@
 
 #' Potential evapotranspiration
 #' 
-#' @description Potential evapotranspiration ET_pot according to Priestley & Taylor 1972.
+#' @description Potential evapotranspiration according to Priestley & Taylor 1972.
 #' 
 #' @param data      Data.frame or matrix containing all required variables; optional
 #' @param Tair      Air temperature (deg C)
@@ -13,28 +13,34 @@
 #' @param G         Ground heat flux (W m-2); optional
 #' @param S         Sum of all storage fluxes (W m-2); optional
 #' @param alpha     Priestley-Taylor coefficient (-)
-#' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
-#' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0. 
+#' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
+#' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-)
 #' 
 #' @details Potential evapotranspiration is calculated according to Priestley & Taylor, 1972:
 #' 
-#'          \deqn{LE_pot = (\alpha * \Delta * (Rn - G - S)) / (\Delta + \gamma)}
+#'            \deqn{LE_pot = (\alpha * \Delta * (Rn - G - S)) / (\Delta + \gamma)}
 #'
+#'          \alpha is the Priestley-Taylor coefficient, \eqn{\Delta} is the slope 
+#'          of the saturation vapor pressure curve (kPa K-1),
+#'          and \eqn{\gamma} is the psychrometric constant (kPa K-1).
+#'          
 #' @return a data.frame with the following columns:
 #'         \item{ET_pot}{Potential evapotranspiration (kg m-2 s-1)}
 #'         \item{LE_pot}{Potential latent heat flux (W m-2)}
 #'         
-#' @note If the first argument 'data' is provided (either a matrix or a data.frame),
+#' @note If the first argument \code{data} is provided (either a matrix or a data.frame),
 #'       the following variables can be provided as character (in which case they are interpreted as
-#'       the column name of 'data') or as numeric vectors, in which case they are taken
-#'       directly for the calculations. If 'data' is not provided, all input variables have to be
+#'       the column name of \code{data}) or as numeric vectors, in which case they are taken
+#'       directly for the calculations. If \code{data} is not provided, all input variables have to be
 #'       numeric vectors.        
 #'   
 #' @references Priestley C.H.B., Taylor R.J., 1972: On the assessment of surface heat flux
 #'             and evaporation using large-scale parameters. Monthly Weather Review 100, 81-92.  
-#'             
+#'          
+#' @seealso \code{\link{ET.ref}}
+#'                                
 #' @examples 
 #' # Calculate potential ET from a surface that receives Rn of 400 Wm-2
 #' ET.pot(Tair=30,pressure=100,Rn=400,alpha=1.26)    
@@ -77,7 +83,7 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #'              equation with a pre-defined surface conductance.
 #' 
 #' @param data      Data.frame or matrix containing all required variables
-#' @param Gs        Surface conductance (m s-1); defaults to 0.0143 ms-1 (~ 0.58mol m-2 s-1)
+#' @param Gs        Surface conductance (m s-1); defaults to 0.0143 m s-1 (~ 0.58 mol m-2 s-1)
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Atmospheric pressure (kPa)
 #' @param VPD       Vapor pressure deficit (kPa)
@@ -85,8 +91,8 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #' @param Rn        Net radiation (W m-2)
 #' @param G         Ground heat flux (W m-2); optional
 #' @param S         Sum of all storage fluxes (W m-2); optional
-#' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
-#' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0. 
+#' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
+#' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 #'                  Rd - gas constant of dry air (J kg-1 K-1) \cr
@@ -106,17 +112,19 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #'          surface.
 #'
 #' @return a data.frame with the following columns:
-#'         \item{ET_0}{reference evapotranspiration (kg m-2 s-1)}
-#'         \item{LE_0}{reference latent heat flux (W m-2)}              
+#'         \item{ET_0}{Reference evapotranspiration (kg m-2 s-1)}
+#'         \item{LE_0}{Reference latent heat flux (W m-2)}              
 #'                  
 #' @references  Allen R.G., Pereira L.S., Raes D., Smith M., 1998: Crop evapotranspiration -
 #'              Guidelines for computing crop water requirements - FAO Irrigation and drainage
 #'              paper 56.
 #' 
-#' @examples 
-#' # Calculate ET_ref for a surface with known Gs (0.5mol m-2 s-1) and Ga (0.1 ms-1)
+#' @seealso \code{\link{ET.pot}}
 #' 
-#' # Gs is required in ms-1
+#' @examples 
+#' # Calculate ET_ref for a surface with known Gs (0.5 mol m-2 s-1) and Ga (0.1 m s-1)
+#' 
+#' # Gs is required in m s-1
 #' Gs_ms <- mol.to.ms(0.5,Tair=20,pressure=100)
 #' ET_ref <- ET.ref(Gs=Gs_ms,Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400)
 #' 
@@ -173,21 +181,21 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #' @param Rn        Net radiation (W m-2)
 #' @param G         Ground heat flux (W m-2); optional
 #' @param S         Sum of all storage fluxes (W m-2); optional
-#' @param missing.G.as.NA  if TRUE, missing G are treated as NA,otherwise set to 0. 
-#' @param missing.S.as.NA  if TRUE, missing S are treated as NA,otherwise set to 0.
+#' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
+#' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-)
 #'                  
 #' @details Total evapotranspiration can be written in the form:
 #' 
-#'          \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
+#'            \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
 #'          
 #'          where \eqn{\Omega} is the decoupling coefficient as calculated from
 #'          \code{\link{decoupling}}. \code{ET_eq} is the equilibrium evapotranspiration rate,
 #'          the ET rate that would occur under uncoupled conditions, where the heat budget
 #'          is dominated by radiation (when Ga -> 0):
 #'          
-#'          \deqn{ET_eq = (\Delta * (Rn - G - S) * \lambda) / (\Delta + \gamma)}
+#'            \deqn{ET_eq = (\Delta * (Rn - G - S) * \lambda) / (\Delta + \gamma)}
 #'          
 #'          where \eqn{\Delta} is the slope of the saturation vapor pressure curve (kPa K-1),
 #'          \eqn{\lambda} is the latent heat of vaporization (J kg-1), and \eqn{\gamma}
@@ -195,14 +203,14 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #'          \code{ET_imp} is the imposed evapotranspiration rate, the ET rate
 #'          that would occur under fully coupled conditions (when Ga -> inf):
 #'          
-#'          \deqn{ET_imp = (\rho * cp * VPD * Gs * \lambda) / \gamma}
+#'            \deqn{ET_imp = (\rho * cp * VPD * Gs * \lambda) / \gamma}
 #'          
 #'          where \eqn{\rho} is the air density (kg m-3).
 #' 
 #' @note Surface conductance (Gs) can be calculated with \code{\link{surface.conductance}}.
 #'       Aerodynamic conductance (Ga) can be calculated using \code{\link{aerodynamic.conductance}}.
 #'       
-#' @return a data.frame with the following columns:
+#' @return A data.frame with the following columns:
 #'         \item{ET_eq}{Equilibrium ET (kg m-2 s-1)}
 #'         \item{ET_imp}{Imposed ET (kg m-2 s-1)}
 #'         \item{LE_eq}{Equilibrium LE (W m-2)}
@@ -213,6 +221,8 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #'             
 #'             Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
 #'             3rd edition. Academic Press, London. 
+#'             
+#' @seealso \code{\link{decoupling}}            
 #'             
 #' @examples 
 #' df <- data.frame(Tair=20,pressure=100,VPD=seq(0.5,4,0.5),

@@ -15,7 +15,7 @@ bigleaf.Vcmax.Jmax(data, C3 = TRUE, Temp, GPP = "GPP", Ci, PPFD = "PPFD",
 \arguments{
 \item{data}{Data.Frame or matrix with all required columns}
 
-\item{C3}{C3 vegetation (TRUE, the default) or C4 vegetation (FALSE)?}
+\item{C3}{C3 vegetation (\code{TRUE}, the default) or C4 vegetation (\code{FALSE})?}
 
 \item{Temp}{Surface (or air) temperature (degC)}
 
@@ -64,12 +64,12 @@ at 25 degC (umol mol-1)}
 
 \item{alpha_canopy}{Canopy absorptance (-)}
 
-\item{missing.Rleaf.as.NA}{if Rleaf is provided, should missing values be treated as NA (TRUE)
-or set to 0 (FALSE, the default)?}
+\item{missing.Rleaf.as.NA}{if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
+or set to 0 (\code{FALSE}, the default)?}
 
 \item{Ci_C4}{intercellular CO2 concentration below which photosynthesis
 is considered to be CO2-limited (umol mol-1), ignored
-if \code{C3=TRUE}.}
+if \code{C3 = TRUE}.}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 Rgas - universal gas constant (J mol-1 K-1)}
@@ -97,7 +97,7 @@ The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
          If net photosynthesis is Rubisco-limited (RuBP-satured carboxylation
          rate, i.e. light has to be (near-)saturating):
         
-         \deqn{Vcmax = (GPP * (Ci + Kc*(1.0 + Oi/Ko))) / (Ci - Gam)}
+           \deqn{Vcmax = (GPP * (Ci + Kc*(1.0 + Oi/Ko))) / (Ci - Gam)}
          
          where Kc and Ko are the Michaelis-Menten constants for CO2 and O2 (mmol mol-1),
          respectively, Oi is the O2 concentration, and Gam is the photorespiratory CO2
@@ -105,25 +105,25 @@ The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
          Under low-light conditions, the electron transport rate J is calculated from
          the RuBP-regeneration limited photosynthesis rate:
          
-         \deqn{J = (GPP * (4.0 * Ci + 8.0 * Gam) / (Ci - Gam)}
+           \deqn{J = (GPP * (4.0 * Ci + 8.0 * Gam) / (Ci - Gam)}
          
          In this function, bulk canopy photosynthesis is assumed to be Rubisco/RuBP-regeneration
          limited, if incoming PPFD is above/below a specified threshold or range. These ranges
          are determined by the parameters \code{PPFD_j} and \code{PPFD_c}. If, for example,
-         PPFD_j = c(100,400), all conditions with a PPFD between 100 and 400 are assumed
+         \code{PPFD_j = c(100,400)}, all conditions with a PPFD between 100 and 400 are assumed
          to be in the RuBP-regeneration (i.e. light-limited) photosynthesis domain. The electron
          transport rate J is then only calculated for periods that meet this criterion.
          
          Jmax is calculated from J and absorbed irradiance:
          
-         \deqn{J = (APPFD_PSII + Jmax - sqrt((APPFD_PSII + Jmax)^2 - 
+           \deqn{J = (APPFD_PSII + Jmax - sqrt((APPFD_PSII + Jmax)^2 - 
                     4.0 * Theta * APPFD_PSII * Jmax)) / (2.0 * Theta)
-              }
+                }
               
          where APPFD_PSII is the absorbed PPFD by photosystem II (PS II), 
          and Theta is a curvature parameter. APPFD_PSII is calculated as
          
-         \deqn{PPFD * alpha_canopy * 0.85 * beta}
+           \deqn{PPFD * alpha_canopy * 0.85 * beta}
          
          where alpha_canopy is canopy-scale absorptance, 0.85 is a correction factor, and
          beta is the fraction of photons absorbed by PS II (assumed 0.5).
@@ -132,12 +132,12 @@ The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
          as at leaf level. Hence, the respective parameter k at 25degC (k25) is calculated as 
          (see e.g. Kattge & Knorr 2007):
          
-         \deqn{k25 = k / 
-                     ( exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
-                     (1 + exp((Tref*dS - Hd) / (Tref * constants$Rgas))) /
-                     (1 + exp((Temp*dS - Hd) / (Temp * constants$Rgas)))
-                     )
-               }
+           \deqn{k25 = k / 
+                       ( exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
+                       (1 + exp((Tref*dS - Hd) / (Tref * constants$Rgas))) /
+                       (1 + exp((Temp*dS - Hd) / (Temp * constants$Rgas)))
+                       )
+                 }
          
          where Ha (kJ mol-1), Hd (kJ mol-1), and dS (kJ mol-1 K-1) are the activation energy,
          deactivation energy, and entropy term of the respective parameter.
@@ -145,7 +145,7 @@ The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
          For C4 photosynthesis, the simplified model by von Caemmerer 2000 is used.
          For light-saturated photosynthesis, Vcmax is given by:
          
-         \deqn{Vcmax = GPP}
+           \deqn{Vcmax = GPP}
          
          Note that in addition to the range \code{PPFD_c}, the range \code{Ci_C4}
          discards all periods with low Ci, in which photosynthesis is likely to
@@ -153,7 +153,7 @@ The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
          
          In the light-limited case, J is calculated as:
          
-         \deqn{J = 3 * GPPj / (1 - 0.5) }
+           \deqn{J = 3 * GPPj / (1 - 0.5) }
          
          The calculation of Jmax25 and Vcmax25 is identical to C3 photosynthesis
          as described above.
@@ -226,4 +226,7 @@ Lloyd J. et al., 1995: A simple calibrated model of Amazon rainforest productivi
             
             von Caemmerer, 2000: Biochemical models of leaf photosynthesis. Techniques
             in plant sciences No. 2. CSIRO Publishing, Collingwood VIC, Australia.
+}
+\seealso{
+\code{\link{intercellular.CO2}}, \code{\link{Arrhenius.temp.response}}
 }

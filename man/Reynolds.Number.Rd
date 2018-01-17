@@ -28,7 +28,7 @@ calculates the Roughness Reynolds Number.
 \details{
 The Roughness Reynolds Number is calculated as in Massman 1999a:
          
-         \deqn{Re = z0m * ustar / v}
+           \deqn{Re = z0m * ustar / v}
          
          where \code{v} is the kinematic viscosity (m2 s-1).
 }

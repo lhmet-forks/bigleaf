@@ -36,10 +36,10 @@ stability parameter 'zeta'
 \details{
 The stability parameter \eqn{\zeta} is given by:
 
-         \deqn{\zeta = (zr - d) / L}
+           \deqn{\zeta = (zr - d) / L}
          
-         where L is the Monin-Obukhov length, calculated from the function
-         \code{\link{MoninObukhov.length}}. The displacement height d can 
+         where L is the Monin-Obukhov length (m), calculated from the function
+         \code{\link{Monin.Obukhov.length}}. The displacement height d can 
          be estimated from the function \code{\link{roughness.parameters}}.
 }
 \examples{

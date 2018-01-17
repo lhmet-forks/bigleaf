@@ -32,27 +32,27 @@ aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
 
 \item{z0m}{Roughness length for momentum (m)}
 
-\item{Dl}{Characteristic leaf dimension (m); only used if \code{Rb_model} is "Choudhury_1988" or "Su_2001".}
+\item{Dl}{Characteristic leaf dimension (m); only used if \code{Rb_model} is \code{"Choudhury_1988"} or \code{"Su_2001"}.}
 
-\item{N}{Number of leaf sides participating in heat exchange (1 or 2); only used if \code{Rb_model} is "Su_2001".}
+\item{N}{Number of leaf sides participating in heat exchange (1 or 2); only used if \code{Rb_model = "Su_2001"}.}
 
-\item{fc}{Fractional vegetation cover (-); only used if \code{Rb_model} is "Su_2001". See Details.}
+\item{fc}{Fractional vegetation cover (-); only used if \code{Rb_model = "Su_2001"}. See Details.}
 
-\item{LAI}{One-sided leaf area index (m2 m-2); only used if \code{Rb_model} is "Choudhury_1988" or "Su_2001".}
+\item{LAI}{One-sided leaf area index (m2 m-2); only used if \code{Rb_model} is \code{"Choudhury_1988"} or \code{"Su_2001"}.}
 
-\item{Cd}{Foliage drag coefficient (-); only used if \code{Rb_model} is "Su_2001".}
+\item{Cd}{Foliage drag coefficient (-); only used if \code{Rb_model = "Su_2001"}.}
 
-\item{hs}{Roughness length of bare soil (m); only used if \code{Rb_model} is "Su_2001".}
+\item{hs}{Roughness length of bare soil (m); only used if \code{Rb_model = "Su_2001"}.}
 
 \item{wind_profile}{Should Ga for resistance be calculated based on the logarithmic wind profile equation? 
-Defaults to FALSE.}
+Defaults to \code{FALSE}.}
 
-\item{stab_correction}{Should stability correction be applied? Defaults to TRUE. Ignored if \code{wind_profile} is FALSE}
+\item{stab_correction}{Should stability correction be applied? Defaults to \code{TRUE}. Ignored if \code{wind_profile = FALSE}.}
 
-\item{stab_formulation}{Stability correction function. Either "Dyer_1970" (default) or
-"Businger_1971". Ignored if one of \code{wind_profile} and \code{stab_correction} is FALSE}
+\item{stab_formulation}{Stability correction function. Either \code{"Dyer_1970"} (default) or
+\code{"Businger_1971"}. Ignored if \code{wind_profile = FALSE} or if \code{stab_correction = FALSE}.}
 
-\item{Rb_model}{Boundary layer resistance formulation. One of c("Thom_1972","Choudhury_1988","Su_2001","constant_kB-1").}
+\item{Rb_model}{Boundary layer resistance formulation. One of \code{"Thom_1972","Choudhury_1988","Su_2001","constant_kB-1"}.}
 
 \item{kB}{kB-1 value; only used if \code{Rb_model = "constant_kB-1"}}
 
@@ -99,7 +99,7 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  additional stability correction function. 
  
  An alternative method to calculate Ra_m is provided
- (calculated if \code{wind_profile} set to TRUE):
+ (calculated if \code{wind_profile = TRUE}):
  
     \deqn{Ra_m = (ln((zr - d)/z0m) - psi_h) / (k ustar)}
  
@@ -108,8 +108,8 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  to account for the effect of atmospheric stability on Ra_m (Ra_m is lower for unstable
  and higher for stable stratification). Stratification is based on a stability parameter zeta (z-d/L),
  where z = reference height, d the zero-plane displacement height, and L the Monin-Obukhov length, 
- calculated with \code{\link{MoninObukhov.length}}
- The Stability correction function is chosen by the argument \code{stab_formulation}. Options are 
+ calculated with \code{\link{Monin.Obukhov.length}}
+ The stability correction function is chosen by the argument \code{stab_formulation}. Options are 
  \code{"Dyer_1970"} and \code{"Businger_1971"}.
  
  The model used to determine the canopy boundary layer resistance (Rb) is specified by 
@@ -124,7 +124,7 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
   
     \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
     
- The option "Su_2001" calculates Rb based on the physically-based Rb model by Su et al. 2001,
+ The option \code{"Su_2001"} calculates Rb based on the physically-based Rb model by Su et al. 2001,
  a simplification of the model developed by Massmann 1999:
  
     \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2}
@@ -184,4 +184,7 @@ Verma, S., 1989: Aerodynamic resistances to transfers of heat, mass and momentum
             
             Monteith, J.L., Unsworth, M.H., 2008: Principles of environmental physics.
             Third Edition. Elsevier Academic Press, Burlington, USA.
+}
+\seealso{
+\code{\link{Gb.Thom}}, \code{\link{Gb.Choudhury}}, \code{\link{Gb.Su}} for calculations of Rb / Gb only
 }

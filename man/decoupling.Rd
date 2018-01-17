@@ -19,10 +19,10 @@ decoupling(data, Tair = "Tair", pressure = "pressure", Ga = "Ga",
 
 \item{Gs}{Surface conductance (m s-1)}
 
-\item{approach}{Approach used to calculate omega. Either "JarvisMcNaughton_1986" (default)
-or "Martin_1989".}
+\item{approach}{Approach used to calculate omega. Either \code{"JarvisMcNaughton_1986"} (default)
+or \code{"Martin_1989"}.}
 
-\item{LAI}{Leaf area index (m2 m-2), only used if approach = "Martin_1989"}
+\item{LAI}{Leaf area index (m2 m-2), only used if \code{approach = "Martin_1989"}.}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
@@ -43,7 +43,7 @@ The decoupling coefficient Omega ranges from 0 to 1 and quantifies the
          and similar conditions at the canopy surface compared to the atmosphere above
          the canopy. Values close to 1 indicate the opposite, i.e. decoupled conditions and 
          a low stomatal control on transpiration (Jarvis & McNaughton 1986). \cr
-         The "JarvisMcNaughton_1986" approach (default option) is the original
+         The \code{"JarvisMcNaughton_1986"} approach (default option) is the original
          formulation for the decoupling coefficient, given by (for an amphistomatous 
          canopy):
          
@@ -54,7 +54,7 @@ The decoupling coefficient Omega ranges from 0 to 1 and quantifies the
          with s being the slope of the saturation vapor pressure curve (Pa K-1), and \eqn{\gamma} the 
          psychrometric constant (Pa K-1).
          
-         The approach "Martin_1989" by Martin 1989 additionally takes radiative coupling
+         The approach \code{"Martin_1989"} by Martin 1989 additionally takes radiative coupling
          into account:
          
          \deqn{\Omega = \frac{\epsilon + 1 + \frac{Gr}{Ga}}{\epsilon + (1 + \frac{Ga}{Gs}) (1 + \frac{Gr}{Ga})}}{%
@@ -76,4 +76,8 @@ Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
             
             Martin P., 1989: The significance of radiative coupling between
             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
+}
+\seealso{
+\code{\link{aerodynamic.conductance}}, \code{\link{surface.conductance}},
+         \code{\link{ET.eq.imp}}
 }

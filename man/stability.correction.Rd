@@ -9,7 +9,8 @@ stability.correction(zeta, formulation = c("Dyer_1970", "Businger_1971"))
 \arguments{
 \item{zeta}{Stability parameter zeta (-)}
 
-\item{formulation}{Formulation for the stability function. Either "Dyer_1970", or "Businger_1971"}
+\item{formulation}{Formulation for the stability function. Either \code{"Dyer_1970"}, 
+or \code{"Businger_1971"}}
 }
 \value{
 a data.frame with the following columns:
@@ -26,11 +27,11 @@ The functions give the integrated form of the universal functions. They
          which can be calculated from the function \code{\link{stability.parameter}}.
          The integration of the universal functions is:
          
-         \deqn{\psi = -x * zeta} 
+           \deqn{\psi = -x * zeta} 
          
          for stable atmospheric conditions (\eqn{\zeta} >= 0), and
          
-         \deqn{\psi = 2 * log( (1 + y) / 2) }
+           \deqn{\psi = 2 * log( (1 + y) / 2) }
          
          for unstable atmospheric conditions (\eqn{\zeta} < 0).
          

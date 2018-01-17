@@ -30,3 +30,6 @@ Light use efficiency is calculated as
 light.use.efficiency(GPP=20,PPFD=1500)
 
 }
+\seealso{
+\code{\link{energy.use.efficiency}}
+}

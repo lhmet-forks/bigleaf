@@ -29,11 +29,11 @@ surface.conductance(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
 
 \item{Ga}{Aerodynamic conductance (m s-1)}
 
-\item{missing.G.as.NA}{if TRUE, missing G are treated as NA,otherwise set to 0.
-Only used if \code{formulation="PenmanMonteith"}.}
+\item{missing.G.as.NA}{if \code{TRUE}, missing G are treated as \code{NA}s, otherwise they are set to 0.
+Only used if \code{formulation = "PenmanMonteith"}.}
 
-\item{missing.S.as.NA}{if TRUE, missing S are treated as NA,otherwise set to 0. 
-Only used if \code{formulation="PenmanMonteith"}.}
+\item{missing.S.as.NA}{if \code{TRUE}, missing S are treated as \code{NA}s, otherwise they are set to 0. 
+Only used if \code{formulation = "PenmanMonteith"}.}
 
 \item{formulation}{Formulation used. Either \code{"PenmanMonteith"} (the default) 
 using the inverted Penman-Monteith equation, or \code{"FluxGradient"},
@@ -53,10 +53,10 @@ a dataframe with the following columns:
 }
 \description{
 Calculates surface conductance to water vapor from the inverted Penman-Monteith
-             equation (by default).
+             equation (by default) or from a simple flux-gradient approach.
 }
 \details{
-If \code{formulation="PenmanMonteith"} (the default), surface conductance (Gs) in ms-1 
+If \code{formulation = "PenmanMonteith"} (the default), surface conductance (Gs) in m s-1 
          is calculated from the inverted Penman-Monteith equation:
 
     \deqn{Gs = ( LE * Ga * \gamma ) / ( \Delta * A + \rho * cp * Ga * VPD - LE * ( \Delta + \gamma ) )}
@@ -65,8 +65,8 @@ If \code{formulation="PenmanMonteith"} (the default), surface conductance (Gs) i
  saturation vapor pressure curve (kPa K-1), and \eqn{\rho} is air density (kg m-3).
  Available energy (A) is defined as A = Rn - G - S. If G and/or S are not provided, A = Rn.
  
- By default, any missing data in G and S are set to 0. If arguments \code{missing.S.as.NA} or \code{missing.S.as.NA} are 
- set to TRUE, Gs will give NA for these timesteps.
+ By default, any missing data in G and S are set to 0. If \code{missing.S.as.NA = TRUE}
+ or \code{missing.S.as.NA = TRUE}, Gs will give \code{NA} for these timesteps.
  
  If \code{formulation="FluxGradient"}, Gs (in mol m-2 s-1) is calculated from VPD and ET only:
  

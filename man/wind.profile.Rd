@@ -36,12 +36,12 @@ only used if \code{d} is not available}
 \item{z0m}{Roughness length (m), optional; only used if stab_correction=FALSE (default=0.1)}
 
 \item{frac_z0m}{Fraction of roughness length on canopy height (-), optional; only used 
-if stab_correction=FALSE (default=0.1), only used if \code{z0m} is not available}
+if \code{stab_correction = FALSE} (default=0.1), only used if \code{z0m} is not available}
 
-\item{stab_correction}{Should stability correction be applied? Defaults to TRUE}
+\item{stab_correction}{Should stability correction be applied? Defaults to \code{TRUE}}
 
-\item{stab_formulation}{Stability correction function used (If stab_correction is TRUE).
-Either "Dyer_1970" or "Businger_1971".}
+\item{stab_formulation}{Stability correction function used (If \code{stab_correction = TRUE}).
+Either \code{"Dyer_1970"} or \code{"Businger_1971"}.}
 
 \item{constants}{k - von-Karman constant (-) \cr
 Kelvin - conversion degree Celsius to Kelvin \cr
@@ -49,7 +49,8 @@ cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 g - gravitational acceleration (m s-2) \cr}
 }
 \value{
-A data.frame with rows representing time and columns representing heights as specified in \code{heights}.
+A data.frame with rows representing time and columns representing heights 
+        as specified in \code{heights}.
 }
 \description{
 wind speed at a given height above the canopy estimated from single-level
@@ -61,7 +62,7 @@ The underlying assumption is the existence of a logarithmic wind profile
          according to the Monin-Obhukov similarity theory).
          In this case, the wind speed at a given height z is given by:
          
-         \deqn{u(z) = (ustar/k) * (ln((z - d) / z0m) - \psi{m}}
+           \deqn{u(z) = (ustar/k) * (ln((z - d) / z0m) - \psi{m}}
          
          The roughness parameters zero-plane displacement height (d) and roughness length (z0m)
          can be approximated from \code{\link{roughness.parameters}}.
@@ -75,4 +76,7 @@ Note that this equation is only valid for z >= d + z0m, and it is not
 df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 
 wind.profile(df,heights=c(17:40),zr=40,zh=25,d=16)
 
+}
+\seealso{
+\code{\link{roughness.parameters}}
 }

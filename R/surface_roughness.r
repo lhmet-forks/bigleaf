@@ -16,7 +16,7 @@
 #'                  
 #' @details The Roughness Reynolds Number is calculated as in Massman 1999a:
 #'          
-#'          \deqn{Re = z0m * ustar / v}
+#'            \deqn{Re = z0m * ustar / v}
 #'          
 #'          where \code{v} is the kinematic viscosity (m2 s-1).
 #'          
@@ -44,15 +44,17 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 #' @description A simple approximation of the two roughness parameters displacement height (d)
 #'              and roughness length for momentum (z0m).
 #'              
-#' @param method    Method to use, either "canopy_height", "canopy_height&LAI", or "wind_profile" \cr
-#'                  NOTE: if method is "canopy_height", only the following three arguments
-#'                  are used. If method is "canopy_height&LAI", only zh, LAI, cd, and hs are required     
+#' @param method    Method to use, one of \code{"canopy_height","canopy_height&LAI","wind_profile"} \cr
+#'                  NOTE: if \code{method = "canopy_height"}, only the following three arguments
+#'                  are used. If \code{method = "canopy_height&LAI"}, only \code{zh, LAI, cd}, 
+#'                  and \code{hs} are required.     
 #' @param zh        Vegetation height (m)          
 #' @param frac_d    Fraction of displacement height on canopy height (-)
 #' @param frac_z0m  Fraction of roughness length on canopy height (-)
 #' @param LAI       Leaf area index (-) 
 #' @param zr        Instrument (reference) height (m)
-#' @param cd        Mean drag coefficient for individual leaves. Defaults to 0.2. Only needed if \code{method = "canopy_height&LAI"}
+#' @param cd        Mean drag coefficient for individual leaves. Defaults to 0.2. 
+#'                  Only needed if \code{method = "canopy_height&LAI"}.
 #' @param hs        roughness length of the soil surface (m). Only needed if \code{method = "canopy_height&LAI"}
 #'                  The following arguments are only needed if \code{method = "wind_profile"}!
 #' @param data      Data.frame or matrix containing all required variables
@@ -63,9 +65,9 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 #' @param H         Sensible heat flux (W m-2)
 #' @param d         Zero-plane displacement height (m); optional
 #' @param z0m       Roughness length for momentum (m); optional
-#' @param stab_roughness   Should stability correction be considered? Default is TRUE
-#' @param stab_formulation Stability correction function used (If stab_correction is TRUE).
-#'                         Either "Dyer_1970" or "Businger_1971".
+#' @param stab_roughness   Should stability correction be considered? Default is \code{TRUE}.
+#' @param stab_formulation Stability correction function used (If \code{stab_correction = TRUE}).
+#'                         Either \code{"Dyer_1970"} or \code{"Businger_1971"}.
 #' @param constants k - von-Karman constant (-) \cr
 #'                  Kelvin - conversion degree Celsius to Kelvin \cr
 #'                  cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
@@ -74,37 +76,40 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 #' 
 #' @details The two main roughness parameters, the displacement height (d)
 #'          and the roughness length for momentum (z0m) can be estimated from simple
-#'          empirical relationships with canopy height (zh). If \code{method} is
-#'          \code{canopy_height}, the following formulas are used:  
+#'          empirical relationships with canopy height (zh). If \code{method = "canopy_height"},
+#'          the following formulas are used:  
 #'          
-#'          \deqn{d = frac_d * zh}
+#'            \deqn{d = frac_d * zh}
 #'          
-#'          \deqn{z0m = frac_z0m * zh}
+#'            \deqn{z0m = frac_z0m * zh}
 #'          
 #'          where frac_d defaults to 0.7 and frac_z0m to 0.1.
 #'          
 #'          Alternatively, d and z0m can be estimated from both canopy height and LAI
-#'          (If \code{method} is \code{canopy_height&LAI}).
+#'          (If \code{method = "canopy_height&LAI"}).
 #'          Based on data from Shaw & Pereira 1982, Choudhury & Monteith 1988 proposed 
 #'          the following semi-empirical relations:
 #'          
-#'          X = cd * L
-#'          d = 1.1 * zh * ln(1 + X^(1/4)) 
-#'          z0m = hs + 0.3 * zh * X^(1/2)  for 0 <= X <= 0.2
-#'          z0m = hs * zh * (1 - d/zh)     for 0.2 < X 
+#'            \deqn{X = cd * LAI}
 #'          
-#'          If \code{method} is \code{wind_profile}, \code{z0m} is estimated by solving
-#'          the windspeed profile for \code{z0m}:
+#'            \deqn{d = 1.1 * zh * ln(1 + X^(1/4))} 
 #'          
-#'          \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
+#'            \deqn{z0m = hs + 0.3 * zh * X^(1/2)   for 0 <= X <= 0.2}
+#'          
+#'            \deqn{z0m = hs * zh * (1 - d/zh)   for 0.2 < X} 
+#'          
+#'          If \code{method = "wind_profile"}, z0m is estimated by solving
+#'          the windspeed profile for z0m:
+#'          
+#'            \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
 #'                  
-#'          By default, d in this equation is fixed to 0.7zh, but can be set to any
-#'          other value. \code{psi_m} is 0 if \code{stab_roughness=FALSE} (the default).       
+#'          By default, d in this equation is fixed to 0.7*zh, but can be set to any
+#'          other value. psi_m is 0 if \code{stab_roughness = FALSE} (the default).       
 #' 
 #' @return a data.frame with the following columns:
 #'         \item{d}{Zero-plane displacement height (m)}
 #'         \item{z0m}{Roughness length for momentum (m)}
-#'         \item{z0m_se}{Only if \code{method} is \code{wind_profile}: Standard Error of the median for z0m (m)}
+#'         \item{z0m_se}{Only if \code{method = wind_profile}: Standard Error of the median for z0m (m)}
 #'
 #' @references Choudhury, B. J., Monteith J.L., 1988: A four-layer model for the heat
 #'             budget of homogeneous land surfaces. Q. J. R. Meteorol. Soc. 114, 373-398.
@@ -112,6 +117,8 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 #'             Shaw, R. H., Pereira, A., 1982: Aerodynamic roughness of a plant canopy: 
 #'             a numerical experiment. Agricultural Meteorology, 26, 51-65.
 #'    
+#' @seealso \code{\link{wind.profile}}
+#'     
 #' @examples 
 #' # estimate d and z0m from canopy height for a dense (LAI=5) and open (LAI=2) canopy
 #' roughness.parameters(method="canopy_height&LAI",zh=25,LAI=5)
@@ -192,16 +199,6 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 #' 
 #' @description wind speed at a given height above the canopy estimated from single-level
 #'              measurements of wind speed at some distance above the canopy.
-#'              
-#' @details The underlying assumption is the existence of a logarithmic wind profile
-#'          above the height d + z0m (the height at which wind speed mathematically reaches zero
-#'          according to the Monin-Obhukov similarity theory).
-#'          In this case, the wind speed at a given height z is given by:
-#'          
-#'          \deqn{u(z) = (ustar/k) * (ln((z - d) / z0m) - \psi{m}}
-#'          
-#'          The roughness parameters zero-plane displacement height (d) and roughness length (z0m)
-#'          can be approximated from \code{\link{roughness.parameters}}.
 #'          
 #' @param data      Data.frame or matrix containing all required variables
 #' @param heights   Vector with heights for which wind speed is to be 
@@ -217,20 +214,33 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 #'                  only used if \code{d} is not available
 #' @param z0m       Roughness length (m), optional; only used if stab_correction=FALSE (default=0.1) 
 #' @param frac_z0m  Fraction of roughness length on canopy height (-), optional; only used 
-#'                  if stab_correction=FALSE (default=0.1), only used if \code{z0m} is not available
-#' @param stab_correction Should stability correction be applied? Defaults to TRUE
-#' @param stab_formulation Stability correction function used (If stab_correction is TRUE).
-#'                         Either "Dyer_1970" or "Businger_1971".
+#'                  if \code{stab_correction = FALSE} (default=0.1), only used if \code{z0m} is not available
+#' @param stab_correction Should stability correction be applied? Defaults to \code{TRUE}
+#' @param stab_formulation Stability correction function used (If \code{stab_correction = TRUE}).
+#'                         Either \code{"Dyer_1970"} or \code{"Businger_1971"}.
 #' @param constants k - von-Karman constant (-) \cr
 #'                  Kelvin - conversion degree Celsius to Kelvin \cr
 #'                  cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  g - gravitational acceleration (m s-2) \cr
-#'                                   
+#'
+#' @details The underlying assumption is the existence of a logarithmic wind profile
+#'          above the height d + z0m (the height at which wind speed mathematically reaches zero
+#'          according to the Monin-Obhukov similarity theory).
+#'          In this case, the wind speed at a given height z is given by:
+#'          
+#'            \deqn{u(z) = (ustar/k) * (ln((z - d) / z0m) - \psi{m}}
+#'          
+#'          The roughness parameters zero-plane displacement height (d) and roughness length (z0m)
+#'          can be approximated from \code{\link{roughness.parameters}}.         
+#'                                                             
 #' @note Note that this equation is only valid for z >= d + z0m, and it is not 
 #'       meaningful to calculate values closely above d + z0m. All values in \code{heights}
 #'       smaller than d + z0m will return 0.                                 
 #'                                  
-#' @return A data.frame with rows representing time and columns representing heights as specified in \code{heights}.
+#' @return A data.frame with rows representing time and columns representing heights 
+#'         as specified in \code{heights}.
+#'         
+#' @seealso \code{\link{roughness.parameters}}
 #' 
 #' @examples 
 #' df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 

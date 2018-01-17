@@ -18,7 +18,7 @@ Latent heat of vaporization as a function of air temperature.
 \details{
 The following formula is used:
 
-\deqn{\lambda = (2.501 - 0.00237*Tair)10^6}
+  \deqn{\lambda = (2.501 - 0.00237*Tair)10^6}
 }
 \examples{
 latent.heat.vaporization(seq(5,45,5))             

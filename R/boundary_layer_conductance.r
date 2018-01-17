@@ -7,17 +7,17 @@
 #' @description An empirical formulation for the canopy boundary layer conductance
 #'              based on a simple ustar dependency.
 #' 
-#' @param ustar     friction velocity (m s-1)
+#' @param ustar     Friction velocity (m s-1)
 #' @param constants k - von-Karman constant (-) \cr
 #'                  Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)
 #'  
 #' @details The empirical equation for Rb to water suggested by Thom 1972 is:
 #'  
-#'  \deqn{Rb = 6.2ustar^-0.67}
+#'    \deqn{Rb = 6.2ustar^-0.67}
 #'  
 #'  Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
 #'  
-#'  \deqn{Rb_CO2 = 1.37 * Rb}
+#'    \deqn{Rb_CO2 = 1.37 * Rb}
 #'  
 #'  The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
 #'  It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
@@ -36,7 +36,7 @@
 #'             Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
 #'             Edition. Elsevier Academic Press, Burlington, USA.
 #' 
-#' @seealso \code{\link{Gb.Choudhury}}, \code{\link{Gb.Su}}
+#' @seealso \code{\link{Gb.Choudhury}}, \code{\link{Gb.Su}}, \code{\link{aerodynamic.conductance}}
 #' 
 #' @examples 
 #' Gb.Thom(seq(0.1,1.4,0.1))
@@ -67,12 +67,12 @@ Gb.Thom <- function(ustar,constants=bigleaf.constants()){
 #' @param zh               Canopy height (m)
 #' @param zr               Instrument (reference) height (m)
 #' @param d                Zero-plane displacement height (-), can be calculated using \code{roughness.parameters}
-#' @param stab_formulation Stability correction function used (If stab_correction is TRUE).
-#'                         Either "Dyer_1970" or "Businger_1971".
+#' @param stab_formulation Stability correction function used (If \code{stab_correction = TRUE}).
+#'                         Either \code{"Dyer_1970"} or \code{"Businger_1971"}.
 #' @param constants        k - von-Karman constant (-) \cr
 #'                         Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)
 #' 
-#' @return a data frame with the following columns:
+#' @return A data frame with the following columns:
 #'     \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
 #'     \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
 #'     \item{Gb}{Boundary layer conductance (m s-1)}
@@ -81,20 +81,20 @@ Gb.Thom <- function(ustar,constants=bigleaf.constants()){
 #' @details Boundary layer conductance according to Choudhury & Monteith 1988 is
 #'          given by:
 #'          
-#'          \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
+#'            \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
 #'          
 #'          where u(zh) is the wind speed at the canopy surface, approximated from
 #'          measured wind speed at sensor height zr and a wind extinction coefficient \eqn{\alpha}:
 #'          
-#'          \deqn{u(zh) = u(zr) / (exp(\alpha(zr/zh -1)))}.
+#'            \deqn{u(zh) = u(zr) / (exp(\alpha(zr/zh -1)))}.
 #'          
 #'          \eqn{\alpha} is modeled as an empirical relation to LAI (McNaughton & van den Hurk 1995):
 #'          
-#'          \deqn{\alpha = 4.39 - 3.97*exp(-0.258*LAI)}
+#'            \deqn{\alpha = 4.39 - 3.97*exp(-0.258*LAI)}
 #'          
 #'          Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
 #'  
-#'          \deqn{Rb_CO2 = 1.37 * Rb}
+#'            \deqn{Rb_CO2 = 1.37 * Rb}
 #'  
 #'          The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
 #'          It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
@@ -111,7 +111,7 @@ Gb.Thom <- function(ustar,constants=bigleaf.constants()){
 #'             Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
 #'             Edition. Elsevier Academic Press, Burlington, USA.
 #'             
-#' @seealso \code{\link{Gb.Thom}}, \code{\link{Gb.Su}}  
+#' @seealso \code{\link{Gb.Thom}}, \code{\link{Gb.Su}}, \code{\link{aerodynamic.conductance}}
 #'    
 #' @examples 
 #' ## bulk canopy boundary layer resistance for a closed canopy (LAI=5) 
@@ -171,14 +171,14 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #' @param N        Number of leaf sides participating in heat exchange (defaults to 2)
 #' @param Cd       Foliage drag coefficient (-)
 #' @param hs       Roughness height of the soil (m)
-#' @param stab_formulation Stability correction function used (If stab_correction is TRUE).
-#'                         Either "Dyer_1970" or "Businger_1971".
+#' @param stab_formulation Stability correction function used (If \code{stab_correction = TRUE}).
+#'                         Either \code{"Dyer_1970"} or \code{"Businger_1971"}.
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
 #'                  pressure0 - reference atmospheric pressure at sea level (Pa) \cr
 #'                  Tair0 - reference air temperature (K) \cr
 #'                  Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)
 #' 
-#' @return a data.frame with the following columns:
+#' @return A data.frame with the following columns:
 #'     \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
 #'     \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
 #'     \item{Gb}{Boundary layer conductance (m s-1)}
@@ -187,31 +187,31 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #' @details The formulation is based on the kB-1 model developed by Massman 1999. 
 #'          Su et al. 2001 derived the following approximation:
 #'           
-#'          \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2}
+#'            \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2}
 #'          
 #'          If fc (fractional vegetation cover) is missing, it is estimated from LAI:
 #' 
-#'          \deqn{fc = 1 - exp(-LAI/2)}
+#'            \deqn{fc = 1 - exp(-LAI/2)}
 #'          
 #'          The wind speed at the top of the canopy is calculated using function
 #'          \code{\link{wind.profile}}.
 #'          
 #'          Ct is the heat transfer coefficient of the leaf (Massman 1999):
 #'          
-#'          \deqn{Ct = Pr^-2/3 Reh^-1/2 N}
+#'            \deqn{Ct = Pr^-2/3 Reh^-1/2 N}
 #'          
 #'          where Pr is the Prandtl number (set to 0.71), and Reh is the Reynolds number for leaves:
 #'          
-#'          \deqn{Dl wind(zh) / v}
+#'            \deqn{Dl wind(zh) / v}
 #'           
 #'          kBs-1, the kB-1 value for bare soil surface, is calculated according 
 #'          to Su et al. 2001:
 #'          
-#'          \deqn{kBs^-1 = 2.46(Re)^0.25 - ln(7.4)}
+#'            \deqn{kBs^-1 = 2.46(Re)^0.25 - ln(7.4)}
 #'          
 #'          Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
 #'  
-#'          \deqn{Rb_CO2 = 1.37 * Rb}
+#'            \deqn{Rb_CO2 = 1.37 * Rb}
 #'  
 #'          The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
 #'          It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
@@ -228,7 +228,7 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #'             Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
 #'             Edition. Elsevier Academic Press, Burlington, USA.
 #' 
-#' @seealso \code{\link{Gb.Thom}}, \code{\link{Gb.Choudhury}}
+#' @seealso \code{\link{Gb.Thom}}, \code{\link{Gb.Choudhury}}, \code{\link{aerodynamic.conductance}}
 #' 
 #' @examples 
 #' # Canopy boundary layer resistance (and kB-1 parameter) for a set of meteorological conditions,

@@ -14,18 +14,18 @@
 #' @param Gs         Surface conductance to water vapor (mol m-2 s-1)
 #' @param Rleaf      Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
 #' @param calc.Csurf Should the derived surface CO2 concentration be used instead of 
-#'                   measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.
+#'                   measured atmospheric CO2? If \code{TRUE}, Ca is derived as shown in \code{Details}.
 #' @param Ga_CO2     Aerodynamic conductance to CO2 (m s-1) 
 #' @param NEE        Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem
-#' @param Tair       Air temperature (degC); ignored if \code{calc.Csurf} is FALSE
-#' @param pressure   Atmospheric pressure (kPa); ignored if \code{calc.Csurf} is FALSE
-#' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as NA (TRUE)
-#'                            or set to 0 (FALSE, the default)?
+#' @param Tair       Air temperature (degC); ignored if \code{calc.Csurf = FALSE}.
+#' @param pressure   Atmospheric pressure (kPa); ignored if \code{calc.Csurf = FALSE}.
+#' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
+#'                            or set to 0 (\code{FALSE}, the default)?
 #' @param constants  DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
 #' 
 #' @details Bulk intercellular CO2 concentration (Ci) is given by:
 #' 
-#'          \deqn{Ci = Ca - (GPP - Rleaf)/(Gs/1.6)}
+#'            \deqn{Ci = Ca - (GPP - Rleaf)/(Gs/1.6)}
 #'          
 #'          where Gs/1.6 (mol m-2 s-1) represents the surface conductance to CO2.
 #'          Note that Gs is required in mol m-2 s-1 for water vapor. Gs is converted to
@@ -58,8 +58,8 @@
 #' intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
 #' 
 #' # now calculate bulk canopy Ci, but with Ca at the canopy surface (Ga and NEE are needed)
-#' # The function \code{\link{aerodynamic.conductance}} can be used to calculate \code{Ga_CO2}.
-#' # Here, \code{Ga_CO2} of 0.05ms-1 is assumed.
+#' # The function aerodynamic.conductance() can be used to calculate Ga_CO2.
+#' # Here, Ga_CO2 of 0.05 m s-1 is assumed.
 #' 
 #' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=TRUE,Ga_CO2=0.05,NEE=-55,
 #'                   Tair=25,pressure=100) 
@@ -94,7 +94,7 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'              CO2 concentration using the Farquhar et al. 1980 model for C3 photosynthesis.
 #'           
 #' @param data      Data.Frame or matrix with all required columns   
-#' @param C3        C3 vegetation (TRUE, the default) or C4 vegetation (FALSE)?              
+#' @param C3        C3 vegetation (\code{TRUE}, the default) or C4 vegetation (\code{FALSE})?              
 #' @param Temp      Surface (or air) temperature (degC) 
 #' @param GPP       Gross primary productivty (umol m-2 s-1)
 #' @param Ci        Bulk canopy intercellular CO2 concentration (umol mol-1)
@@ -120,11 +120,11 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #' @param Jmax_dS   Entropy term for Jmax (kJ mol-1 K-1)
 #' @param Theta     Curvature term in the light response function of J (-)
 #' @param alpha_canopy Canopy absorptance (-)
-#' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as NA (TRUE)
-#'                            or set to 0 (FALSE, the default)?
+#' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
+#'                            or set to 0 (\code{FALSE}, the default)?
 #' @param Ci_C4        intercellular CO2 concentration below which photosynthesis
 #'                     is considered to be CO2-limited (umol mol-1), ignored
-#'                     if \code{C3=TRUE}. 
+#'                     if \code{C3 = TRUE}. 
 #' @param constants    Kelvin - conversion degree Celsius to Kelvin \cr
 #'                     Rgas - universal gas constant (J mol-1 K-1)
 #'                  
@@ -140,7 +140,7 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'          If net photosynthesis is Rubisco-limited (RuBP-satured carboxylation
 #'          rate, i.e. light has to be (near-)saturating):
 #'         
-#'          \deqn{Vcmax = (GPP * (Ci + Kc*(1.0 + Oi/Ko))) / (Ci - Gam)}
+#'            \deqn{Vcmax = (GPP * (Ci + Kc*(1.0 + Oi/Ko))) / (Ci - Gam)}
 #'          
 #'          where Kc and Ko are the Michaelis-Menten constants for CO2 and O2 (mmol mol-1),
 #'          respectively, Oi is the O2 concentration, and Gam is the photorespiratory CO2
@@ -148,25 +148,25 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'          Under low-light conditions, the electron transport rate J is calculated from
 #'          the RuBP-regeneration limited photosynthesis rate:
 #'          
-#'          \deqn{J = (GPP * (4.0 * Ci + 8.0 * Gam) / (Ci - Gam)}
+#'            \deqn{J = (GPP * (4.0 * Ci + 8.0 * Gam) / (Ci - Gam)}
 #'          
 #'          In this function, bulk canopy photosynthesis is assumed to be Rubisco/RuBP-regeneration
 #'          limited, if incoming PPFD is above/below a specified threshold or range. These ranges
 #'          are determined by the parameters \code{PPFD_j} and \code{PPFD_c}. If, for example,
-#'          PPFD_j = c(100,400), all conditions with a PPFD between 100 and 400 are assumed
+#'          \code{PPFD_j = c(100,400)}, all conditions with a PPFD between 100 and 400 are assumed
 #'          to be in the RuBP-regeneration (i.e. light-limited) photosynthesis domain. The electron
 #'          transport rate J is then only calculated for periods that meet this criterion.
 #'          
 #'          Jmax is calculated from J and absorbed irradiance:
 #'          
-#'          \deqn{J = (APPFD_PSII + Jmax - sqrt((APPFD_PSII + Jmax)^2 - 
+#'            \deqn{J = (APPFD_PSII + Jmax - sqrt((APPFD_PSII + Jmax)^2 - 
 #'                     4.0 * Theta * APPFD_PSII * Jmax)) / (2.0 * Theta)
-#'               }
+#'                 }
 #'               
 #'          where APPFD_PSII is the absorbed PPFD by photosystem II (PS II), 
 #'          and Theta is a curvature parameter. APPFD_PSII is calculated as
 #'          
-#'          \deqn{PPFD * alpha_canopy * 0.85 * beta}
+#'            \deqn{PPFD * alpha_canopy * 0.85 * beta}
 #'          
 #'          where alpha_canopy is canopy-scale absorptance, 0.85 is a correction factor, and
 #'          beta is the fraction of photons absorbed by PS II (assumed 0.5).
@@ -175,12 +175,12 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'          as at leaf level. Hence, the respective parameter k at 25degC (k25) is calculated as 
 #'          (see e.g. Kattge & Knorr 2007):
 #'          
-#'          \deqn{k25 = k / 
-#'                      ( exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
-#'                      (1 + exp((Tref*dS - Hd) / (Tref * constants$Rgas))) /
-#'                      (1 + exp((Temp*dS - Hd) / (Temp * constants$Rgas)))
-#'                      )
-#'                }
+#'            \deqn{k25 = k / 
+#'                        ( exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
+#'                        (1 + exp((Tref*dS - Hd) / (Tref * constants$Rgas))) /
+#'                        (1 + exp((Temp*dS - Hd) / (Temp * constants$Rgas)))
+#'                        )
+#'                  }
 #'          
 #'          where Ha (kJ mol-1), Hd (kJ mol-1), and dS (kJ mol-1 K-1) are the activation energy,
 #'          deactivation energy, and entropy term of the respective parameter.
@@ -188,7 +188,7 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'          For C4 photosynthesis, the simplified model by von Caemmerer 2000 is used.
 #'          For light-saturated photosynthesis, Vcmax is given by:
 #'          
-#'          \deqn{Vcmax = GPP}
+#'            \deqn{Vcmax = GPP}
 #'          
 #'          Note that in addition to the range \code{PPFD_c}, the range \code{Ci_C4}
 #'          discards all periods with low Ci, in which photosynthesis is likely to
@@ -196,7 +196,7 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'          
 #'          In the light-limited case, J is calculated as:
 #'          
-#'          \deqn{J = 3 * GPPj / (1 - 0.5) }
+#'            \deqn{J = 3 * GPPj / (1 - 0.5) }
 #'          
 #'          The calculation of Jmax25 and Vcmax25 is identical to C3 photosynthesis
 #'          as described above.
@@ -242,6 +242,8 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'             
 #'             von Caemmerer, 2000: Biochemical models of leaf photosynthesis. Techniques
 #'             in plant sciences No. 2. CSIRO Publishing, Collingwood VIC, Australia.
+#'
+#' @seealso \code{\link{intercellular.CO2}}, \code{\link{Arrhenius.temp.response}}
 #'
 #' @examples 
 #' DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,
@@ -473,20 +475,20 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #' @param VPD        Vapor pressure deficit (kPa)
 #' @param Ca         Atmospheric CO2 concentration (umol mol-1)
 #' @param Rleaf      Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0 
-#' @param model      Stomatal model used. One of c("USO","Ball&Berry","Leuning")
-#' @param robust.nls Use robust nonlinear regression (\code{\link[robustbase]{nlrob}})? Default is FALSE.
+#' @param model      Stomatal model used. One of \code{"USO","Ball&Berry","Leuning"}.
+#' @param robust.nls Use robust nonlinear regression (\code{\link[robustbase]{nlrob}})? Default is \code{FALSE}.
 #' @param nmin       Minimum number of data required to perform the fit; defaults to 40.
 #' @param fitg0      Should g0 and g1 be fitted simultaneously? 
-#' @param g0         Minimum stomatal conductance (mol m-2 s-1); ignored if \code{fitg0} is TRUE.
-#' @param fitD0      Should D0 be fitted along with g1 (and g0 if fitg0 = TRUE)?; only used if \code{model} is "Leuning"
-#' @param D0         Stomatal sensitivity parameter to VPD; only used if \code{model} is "Leuning" and fitD0 is FALSE
-#' @param Gamma      Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning". 
+#' @param g0         Minimum stomatal conductance (mol m-2 s-1); ignored if \code{fitg0 = TRUE}.
+#' @param fitD0      Should D0 be fitted along with g1 (and g0 if \code{fitg0 = TRUE})?; only used if \code{model = "Leuning"}.
+#' @param D0         Stomatal sensitivity parameter to VPD; only used if \code{model = "Leuning"} and \code{fitD0 = FALSE}.
+#' @param Gamma      Canopy CO2 compensation point (umol mol-1); only used if \code{model = "Leuning"}. 
 #'                   Can be a constant or a variable. Defaults to 50 umol mol-1.
 #' @param constants  Kelvin - conversion degree Celsius to Kelvin \cr
 #'                   Rgas - universal gas constant (J mol-1 K-1)
-#' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as NA (TRUE)
-#'                            or set to 0 (FALSE, the default)?
-#' @param ...        Additional arguments to \code{\link[stats]{nls}} or \code{\link[robustbase]{nlrob}} if \code{robust.nls} is TRUE
+#' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
+#'                            or set to 0 (\code{FALSE}, the default)?
+#' @param ...        Additional arguments to \code{\link[stats]{nls}} or \code{\link[robustbase]{nlrob}} if \code{robust.nls = TRUE}.
 #' 
 #' @details All stomatal models were developed at leaf-level, but its parameters 
 #'          can also be estimated at ecosystem level (but be aware of caveats).
@@ -504,14 +506,14 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'             \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
 #'          
 #'          The parameters in the models are estimated using nonlinear regression (\code{\link[stats]{nls}}) if
-#'          \code{robust.nls == FALSE} and weighted nonlinear regression if \code{robust.nls == TRUE}.
+#'          \code{robust.nls = FALSE} and weighted nonlinear regression if \code{robust.nls = TRUE}.
 #'          The weights are calculated from \code{\link[robustbase]{nlrob}}, and \code{\link[stats]{nls}}
 #'          is used for the actual fitting.
 #'          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
 #'          the big-leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
 #'          
 #' 
-#' @return an nls model object, containing information on the fitted parameters, their uncertainty range,
+#' @return A \code{nls} model object, containing information on the fitted parameters, their uncertainty range,
 #'         model fit, etc.
 #' 
 #' @references Medlyn B.E., et al., 2011: Reconciling the optimal and empirical approaches to
@@ -528,6 +530,8 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'             Knauer, J. et al., 2017: Towards physiologically meaningful water-
 #'             use efficiency estimates from eddy covariance data. Global Change Biology.
 #'             DOI: 10.1111/gcb.13893
+#' 
+#' @seealso \code{\link{surface.conductance}}
 #' 
 #' @examples 
 #' ## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)
@@ -744,7 +748,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
 #' @note   Note the sign convention. Negative NEE indicates that carbon is taken up
 #'         by the ecosystem. Reco has to be 0 or larger.
 #' 
-#' @return A nls model object containing estimates (+/- SE) for alpha and GPPmax.
+#' @return A \code{nls} model object containing estimates (+/- SE) for alpha and GPPmax.
 #' 
 #' @references Falge E., et al. 2001: Gap filling strategies for defensible annual
 #'             sums of net ecosystem exchange. Agricultural and Forest Meteorology 107,
@@ -783,6 +787,8 @@ light.response <- function(data,NEE="NEE",Reco="Reco",PPFD="PPFD",PPFD_ref=2000,
 #' 
 #' @return \item{LUE -}{Light use efficiency (-)}
 #' 
+#' @seealso \code{\link{energy.use.efficiency}}
+#' 
 #' @examples
 #' light.use.efficiency(GPP=20,PPFD=1500)
 #' 
@@ -818,7 +824,7 @@ light.use.efficiency <- function(GPP,PPFD){
 #'          VPD can be the one directly measured at instrument height, or the
 #'          one at the surface, as returned by \code{\link{surface.conditions}}.
 #'          
-#' @return An nls model object containing (amongst others) estimates for the mean
+#' @return A \code{nls} model object containing (amongst others) estimates for the mean
 #'         and standard errors of the parameters m and b.
 #' 
 #' @references Oren R., et al. 1999: Survey and synthesis of intra- and interspecific
@@ -828,7 +834,7 @@ light.use.efficiency <- function(GPP,PPFD){
 #'             Novick K.A., et al. 2016: The increasing importance of atmospheric demand
 #'             for ecosystem water and carbon fluxes. Nature Climate Change 6, 1023 - 1027.
 #'          
-#' @importFrom stats nls
+#' @seealso \code{\link{surface.conductance}}          
 #' 
 #' @examples
 #' ## calculate Ga, Gs, and the stomatal sensitivity to VPD for the site FR-Pue in
@@ -846,6 +852,8 @@ light.use.efficiency <- function(GPP,PPFD){
 #' Ga <- aerodynamic.conductance(FR_Pue_May_2012_2)
 #' Gs <- surface.conductance(FR_Pue_May_2012_2,Ga=Ga[,"Ga_h"])
 #' stomatal.sensitivity(FR_Pue_May_2012_2,Gs=Gs[,"Gs_mol"],VPD="VPD")
+#' 
+#' @importFrom stats nls
 #' 
 #' @export
 stomatal.sensitivity <- function(data,Gs="Gs",VPD="VPD",...){

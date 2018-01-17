@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_data.r
 \name{filter.data}
 \alias{filter.data}
-\title{Basic data filtering}
+\title{Basic eddy covariance data filtering}
 \usage{
 filter.data(data, quality.control = TRUE, filter.growseas = FALSE,
   filter.precip = FALSE, filter.vars = NULL, filter.vals.min,
@@ -16,71 +16,71 @@ filter.data(data, quality.control = TRUE, filter.growseas = FALSE,
 \item{data}{Data.frame or matrix containing all required input variables in 
 half-hourly or hourly resolution. Including year, month, day information}
 
-\item{quality.control}{Should quality control be applied? Defaults to TRUE.}
+\item{quality.control}{Should quality control be applied? Defaults to \code{TRUE}.}
 
-\item{filter.growseas}{Should data be filtered for growing season? Defaults to FALSE.}
+\item{filter.growseas}{Should data be filtered for growing season? Defaults to \code{FALSE}.}
 
-\item{filter.precip}{Should precipitation filtering be applied? Defaults to FALSE.}
+\item{filter.precip}{Should precipitation filtering be applied? Defaults to \code{FALSE}.}
 
 \item{filter.vars}{Additional variables to be filtered. Vector of type character.}
 
 \item{filter.vals.min}{Minimum values of the variables to be filtered. Numeric vector of 
-the same length than \code{filter.vars}. Set to NA to be ignored.}
+the same length than \code{filter.vars}. Set to \code{NA} to be ignored.}
 
 \item{filter.vals.max}{Maximum values of the variables to be filtered. Numeric vector of 
-the same length than \code{filter.vars}. Set to NA to be ignored.}
+the same length than \code{filter.vars}. Set to \code{NA} to be ignored.}
 
-\item{NA.as.invalid}{If TRUE (the default) missing data are filtered out (applies to all variables).}
+\item{NA.as.invalid}{If \code{TRUE} (the default) missing data are filtered out (applies to all variables).}
 
 \item{vars.qc}{Character vector indicating the variables for which quality filter should 
-be applied. Ignored if \code{quality.control} is FALSE.}
+be applied. Ignored if \code{quality.control = FALSE}.}
 
 \item{quality.ext}{The extension to the variables' names that marks them as 
-quality control variables. Ignored if \code{quality.control} is FALSE.}
+quality control variables. Ignored if \code{quality.control = FALSE}.}
 
 \item{good.quality}{Which values indicate good quality (i.e. not to be filtered) 
-in the quality control (qc) variables? Ignored if \code{quality.control} is FALSE.}
+in the quality control (qc) variables? Ignored if \code{quality.control = FALSE}.}
 
-\item{missing.qc.as.bad}{If quality control variable is NA, should the corresponding data point be
-treated as bad quality? Defaults to TRUE. Ignored if \code{quality.control} is FALSE.}
+\item{missing.qc.as.bad}{If quality control variable is \code{NA}, should the corresponding data point be
+treated as bad quality? Defaults to \code{TRUE}. Ignored if \code{quality.control = FALSE}.}
 
-\item{GPP}{Gross primary productivity (umol m-2 s-1); Ignored if \code{filter.growseas} is FALSE.}
+\item{GPP}{Gross primary productivity (umol m-2 s-1); Ignored if \code{filter.growseas = FALSE}.}
 
-\item{doy}{Day of year; Ignored if \code{filter.growseas} is FALSE.}
+\item{doy}{Day of year; Ignored if \code{filter.growseas = FALSE}.}
 
-\item{year}{Year; Ignored if \code{filter.growseas} is FALSE.}
+\item{year}{Year; Ignored if \code{filter.growseas = FALSE}.}
 
-\item{tGPP}{GPP threshold (fraction of 95% percentile of the GPP time series).
-Must be between 0 and 1. Ignored if \code{filter.growseas} is FALSE.}
+\item{tGPP}{GPP threshold (fraction of 95th percentile of the GPP time series).
+Must be between 0 and 1. Ignored if \code{filter.growseas} is \code{FALSE}.}
 
 \item{ws}{Window size used for GPP time series smoothing. 
-Ignored if \code{filter.growseas} is FALSE.}
+Ignored if \code{filter.growseas = FALSE}.}
 
 \item{min.int}{Minimum time interval in days for a given state of growing season.
-Ignored if \code{filter.growseas} is FALSE.}
+Ignored if \code{filter.growseas = FALSE}.}
 
 \item{precip}{Precipitation (mm time-1)}
 
 \item{tprecip}{Precipitation threshold used to demark a precipitation event (mm). 
-Ignored if \code{filter.precip} is FALSE}
+Ignored if \code{filter.precip = FALSE}.}
 
 \item{precip.hours}{Number of hours removed following a precipitation event (h).
-Ignored if \code{filter.precip} is FALSE}
+Ignored if \code{filter.precip = FALSE}.}
 
 \item{records.per.hour}{Number of observations per hour. I.e. 2 for half-hourly data.}
 
-\item{filtered.data.to.NA}{Logical. If TRUE (the default), all variables in the input
-data.frame/matrix are set to NA for the timestep where ANY of the
+\item{filtered.data.to.NA}{Logical. If \code{TRUE} (the default), all variables in the input
+data.frame/matrix are set to \code{NA} for the timestep where ANY of the
 \code{filter.vars} were beyond their acceptable range (as
 determined by \code{filter.vals.min} and \code{filter.vals.max}).
-If FALSE, values are not filtered, and an additional column 'valid'
+If \code{FALSE}, values are not filtered, and an additional column 'valid'
 is added to the data.frame/matrix, indicating if any value of a row
 did (1) or did not fulfill the filter criteria (0).}
 }
 \value{
-If \code{filtered.data.to.NA==TRUE} (default), the input data.frame/matrix with 
-        observations which did not fulfill the filter criteria set to NA. 
-        If \code{filtered.data.to.NA==FALSE}, the input data.frame/matrix with an additional 
+If \code{filtered.data.to.NA = TRUE} (default), the input data.frame/matrix with 
+        observations which did not fulfill the filter criteria set to \code{NA}. 
+        If \code{filtered.data.to.NA = FALSE}, the input data.frame/matrix with an additional 
         column "valid", which indicates whether all the data of a timestep fulfill the 
         filtering criteria (1) or not (0).
 }
@@ -96,7 +96,7 @@ This routine consists of two parts:
             the same name as the variable plus the extension as specified in \code{quality.ext}
             must be provided. For timesteps where the value of the quality indicator is not included
             in the argument \code{good.quality}, i.e. the quality is not considered as 'good', 
-            its value is set to NA.
+            its value is set to \code{NA}.
             
          2) Meteorological filtering. Under certain conditions (e.g. low ustar), the assumptions
             of the EC method are not fulfilled. Further, some data analysis require certain meteorological
@@ -104,7 +104,7 @@ This routine consists of two parts:
             The filter applied in this second step serves to exclude time periods that do not fulfill the criteria
             specified in the arguments. More specifically, timeperiods where one of the variables is higher
             or lower than the specified thresholds (\code{filter.vals.min} and \code{filter.vals.max})
-            are set to NA for all variables. If a threshold is set to NA, it will be ignored.
+            are set to \code{NA} for all variables. If a threshold is set to \code{NA}, it will be ignored.
 }
 \note{
 The thresholds set with \code{filter.vals.min} and \code{filter.vals.max} filter all data
@@ -113,9 +113,9 @@ The thresholds set with \code{filter.vals.min} and \code{filter.vals.max} filter
       \code{tprecip} filters all data that are greater than \code{tprecip}. 
 
       Variables considered of bad quality (as specified by the corresponding quality control variables)      
-      will be set to NA by this routine. Data that do not fulfill the filtering critera are set to
-      NA if \code{filtered.data.to.NA==TRUE}. Note that with this option *all* variables of the same
-      time step are set to NA. Alternatively, if \code{filtered.data.to.NA==FALSE} data are not set to NA,
+      will be set to \code{NA} by this routine. Data that do not fulfill the filtering critera are set to
+      \code{NA} if \code{filtered.data.to.NA = TRUE}. Note that with this option *all* variables of the same
+      time step are set to \code{NA}. Alternatively, if \code{filtered.data.to.NA = FALSE} data are not set to \code{NA},
       and a new column "valid" is added to the data.frame/matrix, indicating if any value of a row
       did (1) or did not fulfill the filter criteria (0).
 }

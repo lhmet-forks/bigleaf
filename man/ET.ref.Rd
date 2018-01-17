@@ -12,7 +12,7 @@ ET.ref(data, Gs = 0.0143, Tair = "Tair", pressure = "pressure",
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
 
-\item{Gs}{Surface conductance (m s-1); defaults to 0.0143 ms-1 (~ 0.58mol m-2 s-1)}
+\item{Gs}{Surface conductance (m s-1); defaults to 0.0143 m s-1 (~ 0.58 mol m-2 s-1)}
 
 \item{Tair}{Air temperature (deg C)}
 
@@ -28,9 +28,9 @@ ET.ref(data, Gs = 0.0143, Tair = "Tair", pressure = "pressure",
 
 \item{S}{Sum of all storage fluxes (W m-2); optional}
 
-\item{missing.G.as.NA}{if TRUE, missing G are treated as NA,otherwise set to 0.}
+\item{missing.G.as.NA}{if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0.}
 
-\item{missing.S.as.NA}{if TRUE, missing S are treated as NA,otherwise set to 0.}
+\item{missing.S.as.NA}{if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-) \cr
@@ -40,8 +40,8 @@ Kelvin - conversion degree Celsius to Kelvin \cr}
 }
 \value{
 a data.frame with the following columns:
-        \item{ET_0}{reference evapotranspiration (kg m-2 s-1)}
-        \item{LE_0}{reference latent heat flux (W m-2)}
+        \item{ET_0}{Reference evapotranspiration (kg m-2 s-1)}
+        \item{LE_0}{Reference latent heat flux (W m-2)}
 }
 \description{
 Reference evapotranspiration calculated from the Penman-Monteith
@@ -61,9 +61,9 @@ Reference evapotranspiration is calculated according to the Penman-Monteith
          surface.
 }
 \examples{
-# Calculate ET_ref for a surface with known Gs (0.5mol m-2 s-1) and Ga (0.1 ms-1)
+# Calculate ET_ref for a surface with known Gs (0.5 mol m-2 s-1) and Ga (0.1 m s-1)
 
-# Gs is required in ms-1
+# Gs is required in m s-1
 Gs_ms <- mol.to.ms(0.5,Tair=20,pressure=100)
 ET_ref <- ET.ref(Gs=Gs_ms,Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400)
 
@@ -75,4 +75,7 @@ surface.conductance(Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400,LE=ET_ref[,"LE_ref"
 Allen R.G., Pereira L.S., Raes D., Smith M., 1998: Crop evapotranspiration -
              Guidelines for computing crop water requirements - FAO Irrigation and drainage
              paper 56.
+}
+\seealso{
+\code{\link{ET.pot}}
 }

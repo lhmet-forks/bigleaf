@@ -7,9 +7,9 @@
 Trad.surface(longwave_up, emissivity, constants = bigleaf.constants())
 }
 \arguments{
-\item{longwave_up}{longwave upward radiation (W m-2)}
+\item{longwave_up}{Longwave upward radiation (W m-2)}
 
-\item{emissivity}{infrared emissivity of the surface (-)}
+\item{emissivity}{Infrared emissivity of the surface (-)}
 
 \item{constants}{sigma - Stefan-Boltzmann constant (W m-2 K-4) \cr
 Kelvin - conversion degree Celsius to Kelvin}
@@ -26,7 +26,7 @@ Radiometric surface temperature from longwave upward radiation
 \details{
 Radiometric surface temperature (Trad) is calculated as:
 
-         \deqn{Trad = LW_up / (\sigma \epsilon)^(1/4)}
+           \deqn{Trad = LW_up / (\sigma \epsilon)^(1/4)}
 }
 \examples{
 # determine radiative temperature of an object that has an emissivity of 0.98 

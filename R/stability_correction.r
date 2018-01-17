@@ -19,6 +19,8 @@
 #' @description The Monin-Obukhov length (L) is given by:
 #' 
 #'              \deqn{L = - (\rho * cp * ustar^3 * Tair) / (k * g * H)}
+#'              
+#'              where \eqn{rho} is air density (kg m-3).
 #' 
 #' @return \item{L -}{Monin-Obukhov length (m)}
 #' 
@@ -28,11 +30,13 @@
 #' 
 #' @references Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany. 
 #' 
+#' @seealso \code{\link{stability.parameter}}
+#' 
 #' @examples 
-#' MoninObukhov.length(Tair=25,pressure=100,ustar=seq(0.2,1,0.1),H=seq(40,200,20))
+#' Monin.Obukhov.length(Tair=25,pressure=100,ustar=seq(0.2,1,0.1),H=seq(40,200,20))
 #' 
 #' @export
-MoninObukhov.length <- function(data,Tair,pressure,ustar,H,constants=bigleaf.constants()){
+Monin.Obukhov.length <- function(data,Tair,pressure,ustar,H,constants=bigleaf.constants()){
   
   check.input(data,list(Tair,pressure,ustar,H))
   
@@ -61,10 +65,10 @@ MoninObukhov.length <- function(data,Tair,pressure,ustar,H,constants=bigleaf.con
 #' 
 #' @details The stability parameter \eqn{\zeta} is given by:
 #' 
-#'          \deqn{\zeta = (zr - d) / L}
+#'            \deqn{\zeta = (zr - d) / L}
 #'          
-#'          where L is the Monin-Obukhov length, calculated from the function
-#'          \code{\link{MoninObukhov.length}}. The displacement height d can 
+#'          where L is the Monin-Obukhov length (m), calculated from the function
+#'          \code{\link{Monin.Obukhov.length}}. The displacement height d can 
 #'          be estimated from the function \code{\link{roughness.parameters}}.
 #'          
 #' @return \item{\eqn{\zeta} - }{stability parameter (-)}
@@ -79,7 +83,7 @@ stability.parameter <- function(data,Tair="Tair",pressure="pressure",ustar="usta
   
   check.input(data,list(Tair,pressure,ustar,H))
   
-  MOL  <- MoninObukhov.length(data,Tair,pressure,ustar,H,constants)
+  MOL  <- Monin.Obukhov.length(data,Tair,pressure,ustar,H,constants)
   zeta <- (zr - d) / MOL
   
   return(zeta)
@@ -94,18 +98,19 @@ stability.parameter <- function(data,Tair="Tair",pressure="pressure",ustar="usta
 #'              from the exponential wind profile under non-neutral conditions.
 #'              
 #' @param zeta         Stability parameter zeta (-)
-#' @param formulation  Formulation for the stability function. Either "Dyer_1970", or "Businger_1971"
+#' @param formulation  Formulation for the stability function. Either \code{"Dyer_1970"}, 
+#'                     or \code{"Businger_1971"}
 #'
 #' @details The functions give the integrated form of the universal functions. They
 #'          depend on the value of the stability parameter \eqn{\zeta},
 #'          which can be calculated from the function \code{\link{stability.parameter}}.
 #'          The integration of the universal functions is:
 #'          
-#'          \deqn{\psi = -x * zeta} 
+#'            \deqn{\psi = -x * zeta} 
 #'          
 #'          for stable atmospheric conditions (\eqn{\zeta} >= 0), and
 #'          
-#'          \deqn{\psi = 2 * log( (1 + y) / 2) }
+#'            \deqn{\psi = 2 * log( (1 + y) / 2) }
 #'          
 #'          for unstable atmospheric conditions (\eqn{\zeta} < 0).
 #'          

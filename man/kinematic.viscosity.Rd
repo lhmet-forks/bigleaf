@@ -25,7 +25,7 @@ calculates the kinematic viscosity of air.
 where v is the kinematic viscosity of the air (m2 s-1), 
          given by (Massman 1999b):
          
-         \deqn{v = 1.327 * 10^-5(pressure0/pressure)(Tair/Tair0)^1.81}
+           \deqn{v = 1.327 * 10^-5(pressure0/pressure)(Tair/Tair0)^1.81}
 }
 \examples{
 kinematic.viscosity(25,100)    

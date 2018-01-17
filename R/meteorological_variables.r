@@ -12,7 +12,8 @@
 #'                  Rd - gas constant of dry air (J kg-1 K-1)
 #' 
 #' @details Air density (\eqn{\rho}) is calculated as:
-#' \deqn{\rho = pressure / Rd * Tair}
+#' 
+#'   \deqn{\rho = pressure / Rd * Tair}
 #' 
 #' @return \item{\eqn{\rho}}{air density (kg m-3)}
 #' 
@@ -24,6 +25,7 @@
 #' 
 #' @export
 air.density <- function(Tair,pressure,constants=bigleaf.constants()){
+  
   Tair     <- Tair + constants$Kelvin
   pressure <- pressure*1000
   
@@ -49,7 +51,7 @@ air.density <- function(Tair,pressure,constants=bigleaf.constants()){
 #' 
 #' @details Atmospheric pressure is approximated by the hypsometric equation:
 #' 
-#'       \deqn{pressure = pressure_0 / (exp(g * elevation / (Rd Temp)))}
+#'          \deqn{pressure = pressure_0 / (exp(g * elevation / (Rd Temp)))}
 #'       
 #' @note The hypsometric equation gives an estimate of the standard pressure
 #'       at a given altitude. 
@@ -95,18 +97,19 @@ pressure.from.elevation <- function(elev,Tair,VPD=NULL,constants=bigleaf.constan
 #'              corresponding slope of the saturation vapor pressure curve.
 #' 
 #' @param Tair     Air temperature (deg C)
-#' @param formula  Formula to be used. Either "Sonntag_1990" (Default) or "Alduchov_1996"
+#' @param formula  Formula to be used. Either \code{"Sonntag_1990"} (Default) or 
+#'                 \code{"Alduchov_1996"}.
 #' 
 #' @details Esat (kPa) is calculated using the Magnus equation:
 #' 
-#'  \deqn{Esat = a * exp((b * Tair) / (c + Tair)) / 1000}
+#'    \deqn{Esat = a * exp((b * Tair) / (c + Tair)) / 1000}
 #'  
 #'  where the coefficients a, b, c take different values depending on the formula used.
 #'  The default values are from Sonntag 1990 (a=611.2, b=17.62, c=243.12). This version
 #'  of the Magnus equation is recommended by the WMO (WMO 2008; p1.4-29).
 #'  The slope of the Esat curve (\eqn{\Delta}) is calculated as the first derivative of the function:
 #'  
-#'  \deqn{\Delta = dEsat / dTair}
+#'    \deqn{\Delta = dEsat / dTair}
 #'  
 #'  which is solved using \code{\link[stats]{D}}.
 #' 
@@ -170,7 +173,7 @@ Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
 #'                  
 #' @details The psychrometric constant (\eqn{\gamma}) is given as:
 #' 
-#'  \deqn{\gamma = cp * pressure / (eps * \lambda)},
+#'    \deqn{\gamma = cp * pressure / (eps * \lambda)},
 #'  
 #'  where \eqn{\lambda} is the latent heaf of vaporization (J kg-1), 
 #'  as calculated with \code{\link{latent.heat.vaporization}}.
@@ -202,7 +205,7 @@ psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
 #' 
 #' @details The following formula is used:
 #' 
-#' \deqn{\lambda = (2.501 - 0.00237*Tair)10^6}
+#'   \deqn{\lambda = (2.501 - 0.00237*Tair)10^6}
 #' 
 #' @return \item{\eqn{\lambda} -}{Latent heat of vaporization (J kg-1)} 
 #' 
@@ -214,6 +217,7 @@ psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
 #'             
 #' @export
 latent.heat.vaporization <- function(Tair) {
+  
   k1 <- 2.501
   k2 <- 0.00237
   lambda <- ( k1 - k2 * Tair ) * 1e+06
@@ -236,7 +240,7 @@ latent.heat.vaporization <- function(Tair) {
 #' 
 #' @details Wet-bulb temperature (Tw) is calculated from the following expression:
 #'          
-#'          \deqn{e = Esat(Tw) - gamma* (Tair - Tw)}
+#'            \deqn{e = Esat(Tw) - gamma* (Tair - Tw)}
 #'          
 #'          The equation is solved for Tw using \code{\link[stats]{nls}}.
 #'          Actual vapor pressure e is calculated from VPD using the function \code{\link{VPD.to.e}}.
@@ -274,12 +278,12 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #' @description calculates the dew point, the temperature to which air must be 
 #'              cooled to become saturated (i.e. e = esat(Td))
 #'
-#' @param Tair     Air temperature (degC)
-#' @param VPD      Vapor pressure deficit (kPa)
+#' @param Tair  Air temperature (degC)
+#' @param VPD   Vapor pressure deficit (kPa)
 #' 
 #' @details Dew point temperature (Td) is defined by:
 #' 
-#'         \deqn{e = Esat(Td)}
+#'           \deqn{e = Esat(Td)}
 #'    
 #'          which is solved for Td using \code{\link[stats]{nls}}.
 #'          
@@ -322,7 +326,7 @@ dew.point <- function(Tair,VPD){
 #' 
 #' @details the virtual temperature is given by:
 #'  
-#'  \deqn{Tv = Tair / (1 - (1 - eps) e/pressure)}
+#'    \deqn{Tv = Tair / (1 - (1 - eps) e/pressure)}
 #' 
 #'  where Tair is in Kelvin (converted internally). Likewise, VPD is converted 
 #'  to actual vapor pressure (e in kPa) with \code{\link{VPD.to.e}} internally.
@@ -362,7 +366,7 @@ virtual.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #' @details where v is the kinematic viscosity of the air (m2 s-1), 
 #'          given by (Massman 1999b):
 #'          
-#'          \deqn{v = 1.327 * 10^-5(pressure0/pressure)(Tair/Tair0)^1.81}
+#'            \deqn{v = 1.327 * 10^-5(pressure0/pressure)(Tair/Tair0)^1.81}
 #'          
 #' @return \item{v -}{kinematic viscosity of air (m2 s-1)}
 #' 

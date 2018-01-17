@@ -32,9 +32,10 @@ Calculates the isothermal net radiation, i.e. the net radiation
 \details{
 The isothermal net radiation (Rni) is given by:
          
-         \deqn{Rni = Rn + \epsilon * \sigma * (Tsurf^4 - Tair^4)}
+           \deqn{Rni = Rn + \epsilon * \sigma * (Tsurf^4 - Tair^4)}
          
-         with Tsurf and Tair in Kelvin.
+         where \eqn{\epsilon} is the emissivity of the surface. Tsurf and Tair
+         are in Kelvin.
 }
 \examples{
 # calculate isothermal net radiation of a surface that is 2degC warmer than the air.

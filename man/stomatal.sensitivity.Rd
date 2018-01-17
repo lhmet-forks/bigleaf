@@ -16,7 +16,7 @@ stomatal.sensitivity(data, Gs = "Gs", VPD = "VPD", ...)
 \item{...}{Additional arguments to \code{\link[stats]{nls}}}
 }
 \value{
-An nls model object containing (amongst others) estimates for the mean
+A \code{nls} model object containing (amongst others) estimates for the mean
         and standard errors of the parameters m and b.
 }
 \description{
@@ -58,4 +58,7 @@ Oren R., et al. 1999: Survey and synthesis of intra- and interspecific
             
             Novick K.A., et al. 2016: The increasing importance of atmospheric demand
             for ecosystem water and carbon fluxes. Nature Climate Change 6, 1023 - 1027.
+}
+\seealso{
+\code{\link{surface.conductance}}
 }

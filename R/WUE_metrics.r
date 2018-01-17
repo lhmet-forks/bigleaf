@@ -6,7 +6,7 @@
 #' 
 #' @description Calculation of various water use efficiency (WUE) metrics.
 #' 
-#' @param data      data.frame or matrix containing all required variables
+#' @param data      Data.frame or matrix containing all required variables
 #' @param GPP       Gross primary productivity (umol CO2 m-2 s-1)
 #' @param NEE       Net ecosystem exchange (umol CO2 m-2 s-1)
 #' @param LE        Latent heat flux (W m-2)
@@ -18,19 +18,19 @@
 #' 
 #'          Water-use efficiency (WUE):
 #'          
-#'          \deqn{WUE = GPP / ET}
+#'            \deqn{WUE = GPP / ET}
 #'          
 #'          Water-use efficiency based on NEE (WUE_NEE):
 #'          
-#'          \deqn{WUE_NEE = NEE / ET}
+#'            \deqn{WUE_NEE = NEE / ET}
 #'          
 #'          Inherent water-use efficiency (IWUE; Beer et al. 2009):
 #'          
-#'          \deqn{IWUE = (GPP * VPD) / ET}
+#'            \deqn{IWUE = (GPP * VPD) / ET}
 #'          
 #'          Underlying water-use efficiency (uWUE; Zhou et al. 2014):
 #'          
-#'          \deqn{uWUE= (GPP * sqrt(VPD)) / ET}
+#'            \deqn{uWUE= (GPP * sqrt(VPD)) / ET}
 #'          
 #'          All metrics are calculated based on the median of all values. E.g.
 #'          WUE = median(GPP/ET,na.rm=TRUE)
@@ -49,7 +49,9 @@
 #'             
 #'             Zhou, S., et al., 2014: The effect of vapor pressure deficit on water
 #'             use efficiency at the subdaily time scale. Geophysical Research Letters 41.
-#'             
+#'     
+#' @seealso \code{\link{stomatal.slope}} for a measure of intrinsic WUE          
+#'                             
 #' @examples 
 #' ## filter data for dry periods and daytime at DE-Tha in June 2014
 #' DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,

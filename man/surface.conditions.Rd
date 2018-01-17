@@ -21,15 +21,15 @@ surface.conditions(data, Tair = "Tair", pressure = "pressure", LE = "LE",
 
 \item{VPD}{Vapor pressure deficit (kPa)}
 
-\item{Ga}{Aerodynamic conductance for heat and water vapor (m s-1)}
+\item{Ga}{Aerodynamic conductance for heat/water vapor (m s-1)}
 
-\item{calc.Csurf}{Calculate surface CO2 concentration?}
+\item{calc.Csurf}{Calculate surface CO2 concentration? Defaults to \code{FALSE}.}
 
-\item{Ca}{Atmospheric CO2 concentration (mol mol-1). Required if calc.Ca = TRUE}
+\item{Ca}{Atmospheric CO2 concentration (mol mol-1). Required if \code{calc.Csurf = TRUE}.}
 
-\item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1). Required if calc.Ca = TRUE}
+\item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1). Required if \code{calc.Csurf = TRUE}.}
 
-\item{NEE}{Net ecosystem exchange (umol m-2 s-1). Required if calc.Ca = TRUE}
+\item{NEE}{Net ecosystem exchange (umol m-2 s-1). Required if \code{calc.Csurf = TRUE}.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
 eps - ratio of the molecular weight of water vapor to dry air (-) \cr}
@@ -55,15 +55,21 @@ Canopy surface temperature and humidity are calculated by inverting bulk transfe
          the surface of the big-leaf (i.e. at height d + z0h; the apparent sink of sensible heat and water vapor).
          Aerodynamic canopy surface temperature is given by:
          
-         \deqn{Tsurf = Tair + H / (\rho * cp * Ga)}
+           \deqn{Tsurf = Tair + H / (\rho * cp * Ga)}
          
+         where \eqn{\rho} is air density (kg m-3). 
          Vapor pressure at the canopy surface is:
          
-         \deqn{esurf = e + (LE * \gamma)/(Ga * \rho * cp)}
+           \deqn{esurf = e + (LE * \gamma)/(Ga * \rho * cp)}
          
+         where \eqn{\gamma} is the psychrometric constant (kPa K-1).
          Vapor pressure deficit (VPD) at the canopy surface is calculated as:
          
-         \deqn{VPD_surf = Esat_surf - esurf}
+           \deqn{VPD_surf = Esat_surf - esurf}
+           
+         CO2 concentration at the canopy surface is given by:
+         
+           \deqn{Ca_surf = Ca + NEE / Ga_CO2}
          
          Note that Ga is assumed to be equal for water vapor and sensible heat.
          Ga is further assumed to be the inverse of the sum of the turbulent part
@@ -73,7 +79,7 @@ Canopy surface temperature and humidity are calculated by inverting bulk transfe
          conditions outside the canopy boundary layer, i.e. in the canopy airspace.
 }
 \note{
-If \code{calc.Ca = TRUE} the following sign convention for NEE is employed: 
+If \code{calc.Csurf = TRUE} the following sign convention for NEE is employed: 
       negative values of NEE denote net CO2 uptake by the ecosystem.
 }
 \examples{

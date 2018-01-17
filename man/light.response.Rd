@@ -22,7 +22,7 @@ Default is 2000 umol m-2 s-1.}
 \item{...}{Additional arguments to \code{\link[stats]{nls}}}
 }
 \value{
-A nls model object containing estimates (+/- SE) for alpha and GPPmax.
+A \code{nls} model object containing estimates (+/- SE) for alpha and GPPmax.
 }
 \description{
 calculates GPPmax at a reference (mostly saturating) PPFD and 

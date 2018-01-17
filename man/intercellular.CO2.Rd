@@ -21,18 +21,18 @@ intercellular.CO2(data, Ca = "Ca", GPP = "GPP", Gs = "Gs", Rleaf = NULL,
 \item{Rleaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 
 \item{calc.Csurf}{Should the derived surface CO2 concentration be used instead of 
-measured atmospheric CO2? If TRUE, Ca is derived as shown in \code{Details}.}
+measured atmospheric CO2? If \code{TRUE}, Ca is derived as shown in \code{Details}.}
 
 \item{Ga_CO2}{Aerodynamic conductance to CO2 (m s-1)}
 
 \item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem}
 
-\item{Tair}{Air temperature (degC); ignored if \code{calc.Csurf} is FALSE}
+\item{Tair}{Air temperature (degC); ignored if \code{calc.Csurf = FALSE}.}
 
-\item{pressure}{Atmospheric pressure (kPa); ignored if \code{calc.Csurf} is FALSE}
+\item{pressure}{Atmospheric pressure (kPa); ignored if \code{calc.Csurf = FALSE}.}
 
-\item{missing.Rleaf.as.NA}{if Rleaf is provided, should missing values be treated as NA (TRUE)
-or set to 0 (FALSE, the default)?}
+\item{missing.Rleaf.as.NA}{if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
+or set to 0 (\code{FALSE}, the default)?}
 
 \item{constants}{DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)}
 }
@@ -47,7 +47,7 @@ Bulk canopy intercellular CO2 concentration (Ci) calculated based on Fick's law
 \details{
 Bulk intercellular CO2 concentration (Ci) is given by:
 
-         \deqn{Ci = Ca - (GPP - Rleaf)/(Gs/1.6)}
+           \deqn{Ci = Ca - (GPP - Rleaf)/(Gs/1.6)}
          
          where Gs/1.6 (mol m-2 s-1) represents the surface conductance to CO2.
          Note that Gs is required in mol m-2 s-1 for water vapor. Gs is converted to
@@ -71,8 +71,8 @@ The equation is based on Fick's law of diffusion and is equivalent to the
 intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
 
 # now calculate bulk canopy Ci, but with Ca at the canopy surface (Ga and NEE are needed)
-# The function \\code{\\link{aerodynamic.conductance}} can be used to calculate \\code{Ga_CO2}.
-# Here, \\code{Ga_CO2} of 0.05ms-1 is assumed.
+# The function aerodynamic.conductance() can be used to calculate Ga_CO2.
+# Here, Ga_CO2 of 0.05 m s-1 is assumed.
 
 intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=TRUE,Ga_CO2=0.05,NEE=-55,
                   Tair=25,pressure=100) 

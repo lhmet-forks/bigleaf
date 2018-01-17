@@ -29,7 +29,7 @@ An estimate of mean pressure at a given elevation as predicted by the
 \details{
 Atmospheric pressure is approximated by the hypsometric equation:
 
-      \deqn{pressure = pressure_0 / (exp(g * elevation / (Rd Temp)))}
+         \deqn{pressure = pressure_0 / (exp(g * elevation / (Rd Temp)))}
 }
 \note{
 The hypsometric equation gives an estimate of the standard pressure

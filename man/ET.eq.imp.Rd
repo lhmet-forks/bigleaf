@@ -25,15 +25,15 @@ ET.eq.imp(data, Tair = "Tair", pressure = "pressure", VPD = "VPD",
 
 \item{S}{Sum of all storage fluxes (W m-2); optional}
 
-\item{missing.G.as.NA}{if TRUE, missing G are treated as NA,otherwise set to 0.}
+\item{missing.G.as.NA}{if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0.}
 
-\item{missing.S.as.NA}{if TRUE, missing S are treated as NA,otherwise set to 0.}
+\item{missing.S.as.NA}{if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-)}
 }
 \value{
-a data.frame with the following columns:
+A data.frame with the following columns:
         \item{ET_eq}{Equilibrium ET (kg m-2 s-1)}
         \item{ET_imp}{Imposed ET (kg m-2 s-1)}
         \item{LE_eq}{Equilibrium LE (W m-2)}
@@ -45,14 +45,14 @@ Evapotranspiration (ET) split up into imposed ET and equilibrium ET.
 \details{
 Total evapotranspiration can be written in the form:
 
-         \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
+           \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
          
          where \eqn{\Omega} is the decoupling coefficient as calculated from
          \code{\link{decoupling}}. \code{ET_eq} is the equilibrium evapotranspiration rate,
          the ET rate that would occur under uncoupled conditions, where the heat budget
          is dominated by radiation (when Ga -> 0):
          
-         \deqn{ET_eq = (\Delta * (Rn - G - S) * \lambda) / (\Delta + \gamma)}
+           \deqn{ET_eq = (\Delta * (Rn - G - S) * \lambda) / (\Delta + \gamma)}
          
          where \eqn{\Delta} is the slope of the saturation vapor pressure curve (kPa K-1),
          \eqn{\lambda} is the latent heat of vaporization (J kg-1), and \eqn{\gamma}
@@ -60,7 +60,7 @@ Total evapotranspiration can be written in the form:
          \code{ET_imp} is the imposed evapotranspiration rate, the ET rate
          that would occur under fully coupled conditions (when Ga -> inf):
          
-         \deqn{ET_imp = (\rho * cp * VPD * Gs * \lambda) / \gamma}
+           \deqn{ET_imp = (\rho * cp * VPD * Gs * \lambda) / \gamma}
          
          where \eqn{\rho} is the air density (kg m-3).
 }
@@ -80,4 +80,7 @@ Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
             
             Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
             3rd edition. Academic Press, London.
+}
+\seealso{
+\code{\link{decoupling}}
 }

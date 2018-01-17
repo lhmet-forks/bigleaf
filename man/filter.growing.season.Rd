@@ -9,7 +9,7 @@ filter.growing.season(GPPd, tGPP, ws = 15, min.int = 5)
 \arguments{
 \item{GPPd}{daily GPP (any unit)}
 
-\item{tGPP}{GPP threshold (fraction of 95% percentile of the GPP time series).
+\item{tGPP}{GPP threshold (fraction of 95th percentile of the GPP time series).
 Takes values between 0 and 1.}
 
 \item{ws}{window size used for GPP time series smoothing}
@@ -26,7 +26,7 @@ Filters annual time series for growing season based on smoothed daily GPP data.
 \details{
 The basic idea behind the growing season filter is that vegetation is 
          considered to be active when its carbon uptake (GPP) is above a specified 
-         threshold, which is defined relative to the peak GPP (95th-percentile) 
+         threshold, which is defined relative to the peak GPP (95th percentile) 
          observed in the year. 
          The GPP-threshold is calculated as:
          

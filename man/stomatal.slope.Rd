@@ -27,33 +27,33 @@ stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP",
 
 \item{Rleaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 
-\item{model}{Stomatal model used. One of c("USO","Ball&Berry","Leuning")}
+\item{model}{Stomatal model used. One of \code{"USO","Ball&Berry","Leuning"}.}
 
-\item{robust.nls}{Use robust nonlinear regression (\code{\link[robustbase]{nlrob}})? Default is FALSE.}
+\item{robust.nls}{Use robust nonlinear regression (\code{\link[robustbase]{nlrob}})? Default is \code{FALSE}.}
 
 \item{nmin}{Minimum number of data required to perform the fit; defaults to 40.}
 
 \item{fitg0}{Should g0 and g1 be fitted simultaneously?}
 
-\item{g0}{Minimum stomatal conductance (mol m-2 s-1); ignored if \code{fitg0} is TRUE.}
+\item{g0}{Minimum stomatal conductance (mol m-2 s-1); ignored if \code{fitg0 = TRUE}.}
 
-\item{fitD0}{Should D0 be fitted along with g1 (and g0 if fitg0 = TRUE)?; only used if \code{model} is "Leuning"}
+\item{fitD0}{Should D0 be fitted along with g1 (and g0 if \code{fitg0 = TRUE})?; only used if \code{model = "Leuning"}.}
 
-\item{D0}{Stomatal sensitivity parameter to VPD; only used if \code{model} is "Leuning" and fitD0 is FALSE}
+\item{D0}{Stomatal sensitivity parameter to VPD; only used if \code{model = "Leuning"} and \code{fitD0 = FALSE}.}
 
-\item{Gamma}{Canopy CO2 compensation point (umol mol-1); only used if \code{model} is "Leuning". 
+\item{Gamma}{Canopy CO2 compensation point (umol mol-1); only used if \code{model = "Leuning"}. 
 Can be a constant or a variable. Defaults to 50 umol mol-1.}
 
-\item{missing.Rleaf.as.NA}{if Rleaf is provided, should missing values be treated as NA (TRUE)
-or set to 0 (FALSE, the default)?}
+\item{missing.Rleaf.as.NA}{if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
+or set to 0 (\code{FALSE}, the default)?}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 Rgas - universal gas constant (J mol-1 K-1)}
 
-\item{...}{Additional arguments to \code{\link[stats]{nls}} or \code{\link[robustbase]{nlrob}} if \code{robust.nls} is TRUE}
+\item{...}{Additional arguments to \code{\link[stats]{nls}} or \code{\link[robustbase]{nlrob}} if \code{robust.nls = TRUE}.}
 }
 \value{
-an nls model object, containing information on the fitted parameters, their uncertainty range,
+A \code{nls} model object, containing information on the fitted parameters, their uncertainty range,
         model fit, etc.
 }
 \description{
@@ -77,7 +77,7 @@ All stomatal models were developed at leaf-level, but its parameters
             \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
          
          The parameters in the models are estimated using nonlinear regression (\code{\link[stats]{nls}}) if
-         \code{robust.nls == FALSE} and weighted nonlinear regression if \code{robust.nls == TRUE}.
+         \code{robust.nls = FALSE} and weighted nonlinear regression if \code{robust.nls = TRUE}.
          The weights are calculated from \code{\link[robustbase]{nlrob}}, and \code{\link[stats]{nls}}
          is used for the actual fitting.
          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
@@ -136,4 +136,7 @@ Medlyn B.E., et al., 2011: Reconciling the optimal and empirical approaches to
             Knauer, J. et al., 2017: Towards physiologically meaningful water-
             use efficiency estimates from eddy covariance data. Global Change Biology.
             DOI: 10.1111/gcb.13893
+}
+\seealso{
+\code{\link{surface.conductance}}
 }

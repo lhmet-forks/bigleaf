@@ -21,7 +21,7 @@ calculates the dew point, the temperature to which air must be
 \details{
 Dew point temperature (Td) is defined by:
 
-        \deqn{e = Esat(Td)}
+          \deqn{e = Esat(Td)}
    
          which is solved for Td using \code{\link[stats]{nls}}.
 }

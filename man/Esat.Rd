@@ -9,7 +9,8 @@ Esat(Tair, formula = c("Sonntag_1990", "Alduchov_1996"))
 \arguments{
 \item{Tair}{Air temperature (deg C)}
 
-\item{formula}{Formula to be used. Either "Sonntag_1990" (Default) or "Alduchov_1996"}
+\item{formula}{Formula to be used. Either \code{"Sonntag_1990"} (Default) or 
+\code{"Alduchov_1996"}.}
 }
 \value{
 A dataframe with the following columns: 
@@ -23,14 +24,14 @@ Calculates Saturation vapor pressure (Esat) over water and the
 \details{
 Esat (kPa) is calculated using the Magnus equation:
 
- \deqn{Esat = a * exp((b * Tair) / (c + Tair)) / 1000}
+   \deqn{Esat = a * exp((b * Tair) / (c + Tair)) / 1000}
  
  where the coefficients a, b, c take different values depending on the formula used.
  The default values are from Sonntag 1990 (a=611.2, b=17.62, c=243.12). This version
  of the Magnus equation is recommended by the WMO (WMO 2008; p1.4-29).
  The slope of the Esat curve (\eqn{\Delta}) is calculated as the first derivative of the function:
  
- \deqn{\Delta = dEsat / dTair}
+   \deqn{\Delta = dEsat / dTair}
  
  which is solved using \code{\link[stats]{D}}.
 }

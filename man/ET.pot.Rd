@@ -23,9 +23,9 @@ ET.pot(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
 
 \item{alpha}{Priestley-Taylor coefficient (-)}
 
-\item{missing.G.as.NA}{if TRUE, missing G are treated as NA,otherwise set to 0.}
+\item{missing.G.as.NA}{if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0.}
 
-\item{missing.S.as.NA}{if TRUE, missing S are treated as NA,otherwise set to 0.}
+\item{missing.S.as.NA}{if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-)}
@@ -36,18 +36,22 @@ a data.frame with the following columns:
         \item{LE_pot}{Potential latent heat flux (W m-2)}
 }
 \description{
-Potential evapotranspiration ET_pot according to Priestley & Taylor 1972.
+Potential evapotranspiration according to Priestley & Taylor 1972.
 }
 \details{
 Potential evapotranspiration is calculated according to Priestley & Taylor, 1972:
 
-         \deqn{LE_pot = (\alpha * \Delta * (Rn - G - S)) / (\Delta + \gamma)}
+           \deqn{LE_pot = (\alpha * \Delta * (Rn - G - S)) / (\Delta + \gamma)}
+
+         \alpha is the Priestley-Taylor coefficient, \eqn{\Delta} is the slope 
+         of the saturation vapor pressure curve (kPa K-1),
+         and \eqn{\gamma} is the psychrometric constant (kPa K-1).
 }
 \note{
-If the first argument 'data' is provided (either a matrix or a data.frame),
+If the first argument \code{data} is provided (either a matrix or a data.frame),
       the following variables can be provided as character (in which case they are interpreted as
-      the column name of 'data') or as numeric vectors, in which case they are taken
-      directly for the calculations. If 'data' is not provided, all input variables have to be
+      the column name of \code{data}) or as numeric vectors, in which case they are taken
+      directly for the calculations. If \code{data} is not provided, all input variables have to be
       numeric vectors.
 }
 \examples{
@@ -58,4 +62,7 @@ ET.pot(Tair=30,pressure=100,Rn=400,alpha=1.26)
 \references{
 Priestley C.H.B., Taylor R.J., 1972: On the assessment of surface heat flux
             and evaporation using large-scale parameters. Monthly Weather Review 100, 81-92.
+}
+\seealso{
+\code{\link{ET.ref}}
 }

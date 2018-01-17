@@ -12,7 +12,7 @@ PPFD.to.Rg(PPFD, J_to_mol = 4.6, frac_PAR = 0.5)
 \arguments{
 \item{Rg}{Global radiation = incoming short-wave radiation at the surface (W m-2)}
 
-\item{J_to_mol}{Conversion factor from J m-2 s-1 (=W m-2) to umol (quanta) m-2 s-1}
+\item{J_to_mol}{Conversion factor from J m-2 s-1 (= W m-2) to umol (quanta) m-2 s-1}
 
 \item{frac_PAR}{Fraction of incoming solar irradiance that is photosynthetically 
 active radiation (PAR); defaults to 0.5}

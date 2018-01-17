@@ -26,7 +26,7 @@ Virtual temperature, defined as the temperature at which dry air would have the 
 \details{
 the virtual temperature is given by:
  
- \deqn{Tv = Tair / (1 - (1 - eps) e/pressure)}
+   \deqn{Tv = Tair / (1 - (1 - eps) e/pressure)}
 
  where Tair is in Kelvin (converted internally). Likewise, VPD is converted 
  to actual vapor pressure (e in kPa) with \code{\link{VPD.to.e}} internally.

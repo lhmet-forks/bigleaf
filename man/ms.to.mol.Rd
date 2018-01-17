@@ -11,7 +11,7 @@ ms.to.mol(G_ms, Tair, pressure, constants = bigleaf.constants())
 mol.to.ms(G_mol, Tair, pressure, constants = bigleaf.constants())
 }
 \arguments{
-\item{G_ms}{Conductance (ms-1)}
+\item{G_ms}{Conductance (m s-1)}
 
 \item{Tair}{Air temperature (deg C)}
 
@@ -23,7 +23,7 @@ Rgas - universal gas constant (J mol-1 K-1)}
 \item{G_mol}{Conductance (mol m-2 s-1)}
 }
 \description{
-Converts conductances from mass (ms-1)
+Converts conductances from mass (m s-1)
              to molar units (mol m-2 s-1), or vice versa.
 }
 \details{
@@ -33,7 +33,7 @@ The conversions are given by:
 
 \deqn{G_ms = G_mol * (Rgas * Tair) / pressure}
 
-where \code{Tair} is in Kelvin and \code{pressure} in Pa (converted internally)
+where Tair is in Kelvin and pressure in Pa (converted from kPa internally)
 }
 \examples{
 ms.to.mol(0.005,25,100)

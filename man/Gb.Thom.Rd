@@ -7,7 +7,7 @@
 Gb.Thom(ustar, constants = bigleaf.constants())
 }
 \arguments{
-\item{ustar}{friction velocity (m s-1)}
+\item{ustar}{Friction velocity (m s-1)}
 
 \item{constants}{k - von-Karman constant (-) \cr
 Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
@@ -26,11 +26,11 @@ An empirical formulation for the canopy boundary layer conductance
 \details{
 The empirical equation for Rb to water suggested by Thom 1972 is:
  
- \deqn{Rb = 6.2ustar^-0.67}
+   \deqn{Rb = 6.2ustar^-0.67}
  
  Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
  
- \deqn{Rb_CO2 = 1.37 * Rb}
+   \deqn{Rb_CO2 = 1.37 * Rb}
  
  The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
  It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
@@ -49,5 +49,5 @@ Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
             Edition. Elsevier Academic Press, Burlington, USA.
 }
 \seealso{
-\code{\link{Gb.Choudhury}}, \code{\link{Gb.Su}}
+\code{\link{Gb.Choudhury}}, \code{\link{Gb.Su}}, \code{\link{aerodynamic.conductance}}
 }

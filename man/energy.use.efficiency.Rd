@@ -22,7 +22,7 @@ Fraction of net radiation fixed by primary productivity.
 \details{
 Energy use efficiency is calculated as:
 
-         \deqn{EUE = sum(GPP)/sum(Rn)}
+           \deqn{EUE = sum(GPP)/sum(Rn)}
          
          where the sums are calculated for complete cases of GPP and Rn over
          the entire time period.
@@ -30,4 +30,7 @@ Energy use efficiency is calculated as:
 \examples{
 energy.use.efficiency(GPP=20,Rn=500)
 
+}
+\seealso{
+\code{\link{light.use.efficiency}}
 }

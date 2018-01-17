@@ -14,11 +14,11 @@
 #' @param H          Sensible heat flux (W m-2)
 #' @param LE         Latent heat flux (W m-2)
 #' @param VPD        Vapor pressure deficit (kPa)
-#' @param Ga         Aerodynamic conductance for heat and water vapor (m s-1)
-#' @param calc.Csurf Calculate surface CO2 concentration?
-#' @param Ca         Atmospheric CO2 concentration (mol mol-1). Required if calc.Ca = TRUE
-#' @param NEE        Net ecosystem exchange (umol m-2 s-1). Required if calc.Ca = TRUE
-#' @param Ga_CO2     Aerodynamic conductance for CO2 (m s-1). Required if calc.Ca = TRUE          
+#' @param Ga         Aerodynamic conductance for heat/water vapor (m s-1)
+#' @param calc.Csurf Calculate surface CO2 concentration? Defaults to \code{FALSE}.
+#' @param Ca         Atmospheric CO2 concentration (mol mol-1). Required if \code{calc.Csurf = TRUE}.
+#' @param NEE        Net ecosystem exchange (umol m-2 s-1). Required if \code{calc.Csurf = TRUE}.
+#' @param Ga_CO2     Aerodynamic conductance for CO2 (m s-1). Required if \code{calc.Csurf = TRUE}.          
 #' @param constants  cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
 #'                   eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 #' 
@@ -27,15 +27,21 @@
 #'          the surface of the big-leaf (i.e. at height d + z0h; the apparent sink of sensible heat and water vapor).
 #'          Aerodynamic canopy surface temperature is given by:
 #'          
-#'          \deqn{Tsurf = Tair + H / (\rho * cp * Ga)}
+#'            \deqn{Tsurf = Tair + H / (\rho * cp * Ga)}
 #'          
+#'          where \eqn{\rho} is air density (kg m-3). 
 #'          Vapor pressure at the canopy surface is:
 #'          
-#'          \deqn{esurf = e + (LE * \gamma)/(Ga * \rho * cp)}
+#'            \deqn{esurf = e + (LE * \gamma)/(Ga * \rho * cp)}
 #'          
+#'          where \eqn{\gamma} is the psychrometric constant (kPa K-1).
 #'          Vapor pressure deficit (VPD) at the canopy surface is calculated as:
 #'          
-#'          \deqn{VPD_surf = Esat_surf - esurf}
+#'            \deqn{VPD_surf = Esat_surf - esurf}
+#'            
+#'          CO2 concentration at the canopy surface is given by:
+#'          
+#'            \deqn{Ca_surf = Ca + NEE / Ga_CO2}
 #'          
 #'          Note that Ga is assumed to be equal for water vapor and sensible heat.
 #'          Ga is further assumed to be the inverse of the sum of the turbulent part
@@ -44,7 +50,7 @@
 #'          only the turbulent conductance part), the results of the functions represent
 #'          conditions outside the canopy boundary layer, i.e. in the canopy airspace.
 #' 
-#' @note If \code{calc.Ca = TRUE} the following sign convention for NEE is employed: 
+#' @note If \code{calc.Csurf = TRUE} the following sign convention for NEE is employed: 
 #'       negative values of NEE denote net CO2 uptake by the ecosystem.
 #' 
 #' @return a data.frame with the following columns:
@@ -118,7 +124,7 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 #' 
 #' @details CO2 concentration at the canopy surface is calculated as:
 #' 
-#'        \deqn{Ca_surf = Ca + NEE / Ga_CO2}
+#'          \deqn{Ca_surf = Ca + NEE / Ga_CO2}
 #'        
 #'        Note that this equation can be used for any gas measured (with NEE
 #'        replaced by the net exchange of the respective gas and Ga_CO2 by the Ga of 
@@ -146,14 +152,14 @@ Ca.surface <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 #' @description Radiometric surface temperature from longwave upward radiation
 #'              measurements.
 #'              
-#' @param longwave_up longwave upward radiation (W m-2)
-#' @param emissivity  infrared emissivity of the surface (-)
+#' @param longwave_up Longwave upward radiation (W m-2)
+#' @param emissivity  Infrared emissivity of the surface (-)
 #' @param constants   sigma - Stefan-Boltzmann constant (W m-2 K-4) \cr
 #'                    Kelvin - conversion degree Celsius to Kelvin 
 #' 
 #' @details Radiometric surface temperature (Trad) is calculated as:
 #' 
-#'          \deqn{Trad = LW_up / (\sigma \epsilon)^(1/4)}   
+#'            \deqn{Trad = LW_up / (\sigma \epsilon)^(1/4)}   
 #' 
 #' @return a data.frame with the following columns:
 #'         \item{Trad_K}{Radiometric surface temperature (K)} \cr

@@ -32,14 +32,14 @@ Gb.Choudhury(data, Tair = "Tair", pressure = "pressure", wind = "wind",
 
 \item{d}{Zero-plane displacement height (-), can be calculated using \code{roughness.parameters}}
 
-\item{stab_formulation}{Stability correction function used (If stab_correction is TRUE).
-Either "Dyer_1970" or "Businger_1971".}
+\item{stab_formulation}{Stability correction function used (If \code{stab_correction = TRUE}).
+Either \code{"Dyer_1970"} or \code{"Businger_1971"}.}
 
 \item{constants}{k - von-Karman constant (-) \cr
 Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
 }
 \value{
-a data frame with the following columns:
+A data frame with the following columns:
     \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
     \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
     \item{Gb}{Boundary layer conductance (m s-1)}
@@ -52,20 +52,20 @@ Boundary layer conductance according to Choudhury & Monteith 1988
 Boundary layer conductance according to Choudhury & Monteith 1988 is
          given by:
          
-         \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
+           \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
          
          where u(zh) is the wind speed at the canopy surface, approximated from
          measured wind speed at sensor height zr and a wind extinction coefficient \eqn{\alpha}:
          
-         \deqn{u(zh) = u(zr) / (exp(\alpha(zr/zh -1)))}.
+           \deqn{u(zh) = u(zr) / (exp(\alpha(zr/zh -1)))}.
          
          \eqn{\alpha} is modeled as an empirical relation to LAI (McNaughton & van den Hurk 1995):
          
-         \deqn{\alpha = 4.39 - 3.97*exp(-0.258*LAI)}
+           \deqn{\alpha = 4.39 - 3.97*exp(-0.258*LAI)}
          
          Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
  
-         \deqn{Rb_CO2 = 1.37 * Rb}
+           \deqn{Rb_CO2 = 1.37 * Rb}
  
          The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
          It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
@@ -94,5 +94,5 @@ Choudhury, B. J., Monteith J.L., 1988: A four-layer model for the heat
             Edition. Elsevier Academic Press, Burlington, USA.
 }
 \seealso{
-\code{\link{Gb.Thom}}, \code{\link{Gb.Su}}
+\code{\link{Gb.Thom}}, \code{\link{Gb.Su}}, \code{\link{aerodynamic.conductance}}
 }

@@ -12,9 +12,10 @@ roughness.parameters(method = c("canopy_height", "canopy_height&LAI",
   "Businger_1971"), constants = bigleaf.constants())
 }
 \arguments{
-\item{method}{Method to use, either "canopy_height", "canopy_height&LAI", or "wind_profile" \cr
-NOTE: if method is "canopy_height", only the following three arguments
-are used. If method is "canopy_height&LAI", only zh, LAI, cd, and hs are required}
+\item{method}{Method to use, one of \code{"canopy_height","canopy_height&LAI","wind_profile"} \cr
+NOTE: if \code{method = "canopy_height"}, only the following three arguments
+are used. If \code{method = "canopy_height&LAI"}, only \code{zh, LAI, cd}, 
+and \code{hs} are required.}
 
 \item{zh}{Vegetation height (m)}
 
@@ -26,7 +27,8 @@ are used. If method is "canopy_height&LAI", only zh, LAI, cd, and hs are require
 
 \item{zr}{Instrument (reference) height (m)}
 
-\item{cd}{Mean drag coefficient for individual leaves. Defaults to 0.2. Only needed if \code{method = "canopy_height&LAI"}}
+\item{cd}{Mean drag coefficient for individual leaves. Defaults to 0.2. 
+Only needed if \code{method = "canopy_height&LAI"}.}
 
 \item{hs}{roughness length of the soil surface (m). Only needed if \code{method = "canopy_height&LAI"}
 The following arguments are only needed if \code{method = "wind_profile"}!}
@@ -47,10 +49,10 @@ The following arguments are only needed if \code{method = "wind_profile"}!}
 
 \item{z0m}{Roughness length for momentum (m); optional}
 
-\item{stab_roughness}{Should stability correction be considered? Default is TRUE}
+\item{stab_roughness}{Should stability correction be considered? Default is \code{TRUE}.}
 
-\item{stab_formulation}{Stability correction function used (If stab_correction is TRUE).
-Either "Dyer_1970" or "Businger_1971".}
+\item{stab_formulation}{Stability correction function used (If \code{stab_correction = TRUE}).
+Either \code{"Dyer_1970"} or \code{"Businger_1971"}.}
 
 \item{constants}{k - von-Karman constant (-) \cr
 Kelvin - conversion degree Celsius to Kelvin \cr
@@ -61,7 +63,7 @@ g - gravitational acceleration (m s-2) \cr}
 a data.frame with the following columns:
         \item{d}{Zero-plane displacement height (m)}
         \item{z0m}{Roughness length for momentum (m)}
-        \item{z0m_se}{Only if \code{method} is \code{wind_profile}: Standard Error of the median for z0m (m)}
+        \item{z0m_se}{Only if \code{method = wind_profile}: Standard Error of the median for z0m (m)}
 }
 \description{
 A simple approximation of the two roughness parameters displacement height (d)
@@ -70,32 +72,35 @@ A simple approximation of the two roughness parameters displacement height (d)
 \details{
 The two main roughness parameters, the displacement height (d)
          and the roughness length for momentum (z0m) can be estimated from simple
-         empirical relationships with canopy height (zh). If \code{method} is
-         \code{canopy_height}, the following formulas are used:  
+         empirical relationships with canopy height (zh). If \code{method = "canopy_height"},
+         the following formulas are used:  
          
-         \deqn{d = frac_d * zh}
+           \deqn{d = frac_d * zh}
          
-         \deqn{z0m = frac_z0m * zh}
+           \deqn{z0m = frac_z0m * zh}
          
          where frac_d defaults to 0.7 and frac_z0m to 0.1.
          
          Alternatively, d and z0m can be estimated from both canopy height and LAI
-         (If \code{method} is \code{canopy_height&LAI}).
+         (If \code{method = "canopy_height&LAI"}).
          Based on data from Shaw & Pereira 1982, Choudhury & Monteith 1988 proposed 
          the following semi-empirical relations:
          
-         X = cd * L
-         d = 1.1 * zh * ln(1 + X^(1/4)) 
-         z0m = hs + 0.3 * zh * X^(1/2)  for 0 <= X <= 0.2
-         z0m = hs * zh * (1 - d/zh)     for 0.2 < X 
+           \deqn{X = cd * LAI}
          
-         If \code{method} is \code{wind_profile}, \code{z0m} is estimated by solving
-         the windspeed profile for \code{z0m}:
+           \deqn{d = 1.1 * zh * ln(1 + X^(1/4))} 
          
-         \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
+           \deqn{z0m = hs + 0.3 * zh * X^(1/2)   for 0 <= X <= 0.2}
+         
+           \deqn{z0m = hs * zh * (1 - d/zh)   for 0.2 < X} 
+         
+         If \code{method = "wind_profile"}, z0m is estimated by solving
+         the windspeed profile for z0m:
+         
+           \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
                  
-         By default, d in this equation is fixed to 0.7zh, but can be set to any
-         other value. \code{psi_m} is 0 if \code{stab_roughness=FALSE} (the default).
+         By default, d in this equation is fixed to 0.7*zh, but can be set to any
+         other value. psi_m is 0 if \code{stab_roughness = FALSE} (the default).
 }
 \examples{
 # estimate d and z0m from canopy height for a dense (LAI=5) and open (LAI=2) canopy
@@ -116,4 +121,7 @@ Choudhury, B. J., Monteith J.L., 1988: A four-layer model for the heat
             
             Shaw, R. H., Pereira, A., 1982: Aerodynamic roughness of a plant canopy: 
             a numerical experiment. Agricultural Meteorology, 26, 51-65.
+}
+\seealso{
+\code{\link{wind.profile}}
 }

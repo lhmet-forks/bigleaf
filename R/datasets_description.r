@@ -1,8 +1,8 @@
 #' Eddy covariance data of AT-Neu (Neustift)
 #' 
-#' @description Halfhourly eddy covariance Data of the site AT.Neu,
+#' @description Halfhourly eddy covariance Data of the site AT-Neu,
 #'              a mountain meadow in Austria.
-#'              (\url{http://www.fluxdata.org:8080/sitepages/siteInfo.aspx?DE-Tha}). 
+#'              (\url{http://www.fluxdata.org:8080/sitepages/siteInfo.aspx?AT-Neu}). 
 #'              Data are from July 2010.
 #'              
 #' @format A data frame with 1488 observations and 29 columns:

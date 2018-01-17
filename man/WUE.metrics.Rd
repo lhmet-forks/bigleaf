@@ -8,7 +8,7 @@ WUE.metrics(data, GPP = "GPP", NEE = "NEE", LE = "LE", VPD = "VPD",
   Tair = "Tair", constants = bigleaf.constants())
 }
 \arguments{
-\item{data}{data.frame or matrix containing all required variables}
+\item{data}{Data.frame or matrix containing all required variables}
 
 \item{GPP}{Gross primary productivity (umol CO2 m-2 s-1)}
 
@@ -37,19 +37,19 @@ the following metrics are calculated:
 
          Water-use efficiency (WUE):
          
-         \deqn{WUE = GPP / ET}
+           \deqn{WUE = GPP / ET}
          
          Water-use efficiency based on NEE (WUE_NEE):
          
-         \deqn{WUE_NEE = NEE / ET}
+           \deqn{WUE_NEE = NEE / ET}
          
          Inherent water-use efficiency (IWUE; Beer et al. 2009):
          
-         \deqn{IWUE = (GPP * VPD) / ET}
+           \deqn{IWUE = (GPP * VPD) / ET}
          
          Underlying water-use efficiency (uWUE; Zhou et al. 2014):
          
-         \deqn{uWUE= (GPP * sqrt(VPD)) / ET}
+           \deqn{uWUE= (GPP * sqrt(VPD)) / ET}
          
          All metrics are calculated based on the median of all values. E.g.
          WUE = median(GPP/ET,na.rm=TRUE)
@@ -81,4 +81,7 @@ Beer, C., et al., 2009: Temporal and among-site variability of inherent
             
             Zhou, S., et al., 2014: The effect of vapor pressure deficit on water
             use efficiency at the subdaily time scale. Geophysical Research Letters 41.
+}
+\seealso{
+\code{\link{stomatal.slope}} for a measure of intrinsic WUE
 }

@@ -146,7 +146,7 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'          respectively, Oi is the O2 concentration, and Gam is the photorespiratory CO2
 #'          compensation point (umol mol-1).
 #'          Under low-light conditions, the electron transport rate J is calculated from
-#'          the RuBP-regeneration limited photosynthesis rate:
+#'          the RuBP regeneration-limited photosynthesis rate:
 #'          
 #'            \deqn{J = (GPP * (4.0 * Ci + 8.0 * Gam) / (Ci - Gam)}
 #'          
@@ -182,8 +182,8 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'                        )
 #'                  }
 #'          
-#'          where Ha (kJ mol-1), Hd (kJ mol-1), and dS (kJ mol-1 K-1) are the activation energy,
-#'          deactivation energy, and entropy term of the respective parameter.
+#'          where Ha is the activation energy (kJ mol-1), Hd is the deactivation energy (kJ mol-1),
+#'          and dS is the entropy term (kJ mol-1 K-1) of the respective parameter.
 #'          
 #'          For C4 photosynthesis, the simplified model by von Caemmerer 2000 is used.
 #'          For light-saturated photosynthesis, Vcmax is given by:
@@ -493,7 +493,7 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #' @details All stomatal models were developed at leaf-level, but its parameters 
 #'          can also be estimated at ecosystem level (but be aware of caveats).
 #'          
-#'          The unified stomatal optimization (USO) model is given as (Medlyn et al. 2011):
+#'          The unified stomatal optimization (USO) model is given by (Medlyn et al. 2011):
 #'      
 #'             \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
 #'          
@@ -510,7 +510,7 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'          The weights are calculated from \code{\link[robustbase]{nlrob}}, and \code{\link[stats]{nls}}
 #'          is used for the actual fitting.
 #'          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
-#'          the big-leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
+#'          the big-leaf surface can be provided. Those can be calculated using \code{\link{surface.conditions}}.
 #'          
 #' 
 #' @return A \code{nls} model object, containing information on the fitted parameters, their uncertainty range,

@@ -64,7 +64,7 @@ Estimation of the intrinsic WUE metric "g1" (stomatal slope)
 All stomatal models were developed at leaf-level, but its parameters 
          can also be estimated at ecosystem level (but be aware of caveats).
          
-         The unified stomatal optimization (USO) model is given as (Medlyn et al. 2011):
+         The unified stomatal optimization (USO) model is given by (Medlyn et al. 2011):
      
             \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
          
@@ -81,7 +81,7 @@ All stomatal models were developed at leaf-level, but its parameters
          The weights are calculated from \code{\link[robustbase]{nlrob}}, and \code{\link[stats]{nls}}
          is used for the actual fitting.
          Alternatively to measured VPD and Ca (i.e. conditions at instrument height), conditions at 
-         the big-leaf surface can be provided. They can be calculated using \code{\link{surface.conditions}}.
+         the big-leaf surface can be provided. Those can be calculated using \code{\link{surface.conditions}}.
 }
 \examples{
 ## filter data to ensure that Gs is a meaningful proxy to canopy conductance (Gc)

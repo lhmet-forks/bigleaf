@@ -103,7 +103,7 @@ The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
          respectively, Oi is the O2 concentration, and Gam is the photorespiratory CO2
          compensation point (umol mol-1).
          Under low-light conditions, the electron transport rate J is calculated from
-         the RuBP-regeneration limited photosynthesis rate:
+         the RuBP regeneration-limited photosynthesis rate:
          
            \deqn{J = (GPP * (4.0 * Ci + 8.0 * Gam) / (Ci - Gam)}
          
@@ -139,8 +139,8 @@ The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
                        )
                  }
          
-         where Ha (kJ mol-1), Hd (kJ mol-1), and dS (kJ mol-1 K-1) are the activation energy,
-         deactivation energy, and entropy term of the respective parameter.
+         where Ha is the activation energy (kJ mol-1), Hd is the deactivation energy (kJ mol-1),
+         and dS is the entropy term (kJ mol-1 K-1) of the respective parameter.
          
          For C4 photosynthesis, the simplified model by von Caemmerer 2000 is used.
          For light-saturated photosynthesis, Vcmax is given by:

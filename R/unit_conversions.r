@@ -247,20 +247,19 @@ PPFD.to.Rg <- function(PPFD,J_to_mol=4.6,frac_PAR=0.5){
 
 #' Conversion between mass and molar units of Carbon and CO2
 #' 
-#' @description Converts CO2 quantities from umol CO2 m-2 s-1 to g C m-2 s-1 and vice versa.
+#' @description Converts CO2 quantities from umol CO2 m-2 s-1 to g C m-2 d-1 and vice versa.
 #' 
 #' @param CO2_flux  CO2 flux (umol CO2 m-2 s-1)
-#' @param C_flux    Carbon (C) flux (gC m-2 s-1)
+#' @param C_flux    Carbon (C) flux (gC m-2 d-1)
 #' @param constants Cmol - molar mass of carbon (kg mol-1)
 #' 
 #' @examples 
-#' gC_s <- umolCO2.to.gC(20)  # gC m-2 s-1
-#' gC_d <- gC_s * 86400       # gC m-2 d-1 
+#' umolCO2.to.gC(20)  # gC m-2 d-1
 #' 
 #' @export
 umolCO2.to.gC <- function(CO2_flux,constants=bigleaf.constants()){
   
-  C_flux <- CO2_flux * 1e-06 * constants$Cmol * 1000
+  C_flux <- CO2_flux * 1e-06 * constants$Cmol * 1000 * 86400
   
   return(C_flux)
 }
@@ -270,7 +269,7 @@ umolCO2.to.gC <- function(CO2_flux,constants=bigleaf.constants()){
 #' @export
 gC.to.umolCO2 <- function(C_flux,constants=bigleaf.constants()){
   
-  CO2_flux <- C_flux / 1000 * (constants$Cmol / 2*constants$Omol) * 1e06
+  CO2_flux <- (C_flux / 1000 / 86400) / constants$Cmol * 1e06
   
   return(CO2_flux)
 }

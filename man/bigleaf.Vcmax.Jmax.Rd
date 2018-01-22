@@ -133,14 +133,15 @@ The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
          (see e.g. Kattge & Knorr 2007):
          
            \deqn{k25 = k / 
-                       ( exp(Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp)) *
-                       (1 + exp((Tref*dS - Hd) / (Tref * constants$Rgas))) /
-                       (1 + exp((Temp*dS - Hd) / (Temp * constants$Rgas)))
+                       ( exp(Ha * (Temp - Tref) / (Tref * Rgas * Temp)) *
+                       (1 + exp((Tref * dS - Hd) / (Tref * Rgas))) /
+                       (1 + exp((Temp * dS - Hd) / (Temp * Rgas)))
                        )
                  }
          
          where Ha is the activation energy (kJ mol-1), Hd is the deactivation energy (kJ mol-1),
-         and dS is the entropy term (kJ mol-1 K-1) of the respective parameter.
+         and dS is the entropy term (kJ mol-1 K-1) of the respective parameter. Tref is set
+         to 298.15 K.
          
          For C4 photosynthesis, the simplified model by von Caemmerer 2000 is used.
          For light-saturated photosynthesis, Vcmax is given by:

@@ -293,7 +293,7 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #'             3rd edition. Academic Press, London.
 #'             
 #' @examples
-#' dew.point(25,1.5)                
+#' dew.point(c(25,30),1.5)                
 #' 
 #' @importFrom stats nls 
 #' @export              

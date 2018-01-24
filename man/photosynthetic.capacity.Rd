@@ -205,7 +205,6 @@ Ci <- intercellular.CO2(DE_Tha_Jun_2014_2,Ca="Ca",GPP="GPP",Gs=Gs_PM,
 # calculate Vcmax25 and Jmax25
 photosynthetic.capacity(DE_Tha_Jun_2014_2,Temp="Tair",Ci=Ci,PPFD_j=c(200,500),PPFD_c=1000)
 
-                                                                       
 }
 \references{
 Lloyd J. et al., 1995: A simple calibrated model of Amazon rainforest productivity

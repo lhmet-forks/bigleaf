@@ -279,6 +279,7 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.sur
 #' # calculate Vcmax25 and Jmax25
 #' photosynthetic.capacity(DE_Tha_Jun_2014_2,Temp="Tair",Ci=Ci,PPFD_j=c(200,500),PPFD_c=1000)
 #' 
+#' @importFrom stats optimize
 #'                                                                        
 #' @export                  
 photosynthetic.capacity <- function(data,C3=TRUE,Temp,GPP="GPP",Ci,PPFD="PPFD",PPFD_j=c(200,500),PPFD_c=1000,

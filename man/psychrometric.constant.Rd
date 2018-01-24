@@ -2,7 +2,7 @@
 % Please edit documentation in R/meteorological_variables.r
 \name{psychrometric.constant}
 \alias{psychrometric.constant}
-\title{Psychrometric constant}
+\title{Psychrometric Constant}
 \usage{
 psychrometric.constant(Tair, pressure, constants = bigleaf.constants())
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_input.r
 \name{check.input}
 \alias{check.input}
-\title{checks input for functions in the bigleaf package}
+\title{Check Input for Functions in the bigleaf Package}
 \usage{
 check.input(data, ...)
 }

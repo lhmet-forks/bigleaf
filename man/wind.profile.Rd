@@ -2,7 +2,7 @@
 % Please edit documentation in R/surface_roughness.r
 \name{wind.profile}
 \alias{wind.profile}
-\title{Wind speed at given levels in the surface layer}
+\title{Wind Speed at Given Heights in the Surface Layer}
 \usage{
 wind.profile(data, heights, Tair = "Tair", pressure = "pressure",
   ustar = "ustar", H = "H", zr, zh, d = NULL, frac_d = 0.7,
@@ -74,7 +74,7 @@ Note that this equation is only valid for z >= d + z0m, and it is not
 }
 \examples{
 df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 
-wind.profile(df,heights=c(17:40),zr=40,zh=25,d=16)
+wind.profile(df,heights=seq(18,40,2),zr=40,zh=25,d=16)
 
 }
 \seealso{

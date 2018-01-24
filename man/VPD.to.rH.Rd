@@ -9,7 +9,7 @@
 \alias{q.to.e}
 \alias{q.to.VPD}
 \alias{VPD.to.q}
-\title{Conversions between humidity measures}
+\title{Conversions between Humidity Measures}
 \usage{
 VPD.to.rH(VPD, Tair)
 

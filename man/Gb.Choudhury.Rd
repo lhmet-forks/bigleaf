@@ -2,7 +2,7 @@
 % Please edit documentation in R/boundary_layer_conductance.r
 \name{Gb.Choudhury}
 \alias{Gb.Choudhury}
-\title{Boundary layer conductance according to Choudhury & Monteith 1988}
+\title{Boundary Layer Conductance according to Choudhury & Monteith 1988}
 \usage{
 Gb.Choudhury(data, Tair = "Tair", pressure = "pressure", wind = "wind",
   ustar = "ustar", H = "H", leafwidth, LAI, zh, zr, d,
@@ -46,7 +46,7 @@ A data frame with the following columns:
     \item{kB}{kB-1 parameter (-)}
 }
 \description{
-Boundary layer conductance according to Choudhury & Monteith 1988
+Boundary Layer Conductance according to Choudhury & Monteith 1988
 }
 \details{
 Boundary layer conductance according to Choudhury & Monteith 1988 is

@@ -2,26 +2,26 @@
 #### Big-Leaf Physiology ###-------------------------------------------------------------------------------
 ############################
 
-#' Bulk intercellular CO2 concentration
+#' Bulk Intercellular CO2 Concentration
 #' 
 #' @description Bulk canopy intercellular CO2 concentration (Ci) calculated based on Fick's law
 #'              given surface conductance (Gs), gross primary productivity (GPP) and 
 #'              atmospheric CO2 concentration (Ca).
 #'                            
-#' @param data       Data.Frame or matrix with all required columns                            
-#' @param Ca         Atmospheric CO2 concentration (umol mol-1)              
-#' @param GPP        Gross primary productivity (umol CO2 m-2 s-1)
-#' @param Gs         Surface conductance to water vapor (mol m-2 s-1)
-#' @param Rleaf      Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
-#' @param calc.Csurf Should the derived surface CO2 concentration be used instead of 
-#'                   measured atmospheric CO2? If \code{TRUE}, Ca is derived as shown in \code{Details}.
-#' @param Ga_CO2     Aerodynamic conductance to CO2 (m s-1) 
-#' @param NEE        Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem
-#' @param Tair       Air temperature (degC); ignored if \code{calc.Csurf = FALSE}.
-#' @param pressure   Atmospheric pressure (kPa); ignored if \code{calc.Csurf = FALSE}.
+#' @param data             Data.Frame or matrix with all required columns                            
+#' @param Ca               Atmospheric CO2 concentration (umol mol-1)              
+#' @param GPP              Gross primary productivity (umol CO2 m-2 s-1)
+#' @param Gs               Surface conductance to water vapor (mol m-2 s-1)
+#' @param Rleaf            Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
+#' @param calc.surface.CO2 Should the derived surface CO2 concentration be used instead of 
+#'                         measured atmospheric CO2? If \code{TRUE}, Ca is derived as shown in \code{Details}.
+#' @param Ga_CO2           Aerodynamic conductance to CO2 (m s-1) 
+#' @param NEE              Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem
+#' @param Tair             Air temperature (degC); ignored if \code{calc.surface.CO2 = FALSE}.
+#' @param pressure         Atmospheric pressure (kPa); ignored if \code{calc.surface.CO2 = FALSE}.
 #' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
 #'                            or set to 0 (\code{FALSE}, the default)?
-#' @param constants  DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
+#' @param constants        DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
 #' 
 #' @details Bulk intercellular CO2 concentration (Ci) is given by:
 #' 
@@ -61,12 +61,12 @@
 #' # The function aerodynamic.conductance() can be used to calculate Ga_CO2.
 #' # Here, Ga_CO2 of 0.05 m s-1 is assumed.
 #' 
-#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=TRUE,Ga_CO2=0.05,NEE=-55,
+#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.surface.CO2=TRUE,Ga_CO2=0.05,NEE=-55,
 #'                   Tair=25,pressure=100) 
 #' # note the sign convention for NEE
 #' 
 #' @export
-intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csurf=FALSE,
+intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.surface.CO2=FALSE,
                               Ga_CO2="Ga_CO2",NEE="NEE",Tair="Tair",pressure="pressure",
                               missing.Rleaf.as.NA=FALSE,constants=bigleaf.constants()){
   
@@ -87,7 +87,7 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 
 
 
-#' Bulk canopy biochemical parameters Vcmax and Jmax
+#' Bulk Canopy Photosynthetic Capacity (Vcmax and Jmax)
 #' 
 #' @description Bulk canopy maximum carboxylation rate (Vcmax25), and maximum electron
 #'              transport rate (Jmax25) at 25 degrees Celsius from bulk intercellular 
@@ -129,12 +129,14 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'                     Rgas - universal gas constant (J mol-1 K-1)
 #'                  
 #' @details The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
-#'          transport rate at 25degC (Jmax25) are calculated as at leaf level. 
+#'          transport rate at 25degC (Jmax25), which characterize photosynthetic capacity,
+#'          are calculated as at leaf level. 
 #'          The required variables Gs and Ci can be calculated from 
 #'          \code{\link{surface.conductance}} and \code{\link{intercellular.CO2}}, respectively.
 #'          
-#'          Gas exchange parameters are taken from Bernacchi et al. 2001 (assuming
-#'          an infinite mesophyll conductance).
+#'          Gas exchange parameters are taken from Bernacchi et al. 2001 (apparent values, which
+#'          assume an infinite mesophyll conductance). Negative and very low Ci values 
+#'          (the threshold is set to Ci < 80umol mol-1 at the moment) are filtered out.
 #'          
 #'          Vcmax is calculated from the photosynthesis model by Farquhar et al. 1980.
 #'          If net photosynthesis is Rubisco-limited (RuBP-satured carboxylation
@@ -168,8 +170,11 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'          
 #'            \deqn{PPFD * alpha_canopy * 0.85 * beta}
 #'          
-#'          where alpha_canopy is canopy-scale absorptance, 0.85 is a correction factor, and
-#'          beta is the fraction of photons absorbed by PS II (assumed 0.5).
+#'          where alpha_canopy is canopy-scale absorptance, 0.85 is a correction factor,
+#'          and beta is the fraction of photons absorbed by PS II (assumed 0.5).
+#'          alpha_canopy accounts for non-absorbing components of the ecosystem such as
+#'          stems or soil, and is very likely ecosystem-specific. This parameter is relatively
+#'          sensitive for the determination of Jmax25 at some sites.
 #'          
 #'          Vcmax and Jmax at canopy level are assumed to follow the same temperature response
 #'          as at leaf level. Hence, the respective parameter k at 25degC (k25) is calculated as 
@@ -210,9 +215,10 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #'         for Rubisco-limited photosynthesis was assumed a reasonable working assumption (see Kosugi et al. 2013).
 #'         Here, \code{PPFD_c} defaults to 1000 umol m-2 s-1. Note that even under very high/low irradiances,
 #'         not all photosynthetically active plant material of an ecosystem will be in the same
-#'         limitation state. Note that bulk canopy photosynthetic parameters are not directly 
+#'         limitation state. Note that parameters describing bulk canopy photosynthetic capacity are not directly 
 #'         comparable to their leaf-level counterparts, as the former integrate over the entire canopy
 #'         depth (i.e. are given per ground area, and not per leaf area).
+#'         In general, the function should be used with care!
 #'          
 #' @return a data.frame with the following columns:
 #'         \item{Vcmax25}{maximum bulk canopy carboxylation rate at 25degC (umol m-2 (ground) s-1)}
@@ -268,19 +274,19 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.Csu
 #' 
 #' # calculate Ci 
 #' Ci <- intercellular.CO2(DE_Tha_Jun_2014_2,Ca="Ca",GPP="GPP",Gs=Gs_PM,
-#'                         calc.Csurf=FALSE) 
+#'                         calc.surface.CO2=FALSE) 
 #' 
 #' # calculate Vcmax25 and Jmax25
-#' bigleaf.Vcmax.Jmax(DE_Tha_Jun_2014_2,Temp="Tair",Ci=Ci,PPFD_j=c(200,500),PPFD_c=1000)
+#' photosynthetic.capacity(DE_Tha_Jun_2014_2,Temp="Tair",Ci=Ci,PPFD_j=c(200,500),PPFD_c=1000)
 #' 
 #'                                                                        
 #' @export                  
-bigleaf.Vcmax.Jmax <- function(data,C3=TRUE,Temp,GPP="GPP",Ci,PPFD="PPFD",PPFD_j=c(100,400),PPFD_c=1000,
-                               Rleaf=NULL,Oi=0.21,Kc25=404.9,Ko25=278.4,Gam25=42.75,
-                               Kc_Ha=79.43,Ko_Ha=36.38,Gam_Ha=37.83,Vcmax_Ha=65.33,Vcmax_Hd=200,
-                               Vcmax_dS=0.635,Jmax_Ha=43.9,Jmax_Hd=200,Jmax_dS=0.640,
-                               Theta=0.7,alpha_canopy=0.8,missing.Rleaf.as.NA=FALSE,Ci_C4=100,
-                               constants=bigleaf.constants()){
+photosynthetic.capacity <- function(data,C3=TRUE,Temp,GPP="GPP",Ci,PPFD="PPFD",PPFD_j=c(200,500),PPFD_c=1000,
+                                    Rleaf=NULL,Oi=0.21,Kc25=404.9,Ko25=278.4,Gam25=42.75,
+                                    Kc_Ha=79.43,Ko_Ha=36.38,Gam_Ha=37.83,Vcmax_Ha=65.33,Vcmax_Hd=200,
+                                    Vcmax_dS=0.635,Jmax_Ha=43.9,Jmax_Hd=200,Jmax_dS=0.640,
+                                    Theta=0.7,alpha_canopy=0.8,missing.Rleaf.as.NA=FALSE,Ci_C4=100,
+                                    constants=bigleaf.constants()){
   
   check.input(data,list(Temp,GPP,Ci,PPFD))
   
@@ -291,74 +297,71 @@ bigleaf.Vcmax.Jmax <- function(data,C3=TRUE,Temp,GPP="GPP",Ci,PPFD="PPFD",PPFD_j
     Kc_Ha    <- Kc_Ha * 1000
     Ko_Ha    <- Ko_Ha * 1000
     Gam_Ha   <- Gam_Ha * 1000
-
+    
     # Temperature dependencies of photosynthetic parameters 
     Kc  <- Kc25 * exp(Kc_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
     Ko  <- Ko25 * exp(Ko_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
     Gam <- Gam25 * exp(Gam_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
     Ko  <- Ko / 1000
-  
+    
+    # basic filtering on Ci 
+    Ci[Ci < 80 | is.na(Ci)] <- NA
+    
     # Presumed limitation states 
     GPPc = GPPj <- GPP
     GPPj[PPFD < PPFD_j[1] | PPFD > PPFD_j[2] | is.na(PPFD)] <- NA
     GPPc[PPFD < PPFD_c | is.na(PPFD)] <- NA
-  
+    
     if(!is.null(Rleaf)){
       if(!missing.Rleaf.as.NA){Rleaf[is.na(Rleaf)] <- 0 }
     } else {
       cat("Respiration from the leaves is ignored and set to 0.",fill=TRUE)
       Rleaf <- 0
     }
-  
+    
     # calculate Vcmax and J (electron transport rate)
     Vcmax <- (GPPc-Rleaf) * (Ci + Kc*(1.0 + Oi/Ko)) / (Ci - Gam)
     J     <- (GPPj-Rleaf) * (4.0 * Ci + 8.0 * Gam) / (Ci - Gam)
-
+    
     
   } else {  # C4 vegetation
     
     # Presumed limitation states (C4) 
     GPPc = GPPj <- GPP
-    GPPj[PPFD < PPFD_j[1] | PPFD > PPFD_j[2] | is.na(PPFD)] <- NA
+    GPPj[PPFD < PPFD_j[1] | PPFD > PPFD_j[2] | is.na(PPFD) | Ci < 0] <- NA
     GPPc[PPFD < PPFD_c | Ci < Ci_C4 | is.na(PPFD)] <- NA
     
     Vcmax <- GPPc
     J     <- 3 * GPPj / (1 - 0.5)
-  
-  }  
     
+  }  
+  
+  
   # calculate Jmax from J
   APPFD_PSII <- PPFD * alpha_canopy * 0.85 * 0.5
-  dat        <- data.frame(J,APPFD_PSII)
-  complete   <- complete.cases(dat)
-  dat        <- dat[complete.cases(dat),]
-  if (nrow(dat) > 0){
-    Jmax <- sapply(c(1:nrow(dat)), function(x) tryCatch(summary(nls(J ~ c((APPFD_PSII + Jmax - 
-                                                          sqrt((APPFD_PSII + Jmax)^2 - 
-                                                          4.0 * Theta * APPFD_PSII * Jmax)) /
-                                                          (2.0 * Theta)),
-                                                          start=list(Jmax=50),data=dat[x,],
-                                                          algorithm="port"))$coef[1],
-                                                          error=function(err){NA}
-                                                          )
-                     )
+  
+  calcJmax  <- which(complete.cases(J,APPFD_PSII))
+  if (length(calcJmax) > 0){
+    Jmax <- sapply(calcJmax, function(i) tryCatch(optimize(function(Jmax){abs(J[i] - c((APPFD_PSII[i] + Jmax - 
+                                                                                          sqrt((APPFD_PSII[i] + Jmax)^2 - 
+                                                                                                 4.0 * Theta * APPFD_PSII[i] * Jmax)) /
+                                                                                         (2.0 * Theta)))},
+                                                           interval=c(0,1000),tol=1e-02)$minimum,
+                                                  error=function(err){NA}
+    )
+    )
   } else {
     warning("Not enough observations to calculate Jmax!")
     Jmax <- NA
   }
-
   
   # calculate Vcmax25 and Jmax25
   Vcmax25 <- Arrhenius.temp.response(Vcmax,Temp-constants$Kelvin,Ha=Vcmax_Ha,
                                      Hd=Vcmax_Hd,dS=Vcmax_dS,constants=constants)
   
-  Jmax25 <- Arrhenius.temp.response(Jmax,Temp[complete]-constants$Kelvin,Ha=Jmax_Ha,
+  Jmax25 <- Arrhenius.temp.response(Jmax,Temp[calcJmax]-constants$Kelvin,Ha=Jmax_Ha,
                                     Hd=Jmax_Hd,dS=Jmax_dS,constants=constants)
-
-
-  # remove extreme outliers
-  Vcmax25[abs(Vcmax25) > 2*sd(Vcmax25,na.rm=TRUE) | is.na(Vcmax25)] <- NA
-  Jmax25[abs(Jmax25) > 2*sd(Jmax25,na.rm=TRUE) | is.na(Jmax25)] <- NA
+  
   
   # calculate medians and standard errors of the median
   Vcmax25_Median <- median(Vcmax25,na.rm=TRUE)
@@ -366,14 +369,15 @@ bigleaf.Vcmax.Jmax <- function(data,C3=TRUE,Temp,GPP="GPP",Ci,PPFD="PPFD",PPFD_j
   Jmax25_Median  <- median(Jmax25,na.rm=TRUE)
   Jmax25_SE      <- 1.253 * sd(Jmax25,na.rm=TRUE)/sqrt((sum(!is.na(Jmax25))))
   
-  return(c("Vcmax25"=Vcmax25_Median,"Vcmax25_SE"=Vcmax25_SE,
-           "Jmax25"=Jmax25_Median,"Jmax25_SE"=Jmax25_SE))
+  return(c("Vcmax25"=round(Vcmax25_Median,2),"Vcmax25_SE"=round(Vcmax25_SE,2),
+           "Jmax25"=round(Jmax25_Median,2),"Jmax25_SE"=round(Jmax25_SE,2)))
+  
 }
 
 
 
 
-#' (Modified) Arrhenius temperature response function
+#' (Modified) Arrhenius Temperature Response Function
 #' 
 #' @description (Modified) Arrhenius function describing
 #'              the temperature response of biochemical parameters.
@@ -463,7 +467,7 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 
 
 
-#' Stomatal slope parameter "g1"
+#' Stomatal Slope Parameter "g1"
 #' 
 #' @description Estimation of the intrinsic WUE metric "g1" (stomatal slope) 
 #'              from nonlinear regression.
@@ -715,7 +719,7 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
 
 
 
-#' Ecosytem light response
+#' Ecosystem Light Response
 #' 
 #' @description calculates GPPmax at a reference (mostly saturating) PPFD and 
 #'              ecosystem quantum yield using a rectangular light response curve.
@@ -771,7 +775,7 @@ light.response <- function(data,NEE="NEE",Reco="Reco",PPFD="PPFD",PPFD_ref=2000,
 
   
 
-#' Light use efficiency (LUE)
+#' Light Use Efficiency (LUE)
 #' 
 #' @description Amount of carbon fixed (GPP) per incoming light.
 #' 
@@ -806,7 +810,7 @@ light.use.efficiency <- function(GPP,PPFD){
 
 
 
-#' Stomatal sensitivity to VPD
+#' Stomatal Sensitivity to VPD
 #' 
 #' @description Sensitivity of surface conductance to vapor pressure deficit.
 #' 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/boundary_layer_conductance.r
 \name{Gb.Thom}
 \alias{Gb.Thom}
-\title{Boundary layer conductance according to Thom 1972}
+\title{Boundary Layer Conductance according to Thom 1972}
 \usage{
 Gb.Thom(ustar, constants = bigleaf.constants())
 }

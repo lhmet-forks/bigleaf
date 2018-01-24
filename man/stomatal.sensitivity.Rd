@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf_physiology.r
 \name{stomatal.sensitivity}
 \alias{stomatal.sensitivity}
-\title{Stomatal sensitivity to VPD}
+\title{Stomatal Sensitivity to VPD}
 \usage{
 stomatal.sensitivity(data, Gs = "Gs", VPD = "VPD", ...)
 }

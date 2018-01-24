@@ -2,7 +2,7 @@
 #### Evapotranspiration ###
 ###########################
 
-#' Potential evapotranspiration
+#' Potential Evapotranspiration
 #' 
 #' @description Potential evapotranspiration according to Priestley & Taylor 1972.
 #' 
@@ -66,7 +66,7 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat(Tair)[,"Delta"]
+  Delta  <- Esat.slope(Tair)[,"Delta"]
   
   LE_pot <- (alpha * Delta * (Rn - G - S)) / (Delta + gamma)
   ET_pot <- LE.to.ET(LE_pot,Tair)
@@ -77,7 +77,7 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 
 
 
-#' Reference evapotranspiration
+#' Reference Evapotranspiration
 #' 
 #' @description Reference evapotranspiration calculated from the Penman-Monteith
 #'              equation with a pre-defined surface conductance.
@@ -153,7 +153,7 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat(Tair)[,"Delta"]
+  Delta  <- Esat.slope(Tair)[,"Delta"]
   rho    <- air.density(Tair,pressure)
   
   LE_ref <- (Delta * (Rn - G - S) + rho * constants$cp * VPD * Ga) / 
@@ -252,7 +252,7 @@ ET.eq.imp <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
   
   rho    <- air.density(Tair,pressure)
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat(Tair)[,"Delta"]
+  Delta  <- Esat.slope(Tair)[,"Delta"]
   
   LE_eq  <- (Delta * (Rn - G - S)) / (gamma + Delta)
   LE_imp <- (rho * constants$cp * Gs * VPD) / gamma

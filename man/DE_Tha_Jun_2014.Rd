@@ -3,7 +3,7 @@
 \docType{data}
 \name{DE_Tha_Jun_2014}
 \alias{DE_Tha_Jun_2014}
-\title{Eddy covariance data of DE-Tha (Tharandt)}
+\title{Eddy Covariance Data of DE-Tha (Tharandt)}
 \format{A data frame with 1440 observations and 29 columns:
  \describe{
    \item{year}{year of measurement}

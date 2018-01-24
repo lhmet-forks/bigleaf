@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_data.r
 \name{filter.growing.season}
 \alias{filter.growing.season}
-\title{GPP-based growing season filter}
+\title{GPP-based Growing Season Filter}
 \usage{
 filter.growing.season(GPPd, tGPP, ws = 15, min.int = 5)
 }

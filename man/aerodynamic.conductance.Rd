@@ -2,7 +2,7 @@
 % Please edit documentation in R/aerodynamic_conductance.r
 \name{aerodynamic.conductance}
 \alias{aerodynamic.conductance}
-\title{Aerodynamic conductance}
+\title{Aerodynamic Conductance}
 \usage{
 aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
   wind = "wind", ustar = "ustar", H = "H", zr, zh, d, z0m, Dl, N,

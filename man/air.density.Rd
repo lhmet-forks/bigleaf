@@ -2,7 +2,7 @@
 % Please edit documentation in R/meteorological_variables.r
 \name{air.density}
 \alias{air.density}
-\title{Air density}
+\title{Air Density}
 \usage{
 air.density(Tair, pressure, constants = bigleaf.constants())
 }

@@ -2,25 +2,25 @@
 #### Surface conditions  ####
 #############################
 
-#' Big-leaf surface conditions
+#' Big-Leaf Surface Conditions
 #' 
 #' @description Calculates meteorological conditions at the big-leaf surface
 #'              by inverting bulk transfer equations for water, energy, and carbon
 #'              fluxes.
 #' 
-#' @param data       Data.frame or matrix containing all required input variables
-#' @param Tair       Air temperature (deg C)
-#' @param pressure   Atmospheric pressure (kPa)
-#' @param H          Sensible heat flux (W m-2)
-#' @param LE         Latent heat flux (W m-2)
-#' @param VPD        Vapor pressure deficit (kPa)
-#' @param Ga         Aerodynamic conductance for heat/water vapor (m s-1)
-#' @param calc.Csurf Calculate surface CO2 concentration? Defaults to \code{FALSE}.
-#' @param Ca         Atmospheric CO2 concentration (mol mol-1). Required if \code{calc.Csurf = TRUE}.
-#' @param NEE        Net ecosystem exchange (umol m-2 s-1). Required if \code{calc.Csurf = TRUE}.
-#' @param Ga_CO2     Aerodynamic conductance for CO2 (m s-1). Required if \code{calc.Csurf = TRUE}.          
-#' @param constants  cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
-#'                   eps - ratio of the molecular weight of water vapor to dry air (-) \cr
+#' @param data             Data.frame or matrix containing all required input variables
+#' @param Tair             Air temperature (deg C)
+#' @param pressure         Atmospheric pressure (kPa)
+#' @param H                Sensible heat flux (W m-2)
+#' @param LE               Latent heat flux (W m-2)
+#' @param VPD              Vapor pressure deficit (kPa)
+#' @param Ga               Aerodynamic conductance for heat/water vapor (m s-1)
+#' @param calc.surface.CO2 Calculate surface CO2 concentration? Defaults to \code{FALSE}.
+#' @param Ca               Atmospheric CO2 concentration (mol mol-1). Required if \code{calc.surface.CO2 = TRUE}.
+#' @param NEE              Net ecosystem exchange (umol m-2 s-1). Required if \code{calc.surface.CO2 = TRUE}.
+#' @param Ga_CO2           Aerodynamic conductance for CO2 (m s-1). Required if \code{calc.surface.CO2 = TRUE}.          
+#' @param constants        cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
+#'                         eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 #' 
 #' @details Canopy surface temperature and humidity are calculated by inverting bulk transfer equations of
 #'          sensible and latent heat, respectively. 'Canopy surface' in this case refers to 
@@ -50,7 +50,8 @@
 #'          only the turbulent conductance part), the results of the functions represent
 #'          conditions outside the canopy boundary layer, i.e. in the canopy airspace.
 #' 
-#' @note If \code{calc.Csurf = TRUE} the following sign convention for NEE is employed: 
+#' @note The following sign convention for NEE is employed (relevant if 
+#'       \code{calc.surface.CO2 = TRUE}): 
 #'       negative values of NEE denote net CO2 uptake by the ecosystem.
 #' 
 #' @return a data.frame with the following columns:
@@ -70,7 +71,7 @@
 #'          
 #' # now calculate also surface CO2 concentration
 #' surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1),
-#'                    Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.Csurf=TRUE)
+#'                    Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.surface.CO2=TRUE)
 #'                    
 #' @references Knauer, J. et al., 2017: Towards physiologically meaningful water-
 #'             use efficiency estimates from eddy covariance data. Global Change Biology.
@@ -78,7 +79,7 @@
 #'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 #' @export 
 surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",
-                               VPD="VPD",Ga="Ga",calc.Csurf=FALSE,Ca="Ca",Ga_CO2="Ga_CO2",
+                               VPD="VPD",Ga="Ga",calc.surface.CO2=FALSE,Ca="Ca",Ga_CO2="Ga_CO2",
                                NEE="NEE",constants=bigleaf.constants()){
   
   check.input(data,list(Tair,pressure,LE,H,VPD,Ga))
@@ -90,18 +91,18 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
   Tsurf <- Tair + H / (rho * constants$cp * Ga)
   
   # 2) Humidity
-  esat      <- Esat(Tair)[,"Esat"]
+  esat      <- Esat.slope(Tair)[,"Esat"]
   e         <- esat - VPD
-  esat_surf <- Esat(Tsurf)[,"Esat"]
+  esat_surf <- Esat.slope(Tsurf)[,"Esat"]
   esurf     <- e + (LE * gamma)/(Ga * rho * constants$cp)
   VPD_surf  <- pmax(esat_surf - esurf,0)
   qsurf     <- VPD.to.q(VPD_surf,Tsurf,pressure,constants)
   rH_surf   <- VPD.to.rH(VPD_surf,Tsurf)
   
   # 3) CO2 concentration
-  if (calc.Csurf){
+  if (calc.surface.CO2){
     check.input(data,Ca,NEE,Ga_CO2)
-    Ca_surf <- Ca.surface(Ca,NEE,Ga_CO2,Tair,pressure)
+    Ca_surf <- surface.CO2(Ca,NEE,Ga_CO2,Tair,pressure)
   } else {
     Ca_surf <- as.numeric(rep(NA,length(Tair)))
   }
@@ -111,7 +112,7 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 
 
 
-#' CO2 concentration at the canopy surface
+#' CO2 Concentration at the Canopy Surface
 #'
 #' @description the CO2 concentration at the canopy surface derived from net ecosystem
 #'              CO2 exchange and measured atmospheric CO2 concentration.
@@ -135,7 +136,11 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
 #' 
 #' @return \item{Ca_surf -}{CO2 concentration at the canopy surface (umol mol-1)}
 #' 
-Ca.surface <- function(Ca,NEE,Ga_CO2,Tair,pressure){
+#' @examples 
+#' surface.CO2(Ca=400,NEE=-30,Ga_CO2=0.05,Tair=25,pressure=100)
+#' 
+#' @export
+surface.CO2 <- function(Ca,NEE,Ga_CO2,Tair,pressure){
   
   Ga_CO2 <- ms.to.mol(Ga_CO2,Tair,pressure)
   
@@ -147,7 +152,7 @@ Ca.surface <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 
 
 
-#' Radiometric surface temperature
+#' Radiometric Surface Temperature
 #' 
 #' @description Radiometric surface temperature from longwave upward radiation
 #'              measurements.

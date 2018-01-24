@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf_physiology.r
 \name{Arrhenius.temp.response}
 \alias{Arrhenius.temp.response}
-\title{(Modified) Arrhenius temperature response function}
+\title{(Modified) Arrhenius Temperature Response Function}
 \usage{
 Arrhenius.temp.response(param, Temp, Ha, Hd, dS,
   constants = bigleaf.constants())

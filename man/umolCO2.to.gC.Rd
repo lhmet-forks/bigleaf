@@ -3,7 +3,7 @@
 \name{umolCO2.to.gC}
 \alias{umolCO2.to.gC}
 \alias{gC.to.umolCO2}
-\title{Conversion between mass and molar units of Carbon and CO2}
+\title{Conversion between Mass and Molar Units of Carbon and CO2}
 \usage{
 umolCO2.to.gC(CO2_flux, constants = bigleaf.constants())
 

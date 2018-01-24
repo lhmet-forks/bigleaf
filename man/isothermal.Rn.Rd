@@ -2,7 +2,7 @@
 % Please edit documentation in R/energy_balance.r
 \name{isothermal.Rn}
 \alias{isothermal.Rn}
-\title{Isothermal net radiation}
+\title{Isothermal Net Radiation}
 \usage{
 isothermal.Rn(data, Rn = "Rn", Tair = "Tair", Tsurf = "Tsurf", emissivity,
   constants = bigleaf.constants())

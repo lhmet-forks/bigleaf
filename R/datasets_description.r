@@ -1,4 +1,4 @@
-#' Eddy covariance data of AT-Neu (Neustift)
+#' Eddy Covariance Data of AT-Neu (Neustift)
 #' 
 #' @description Halfhourly eddy covariance Data of the site AT-Neu,
 #'              a mountain meadow in Austria.
@@ -47,7 +47,7 @@
 
 
 
-#' Eddy covariance data of DE-Tha (Tharandt)
+#' Eddy Covariance Data of DE-Tha (Tharandt)
 #' 
 #' @description Halfhourly eddy covariance Data of the site DE-Tha,
 #'              a spruce forest in Eastern Germany 
@@ -96,7 +96,7 @@
 
 
 
-#' Eddy covariance data of FR-Pue (Puechabon)
+#' Eddy Covariance Data of FR-Pue (Puechabon)
 #' 
 #' @description Halfhourly eddy covariance Data of the site FR-Pue,
 #'              a Mediterranean evergreen oak forest in Southern France

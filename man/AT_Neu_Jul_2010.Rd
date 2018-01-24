@@ -3,7 +3,7 @@
 \docType{data}
 \name{AT_Neu_Jul_2010}
 \alias{AT_Neu_Jul_2010}
-\title{Eddy covariance data of AT-Neu (Neustift)}
+\title{Eddy Covariance Data of AT-Neu (Neustift)}
 \format{A data frame with 1488 observations and 29 columns:
  \describe{
    \item{year}{year of measurement}

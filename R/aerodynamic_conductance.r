@@ -2,7 +2,7 @@
 ### Aerodynamic conductance #### 
 ################################
 
-#' Aerodynamic conductance
+#' Aerodynamic Conductance
 #' 
 #' @description Bulk aerodynamic conductance, including options for the boundary layer conductance
 #'              formulation and stability correction functions.

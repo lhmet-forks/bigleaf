@@ -2,7 +2,7 @@
 ### helper functions to check input ###
 #######################################
 
-#' checks input for functions in the bigleaf package
+#' Check Input for Functions in the bigleaf Package
 #' 
 #' @description Checks length and type of the provided input variables.
 #' 
@@ -94,7 +94,7 @@ check.input <- function(data,...){
 
 
 
-#' tests if variables have the same length
+#' Test Variables for Equal Length
 #' 
 #' @param varlist List of variables for which the length has to be compared
 #' 

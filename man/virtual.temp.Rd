@@ -2,7 +2,7 @@
 % Please edit documentation in R/meteorological_variables.r
 \name{virtual.temp}
 \alias{virtual.temp}
-\title{Virtual temperature}
+\title{Virtual Temperature}
 \usage{
 virtual.temp(Tair, pressure, VPD, constants = bigleaf.constants())
 }

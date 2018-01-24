@@ -2,9 +2,10 @@
 % Please edit documentation in R/meteorological_variables.r
 \name{wetbulb.temp}
 \alias{wetbulb.temp}
-\title{Wet-bulb temperature}
+\title{Wet-Bulb Temperature}
 \usage{
-wetbulb.temp(Tair, pressure, VPD, constants = bigleaf.constants())
+wetbulb.temp(Tair, pressure, VPD, accuracy = 0.001,
+  constants = bigleaf.constants())
 }
 \arguments{
 \item{Tair}{Air temperature (deg C)}
@@ -12,6 +13,8 @@ wetbulb.temp(Tair, pressure, VPD, constants = bigleaf.constants())
 \item{pressure}{Atmospheric pressure (kPa)}
 
 \item{VPD}{Vapor pressure deficit (kPa)}
+
+\item{accuracy}{Accuracy of the result (deg C)}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-)}
@@ -28,8 +31,9 @@ Wet-bulb temperature (Tw) is calculated from the following expression:
          
            \deqn{e = Esat(Tw) - gamma* (Tair - Tw)}
          
-         The equation is solved for Tw using \code{\link[stats]{nls}}.
-         Actual vapor pressure e is calculated from VPD using the function \code{\link{VPD.to.e}}.
+         The equation is solved for Tw using \code{\link[stats]{optimize}}.
+         Actual vapor pressure e (kPa) is calculated from VPD using the function \code{\link{VPD.to.e}}.
+         The psychrometric constant gamma (kPa K-1) is calculated from \code{\link{psychrometric.constant}}.
 }
 \examples{
 wetbulb.temp(Tair=c(20,25),pressure=100,VPD=c(1,1.6))             

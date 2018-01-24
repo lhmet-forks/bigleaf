@@ -2,7 +2,7 @@
 #### Energy balance ####
 ########################
 
-#' Biochemical energy
+#' Biochemical Energy
 #' 
 #' @description Radiant energy absorbed in photosynthesis or heat release by respiration calculated
 #'              from net ecosystem exchange of CO2 (NEE).  
@@ -42,7 +42,7 @@ biochemical.energy <- function(NEE,alpha=0.422){
 
 
 
-#' Energy use efficiency (EUE)
+#' Energy Use Efficiency (EUE)
 #' 
 #' @description Fraction of net radiation fixed by primary productivity.
 #' 
@@ -83,7 +83,7 @@ energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
 
 
 
-#' Energy balance closure
+#' Energy Balance Closure
 #' 
 #' @description Calculates the degree of the energy balance non-closure for the entire timespan
 #'              based on the ratio of two sums (energy balance ratio), and ordinary least squares (OLS).
@@ -172,7 +172,7 @@ energy.closure <- function(data,Rn="Rn",G=NULL,S=NULL,LE="LE",H="H",instantaneou
 
 
 
-#' Isothermal net radiation
+#' Isothermal Net Radiation
 #' 
 #' @description Calculates the isothermal net radiation, i.e. the net radiation 
 #'              that the surface would receive if it had the same temperature than

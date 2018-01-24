@@ -2,7 +2,7 @@
 ### Meteorological variables ####
 #################################
 
-#' Air density
+#' Air Density
 #' 
 #' @description Air density of moist air from air temperature and pressure.
 #' 
@@ -36,7 +36,7 @@ air.density <- function(Tair,pressure,constants=bigleaf.constants()){
 
 
 
-#' Atmospheric pressure from hypsometric equation
+#' Atmospheric Pressure from Hypsometric Equation
 #' 
 #' @description An estimate of mean pressure at a given elevation as predicted by the
 #'              hypsometric equation.
@@ -91,9 +91,9 @@ pressure.from.elevation <- function(elev,Tair,VPD=NULL,constants=bigleaf.constan
 
 
 
-#' Saturation vapor pressure (Esat) and slope of the Esat curve
+#' Saturation Vapor Pressure (Esat) and Slope of the Esat Curve
 #' 
-#' @description Calculates Saturation vapor pressure (Esat) over water and the
+#' @description Calculates saturation vapor pressure (Esat) over water and the
 #'              corresponding slope of the saturation vapor pressure curve.
 #' 
 #' @param Tair     Air temperature (deg C)
@@ -129,12 +129,12 @@ pressure.from.elevation <- function(elev,Tair,VPD=NULL,constants=bigleaf.constan
 #'             Geneva. 7th Edition.
 #' 
 #' @examples 
-#' Esat(seq(0,45,5))[,"Esat"]  # Esat in kPa
-#' Esat(seq(0,45,5))[,"Delta"] # the corresponding slope of the Esat curve in kPa K-1
+#' Esat.slope(seq(0,45,5))[,"Esat"]  # Esat in kPa
+#' Esat.slope(seq(0,45,5))[,"Delta"] # the corresponding slope of the Esat curve in kPa K-1
 #'        
 #' @importFrom stats D                  
 #' @export
-Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
+Esat.slope <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
   
   formula <- match.arg(formula)
   
@@ -162,7 +162,7 @@ Esat <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
 
 
 
-#' Psychrometric constant
+#' Psychrometric Constant
 #' 
 #' @description Calculates the psychrometric 'constant'.
 #' 
@@ -197,7 +197,7 @@ psychrometric.constant <- function(Tair,pressure,constants=bigleaf.constants()){
 
 
 
-#' Latent heat of vaporization
+#' Latent Heat of Vaporization
 #' 
 #' @description Latent heat of vaporization as a function of air temperature.
 #' 
@@ -227,7 +227,32 @@ latent.heat.vaporization <- function(Tair) {
 
 
 
-#' Wet-bulb temperature
+
+
+
+#' Solver Function for Wet-Bulb Temperature
+#' 
+#' @description Solver function used in wetbulb.temp()
+#' 
+#' @param ea         Air vapor pressure (kPa)
+#' @param Tair       Air temperature (degC)
+#' @param gamma      Psychrometric constant (kPa K-1)
+#' @param accuracy   Accuracy of the result (degC)
+#' 
+#' @note \code{accuracy} is passed to this function by wetbulb.temp().
+#' 
+#' @importFrom stats optimize 
+#' 
+#' @keywords internal
+wetbulb.solver <- function(ea,Tair,gamma,accuracy){
+  wetbulb.optim <- optimize(function(Tw){abs(ea - c((Esat.slope(Tw)[,"Esat"] - 0.93*gamma*(Tair - Tw))))},
+                            interval=c(-100,100),tol=accuracy)
+  return(wetbulb.optim)
+}
+
+
+
+#' Wet-Bulb Temperature
 #' 
 #' @description calculates the wet bulb temperature, i.e. the temperature
 #'              that the air would have if it was saturated.
@@ -235,6 +260,7 @@ latent.heat.vaporization <- function(Tair) {
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Atmospheric pressure (kPa)
 #' @param VPD       Vapor pressure deficit (kPa)
+#' @param accuracy  Accuracy of the result (deg C)
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-) 
 #' 
@@ -242,8 +268,9 @@ latent.heat.vaporization <- function(Tair) {
 #'          
 #'            \deqn{e = Esat(Tw) - gamma* (Tair - Tw)}
 #'          
-#'          The equation is solved for Tw using \code{\link[stats]{nls}}.
-#'          Actual vapor pressure e is calculated from VPD using the function \code{\link{VPD.to.e}}.
+#'          The equation is solved for Tw using \code{\link[stats]{optimize}}.
+#'          Actual vapor pressure e (kPa) is calculated from VPD using the function \code{\link{VPD.to.e}}.
+#'          The psychrometric constant gamma (kPa K-1) is calculated from \code{\link{psychrometric.constant}}.
 #'          
 #' @return \item{Tw -}{wet-bulb temperature (degC)}      
 #'              
@@ -253,19 +280,29 @@ latent.heat.vaporization <- function(Tair) {
 #' @examples 
 #' wetbulb.temp(Tair=c(20,25),pressure=100,VPD=c(1,1.6))             
 #'        
-#' @importFrom stats nls                  
+#' @importFrom stats optimize                  
 #' @export
-wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
+wetbulb.temp <- function(Tair,pressure,VPD,accuracy=1e-03,constants=bigleaf.constants()){
+  
+  if (!is.numeric(accuracy)){
+    stop("'accuracy' must be numeric!")
+  }
+  
+  if (accuracy > 1){
+    print("'accuracy' is set to 1 degC")
+    accuracy <- 1
+  }
+  
+  # determine number of digits to print
+  ndigits <- as.numeric(strsplit(format(accuracy,scientific = TRUE),"-")[[1]][2])
+  ndigits <- ifelse(is.na(ndigits),0,ndigits)
+  
   
   gamma  <- psychrometric.constant(Tair,pressure)
   ea     <- VPD.to.e(VPD,Tair)
   
-  wetbulb <- function(ea,gamma,Tair){
-    mod <- nls(ea ~ Esat(Tw)[,"Esat"] - 0.93*gamma*(Tair - Tw),start=list(Tw=Tair),algorithm="port")
-    return(summary(mod)$coef[1,1])
-  }
-  
-  Tw <- sapply(seq_along(ea),function(i) wetbulb(ea[i],gamma[i],Tair[i]))
+  Tw <- sapply(seq_along(ea),function(i) round(wetbulb.solver(ea[i],Tair[i],gamma[i],
+                                                              accuracy=accuracy)$minimum,ndigits))
   
   return(Tw)
   
@@ -273,19 +310,50 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 
 
 
-#' Dew point
+
+
+
+
+
+
+
+
+#' Solver function for dew point temperature
+#' 
+#' @description Solver function used in dew.point()
+#' 
+#' @param ea         Air vapor pressure (kPa)
+#' @param accuracy   Accuracy of the result (degC)
+#' 
+#' @note \code{accuracy} is passed to this function by dew.point().
+#' 
+#' @importFrom stats optimize 
+#' 
+#' @keywords internal
+dew.point.solver <- function(ea,accuracy){
+  
+  Td.optim <- optimize(function(Td){abs(ea - Esat.slope(Td)[,"Esat"])},
+                       interval=c(-100,100),tol=accuracy)
+  return(Td.optim)
+}
+
+
+
+#' Dew Point
 #' 
 #' @description calculates the dew point, the temperature to which air must be 
-#'              cooled to become saturated (i.e. e = esat(Td))
+#'              cooled to become saturated (i.e. e = Esat(Td))
 #'
-#' @param Tair  Air temperature (degC)
-#' @param VPD   Vapor pressure deficit (kPa)
+#' @param Tair     Air temperature (degC)
+#' @param VPD      Vapor pressure deficit (kPa)
+#' @param accuracy Accuracy of the result (deg C)
 #' 
 #' @details Dew point temperature (Td) is defined by:
 #' 
 #'           \deqn{e = Esat(Td)}
 #'    
-#'          which is solved for Td using \code{\link[stats]{nls}}.
+#'          where e is vapor pressure of the air and Esat is the vapor pressure deficit.
+#'          This equation is solved for Td using \code{\link[stats]{optimize}}.
 #'          
 #' @return \item{Td -}{dew point temperature (degC)}
 #' 
@@ -295,25 +363,36 @@ wetbulb.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 #' @examples
 #' dew.point(c(25,30),1.5)                
 #' 
-#' @importFrom stats nls 
+#' @importFrom stats optimize 
 #' @export              
-dew.point <- function(Tair,VPD){
+dew.point <- function(Tair,VPD,accuracy=1e-03){
   
-  ea     <- VPD.to.e(VPD,Tair)
-  
-  dewpoint <- function(ea,Tair){
-    mod <- nls(ea ~ Esat(Td)[,"Esat"],start=list(Td=Tair),algorithm="port")
-    return(summary(mod)$coef[1,1])
+  if (!is.numeric(accuracy)){
+    stop("'accuracy' must be numeric!")
   }
   
-  Td <- sapply(seq_along(ea),function(i) dewpoint(ea[i],Tair[i]))
+  if (accuracy > 1){
+    print("'accuracy' is set to 1 degC")
+    accuracy <- 1
+  }
+  
+  # determine number of digits to print
+  ndigits <- as.numeric(strsplit(format(accuracy,scientific = TRUE),"-")[[1]][2])
+  ndigits <- ifelse(is.na(ndigits),0,ndigits)
+  
+  ea <- VPD.to.e(VPD,Tair)
+  Td <- sapply(seq_along(ea),function(i) round(dew.point.solver(ea[i],accuracy=accuracy)$minimum,ndigits))
   
   return(Td)
 }
 
 
 
-#' Virtual temperature
+
+
+
+
+#' Virtual Temperature
 #' 
 #' @description Virtual temperature, defined as the temperature at which dry air would have the same
 #'              density as moist air at its actual temperature.
@@ -353,7 +432,7 @@ virtual.temp <- function(Tair,pressure,VPD,constants=bigleaf.constants()){
 
 
 
-#' Kinematic viscosity of air
+#' Kinematic Viscosity of Air
 #' 
 #' @description calculates the kinematic viscosity of air.
 #' 

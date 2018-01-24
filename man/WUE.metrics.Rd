@@ -2,7 +2,7 @@
 % Please edit documentation in R/WUE_metrics.r
 \name{WUE.metrics}
 \alias{WUE.metrics}
-\title{Water-Use Efficiency metrics}
+\title{Water-Use Efficiency Metrics}
 \usage{
 WUE.metrics(data, GPP = "GPP", NEE = "NEE", LE = "LE", VPD = "VPD",
   Tair = "Tair", constants = bigleaf.constants())

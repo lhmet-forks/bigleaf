@@ -2,7 +2,7 @@
 % Please edit documentation in R/evapotranspiration.r
 \name{ET.pot}
 \alias{ET.pot}
-\title{Potential evapotranspiration}
+\title{Potential Evapotranspiration}
 \usage{
 ET.pot(data, Tair = "Tair", pressure = "pressure", Rn = "Rn", G = NULL,
   S = NULL, alpha = 1.26, missing.G.as.NA = FALSE,

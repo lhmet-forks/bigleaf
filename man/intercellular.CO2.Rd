@@ -2,11 +2,11 @@
 % Please edit documentation in R/bigleaf_physiology.r
 \name{intercellular.CO2}
 \alias{intercellular.CO2}
-\title{Bulk intercellular CO2 concentration}
+\title{Bulk Intercellular CO2 Concentration}
 \usage{
 intercellular.CO2(data, Ca = "Ca", GPP = "GPP", Gs = "Gs", Rleaf = NULL,
-  calc.Csurf = FALSE, Ga_CO2 = "Ga_CO2", NEE = "NEE", Tair = "Tair",
-  pressure = "pressure", missing.Rleaf.as.NA = FALSE,
+  calc.surface.CO2 = FALSE, Ga_CO2 = "Ga_CO2", NEE = "NEE",
+  Tair = "Tair", pressure = "pressure", missing.Rleaf.as.NA = FALSE,
   constants = bigleaf.constants())
 }
 \arguments{
@@ -20,16 +20,16 @@ intercellular.CO2(data, Ca = "Ca", GPP = "GPP", Gs = "Gs", Rleaf = NULL,
 
 \item{Rleaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 
-\item{calc.Csurf}{Should the derived surface CO2 concentration be used instead of 
+\item{calc.surface.CO2}{Should the derived surface CO2 concentration be used instead of 
 measured atmospheric CO2? If \code{TRUE}, Ca is derived as shown in \code{Details}.}
 
 \item{Ga_CO2}{Aerodynamic conductance to CO2 (m s-1)}
 
 \item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem}
 
-\item{Tair}{Air temperature (degC); ignored if \code{calc.Csurf = FALSE}.}
+\item{Tair}{Air temperature (degC); ignored if \code{calc.surface.CO2 = FALSE}.}
 
-\item{pressure}{Atmospheric pressure (kPa); ignored if \code{calc.Csurf = FALSE}.}
+\item{pressure}{Atmospheric pressure (kPa); ignored if \code{calc.surface.CO2 = FALSE}.}
 
 \item{missing.Rleaf.as.NA}{if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
 or set to 0 (\code{FALSE}, the default)?}
@@ -74,7 +74,7 @@ intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
 # The function aerodynamic.conductance() can be used to calculate Ga_CO2.
 # Here, Ga_CO2 of 0.05 m s-1 is assumed.
 
-intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.Csurf=TRUE,Ga_CO2=0.05,NEE=-55,
+intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.surface.CO2=TRUE,Ga_CO2=0.05,NEE=-55,
                   Tair=25,pressure=100) 
 # note the sign convention for NEE
 

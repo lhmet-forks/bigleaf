@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_data.r
 \name{filter.data}
 \alias{filter.data}
-\title{Basic eddy covariance data filtering}
+\title{Basic Eddy Covariance Data Filtering}
 \usage{
 filter.data(data, quality.control = TRUE, filter.growseas = FALSE,
   filter.precip = FALSE, filter.vars = NULL, filter.vals.min,

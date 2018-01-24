@@ -2,7 +2,7 @@
 % Please edit documentation in R/decoupling.r
 \name{Gr.longwave}
 \alias{Gr.longwave}
-\title{longwave radiative transfer conductance of the canopy}
+\title{Longwave Radiative Transfer Conductance of the Canopy}
 \usage{
 Gr.longwave(Tair, LAI, constants = bigleaf.constants())
 }
@@ -19,7 +19,7 @@ cp - specific heat of air for constant pressure (J K-1 kg-1)}
 \item{Gr -}{longwave radiative transfer conductance of the canopy (m s-1)}
 }
 \description{
-longwave radiative transfer conductance of the canopy
+Longwave Radiative Transfer Conductance of the Canopy
 }
 \details{
 the following formula is used (Martin, 1989):

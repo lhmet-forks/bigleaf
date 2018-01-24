@@ -2,7 +2,7 @@
 ### Filter functions ###----------------------------------------------------------------------------
 ########################
 
-#' Basic eddy covariance data filtering
+#' Basic Eddy Covariance Data Filtering
 #'
 #' @description Filters timeseries of EC data for high-quality values and specified
 #'              meteorological conditions.
@@ -263,7 +263,7 @@ filter.data <- function(data,quality.control=TRUE,filter.growseas=FALSE,
 
 
 
-#' GPP-based growing season filter
+#' GPP-based Growing Season Filter
 #' 
 #' @description Filters annual time series for growing season based on smoothed daily GPP data.
 #' 

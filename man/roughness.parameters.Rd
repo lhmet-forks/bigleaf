@@ -2,7 +2,7 @@
 % Please edit documentation in R/surface_roughness.r
 \name{roughness.parameters}
 \alias{roughness.parameters}
-\title{Roughness parameters}
+\title{Roughness Parameters}
 \usage{
 roughness.parameters(method = c("canopy_height", "canopy_height&LAI",
   "wind_profile"), zh, frac_d = 0.7, frac_z0m = 0.1, LAI, zr, cd = 0.2,

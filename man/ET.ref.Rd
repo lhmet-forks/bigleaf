@@ -2,7 +2,7 @@
 % Please edit documentation in R/evapotranspiration.r
 \name{ET.ref}
 \alias{ET.ref}
-\title{Reference evapotranspiration}
+\title{Reference Evapotranspiration}
 \usage{
 ET.ref(data, Gs = 0.0143, Tair = "Tair", pressure = "pressure",
   VPD = "VPD", Rn = "Rn", Ga = "Ga", G = NULL, S = NULL,

@@ -2,7 +2,7 @@
 #### Surface conductance  ####
 ##############################
 
-#' Surface conductance to water vapor
+#' Surface Conductance to Water Vapor
 #' 
 #' @description Calculates surface conductance to water vapor from the inverted Penman-Monteith
 #'              equation (by default) or from a simple flux-gradient approach.
@@ -141,7 +141,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
       S <- 0
     }
     
-    Delta <- Esat(Tair)[,"Delta"]
+    Delta <- Esat.slope(Tair)[,"Delta"]
     gamma <- psychrometric.constant(Tair,pressure)
     rho   <- air.density(Tair,pressure)
     

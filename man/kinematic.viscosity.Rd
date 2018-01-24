@@ -2,7 +2,7 @@
 % Please edit documentation in R/meteorological_variables.r
 \name{kinematic.viscosity}
 \alias{kinematic.viscosity}
-\title{Kinematic viscosity of air}
+\title{Kinematic Viscosity of Air}
 \usage{
 kinematic.viscosity(Tair, pressure, constants = bigleaf.constants())
 }

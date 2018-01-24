@@ -1,11 +1,12 @@
 Package: bigleaf
 Type: Package
-Version: 0.2.1
-Date: 2018-01-23
+Version: 0.3.0
+Date: 2018-01-24
 Title: Physical and Physiological Ecosystem Properties from Eddy Covariance Data
 Authors@R: c( person("Juergen", "Knauer", role=c("aut","cre"), email="jknauer@bgc-jena.mpg.de"),
               person("Soenke", "Zaehle", role=c("ctb"), email="szaehle@bgc-jena.mpg.de"),
-			  person("Tarek", "El-Madany", role=c("ctb"), email="telmad@bgc-jena.mpg.de")
+			  person("Tarek", "El-Madany", role=c("ctb"), email="telmad@bgc-jena.mpg.de"),
+			  person("Mirco", "Migliavacca", role=c("ctb"), email="mmiglia@bgc-jena.mpg.de")
 			)	
 Maintainer: Juergen Knauer <jknauer@bgc-jena.mpg.de>
 Description: Calculation of physical (e.g. aerodynamic conductance, surface temperature), 

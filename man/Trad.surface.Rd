@@ -2,7 +2,7 @@
 % Please edit documentation in R/surface_conditions.r
 \name{Trad.surface}
 \alias{Trad.surface}
-\title{Radiometric surface temperature}
+\title{Radiometric Surface Temperature}
 \usage{
 Trad.surface(longwave_up, emissivity, constants = bigleaf.constants())
 }

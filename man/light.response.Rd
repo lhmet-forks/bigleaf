@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf_physiology.r
 \name{light.response}
 \alias{light.response}
-\title{Ecosytem light response}
+\title{Ecosystem Light Response}
 \usage{
 light.response(data, NEE = "NEE", Reco = "Reco", PPFD = "PPFD",
   PPFD_ref = 2000, ...)

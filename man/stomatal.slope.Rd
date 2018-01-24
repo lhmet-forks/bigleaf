@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf_physiology.r
 \name{stomatal.slope}
 \alias{stomatal.slope}
-\title{Stomatal slope parameter "g1"}
+\title{Stomatal Slope Parameter "g1"}
 \usage{
 stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP",
   Gs = "Gs", VPD = "VPD", Ca = "Ca", Rleaf = NULL, model = c("USO",

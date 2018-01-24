@@ -2,7 +2,7 @@
 % Please edit documentation in R/boundary_layer_conductance.r
 \name{Gb.Su}
 \alias{Gb.Su}
-\title{Boundary layer conductance according to Su et al. 2001}
+\title{Boundary Layer Conductance according to Su et al. 2001}
 \usage{
 Gb.Su(data, Tair = "Tair", pressure = "pressure", ustar = "ustar",
   wind = "wind", H = "H", zh, zr, d, Dl, fc = NULL, LAI = NULL, N = 2,

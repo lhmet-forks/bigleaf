@@ -2,7 +2,7 @@
 % Please edit documentation in R/energy_balance.r
 \name{biochemical.energy}
 \alias{biochemical.energy}
-\title{Biochemical energy}
+\title{Biochemical Energy}
 \usage{
 biochemical.energy(NEE, alpha = 0.422)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/meteorological_variables.r
 \name{pressure.from.elevation}
 \alias{pressure.from.elevation}
-\title{Atmospheric pressure from hypsometric equation}
+\title{Atmospheric Pressure from Hypsometric Equation}
 \usage{
 pressure.from.elevation(elev, Tair, VPD = NULL,
   constants = bigleaf.constants())

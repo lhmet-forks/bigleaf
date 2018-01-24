@@ -2,7 +2,7 @@
 % Please edit documentation in R/stability_correction.r
 \name{stability.parameter}
 \alias{stability.parameter}
-\title{stability parameter 'zeta'}
+\title{Stability Parameter "zeta"}
 \usage{
 stability.parameter(data, Tair = "Tair", pressure = "pressure",
   ustar = "ustar", H = "H", zr, d, constants = bigleaf.constants())
@@ -31,7 +31,7 @@ g - gravitational acceleration (m s-2)}
 \item{\eqn{\zeta} - }{stability parameter (-)}
 }
 \description{
-stability parameter 'zeta'
+Stability Parameter "zeta"
 }
 \details{
 The stability parameter \eqn{\zeta} is given by:

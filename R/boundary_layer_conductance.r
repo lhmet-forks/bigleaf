@@ -2,7 +2,7 @@
 ### Boundary layer conductance formulations #### 
 ################################################
 
-#' Boundary layer conductance according to Thom 1972
+#' Boundary Layer Conductance according to Thom 1972
 #' 
 #' @description An empirical formulation for the canopy boundary layer conductance
 #'              based on a simple ustar dependency.
@@ -54,7 +54,7 @@ Gb.Thom <- function(ustar,constants=bigleaf.constants()){
 
 
 
-#' Boundary layer conductance according to Choudhury & Monteith 1988
+#' Boundary Layer Conductance according to Choudhury & Monteith 1988
 #' 
 #' @param data             Data.frame or matrix containing all required variables
 #' @param Tair             Air temperature (degC)
@@ -152,7 +152,7 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 
 
 
-#' Boundary layer conductance according to Su et al. 2001
+#' Boundary Layer Conductance according to Su et al. 2001
 #' 
 #' @description A physically based formulation for the canopy boundary layer conductance. 
 #'

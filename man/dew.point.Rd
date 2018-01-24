@@ -2,31 +2,34 @@
 % Please edit documentation in R/meteorological_variables.r
 \name{dew.point}
 \alias{dew.point}
-\title{Dew point}
+\title{Dew Point}
 \usage{
-dew.point(Tair, VPD)
+dew.point(Tair, VPD, accuracy = 0.001)
 }
 \arguments{
 \item{Tair}{Air temperature (degC)}
 
 \item{VPD}{Vapor pressure deficit (kPa)}
+
+\item{accuracy}{Accuracy of the result (deg C)}
 }
 \value{
 \item{Td -}{dew point temperature (degC)}
 }
 \description{
 calculates the dew point, the temperature to which air must be 
-             cooled to become saturated (i.e. e = esat(Td))
+             cooled to become saturated (i.e. e = Esat(Td))
 }
 \details{
 Dew point temperature (Td) is defined by:
 
           \deqn{e = Esat(Td)}
    
-         which is solved for Td using \code{\link[stats]{nls}}.
+         where e is vapor pressure of the air and Esat is the vapor pressure deficit.
+         This equation is solved for Td using \code{\link[stats]{optimize}}.
 }
 \examples{
-dew.point(25,1.5)                
+dew.point(c(25,30),1.5)                
 
 }
 \references{

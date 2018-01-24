@@ -2,7 +2,7 @@
 % Please edit documentation in R/stability_correction.r
 \name{stability.correction}
 \alias{stability.correction}
-\title{Integrated stability correction functions for heat and momentum}
+\title{Integrated Stability Correction Functions for Heat and Momentum}
 \usage{
 stability.correction(zeta, formulation = c("Dyer_1970", "Businger_1971"))
 }
@@ -38,7 +38,7 @@ The functions give the integrated form of the universal functions. They
          The different formulations differ in their value of x and y.
 }
 \examples{
-zeta <- seq(-2,0.5,0.01)
+zeta <- seq(-2,0.5,0.05)
 stability.correction(zeta)
 stability.correction(zeta,formulation="Businger_1971")                          
             

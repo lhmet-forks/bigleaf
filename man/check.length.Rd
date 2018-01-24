@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_input.r
 \name{check.length}
 \alias{check.length}
-\title{tests if variables have the same length}
+\title{Test Variables for Equal Length}
 \usage{
 check.length(varlist)
 }
@@ -10,7 +10,7 @@ check.length(varlist)
 \item{varlist}{List of variables for which the length has to be compared}
 }
 \description{
-tests if variables have the same length
+Test Variables for Equal Length
 }
 \note{
 This function only plays a role if no input data.frame or matrix are 

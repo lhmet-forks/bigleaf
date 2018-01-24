@@ -39,7 +39,7 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 
 
 
-#' Roughness parameters
+#' Roughness Parameters
 #' 
 #' @description A simple approximation of the two roughness parameters displacement height (d)
 #'              and roughness length for momentum (z0m).
@@ -195,7 +195,7 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 
 
 
-#' Wind speed at given levels in the surface layer
+#' Wind Speed at Given Heights in the Surface Layer
 #' 
 #' @description wind speed at a given height above the canopy estimated from single-level
 #'              measurements of wind speed at some distance above the canopy.
@@ -244,7 +244,7 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 #' 
 #' @examples 
 #' df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 
-#' wind.profile(df,heights=c(17:40),zr=40,zh=25,d=16)
+#' wind.profile(df,heights=seq(18,40,2),zr=40,zh=25,d=16)
 #' 
 #' @export                                                                                                                          
 wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ustar",

@@ -2,7 +2,7 @@
 % Please edit documentation in R/stability_correction.r
 \name{Monin.Obukhov.length}
 \alias{Monin.Obukhov.length}
-\title{Monin-Obukhov length}
+\title{Monin-Obukhov Length}
 \usage{
 Monin.Obukhov.length(data, Tair, pressure, ustar, H,
   constants = bigleaf.constants())

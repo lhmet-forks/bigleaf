@@ -2,7 +2,7 @@
 % Please edit documentation in R/meteorological_variables.r
 \name{latent.heat.vaporization}
 \alias{latent.heat.vaporization}
-\title{Latent heat of vaporization}
+\title{Latent Heat of Vaporization}
 \usage{
 latent.heat.vaporization(Tair)
 }

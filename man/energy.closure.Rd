@@ -2,7 +2,7 @@
 % Please edit documentation in R/energy_balance.r
 \name{energy.closure}
 \alias{energy.closure}
-\title{Energy balance closure}
+\title{Energy Balance Closure}
 \usage{
 energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
   H = "H", instantaneous = FALSE, missing.G.as.NA = FALSE,

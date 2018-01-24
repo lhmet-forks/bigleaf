@@ -2,7 +2,7 @@
 ## Unit Conversions ### 
 #######################
 
-#' Conversion between latent heat flux and evapotranspiration
+#' Conversion between Latent Heat Flux and Evapotranspiration
 #' 
 #' @description converts evporative water flux from mass (ET=evapotranspiration)
 #'              to energy (LE=latent heat flux) units, or vice versa.
@@ -49,7 +49,7 @@ ET.to.LE <- function(ET,Tair){
 
 
 
-#' Conversion between conductance units
+#' Conversion between Conductance Units
 #' 
 #' @description Converts conductances from mass (m s-1)
 #'              to molar units (mol m-2 s-1), or vice versa.
@@ -104,7 +104,7 @@ mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
 
 
 
-#' Conversions between humidity measures
+#' Conversions between Humidity Measures
 #' 
 #' @description Conversion between vapor pressure (e), vapor pressure deficit (VPD), 
 #'              specific humidity (q), and relative humidity (rH).
@@ -123,7 +123,7 @@ mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
 #' 
 #' @export
 VPD.to.rH <- function(VPD,Tair){
-  esat <- Esat(Tair)[,"Esat"]
+  esat <- Esat.slope(Tair)[,"Esat"]
   rH   <- 1 - VPD/esat
   return(rH)
 } 
@@ -136,7 +136,7 @@ rH.to.VPD <- function(rH,Tair){
   if(rH > 1){
     warning("relative humidity (rH) has to be between 0 and 1.")
   }
-  esat <- Esat(Tair)[,"Esat"]
+  esat <- Esat.slope(Tair)[,"Esat"]
   VPD  <- esat - rH*esat
   return(VPD)
 } 
@@ -146,7 +146,7 @@ rH.to.VPD <- function(rH,Tair){
 #' @family humidity conversion
 #' @export
 VPD.to.e <- function(VPD,Tair){
-  esat <- Esat(Tair)[,"Esat"]
+  esat <- Esat.slope(Tair)[,"Esat"]
   e    <- esat - VPD
   return(e)
 }
@@ -156,7 +156,7 @@ VPD.to.e <- function(VPD,Tair){
 #' @family humidity conversion
 #' @export
 e.to.VPD <- function(e,Tair){
-  esat <- Esat(Tair)[,"Esat"]
+  esat <- Esat.slope(Tair)[,"Esat"]
   VPD  <- esat - e 
   return(VPD)
 }
@@ -184,7 +184,7 @@ q.to.e <- function(q,pressure,constants=bigleaf.constants()){
 #' @family humidity conversion
 #' @export
 q.to.VPD <- function(q,Tair,pressure,constants=bigleaf.constants()){
-  esat <- Esat(Tair)[,"Esat"]
+  esat <- Esat.slope(Tair)[,"Esat"]
   e    <- q.to.e(q,pressure,constants)
   VPD  <- esat - e
   return(VPD)
@@ -195,7 +195,7 @@ q.to.VPD <- function(q,Tair,pressure,constants=bigleaf.constants()){
 #' @family humidity conversion
 #' @export
 VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
-  esat <- Esat(Tair)[,"Esat"]
+  esat <- Esat.slope(Tair)[,"Esat"]
   e    <- esat - VPD
   q    <- e.to.q(e,pressure,constants)
   return(q) 
@@ -205,7 +205,7 @@ VPD.to.q <- function(VPD,Tair,pressure,constants=bigleaf.constants()){
 
 
 
-#' Conversions between global radiation and photosynthetic photon flux density
+#' Conversions between Global Radiation and Photosynthetic Photon Flux Density
 #' 
 #' @description Converts radiation from W m-2 to umol m-2 s-1 and vice versa.
 #' 
@@ -245,7 +245,7 @@ PPFD.to.Rg <- function(PPFD,J_to_mol=4.6,frac_PAR=0.5){
 
 
 
-#' Conversion between mass and molar units of Carbon and CO2
+#' Conversion between Mass and Molar Units of Carbon and CO2
 #' 
 #' @description Converts CO2 quantities from umol CO2 m-2 s-1 to g C m-2 d-1 and vice versa.
 #' 

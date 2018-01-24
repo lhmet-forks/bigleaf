@@ -2,11 +2,12 @@
 % Please edit documentation in R/surface_conditions.r
 \name{surface.conditions}
 \alias{surface.conditions}
-\title{Big-leaf surface conditions}
+\title{Big-Leaf Surface Conditions}
 \usage{
 surface.conditions(data, Tair = "Tair", pressure = "pressure", LE = "LE",
-  H = "H", VPD = "VPD", Ga = "Ga", calc.Csurf = FALSE, Ca = "Ca",
-  Ga_CO2 = "Ga_CO2", NEE = "NEE", constants = bigleaf.constants())
+  H = "H", VPD = "VPD", Ga = "Ga", calc.surface.CO2 = FALSE,
+  Ca = "Ca", Ga_CO2 = "Ga_CO2", NEE = "NEE",
+  constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required input variables}
@@ -23,13 +24,13 @@ surface.conditions(data, Tair = "Tair", pressure = "pressure", LE = "LE",
 
 \item{Ga}{Aerodynamic conductance for heat/water vapor (m s-1)}
 
-\item{calc.Csurf}{Calculate surface CO2 concentration? Defaults to \code{FALSE}.}
+\item{calc.surface.CO2}{Calculate surface CO2 concentration? Defaults to \code{FALSE}.}
 
-\item{Ca}{Atmospheric CO2 concentration (mol mol-1). Required if \code{calc.Csurf = TRUE}.}
+\item{Ca}{Atmospheric CO2 concentration (mol mol-1). Required if \code{calc.surface.CO2 = TRUE}.}
 
-\item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1). Required if \code{calc.Csurf = TRUE}.}
+\item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1). Required if \code{calc.surface.CO2 = TRUE}.}
 
-\item{NEE}{Net ecosystem exchange (umol m-2 s-1). Required if \code{calc.Csurf = TRUE}.}
+\item{NEE}{Net ecosystem exchange (umol m-2 s-1). Required if \code{calc.surface.CO2 = TRUE}.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
 eps - ratio of the molecular weight of water vapor to dry air (-) \cr}
@@ -79,7 +80,8 @@ Canopy surface temperature and humidity are calculated by inverting bulk transfe
          conditions outside the canopy boundary layer, i.e. in the canopy airspace.
 }
 \note{
-If \code{calc.Csurf = TRUE} the following sign convention for NEE is employed: 
+The following sign convention for NEE is employed (relevant if 
+      \code{calc.surface.CO2 = TRUE}): 
       negative values of NEE denote net CO2 uptake by the ecosystem.
 }
 \examples{
@@ -90,7 +92,7 @@ surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1)
          
 # now calculate also surface CO2 concentration
 surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1),
-                   Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.Csurf=TRUE)
+                   Ca=400,Ga_CO2=c(0.02,0.05,0.1),NEE=-20,calc.surface.CO2=TRUE)
                    
 }
 \references{

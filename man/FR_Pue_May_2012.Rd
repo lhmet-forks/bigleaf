@@ -3,7 +3,7 @@
 \docType{data}
 \name{FR_Pue_May_2012}
 \alias{FR_Pue_May_2012}
-\title{Eddy covariance data of FR-Pue (Puechabon)}
+\title{Eddy Covariance Data of FR-Pue (Puechabon)}
 \format{A data frame with 1488 observations and 27 columns:
  \describe{
    \item{year}{year of measurement}

@@ -2,7 +2,7 @@
 ### Stability parameters and stability correction ### ---------------------------------------------------
 #####################################################
 
-#' Monin-Obukhov length
+#' Monin-Obukhov Length
 #' 
 #' @description 
 #' 
@@ -49,7 +49,7 @@ Monin.Obukhov.length <- function(data,Tair,pressure,ustar,H,constants=bigleaf.co
 
 
 
-#' stability parameter 'zeta'
+#' Stability Parameter "zeta"
 #' 
 #' @param data      Data.frame or matrix containing all required variables
 #' @param Tair      Air temperature (degC)
@@ -92,7 +92,7 @@ stability.parameter <- function(data,Tair="Tair",pressure="pressure",ustar="usta
 
 
 
-#' Integrated stability correction functions for heat and momentum
+#' Integrated Stability Correction Functions for Heat and Momentum
 #' 
 #' @description dimensionless stability functions needed to correct deviations
 #'              from the exponential wind profile under non-neutral conditions.
@@ -137,7 +137,7 @@ stability.parameter <- function(data,Tair="Tair",pressure="pressure",ustar="usta
 #'             Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 #'
 #' @examples 
-#' zeta <- seq(-2,0.5,0.01)
+#' zeta <- seq(-2,0.5,0.05)
 #' stability.correction(zeta)
 #' stability.correction(zeta,formulation="Businger_1971")                          
 #'             

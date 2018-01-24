@@ -2,7 +2,7 @@
 % Please edit documentation in R/decoupling.r
 \name{decoupling}
 \alias{decoupling}
-\title{Decoupling coefficient}
+\title{Canopy-Atmosphere Decoupling Coefficient}
 \usage{
 decoupling(data, Tair = "Tair", pressure = "pressure", Ga = "Ga",
   Gs = "Gs", approach = c("JarvisMcNaughton_1986", "Martin_1989"), LAI,

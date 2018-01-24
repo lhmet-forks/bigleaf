@@ -2,7 +2,7 @@
 % Please edit documentation in R/surface_conductance.r
 \name{surface.conductance}
 \alias{surface.conductance}
-\title{Surface conductance to water vapor}
+\title{Surface Conductance to Water Vapor}
 \usage{
 surface.conductance(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
   G = NULL, S = NULL, VPD = "VPD", LE = "LE", Ga = "Ga",

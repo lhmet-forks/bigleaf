@@ -3,7 +3,7 @@
 \name{Rg.to.PPFD}
 \alias{Rg.to.PPFD}
 \alias{PPFD.to.Rg}
-\title{Conversions between global radiation and photosynthetic photon flux density}
+\title{Conversions between Global Radiation and Photosynthetic Photon Flux Density}
 \usage{
 Rg.to.PPFD(Rg, J_to_mol = 4.6, frac_PAR = 0.5)
 

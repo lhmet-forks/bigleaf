@@ -2,7 +2,7 @@
 #### Canopy-Atmosphere Decoupling  ####
 #######################################
 
-#' Decoupling coefficient
+#' Canopy-Atmosphere Decoupling Coefficient
 #' 
 #' @description The canopy-atmosphere decoupling coefficient 'Omega'. 
 #' 
@@ -72,7 +72,7 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
   
   check.input(data,list(Tair,pressure,Ga,Gs))
   
-  Delta   <- Esat(Tair)[,"Delta"]
+  Delta   <- Esat.slope(Tair)[,"Delta"]
   gamma   <- psychrometric.constant(Tair,pressure,constants=constants)
   epsilon <- Delta/gamma
   
@@ -100,7 +100,7 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
 
 
 
-#' longwave radiative transfer conductance of the canopy
+#' Longwave Radiative Transfer Conductance of the Canopy
 #' 
 #' @param Tair      Air temperature (deg C)
 #' @param LAI       Leaf area index (m2 m-2)

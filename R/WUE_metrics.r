@@ -2,7 +2,7 @@
 ### WUE metrics calculation ###
 ###############################
 
-#' Water-Use Efficiency metrics
+#' Water-Use Efficiency Metrics
 #' 
 #' @description Calculation of various water use efficiency (WUE) metrics.
 #' 

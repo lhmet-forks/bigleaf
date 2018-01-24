@@ -175,10 +175,10 @@ surface.CO2 <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 #' @examples 
 #' # determine radiative temperature of an object that has an emissivity of 0.98 
 #' # and emits longwave radiation of 400Wm-2  
-#' Trad.surface(400,0.98)
+#' radiometric.surface.temp(400,0.98)
 #' 
 #' @export
-Trad.surface<- function(longwave_up,emissivity,constants=bigleaf.constants()){
+radiometric.surface.temp <- function(longwave_up,emissivity,constants=bigleaf.constants()){
   
   Trad.K    <- (longwave_up / (constants$sigma * emissivity))^(1/4)
   Trad.degC <- Trad.K - constants$Kelvin

@@ -39,15 +39,15 @@
 #' @references Priestley C.H.B., Taylor R.J., 1972: On the assessment of surface heat flux
 #'             and evaporation using large-scale parameters. Monthly Weather Review 100, 81-92.  
 #'          
-#' @seealso \code{\link{ET.ref}}
+#' @seealso \code{\link{reference.ET}}
 #'                                
 #' @examples 
 #' # Calculate potential ET from a surface that receives Rn of 400 Wm-2
-#' ET.pot(Tair=30,pressure=100,Rn=400,alpha=1.26)    
+#' potential.ET(Tair=30,pressure=100,Rn=400,alpha=1.26)    
 #' 
 #' @export
-ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,alpha=1.26,
-                   missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,constants=bigleaf.constants()){
+potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,alpha=1.26,
+                         missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,constants=bigleaf.constants()){
   
   check.input(data,list(Tair,pressure,Rn,G,S))
   
@@ -119,22 +119,22 @@ ET.pot <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,al
 #'              Guidelines for computing crop water requirements - FAO Irrigation and drainage
 #'              paper 56.
 #' 
-#' @seealso \code{\link{ET.pot}}
+#' @seealso \code{\link{potential.ET}}
 #' 
 #' @examples 
 #' # Calculate ET_ref for a surface with known Gs (0.5 mol m-2 s-1) and Ga (0.1 m s-1)
 #' 
 #' # Gs is required in m s-1
 #' Gs_ms <- mol.to.ms(0.5,Tair=20,pressure=100)
-#' ET_ref <- ET.ref(Gs=Gs_ms,Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400)
+#' ET_ref <- reference.ET(Gs=Gs_ms,Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400)
 #' 
 #' # now cross-check with the inverted version
 #' surface.conductance(Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400,LE=ET_ref[,"LE_ref"])
 #' 
 #' @export                 
-ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="Rn",Ga="Ga",
-                   G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
-                   constants=bigleaf.constants()){
+reference.ET <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="Rn",Ga="Ga",
+                         G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
+                         constants=bigleaf.constants()){
   
   check.input(data,list(Tair,pressure,VPD,Rn,Ga,G,S))
   
@@ -227,12 +227,12 @@ ET.ref <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="
 #' @examples 
 #' df <- data.frame(Tair=20,pressure=100,VPD=seq(0.5,4,0.5),
 #'                  Gs=seq(0.01,0.002,length.out=8),Rn=seq(50,400,50))            
-#' ET.eq.imp(df)            
+#' equilibrium.imposed.ET(df)            
 #'             
 #' @export
-ET.eq.imp <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
-                          Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
-                          constants=bigleaf.constants()){
+equilibrium.imposed.ET <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
+                                   Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
+                                   constants=bigleaf.constants()){
   
   check.input(data,list(Tair,pressure,VPD,Rn,Gs,G,S))
   

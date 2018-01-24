@@ -88,7 +88,7 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
       
     } else {
       
-      Gr    <- Gr.longwave(Tair,LAI,constants=constants)
+      Gr    <- longwave.conductance(Tair,LAI,constants=constants)
       Omega <- (epsilon + 1 + Gr/Ga) / (epsilon + 1 + Ga/Gs + Gr/Gs + Gr/Ga)
       
     }
@@ -118,10 +118,10 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
 #'             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
 #'          
 #' @examples 
-#' Gr.longwave(25,seq(1,8,1))            
+#' longwave.conductance(25,seq(1,8,1))            
 #'                  
 #' @export             
-Gr.longwave <- function(Tair,LAI,constants=bigleaf.constants()){
+longwave.conductance <- function(Tair,LAI,constants=bigleaf.constants()){
   
   Tair <- Tair + constants$Kelvin
   

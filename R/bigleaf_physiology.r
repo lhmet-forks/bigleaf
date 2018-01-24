@@ -12,11 +12,11 @@
 #' @param Ca               Atmospheric CO2 concentration (umol mol-1)              
 #' @param GPP              Gross primary productivity (umol CO2 m-2 s-1)
 #' @param Gs               Surface conductance to water vapor (mol m-2 s-1)
-#' @param Rleaf            Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
+#' @param Rleaf            Ecosystem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
 #' @param calc.surface.CO2 Should the derived surface CO2 concentration be used instead of 
 #'                         measured atmospheric CO2? If \code{TRUE}, Ca is derived as shown in \code{Details}.
 #' @param Ga_CO2           Aerodynamic conductance to CO2 (m s-1) 
-#' @param NEE              Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem
+#' @param NEE              Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosystem
 #' @param Tair             Air temperature (degC); ignored if \code{calc.surface.CO2 = FALSE}.
 #' @param pressure         Atmospheric pressure (kPa); ignored if \code{calc.surface.CO2 = FALSE}.
 #' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
@@ -34,11 +34,11 @@
 #' @note The equation is based on Fick's law of diffusion and is equivalent to the
 #'       often used equation at leaf level (ci = ca - An/gs).
 #'       Note that GPP and Gs have a different interpretation than An and gs.
-#'       Gs comprises non-pyhsiological contributions (i.e. physical evaporation)
+#'       Gs comprises non-physiological contributions (i.e. physical evaporation)
 #'       and is confounded by physical factors (e.g. energy balance non-closure).
 #'       GPP does not account for dark respiration and is further subject to uncertainties
 #'       in the NEE partitioning algorithm used. Leaf respiration can be provided,
-#'       but it is usually not known at ecosytem level (as a consequence, Ci is likely to be 
+#'       but it is usually not known at ecosystem level (as a consequence, Ci is likely to be 
 #'       slightly underestimated)
 #'       This function should be used with care and the resulting Ci might not be
 #'       readily comparable to its leaf-level analogue and/or physiological meaningful.          
@@ -96,14 +96,14 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.sur
 #' @param data      Data.Frame or matrix with all required columns   
 #' @param C3        C3 vegetation (\code{TRUE}, the default) or C4 vegetation (\code{FALSE})?              
 #' @param Temp      Surface (or air) temperature (degC) 
-#' @param GPP       Gross primary productivty (umol m-2 s-1)
+#' @param GPP       Gross primary productivity (umol m-2 s-1)
 #' @param Ci        Bulk canopy intercellular CO2 concentration (umol mol-1)
 #' @param PPFD      Photosynthetic photon flux density (umol m-2 s-1) 
 #' @param PPFD_j    PPFD threshold, below which the canopy is considered to 
 #'                  be RuBP regeneration limited. Defaults to 500 umol m-2 s-1.
 #' @param PPFD_c    PPFD threshold, above which the canopy is considered to 
 #'                  be Rubisco limited. Defaults to 1000 umol m-2 s-1.
-#' @param Rleaf     Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0 
+#' @param Rleaf     Ecosystem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0 
 #' @param Oi        Intercellular O2 concentration (mol mol-1)
 #' @param Kc25      Michaelis-Menten constant for CO2 at 25 degC (umol mol-1)
 #' @param Ko25      Michaelis-Menten constant for O2 at 25 degC (mmol mol-1)
@@ -139,7 +139,7 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.sur
 #'          (the threshold is set to Ci < 80umol mol-1 at the moment) are filtered out.
 #'          
 #'          Vcmax is calculated from the photosynthesis model by Farquhar et al. 1980.
-#'          If net photosynthesis is Rubisco-limited (RuBP-satured carboxylation
+#'          If net photosynthesis is Rubisco-limited (RuBP-saturated carboxylation
 #'          rate, i.e. light has to be (near-)saturating):
 #'         
 #'            \deqn{Vcmax = (GPP * (Ci + Kc*(1.0 + Oi/Ko))) / (Ci - Gam)}
@@ -479,7 +479,7 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #' @param Gs         Surface conductance to water vapor (mol m-2 s-1)
 #' @param VPD        Vapor pressure deficit (kPa)
 #' @param Ca         Atmospheric CO2 concentration (umol mol-1)
-#' @param Rleaf      Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0 
+#' @param Rleaf      Ecosystem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0 
 #' @param model      Stomatal model used. One of \code{"USO","Ball&Berry","Leuning"}.
 #' @param robust.nls Use robust nonlinear regression (\code{\link[robustbase]{nlrob}})? Default is \code{FALSE}.
 #' @param nmin       Minimum number of data required to perform the fit; defaults to 40.
@@ -824,7 +824,7 @@ light.use.efficiency <- function(GPP,PPFD){
 #'             \deqn{Gs = -m ln(VPD) + b}
 #'
 #'          where b is the reference surface conductance (Gs) at VPD=1kPa (in mol m-2 s-1),
-#'          and m is the sensitvity parameter of Gs to VPD (in mol m-2 s-1 log(kPa)-1).
+#'          and m is the sensitivity parameter of Gs to VPD (in mol m-2 s-1 log(kPa)-1).
 #'          The two parameters b and m are fitted using \code{\link[stats]{nls}}.
 #'          VPD can be the one directly measured at instrument height, or the
 #'          one at the surface, as returned by \code{\link{surface.conditions}}.

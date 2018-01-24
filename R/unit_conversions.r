@@ -4,7 +4,7 @@
 
 #' Conversion between Latent Heat Flux and Evapotranspiration
 #' 
-#' @description converts evporative water flux from mass (ET=evapotranspiration)
+#' @description converts evaporative water flux from mass (ET=evapotranspiration)
 #'              to energy (LE=latent heat flux) units, or vice versa.
 #'              
 #' @aliases LE.to.ET ET.to.LE
@@ -73,7 +73,7 @@ ET.to.LE <- function(ET,Tair){
 #' where Tair is in Kelvin and pressure in Pa (converted from kPa internally)
 #' 
 #' @references Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.
-#'             2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p
+#'             2nd Edition., Cambridge University Press, Cambridge. 428 p
 #'             
 #' @examples 
 #' ms.to.mol(0.005,25,100)

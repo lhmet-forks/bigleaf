@@ -61,7 +61,7 @@ Ignored if \code{filter.growseas = FALSE}.}
 
 \item{precip}{Precipitation (mm time-1)}
 
-\item{tprecip}{Precipitation threshold used to demark a precipitation event (mm). 
+\item{tprecip}{Precipitation threshold used to identify a precipitation event (mm). 
 Ignored if \code{filter.precip = FALSE}.}
 
 \item{precip.hours}{Number of hours removed following a precipitation event (h).
@@ -70,7 +70,7 @@ Ignored if \code{filter.precip = FALSE}.}
 \item{records.per.hour}{Number of observations per hour. I.e. 2 for half-hourly data.}
 
 \item{filtered.data.to.NA}{Logical. If \code{TRUE} (the default), all variables in the input
-data.frame/matrix are set to \code{NA} for the timestep where ANY of the
+data.frame/matrix are set to \code{NA} for the time step where ANY of the
 \code{filter.vars} were beyond their acceptable range (as
 determined by \code{filter.vals.min} and \code{filter.vals.max}).
 If \code{FALSE}, values are not filtered, and an additional column 'valid'
@@ -81,11 +81,11 @@ did (1) or did not fulfill the filter criteria (0).}
 If \code{filtered.data.to.NA = TRUE} (default), the input data.frame/matrix with 
         observations which did not fulfill the filter criteria set to \code{NA}. 
         If \code{filtered.data.to.NA = FALSE}, the input data.frame/matrix with an additional 
-        column "valid", which indicates whether all the data of a timestep fulfill the 
+        column "valid", which indicates whether all the data of a time step fulfill the 
         filtering criteria (1) or not (0).
 }
 \description{
-Filters timeseries of EC data for high-quality values and specified
+Filters time series of EC data for high-quality values and specified
              meteorological conditions.
 }
 \details{
@@ -94,7 +94,7 @@ This routine consists of two parts:
          1) Quality control: All variables included in \code{vars.qc} are filtered for 
             good quality data. For these variables a corresponding quality variable with 
             the same name as the variable plus the extension as specified in \code{quality.ext}
-            must be provided. For timesteps where the value of the quality indicator is not included
+            must be provided. For time steps where the value of the quality indicator is not included
             in the argument \code{good.quality}, i.e. the quality is not considered as 'good', 
             its value is set to \code{NA}.
             
@@ -102,7 +102,7 @@ This routine consists of two parts:
             of the EC method are not fulfilled. Further, some data analysis require certain meteorological
             conditions, such as periods without rainfall, or active vegetation (growing season, daytime).
             The filter applied in this second step serves to exclude time periods that do not fulfill the criteria
-            specified in the arguments. More specifically, timeperiods where one of the variables is higher
+            specified in the arguments. More specifically, time periods where one of the variables is higher
             or lower than the specified thresholds (\code{filter.vals.min} and \code{filter.vals.max})
             are set to \code{NA} for all variables. If a threshold is set to \code{NA}, it will be ignored.
 }
@@ -113,7 +113,7 @@ The thresholds set with \code{filter.vals.min} and \code{filter.vals.max} filter
       \code{tprecip} filters all data that are greater than \code{tprecip}. 
 
       Variables considered of bad quality (as specified by the corresponding quality control variables)      
-      will be set to \code{NA} by this routine. Data that do not fulfill the filtering critera are set to
+      will be set to \code{NA} by this routine. Data that do not fulfill the filtering criteria are set to
       \code{NA} if \code{filtered.data.to.NA = TRUE}. Note that with this option *all* variables of the same
       time step are set to \code{NA}. Alternatively, if \code{filtered.data.to.NA = FALSE} data are not set to \code{NA},
       and a new column "valid" is added to the data.frame/matrix, indicating if any value of a row
@@ -150,7 +150,7 @@ DE_Tha_Jun_2014_2 <- filter.data(DE_Tha_Jun_2014,quality.control=FALSE,
                                  filtered.data.to.NA=FALSE)
                                  
  # note the additional column 'valid' in DE_Tha_Jun_2014_3.
- # To remove timesteps marked as filtered out (i.e. 0 values in column 'valid'):
+ # To remove time steps marked as filtered out (i.e. 0 values in column 'valid'):
  DE_Tha_Jun_2014_3[DE_Tha_Jun_2014_3["valid"] == 0,] <- NA
   
   

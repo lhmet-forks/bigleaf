@@ -18,14 +18,14 @@ intercellular.CO2(data, Ca = "Ca", GPP = "GPP", Gs = "Gs", Rleaf = NULL,
 
 \item{Gs}{Surface conductance to water vapor (mol m-2 s-1)}
 
-\item{Rleaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
+\item{Rleaf}{Ecosystem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 
 \item{calc.surface.CO2}{Should the derived surface CO2 concentration be used instead of 
 measured atmospheric CO2? If \code{TRUE}, Ca is derived as shown in \code{Details}.}
 
 \item{Ga_CO2}{Aerodynamic conductance to CO2 (m s-1)}
 
-\item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosytem}
+\item{NEE}{Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosystem}
 
 \item{Tair}{Air temperature (degC); ignored if \code{calc.surface.CO2 = FALSE}.}
 
@@ -57,11 +57,11 @@ Bulk intercellular CO2 concentration (Ci) is given by:
 The equation is based on Fick's law of diffusion and is equivalent to the
       often used equation at leaf level (ci = ca - An/gs).
       Note that GPP and Gs have a different interpretation than An and gs.
-      Gs comprises non-pyhsiological contributions (i.e. physical evaporation)
+      Gs comprises non-physiological contributions (i.e. physical evaporation)
       and is confounded by physical factors (e.g. energy balance non-closure).
       GPP does not account for dark respiration and is further subject to uncertainties
       in the NEE partitioning algorithm used. Leaf respiration can be provided,
-      but it is usually not known at ecosytem level (as a consequence, Ci is likely to be 
+      but it is usually not known at ecosystem level (as a consequence, Ci is likely to be 
       slightly underestimated)
       This function should be used with care and the resulting Ci might not be
       readily comparable to its leaf-level analogue and/or physiological meaningful.

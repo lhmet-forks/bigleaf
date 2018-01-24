@@ -21,8 +21,8 @@ energy.closure(data, Rn = "Rn", G = NULL, S = NULL, LE = "LE",
 
 \item{H}{Sensible heat flux (W m-2)}
 
-\item{instantaneous}{should the energy balance be calculated at the timestep 
-of the observations (\code{TRUE}), or over the entire timeperiod
+\item{instantaneous}{should the energy balance be calculated at the time step 
+of the observations (\code{TRUE}), or over the entire time period
 provided as input (\code{FALSE})}
 
 \item{missing.G.as.NA}{if \code{TRUE}, missing G are treated as \code{NA}s ,otherwise set to 0.}
@@ -40,7 +40,7 @@ a named vector containing:
         if \code{instantaneous = TRUE}, only \code{EBR} is returned.
 }
 \description{
-Calculates the degree of the energy balance non-closure for the entire timespan
+Calculates the degree of the energy balance non-closure for the entire time span
              based on the ratio of two sums (energy balance ratio), and ordinary least squares (OLS).
 }
 \details{
@@ -48,7 +48,7 @@ The energy balance ratio (EBR) is calculated as:
          
            \deqn{EBR = sum(LE + H)/sum(Rn - G - S)}
          
-         the sum is taken for all timesteps with complete observations (i.e. where
+         the sum is taken for all time steps with complete observations (i.e. where
          all energy balance terms are available).
 }
 \examples{

@@ -125,7 +125,7 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
     \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
     
  The option \code{"Su_2001"} calculates Rb based on the physically-based Rb model by Su et al. 2001,
- a simplification of the model developed by Massmann 1999:
+ a simplification of the model developed by Massman 1999:
  
     \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2}
  

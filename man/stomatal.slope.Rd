@@ -25,7 +25,7 @@ stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP",
 
 \item{Ca}{Atmospheric CO2 concentration (umol mol-1)}
 
-\item{Rleaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
+\item{Rleaf}{Ecosystem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 
 \item{model}{Stomatal model used. One of \code{"USO","Ball&Berry","Leuning"}.}
 

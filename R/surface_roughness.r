@@ -99,7 +99,7 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 #'            \deqn{z0m = hs * zh * (1 - d/zh)   for 0.2 < X} 
 #'          
 #'          If \code{method = "wind_profile"}, z0m is estimated by solving
-#'          the windspeed profile for z0m:
+#'          the wind speed profile for z0m:
 #'          
 #'            \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
 #'                  

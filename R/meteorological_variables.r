@@ -175,13 +175,13 @@ Esat.slope <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
 #' 
 #'    \deqn{\gamma = cp * pressure / (eps * \lambda)},
 #'  
-#'  where \eqn{\lambda} is the latent heaf of vaporization (J kg-1), 
+#'  where \eqn{\lambda} is the latent heat of vaporization (J kg-1), 
 #'  as calculated with \code{\link{latent.heat.vaporization}}.
 #'  
 #' @return \item{\eqn{\gamma} -}{the psychrometric constant (kPa K-1)}
 #'  
 #' @references Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
-#'             3rd edition. Academic Press, London. 
+#'             3rd Edition. Academic Press, London. 
 #' 
 #' @examples 
 #' psychrometric.constant(seq(5,45,5),100)

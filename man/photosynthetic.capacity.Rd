@@ -19,7 +19,7 @@ photosynthetic.capacity(data, C3 = TRUE, Temp, GPP = "GPP", Ci,
 
 \item{Temp}{Surface (or air) temperature (degC)}
 
-\item{GPP}{Gross primary productivty (umol m-2 s-1)}
+\item{GPP}{Gross primary productivity (umol m-2 s-1)}
 
 \item{Ci}{Bulk canopy intercellular CO2 concentration (umol mol-1)}
 
@@ -31,7 +31,7 @@ be RuBP regeneration limited. Defaults to 500 umol m-2 s-1.}
 \item{PPFD_c}{PPFD threshold, above which the canopy is considered to 
 be Rubisco limited. Defaults to 1000 umol m-2 s-1.}
 
-\item{Rleaf}{Ecosytem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
+\item{Rleaf}{Ecosystem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 
 \item{Oi}{Intercellular O2 concentration (mol mol-1)}
 
@@ -96,7 +96,7 @@ The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
          (the threshold is set to Ci < 80umol mol-1 at the moment) are filtered out.
          
          Vcmax is calculated from the photosynthesis model by Farquhar et al. 1980.
-         If net photosynthesis is Rubisco-limited (RuBP-satured carboxylation
+         If net photosynthesis is Rubisco-limited (RuBP-saturated carboxylation
          rate, i.e. light has to be (near-)saturating):
         
            \deqn{Vcmax = (GPP * (Ci + Kc*(1.0 + Oi/Ko))) / (Ci - Gam)}

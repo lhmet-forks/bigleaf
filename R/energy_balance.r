@@ -85,7 +85,7 @@ energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
 
 #' Energy Balance Closure
 #' 
-#' @description Calculates the degree of the energy balance non-closure for the entire timespan
+#' @description Calculates the degree of the energy balance non-closure for the entire time span
 #'              based on the ratio of two sums (energy balance ratio), and ordinary least squares (OLS).
 #' 
 #' @param data  Data.frame or matrix containing all required variables.
@@ -94,8 +94,8 @@ energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
 #' @param S     Sum of all storage fluxes (W m-2); optional
 #' @param LE    Latent heat flux (W m-2)
 #' @param H     Sensible heat flux (W m-2)
-#' @param instantaneous    should the energy balance be calculated at the timestep 
-#'                         of the observations (\code{TRUE}), or over the entire timeperiod
+#' @param instantaneous    should the energy balance be calculated at the time step 
+#'                         of the observations (\code{TRUE}), or over the entire time period
 #'                         provided as input (\code{FALSE})
 #' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s ,otherwise set to 0. 
 #' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.
@@ -105,7 +105,7 @@ energy.use.efficiency <- function(GPP,alpha=0.422,Rn){
 #'          
 #'            \deqn{EBR = sum(LE + H)/sum(Rn - G - S)}
 #'          
-#'          the sum is taken for all timesteps with complete observations (i.e. where
+#'          the sum is taken for all time steps with complete observations (i.e. where
 #'          all energy balance terms are available).
 #' 
 #' @return a named vector containing:

@@ -18,7 +18,7 @@ ET.to.LE(ET, Tair)
 \item{ET}{Evapotranspiration (kg m-2 s-1)}
 }
 \description{
-converts evporative water flux from mass (ET=evapotranspiration)
+converts evaporative water flux from mass (ET=evapotranspiration)
              to energy (LE=latent heat flux) units, or vice versa.
 }
 \details{

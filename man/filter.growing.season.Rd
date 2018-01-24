@@ -38,7 +38,7 @@ The basic idea behind the growing season filter is that vegetation is
          
          The argument \code{min.int} serves to avoid short fluctuations in the 
          status growing season vs. no growing season by defining a minimum length
-         of the status. If a time interval shorter than \code{min.int} is labelled
+         of the status. If a time interval shorter than \code{min.int} is labeled
          as growing season or non-growing season, it is changed to the status of 
-         the neighbouring values.
+         the neighboring values.
 }

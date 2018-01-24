@@ -41,5 +41,5 @@ ms.to.mol(0.005,25,100)
 }
 \references{
 Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.
-            2nd Edition., 2nd Edn. Cambridge University Press, Cambridge. 428 p
+            2nd Edition., Cambridge University Press, Cambridge. 428 p
 }

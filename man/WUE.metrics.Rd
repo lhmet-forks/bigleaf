@@ -80,7 +80,7 @@ Beer, C., et al., 2009: Temporal and among-site variability of inherent
             water use efficiency at the ecosystem level. Global Biogeochemical Cycles 23, GB2018.
             
             Zhou, S., et al., 2014: The effect of vapor pressure deficit on water
-            use efficiency at the subdaily time scale. Geophysical Research Letters 41.
+            use efficiency at the sub-daily time scale. Geophysical Research Letters 41.
 }
 \seealso{
 \code{\link{stomatal.slope}} for a measure of intrinsic WUE

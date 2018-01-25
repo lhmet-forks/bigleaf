@@ -79,5 +79,5 @@ Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
 }
 \seealso{
 \code{\link{aerodynamic.conductance}}, \code{\link{surface.conductance}},
-         \code{\link{ET.eq.imp}}
+         \code{\link{equilibrium.imposed.ET}}
 }

@@ -52,7 +52,7 @@
 #'             vegetation and the atmosphere. Agricultural and Forest Meteorology 49, 45-53.
 #' 
 #' @seealso \code{\link{aerodynamic.conductance}}, \code{\link{surface.conductance}},
-#'          \code{\link{ET.eq.imp}}
+#'          \code{\link{equilibrium.imposed.ET}}
 #' 
 #' @examples 
 #' # Omega calculated following Jarvis & McNaughton 1986

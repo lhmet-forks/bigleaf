@@ -45,7 +45,7 @@ a data.frame with the following columns:
 }
 \description{
 Reference evapotranspiration calculated from the Penman-Monteith
-             equation with a pre-defined surface conductance.
+             equation with a prescribed surface conductance.
 }
 \details{
 Reference evapotranspiration is calculated according to the Penman-Monteith

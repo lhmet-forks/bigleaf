@@ -80,7 +80,7 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
 #' Reference Evapotranspiration
 #' 
 #' @description Reference evapotranspiration calculated from the Penman-Monteith
-#'              equation with a pre-defined surface conductance.
+#'              equation with a prescribed surface conductance.
 #' 
 #' @param data      Data.frame or matrix containing all required variables
 #' @param Gs        Surface conductance (m s-1); defaults to 0.0143 m s-1 (~ 0.58 mol m-2 s-1)

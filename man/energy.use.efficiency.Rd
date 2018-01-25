@@ -2,7 +2,7 @@
 % Please edit documentation in R/energy_balance.r
 \name{energy.use.efficiency}
 \alias{energy.use.efficiency}
-\title{Energy Use Efficiency (EUE)}
+\title{Energy-Use Efficiency (EUE)}
 \usage{
 energy.use.efficiency(GPP, alpha = 0.422, Rn)
 }

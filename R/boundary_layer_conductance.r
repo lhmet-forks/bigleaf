@@ -4,8 +4,8 @@
 
 #' Boundary Layer Conductance according to Thom 1972
 #' 
-#' @description An empirical formulation for the canopy boundary layer conductance
-#'              based on a simple ustar dependency.
+#' @description An empirical formulation for the canopy boundary layer conductance 
+#'              to heat/water vapor based on a simple ustar dependency.
 #' 
 #' @param ustar     Friction velocity (m s-1)
 #' @param constants k - von-Karman constant (-) \cr
@@ -56,6 +56,9 @@ Gb.Thom <- function(ustar,constants=bigleaf.constants()){
 
 #' Boundary Layer Conductance according to Choudhury & Monteith 1988
 #' 
+#' @description A formulation for the canopy boundary layer conductance 
+#'              to heat/water vapor according to Choudhury & Monteith 1988.
+#'              
 #' @param data             Data.frame or matrix containing all required variables
 #' @param Tair             Air temperature (degC)
 #' @param pressure         Atmospheric pressure (kPa)
@@ -154,7 +157,8 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 
 #' Boundary Layer Conductance according to Su et al. 2001
 #' 
-#' @description A physically based formulation for the canopy boundary layer conductance. 
+#' @description A physically based formulation for the canopy boundary layer conductance
+#'              to heat/water vapor according to Su et al. 2001. 
 #'
 #' @param data     Data.frame or matrix containing all required variables
 #' @param Tair     Air temperature (degC)

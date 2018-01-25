@@ -20,8 +20,8 @@ a data.frame with the following columns:
  \item{kB}{kB-1 parameter (-)}
 }
 \description{
-An empirical formulation for the canopy boundary layer conductance
-             based on a simple ustar dependency.
+An empirical formulation for the canopy boundary layer conductance 
+             to heat/water vapor based on a simple ustar dependency.
 }
 \details{
 The empirical equation for Rb to water suggested by Thom 1972 is:

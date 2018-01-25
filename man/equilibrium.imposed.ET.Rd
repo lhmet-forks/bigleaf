@@ -2,7 +2,7 @@
 % Please edit documentation in R/evapotranspiration.r
 \name{equilibrium.imposed.ET}
 \alias{equilibrium.imposed.ET}
-\title{Imposed and Equilibrium Evapotranspiration}
+\title{Equilibrium and Imposed Evapotranspiration}
 \usage{
 equilibrium.imposed.ET(data, Tair = "Tair", pressure = "pressure",
   VPD = "VPD", Gs = "Gs", Rn = "Rn", G = NULL, S = NULL,
@@ -44,7 +44,7 @@ A data.frame with the following columns:
 Evapotranspiration (ET) split up into imposed ET and equilibrium ET.
 }
 \details{
-Total evapotranspiration can be written in the form:
+Total evapotranspiration can be written in the form (Jarvis & McNaughton 1986):
 
            \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
          

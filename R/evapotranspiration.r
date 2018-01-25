@@ -169,7 +169,7 @@ reference.ET <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD
 
 
 
-#' Imposed and Equilibrium Evapotranspiration
+#' Equilibrium and Imposed Evapotranspiration
 #' 
 #' @description Evapotranspiration (ET) split up into imposed ET and equilibrium ET.
 #' 
@@ -186,7 +186,7 @@ reference.ET <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-)
 #'                  
-#' @details Total evapotranspiration can be written in the form:
+#' @details Total evapotranspiration can be written in the form (Jarvis & McNaughton 1986):
 #' 
 #'            \deqn{ET = \Omega ET_eq + (1 - \Omega)ET_imp}
 #'          

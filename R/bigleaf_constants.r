@@ -2,7 +2,7 @@
 ### global constants ####
 #########################
 
-#' Constants used in the bigleaf package
+#' Constants Used in the bigleaf Package
 #'
 #' @return This function defines the following constants:
 #' \item{cp}{specific heat of air for constant pressure (J K-1 kg-1)}

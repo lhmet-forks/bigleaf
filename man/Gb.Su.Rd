@@ -56,7 +56,8 @@ A data.frame with the following columns:
     \item{kB}{kB-1 parameter (-)}
 }
 \description{
-A physically based formulation for the canopy boundary layer conductance.
+A physically based formulation for the canopy boundary layer conductance
+             to heat/water vapor according to Su et al. 2001.
 }
 \details{
 The formulation is based on the kB-1 model developed by Massman 1999. 

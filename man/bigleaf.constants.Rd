@@ -2,7 +2,7 @@
 % Please edit documentation in R/bigleaf_constants.r
 \name{bigleaf.constants}
 \alias{bigleaf.constants}
-\title{Constants used in the bigleaf package}
+\title{Constants Used in the bigleaf Package}
 \usage{
 bigleaf.constants()
 }
@@ -27,7 +27,7 @@ This function defines the following constants:
 \item{Rbwc}{Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
 }
 \description{
-Constants used in the bigleaf package
+Constants Used in the bigleaf Package
 }
 \note{
 Constants contained within this function can be changed permanently (which

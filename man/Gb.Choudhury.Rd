@@ -46,7 +46,8 @@ A data frame with the following columns:
     \item{kB}{kB-1 parameter (-)}
 }
 \description{
-Boundary Layer Conductance according to Choudhury & Monteith 1988
+A formulation for the canopy boundary layer conductance 
+             to heat/water vapor according to Choudhury & Monteith 1988.
 }
 \details{
 Boundary layer conductance according to Choudhury & Monteith 1988 is

@@ -42,7 +42,7 @@ biochemical.energy <- function(NEE,alpha=0.422){
 
 
 
-#' Energy Use Efficiency (EUE)
+#' Energy-Use Efficiency (EUE)
 #' 
 #' @description Fraction of net radiation fixed by primary productivity.
 #' 

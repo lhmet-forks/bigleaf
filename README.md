@@ -4,7 +4,7 @@
 (e.g. canopy conductance, water-use efficiency) ecosystem properties from eddy covariance data and accompanying meteorological measurements. 
 All calculations are based on a 'big-leaf' representation of the vegetation and return representative bulk ecosystem/canopy variables.
 
-http://cranlogs.r-pkg.org/badges/grand-total/bigleaf
+![](http://cranlogs.r-pkg.org/badges/grand-total/bigleaf)
 
 # Installation
 The bigleaf R package is on CRAN and can be installed using:

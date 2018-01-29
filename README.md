@@ -37,6 +37,7 @@ surface.conductance(DE_Tha_June_2014)
 ```
 Important: please ensure that all input variables are in the correct units as described on the help pages.
 
+[Please report bugs or issues here](https://bitbucket.org/juergenknauer/bigleaf/issues?status=new&status=open)
 
 # Package content 
 The package provides the following functionalities:

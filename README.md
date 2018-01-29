@@ -1,6 +1,6 @@
 # The bigleaf R package #
 
-![https://www.r-pkg.org/badges/version/bigleaf](https://www.r-pkg.org/badges/version/bigleaf) ![http://cranlogs.r-pkg.org/badges/grand-total/bigleaf](http://cranlogs.r-pkg.org/badges/grand-total/bigleaf)
+![](https://www.r-pkg.org/badges/version/bigleaf) ![](http://cranlogs.r-pkg.org/badges/grand-total/bigleaf)
 
 **bigleaf** is an R package for the calculation of physical (e.g. aerodynamic conductance, surface temperature) and physiological
 (e.g. canopy conductance, water-use efficiency) ecosystem properties from eddy covariance data and accompanying meteorological measurements. 

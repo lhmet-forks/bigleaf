@@ -98,7 +98,9 @@ surface.conditions(Tair=25,pressure=100,LE=100,H=200,VPD=1.2,Ga=c(0.02,0.05,0.1)
                    
 }
 \references{
-Knauer, J. et al., 2017: Towards physiologically meaningful water-
-            use efficiency estimates from eddy covariance data. Global Change Biology.
-            DOI: 10.1111/gcb.13893
+Knauer, J. et al., 2018: Towards physiologically meaningful water-use efficiency estimates
+            from eddy covariance data. Global Change Biology 24, 694-710.
+            
+            Blanken, P.D. & Black, T.A., 2004: The canopy conductance of a boreal aspen forest,
+            Prince Albert National Park, Canada. Hydrological Processes 18, 1561-1578.
 }

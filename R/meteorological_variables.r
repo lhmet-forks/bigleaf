@@ -173,10 +173,10 @@ Esat.slope <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
 #'                  
 #' @details The psychrometric constant (\eqn{\gamma}) is given as:
 #' 
-#'    \deqn{\gamma = cp * pressure / (eps * \lambda)},
+#'    \deqn{\gamma = cp * pressure / (eps * \lambda)}
 #'  
 #'  where \eqn{\lambda} is the latent heat of vaporization (J kg-1), 
-#'  as calculated with \code{\link{latent.heat.vaporization}}.
+#'  as calculated from \code{\link{latent.heat.vaporization}}.
 #'  
 #' @return \item{\eqn{\gamma} -}{the psychrometric constant (kPa K-1)}
 #'  

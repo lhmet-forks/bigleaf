@@ -533,9 +533,8 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'             Leuning R., 1995: A critical appraisal of a combined stomatal-photosynthesis
 #'             model for C3 plants. Plant, Cell and Environment 18, 339-355.
 #'             
-#'             Knauer, J. et al., 2017: Towards physiologically meaningful water-
-#'             use efficiency estimates from eddy covariance data. Global Change Biology.
-#'             DOI: 10.1111/gcb.13893
+#'             Knauer, J. et al., 2018: Towards physiologically meaningful water-use efficiency estimates
+#'             from eddy covariance data. Global Change Biology 24, 694-710.
 #' 
 #' @seealso \code{\link{surface.conductance}}
 #' 

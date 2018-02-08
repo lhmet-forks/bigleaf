@@ -103,4 +103,7 @@ Knauer, J. et al., 2018: Towards physiologically meaningful water-use efficiency
             
             Blanken, P.D. & Black, T.A., 2004: The canopy conductance of a boreal aspen forest,
             Prince Albert National Park, Canada. Hydrological Processes 18, 1561-1578.
+            
+            Shuttleworth, W. J., Wallace, J.S., 1985: Evaporation from sparse crops-
+            an energy combination theory. Quart. J. R. Met. Soc. 111, 839-855.
 }

@@ -239,7 +239,7 @@ equilibrium.imposed.ET <- function(data,Tair="Tair",pressure="pressure",VPD="VPD
   if(!is.null(G)){
     if (!missing.G.as.NA){G[is.na(G)] <- 0}
   } else {
-    cat("ground heat flux G is not provided and set to 0.",fill=TRUE)
+    cat("Ground heat flux G is not provided and set to 0.",fill=TRUE)
     G <- 0
   }
   

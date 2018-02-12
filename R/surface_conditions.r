@@ -185,8 +185,8 @@ surface.CO2 <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 #' @export
 radiometric.surface.temp <- function(longwave_up,emissivity,constants=bigleaf.constants()){
   
-  Trad.K    <- (longwave_up / (constants$sigma * emissivity))^(1/4)
-  Trad.degC <- Trad.K - constants$Kelvin
+  Trad_K    <- (longwave_up / (constants$sigma * emissivity))^(1/4)
+  Trad_degC <- Trad_K - constants$Kelvin
   
-  return(data.frame(Trad.K,Trad.degC))
+  return(data.frame(Trad_K,Trad_degC))
 }

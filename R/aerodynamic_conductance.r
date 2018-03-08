@@ -113,11 +113,12 @@
 #'         \item{kB}{kB-1 parameter}
 #'         \item{zeta}{Stability parameter 'zeta'}
 #'         \item{psi_h}{Integrated stability correction function}
+#'         \item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1)}
 #'         \item{Ra_CO2}{Aerodynamic resistance for CO2 (s m-1)}
-#'         \item{Ra_Sc_name}{Aerodynamic resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+#'         \item{Ra_Sc_name}{Aerodynamic resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                           \code{Sc_name} are provided}
 #'         \item{Rb_CO2}{Canopy boundary layer resistance for CO2 (s m-1)}
-#'         \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+#'         \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                           \code{Sc_name} are provided}
 #'        
 #' @note The roughness length for water and heat (z0h) is not returned by this function, but 
@@ -260,12 +261,13 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
     
   }
   
-  Ga_m <- 1/Ra_m
-  Ra_h <- Ra_m + Rb
-  Ga_h <- 1/Ra_h
-  Ra_x <- Ra_m + Rb_x
+  Ga_m   <- 1/Ra_m
+  Ra_h   <- Ra_m + Rb
+  Ga_h   <- 1/Ra_h
+  Ra_x   <- Ra_m + Rb_x
+  Ga_CO2 <- 1/Ra_x[,1]
   colnames(Ra_x) <- paste0("Ra_",c("CO2",Sc_name))
 
-  return(data.frame(Ga_m,Ra_m,Ga_h,Ra_h,Gb,Rb,kB,zeta,psi_h,Ra_x,Rb_x))
+  return(data.frame(Ga_m,Ra_m,Ga_h,Ra_h,Gb,Rb,kB,zeta,psi_h,Ga_CO2,Ra_x,Rb_x))
   
 }

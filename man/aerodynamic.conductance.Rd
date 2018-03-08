@@ -82,11 +82,12 @@ a dataframe with the following columns:
         \item{kB}{kB-1 parameter}
         \item{zeta}{Stability parameter 'zeta'}
         \item{psi_h}{Integrated stability correction function}
+        \item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1)}
         \item{Ra_CO2}{Aerodynamic resistance for CO2 (s m-1)}
-        \item{Ra_Sc_name}{Aerodynamic resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+        \item{Ra_Sc_name}{Aerodynamic resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
                           \code{Sc_name} are provided}
         \item{Rb_CO2}{Canopy boundary layer resistance for CO2 (s m-1)}
-        \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+        \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
                           \code{Sc_name} are provided}
 }
 \description{

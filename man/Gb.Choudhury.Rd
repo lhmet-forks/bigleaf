@@ -49,7 +49,7 @@ A data frame with the following columns:
  \item{Gb}{Boundary layer conductance (m s-1)}
  \item{kB}{kB-1 parameter (-)}
  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
- \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+ \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
                    \code{Sc_name} are provided}
 }
 \description{

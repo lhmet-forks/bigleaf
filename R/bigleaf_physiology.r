@@ -735,8 +735,8 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
 #' @details A rectangular light response curve is fitted to NEE data. The curve
 #'          takes the form as described in Falge et al. 2001:
 #'          
-#'             \deqn{NEE = \alpha PPFD / (1 - (PPFD / PPFD_ref) + \alpha 
-#'                         PPFD / GPP_ref) + Reco}
+#'             \deqn{-NEE = \alpha PPFD / (1 - (PPFD / PPFD_ref) + \alpha 
+#'                          PPFD / GPP_ref) - Reco}
 #'                       
 #'          where \eqn{\alpha} is the ecosystem quantum yield (umol CO2 m-2 s-1) (umol quanta m-2 s-1)-1, 
 #'          and GPP_ref is the GPP at the reference PPFD (usually at saturating light). \eqn{\alpha} 

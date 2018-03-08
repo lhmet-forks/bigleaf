@@ -31,7 +31,7 @@
 #'  \item{Gb}{Boundary layer conductance (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
 #'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-#'  \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+#'  \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #'  
 #' @references Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
@@ -103,7 +103,7 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
 #'  \item{Gb}{Boundary layer conductance (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
 #'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-#'  \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+#'  \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #' 
 #' @details Boundary layer conductance according to Choudhury & Monteith 1988 is
@@ -227,7 +227,7 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #'  \item{Gb}{Boundary layer conductance (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
 #'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-#'  \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+#'  \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #'     
 #' @details The formulation is based on the kB-1 model developed by Massman 1999. 

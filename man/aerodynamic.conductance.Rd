@@ -9,7 +9,8 @@ aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
   fc = NULL, LAI, Cd = 0.2, hs = 0.01, wind_profile = FALSE,
   stab_correction = TRUE, stab_formulation = c("Dyer_1970",
   "Businger_1971"), Rb_model = c("Thom_1972", "Choudhury_1988", "Su_2001",
-  "constant_kB-1"), kB = NULL, constants = bigleaf.constants())
+  "constant_kB-1"), kB = NULL, Sc = NULL, Sc_name = NULL,
+  constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
@@ -56,28 +57,37 @@ Defaults to \code{FALSE}.}
 
 \item{kB}{kB-1 value; only used if \code{Rb_model = "constant_kB-1"}}
 
-\item{constants}{k - von Karman constant (-) \cr
-Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-) \cr
+\item{Sc}{Optional: Schmidt number of additional quantities to be calculated}
+
+\item{Sc_name}{Optional: Name of the additonal quantities, has to be of same length than 
+\code{Sc_name}}
+
+\item{constants}{k - von Karman constant \cr
 cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 Kelvin - conversion degree Celsius to Kelvin \cr
 g - gravitational acceleration (m s-2) \cr
 pressure0 - reference atmospheric pressure at sea level (Pa) \cr
-Tair0 - reference air temperature (K) \cr}
+Tair0 - reference air temperature (K) \cr
+Sc_CO2 - Schmidt number for CO2 \cr 
+Pr - Prandtl number (if \code{Sc} is provided)}
 }
 \value{
 a dataframe with the following columns:
         \item{Ga_m}{Aerodynamic conductance for momentum (m s-1)}
-        \item{Ga_h}{Aerodynamic conductance for heat and water vapor (m s-1)}
-        \item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1)}
         \item{Ra_m}{Aerodynamic resistance for momentum (s m-1)}
+        \item{Ga_h}{Aerodynamic conductance for heat and water vapor (m s-1)}
         \item{Ra_h}{Aerodynamic resistance for heat and water vapor (s m-1)}
-        \item{Ra_CO2}{Aerodynamic resistance for CO2 (s m-1)}
         \item{Gb}{Canopy boundary layer conductance for heat and water vapor (m s-1)}
         \item{Rb}{Canopy boundary layer resistance for heat and water vapor (s m-1)}
+        \item{kB}{kB-1 parameter}
+        \item{zeta}{Stability parameter 'zeta'}
+        \item{psi_h}{Integrated stability correction function}
+        \item{Ra_CO2}{Aerodynamic resistance for CO2 (s m-1)}
+        \item{Ra_Sc_name}{Aerodynamic resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+                          \code{Sc_name} are provided}
         \item{Rb_CO2}{Canopy boundary layer resistance for CO2 (s m-1)}
-        \item{kB}{kB-1 parameter (-)}
-        \item{zeta}{Stability parameter 'zeta' (-)}
-        \item{psi_h}{Integrated stability correction function (-)}
+        \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+                          \code{Sc_name} are provided}
 }
 \description{
 Bulk aerodynamic conductance, including options for the boundary layer conductance
@@ -88,7 +98,7 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
 
     \deqn{Ga_h = 1 / (Ra_m + Rb)}
  
- where Ra_m is the aerodynamic resistance for momentum and Rb the canopy boundary
+ where Ra_m is the aerodynamic resistance for momentum and Rb the (quasi-laminar) canopy boundary
  layer resistance ('excess resistance').
  
  The aerodynamic resistance for momentum Ra_m is given by:
@@ -135,14 +145,14 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  
  Both kB-1 and Rb, as well as Gb are given in the output.
  
- Rb (and Gb) for water vapor and heat are assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
+ Rb (and Gb) for water vapor and heat are assumed to be equal. Rb for other quantities
+ x is calculated as (Hicks et al. 1987):
  
-    \deqn{Rb_CO2 = 1.37 * Rb}
+    \deqn{Rb_x = Rb * (Sc_x / Pr)^0.67}
  
- The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
- It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
- across the boundary layer is assumed to be partly by diffusion and partly by turbulent
- mixing (Nobel 2005).
+ where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
+ 
+ data.frame(Ga_m,Ra_m,Ga_h,Ra_h,Gb,Rb,kB,zeta,psi_h,Ra_x,Rb_x))
 }
 \note{
 The roughness length for water and heat (z0h) is not returned by this function, but 
@@ -179,8 +189,9 @@ Verma, S., 1989: Aerodynamic resistances to transfers of heat, mass and momentum
             Verhoef, A., De Bruin, H., Van Den Hurk, B., 1997: Some practical notes on the parameter kB-1
             for sparse vegetation. Journal of Applied Meteorology, 36, 560-572.
             
-            Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
-            Edition. Elsevier Academic Press, Burlington, USA.
+            Hicks, B.B., Baldocchi, D.D., Meyers, T.P., Hosker, J.R., Matt, D.R., 1987:
+            A preliminary multiple resistance routine for deriving dry deposition velocities
+            from measured quantities. Water, Air, and Soil Pollution 36, 311-330.
             
             Monteith, J.L., Unsworth, M.H., 2008: Principles of environmental physics.
             Third Edition. Elsevier Academic Press, Burlington, USA.

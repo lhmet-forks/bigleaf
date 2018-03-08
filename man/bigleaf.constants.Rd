@@ -14,17 +14,18 @@ This function defines the following constants:
 \item{Rd}{gas constant of dry air (J kg-1 K-1) (Foken p. 245)}
 \item{Md}{molar mass of dry air [kg mol-1]}
 \item{Mw}{molar mass of water vapor (kg mol-1)}
-\item{eps}{ratio of the molecular weight of water vapor to dry air (-) (=Mw/Md)}
+\item{eps}{ratio of the molecular weight of water vapor to dry air (=Mw/Md)}
 \item{Kelvin}{conversion degree Celsius to Kelvin}
 \item{g}{gravitational acceleration (m s-2)}
 \item{pressure0}{reference atmospheric pressure at sea level (Pa)}
 \item{Tair0}{reference air temperature (K)}
-\item{k}{von Karman constant (-)}
+\item{k}{von Karman constant}
 \item{Cmol}{molar mass of carbon (kg mol-1)}
 \item{Omol}{molar mass of oxygen (kg mol-1)}
 \item{sigma}{Stefan-Boltzmann constant (W m-2 K-4)}
-\item{DwDc}{Ratio of the molecular diffusivities for water vapor and CO2 (-)}
-\item{Rbwc}{Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
+\item{DwDc}{Ratio of the molecular diffusivities for water vapor and CO2}
+\item{Pr}{Prandtl number}
+\item{Sc_CO2}{Schmidt number for CO2}
 }
 \description{
 Constants Used in the bigleaf Package

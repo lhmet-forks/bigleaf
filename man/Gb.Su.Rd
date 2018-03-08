@@ -7,7 +7,7 @@
 Gb.Su(data, Tair = "Tair", pressure = "pressure", ustar = "ustar",
   wind = "wind", H = "H", zh, zr, d, Dl, fc = NULL, LAI = NULL, N = 2,
   Cd = 0.2, hs = 0.01, stab_formulation = c("Dyer_1970", "Businger_1971"),
-  constants = bigleaf.constants())
+  Sc = NULL, Sc_name = NULL, constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
@@ -43,17 +43,24 @@ Gb.Su(data, Tair = "Tair", pressure = "pressure", ustar = "ustar",
 \item{stab_formulation}{Stability correction function used (If \code{stab_correction = TRUE}).
 Either \code{"Dyer_1970"} or \code{"Businger_1971"}.}
 
+\item{Sc}{Optional: Schmidt number of additional quantities to be calculated}
+
+\item{Sc_name}{Optional: Name of the additional quantities, has to be of same length than 
+\code{Sc_name}}
+
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
 pressure0 - reference atmospheric pressure at sea level (Pa) \cr
 Tair0 - reference air temperature (K) \cr
-Rbwc - Ratio of the transfer efficiency through the boundary layer for water vapor and CO2 (-)}
+Sc_CO2 - Schmidt number for CO2 \cr 
+Pr - Prandtl number (if \code{Sc} is provided)}
 }
 \value{
 A data.frame with the following columns:
-    \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-    \item{Rb_CO2}{Boundary layer resistance for CO2 (s m-1)}
-    \item{Gb}{Boundary layer conductance (m s-1)}
-    \item{kB}{kB-1 parameter (-)}
+ \item{Gb}{Boundary layer conductance (m s-1)}
+ \item{kB}{kB-1 parameter (-)}
+ \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+ \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name}. Only if \code{Sc_name} and 
+                   \code{Sc_name} are provided}
 }
 \description{
 A physically based formulation for the canopy boundary layer conductance
@@ -85,14 +92,12 @@ The formulation is based on the kB-1 model developed by Massman 1999.
          
            \deqn{kBs^-1 = 2.46(Re)^0.25 - ln(7.4)}
          
-         Rb for water vapor and heat is assumed to be equal. Rb for CO2 (Rb_CO2) is given as:
+         Rb for water vapor and heat is assumed to be equal. Rb for other quantities x is calculated as
+         (Hicks et al. 1987):
  
-           \deqn{Rb_CO2 = 1.37 * Rb}
+           \deqn{Rb_x = Rb * (Sc_x / Pr)^0.67}
  
-         The factor 1.37 arises due the lower molecular diffusivity of CO2 compared to water.
-         It is lower than the ratio of the molecular diffusivities (Dw/DCO2 = 1.6), as movement
-         across the boundary layer is assumed to be partly by diffusion and partly by turbulent
-         mixing (Nobel 2005).
+         where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 }
 \examples{
 # Canopy boundary layer resistance (and kB-1 parameter) for a set of meteorological conditions,
@@ -115,8 +120,9 @@ Su, Z., Schmugge, T., Kustas, W. & Massman, W., 2001: An evaluation of
             Massman, W., 1999: A model study of kB H- 1 for vegetated surfaces using
            'localized near-field' Lagrangian theory. Journal of Hydrology 223, 27-43.
            
-            Nobel, P. S., 2005: Physicochemical and Environmental Plant Physiology. Third 
-            Edition. Elsevier Academic Press, Burlington, USA.
+            Hicks, B.B., Baldocchi, D.D., Meyers, T.P., Hosker, J.R., Matt, D.R., 1987:
+            A preliminary multiple resistance routine for deriving dry deposition velocities
+            from measured quantities. Water, Air, and Soil Pollution 36, 311-330.
 }
 \seealso{
 \code{\link{Gb.Thom}}, \code{\link{Gb.Choudhury}}, \code{\link{aerodynamic.conductance}}

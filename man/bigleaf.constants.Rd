@@ -4,7 +4,11 @@
 \alias{bigleaf.constants}
 \title{Constants Used in the bigleaf Package}
 \usage{
-bigleaf.constants()
+bigleaf.constants(cp = 1004.834, Rgas = 8.31451, Rv = 461.5,
+  Rd = 287.0586, Md = 0.0289645, Mw = 0.0180153, eps = 0.622,
+  Kelvin = 273.15, g = 9.81, pressure0 = 101325, Tair0 = 273.15,
+  k = 0.41, Cmol = 0.012011, Omol = 0.0159994, sigma = 5.670367e-08,
+  DwDc = 1.6, Pr = 0.71, Sc_CO2 = 1.07)
 }
 \value{
 This function defines the following constants:
@@ -31,12 +35,22 @@ This function defines the following constants:
 Constants Used in the bigleaf Package
 }
 \note{
-Constants contained within this function can be changed permanently (which
-      makes sense for some of them, e.g. for the von Karman constant), by using
-      the command \code{\link[utils]{fixInNamespace}}. E.g.
+This function is passed as an argument to every function that uses one 
+      or more constants. Individual constants passed to a function can be 
+      easily altered. E.g. the following command will change the value of 
+      the von Karman constant from 0.41 to 0.4:
+      
+      \code{bigleaf.constants(k=0.4)}
+      
+      the value of a constant can be returned by calling:
+      
+      \code{bigleaf.constants()$*name_of_constant*}
+
+      To permanently change the constants contained within this function (which
+      makes sense for some of them, e.g. for the von Karman constant), 
+      the command \code{\link[utils]{fixInNamespace}} can be used. E.g.
       
       \code{fixInNamespace(bigleaf.constants,ns="bigleaf")}
       
       Note that this has to be repeated every time the package is newly installed/loaded.
-      It might thus be easier to change it directly in the source files.
 }

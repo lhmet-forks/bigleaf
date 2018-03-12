@@ -22,7 +22,10 @@
 #'                          Only used if \code{formulation = "PenmanMonteith"}.
 #' @param formulation Formulation used. Either \code{"PenmanMonteith"} (the default) 
 #'                    using the inverted Penman-Monteith equation, or \code{"FluxGradient"},
-#'                    for a simple flux-gradient approach requiring ET, pressure, and VPD only. 
+#'                    for a simple flux-gradient approach requiring ET, pressure, and VPD only.
+#' @param Esat.formula  Formula to be used for the calculation of esat and the slope of esat.
+#'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}. 
+#'                      Only used if \code{formulation = "PenmanMonteith"}. See \code{\link{Esat.slope}}.
 #' @param constants   cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                    eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 #'                    Rd - gas constant of dry air (J kg-1 K-1) \cr
@@ -112,6 +115,7 @@
 surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,
                                 VPD="VPD",LE="LE",Ga="Ga",missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                                 formulation=c("PenmanMonteith","FluxGradient"),
+                                Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                                 constants=bigleaf.constants()){ 
   
   formulation <- match.arg(formulation)
@@ -141,7 +145,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
       S <- 0
     }
     
-    Delta <- Esat.slope(Tair)[,"Delta"]
+    Delta <- Esat.slope(Tair,formula=Esat.formula)[,"Delta"]
     gamma <- psychrometric.constant(Tair,pressure)
     rho   <- air.density(Tair,pressure)
     

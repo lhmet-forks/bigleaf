@@ -7,6 +7,7 @@
 reference.ET(data, Gs = 0.0143, Tair = "Tair", pressure = "pressure",
   VPD = "VPD", Rn = "Rn", Ga = "Ga", G = NULL, S = NULL,
   missing.G.as.NA = FALSE, missing.S.as.NA = FALSE,
+  Esat.formula = c("Sonntag_1990", "Alduchov_1996", "Allen_1998"),
   constants = bigleaf.constants())
 }
 \arguments{
@@ -31,6 +32,10 @@ reference.ET(data, Gs = 0.0143, Tair = "Tair", pressure = "pressure",
 \item{missing.G.as.NA}{if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0.}
 
 \item{missing.S.as.NA}{if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.}
+
+\item{Esat.formula}{Formula to be used for the calculation of esat and the slope of esat.
+One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
+See \code{\link{Esat.slope}}.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air (-) \cr

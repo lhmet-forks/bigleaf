@@ -618,19 +618,19 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
       if (fitg0){
         if (robust.nls){
           mod_weights <- nlrob(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g0=0,g1=3),
-                               na.action=na.exclude)$w
-          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),weights=mod_weights)
+                               na.action=na.exclude,...)$w
+          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),weights=mod_weights,...)
         } else {
-          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3))
+          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),...)
         }
       } else {
         if (robust.nls){
           df$g0   <- rep(g0,nrow(df)) # g0 as constant does not work in the nlrob function...
           mod_weights <- nlrob(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g1=3),
-                               na.action=na.exclude)$w
-          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),weights=mod_weights)
+                               na.action=na.exclude,...)$w
+          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),weights=mod_weights,...)
         } else {
-          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3))
+          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),...)
         }
       }
       
@@ -640,21 +640,21 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
         if (fitD0){
           if (robust.nls){
             mod_weights <- nlrob(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),data=df,
-                                 start=list(g0=0,g1=9,D0=1.5),na.action=na.exclude)$w
+                                 start=list(g0=0,g1=9,D0=1.5),na.action=na.exclude,...)$w
             mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9,D0=1.5),
-                       weights=mod_weights)
+                       weights=mod_weights,...)
           } else {
-            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9,D0=1.5))
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9,D0=1.5),...)
           }
         } else {
           if (robust.nls){
             df$D0  <- rep(D0,nrow(df))
             mod_weights <- nlrob(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),data=df,
-                                 start=list(g0=0,g1=9),na.action=na.exclude)$w
+                                 start=list(g0=0,g1=9),na.action=na.exclude,...)$w
             mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9),
-                       weights=mod_weights)
+                       weights=mod_weights,...)
           } else {
-            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9))
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g0=0,g1=9),...)
           }
         }
       } else {
@@ -662,22 +662,22 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
           if (robust.nls){
             df$g0    <- rep(g0,nrow(df))
             mod_weights <- nlrob(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),data=df,
-                                 start=list(g1=9,D0=1.5),na.action=na.exclude)$w
+                                 start=list(g1=9,D0=1.5),na.action=na.exclude,...)$w
             mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9,D0=1.5),
-                       weights=mod_weights)
+                       weights=mod_weights,...)
           } else {
-            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9,D0=1.5))
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9,D0=1.5),...)
           }
         } else {
           if (robust.nls){
             df$g0  <- rep(g0,nrow(df))
             df$D0  <- rep(D0,nrow(df))
             mod_weights <- nlrob(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),data=df,
-                                 start=list(g1=9),na.action=na.exclude)$w
+                                 start=list(g1=9),na.action=na.exclude,...)$w
             mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9),
-                       weights=mod_weights)
+                       weights=mod_weights,...)
           } else {
-            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9))
+            mod <- nls(Gs ~ g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0)),start=list(g1=9),...)
           }
         }
       }
@@ -690,19 +690,19 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
       if (fitg0){
         if (robust.nls){
           mod_weights <- nlrob(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9),data=df,
-                               na.action=na.exclude)$w
-          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9),weights=mod_weights)
+                               na.action=na.exclude,...)$w
+          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9),weights=mod_weights,...)
         } else {
-          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9))
+          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g0=0,g1=9),...)
         }
       } else {
         if (robust.nls){
           df$g0   <- rep(g0,nrow(df))
           mod_weights <- nlrob(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9),data=df,
-                               na.action=na.exclude)$w
-          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9),weights=mod_weights)
+                               na.action=na.exclude,...)$w
+          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9),weights=mod_weights,...)
         } else {
-          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9))
+          mod <- nls(Gs ~ g0 + g1 * (GPP * rH) / Ca,start=list(g1=9),...)
         }
       }
       
@@ -776,7 +776,7 @@ light.response <- function(data,NEE="NEE",Reco="Reco",PPFD="PPFD",PPFD_ref=2000,
   check.input(data,list(NEE,Reco,PPFD))
   
   mod <- nls(-NEE ~ alpha * PPFD / (1 - (PPFD / PPFD_ref) + (alpha * PPFD / GPP_ref)) - Reco,
-             start=list(alpha=0.05,GPP_ref=30))
+             start=list(alpha=0.05,GPP_ref=30),...)
   
   return(mod)
 }  

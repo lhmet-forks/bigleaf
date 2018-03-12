@@ -15,6 +15,9 @@
 #' @param alpha     Priestley-Taylor coefficient (-)
 #' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
 #' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0. 
+#' @param Esat.formula  Formula to be used for the calculation of esat and the slope of esat.
+#'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
+#'                      See \code{\link{Esat.slope}}. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-)
 #' 
@@ -47,7 +50,9 @@
 #' 
 #' @export
 potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,alpha=1.26,
-                         missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,constants=bigleaf.constants()){
+                         missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
+                         Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
+                         constants=bigleaf.constants()){
   
   check.input(data,list(Tair,pressure,Rn,G,S))
   
@@ -66,7 +71,7 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat.slope(Tair)[,"Delta"]
+  Delta  <- Esat.slope(Tair,formula=Esat.formula)[,"Delta"]
   
   LE_pot <- (alpha * Delta * (Rn - G - S)) / (Delta + gamma)
   ET_pot <- LE.to.ET(LE_pot,Tair)
@@ -93,6 +98,9 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
 #' @param S         Sum of all storage fluxes (W m-2); optional
 #' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
 #' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0. 
+#' @param Esat.formula  Formula to be used for the calculation of esat and the slope of esat.
+#'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
+#'                      See \code{\link{Esat.slope}}. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 #'                  Rd - gas constant of dry air (J kg-1 K-1) \cr
@@ -134,6 +142,7 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
 #' @export                 
 reference.ET <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="Rn",Ga="Ga",
                          G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
+                         Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                          constants=bigleaf.constants()){
   
   check.input(data,list(Tair,pressure,VPD,Rn,Ga,G,S))
@@ -153,7 +162,7 @@ reference.ET <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat.slope(Tair)[,"Delta"]
+  Delta  <- Esat.slope(Tair,formula=Esat.formula)[,"Delta"]
   rho    <- air.density(Tair,pressure)
   
   LE_ref <- (Delta * (Rn - G - S) + rho * constants$cp * VPD * Ga) / 
@@ -183,6 +192,9 @@ reference.ET <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD
 #' @param S         Sum of all storage fluxes (W m-2); optional
 #' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
 #' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.
+#' @param Esat.formula  Formula to be used for the calculation of esat and the slope of esat.
+#'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
+#'                      See \code{\link{Esat.slope}}. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air (-)
 #'                  
@@ -232,6 +244,7 @@ reference.ET <- function(data,Gs=0.0143,Tair="Tair",pressure="pressure",VPD="VPD
 #' @export
 equilibrium.imposed.ET <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
                                    Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
+                                   Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                                    constants=bigleaf.constants()){
   
   check.input(data,list(Tair,pressure,VPD,Rn,Gs,G,S))
@@ -252,7 +265,7 @@ equilibrium.imposed.ET <- function(data,Tair="Tair",pressure="pressure",VPD="VPD
   
   rho    <- air.density(Tair,pressure)
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat.slope(Tair)[,"Delta"]
+  Delta  <- Esat.slope(Tair,formula=Esat.formula)[,"Delta"]
   
   LE_eq  <- (Delta * (Rn - G - S)) / (gamma + Delta)
   LE_imp <- (rho * constants$cp * Gs * VPD) / gamma

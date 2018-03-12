@@ -18,7 +18,10 @@
 #' @param calc.surface.CO2 Calculate surface CO2 concentration? Defaults to \code{FALSE}.
 #' @param Ca               Atmospheric CO2 concentration (mol mol-1). Required if \code{calc.surface.CO2 = TRUE}.
 #' @param NEE              Net ecosystem exchange (umol m-2 s-1). Required if \code{calc.surface.CO2 = TRUE}.
-#' @param Ga_CO2           Aerodynamic conductance for CO2 (m s-1). Required if \code{calc.surface.CO2 = TRUE}.          
+#' @param Ga_CO2           Aerodynamic conductance for CO2 (m s-1). Required if \code{calc.surface.CO2 = TRUE}.
+#' @param Esat.formula     Formula to be used for the calculation of esat and the slope of esat.
+#'                         One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
+#'                         See \code{\link{Esat.slope}}.           
 #' @param constants        cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
 #'                         eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 #' 
@@ -87,7 +90,8 @@
 #' @export 
 surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H",
                                VPD="VPD",Ga="Ga",calc.surface.CO2=FALSE,Ca="Ca",Ga_CO2="Ga_CO2",
-                               NEE="NEE",constants=bigleaf.constants()){
+                               NEE="NEE",Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
+                               constants=bigleaf.constants()){
   
   check.input(data,list(Tair,pressure,LE,H,VPD,Ga))
   
@@ -98,9 +102,9 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
   Tsurf <- Tair + H / (rho * constants$cp * Ga)
   
   # 2) Humidity
-  esat      <- Esat.slope(Tair)[,"Esat"]
+  esat      <- Esat.slope(Tair,formula=Esat.formula)[,"Esat"]
   e         <- esat - VPD
-  esat_surf <- Esat.slope(Tsurf)[,"Esat"]
+  esat_surf <- Esat.slope(Tsurf,formula=Esat.formula)[,"Esat"]
   esurf     <- e + (LE * gamma)/(Ga * rho * constants$cp)
   VPD_surf  <- pmax(esat_surf - esurf,0)
   qsurf     <- VPD.to.q(VPD_surf,Tsurf,pressure,constants)

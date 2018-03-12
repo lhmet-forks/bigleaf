@@ -134,7 +134,7 @@ pressure.from.elevation <- function(elev,Tair,VPD=NULL,constants=bigleaf.constan
 #'        
 #' @importFrom stats D                  
 #' @export
-Esat.slope <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
+Esat.slope <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996","Allen_1998")){
   
   formula <- match.arg(formula)
   
@@ -146,6 +146,10 @@ Esat.slope <- function(Tair,formula=c("Sonntag_1990","Alduchov_1996")){
     a <- 610.94
     b <- 17.625
     c <- 243.04
+  } else if (formula == "Allen_1998"){
+    a <- 610.8
+    b <- 17.27
+    c <- 237.3
   }
   
   # saturation vapor pressure

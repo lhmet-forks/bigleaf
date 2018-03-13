@@ -81,10 +81,10 @@ equilibrium.imposed.ET(df)
             
 }
 \references{
-Jarvis P.G., McNaughton K.G., 1986: Stomatal control of transpiration:
+Jarvis, P.G., McNaughton, K.G., 1986: Stomatal control of transpiration:
             scaling up from leaf to region. Advances in Ecological Research 15, 1-49.
             
-            Monteith J.L., Unsworth M.H., 2008: Principles of Environmental Physics.
+            Monteith, J.L., Unsworth, M.H., 2008: Principles of Environmental Physics.
             3rd edition. Academic Press, London.
 }
 \seealso{

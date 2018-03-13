@@ -65,7 +65,7 @@ potential.ET(Tair=30,pressure=100,Rn=400,alpha=1.26)
 
 }
 \references{
-Priestley C.H.B., Taylor R.J., 1972: On the assessment of surface heat flux
+Priestley, C.H.B., Taylor, R.J., 1972: On the assessment of surface heat flux
             and evaporation using large-scale parameters. Monthly Weather Review 100, 81-92.
 }
 \seealso{

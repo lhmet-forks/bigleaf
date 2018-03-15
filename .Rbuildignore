@@ -1,4 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 Readme.md
+News.md
 cran-comments.md

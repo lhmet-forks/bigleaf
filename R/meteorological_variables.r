@@ -80,7 +80,8 @@ pressure.from.elevation <- function(elev,Tair,VPD=NULL,constants=bigleaf.constan
   } else {
     
     pressure1   <- constants$pressure0 / exp(constants$g * elev / (constants$Rd*Tair))
-    Tv          <- virtual.temp(Tair - constants$Kelvin,pressure1 / 1000,VPD,constants) + constants$Kelvin
+    Tv          <- virtual.temp(Tair - constants$Kelvin,pressure1 / 1000,VPD,Esat.formula="Sonntag_1990",
+                                constants) + constants$Kelvin
     
     pressure    <- constants$pressure0 / exp(constants$g * elev / (constants$Rd*Tv))
   }

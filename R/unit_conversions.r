@@ -126,7 +126,7 @@ mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
 #' 
 #' @export
 VPD.to.rH <- function(VPD,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998")){
-  esat <- Esat.slope(Tair,formula=Esat.formula)[,"Esat"]
+  esat <- Esat.slope(Tair,Esat.formula)[,"Esat"]
   rH   <- 1 - VPD/esat
   return(rH)
 } 
@@ -139,7 +139,7 @@ rH.to.VPD <- function(rH,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","All
   if(any(rH > 1)){
     warning("relative humidity (rH) has to be between 0 and 1.")
   }
-  esat <- Esat.slope(Tair,formula=Esat.formula)[,"Esat"]
+  esat <- Esat.slope(Tair,Esat.formula)[,"Esat"]
   VPD  <- esat - rH*esat
   return(VPD)
 } 
@@ -149,7 +149,7 @@ rH.to.VPD <- function(rH,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","All
 #' @family humidity conversion
 #' @export
 VPD.to.e <- function(VPD,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998")){
-  esat <- Esat.slope(Tair,formula=Esat.formula)[,"Esat"]
+  esat <- Esat.slope(Tair,Esat.formula)[,"Esat"]
   e    <- esat - VPD
   return(e)
 }
@@ -159,7 +159,7 @@ VPD.to.e <- function(VPD,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","All
 #' @family humidity conversion
 #' @export
 e.to.VPD <- function(e,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998")){
-  esat <- Esat.slope(Tair,formula=Esat.formula)[,"Esat"]
+  esat <- Esat.slope(Tair,Esat.formula)[,"Esat"]
   VPD  <- esat - e 
   return(VPD)
 }
@@ -188,7 +188,7 @@ q.to.e <- function(q,pressure,constants=bigleaf.constants()){
 #' @export
 q.to.VPD <- function(q,Tair,pressure,Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                      constants=bigleaf.constants()){
-  esat <- Esat.slope(Tair,formula=Esat.formula)[,"Esat"]
+  esat <- Esat.slope(Tair,Esat.formula)[,"Esat"]
   e    <- q.to.e(q,pressure,constants)
   VPD  <- esat - e
   return(VPD)
@@ -200,7 +200,7 @@ q.to.VPD <- function(q,Tair,pressure,Esat.formula=c("Sonntag_1990","Alduchov_199
 #' @export
 VPD.to.q <- function(VPD,Tair,pressure,Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                      constants=bigleaf.constants()){
-  esat <- Esat.slope(Tair,formula=Esat.formula)[,"Esat"]
+  esat <- Esat.slope(Tair,Esat.formula)[,"Esat"]
   e    <- esat - VPD
   q    <- e.to.q(e,pressure,constants)
   return(q) 

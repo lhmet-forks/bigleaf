@@ -145,7 +145,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
       S <- 0
     }
     
-    Delta <- Esat.slope(Tair,formula=Esat.formula)[,"Delta"]
+    Delta <- Esat.slope(Tair,Esat.formula)[,"Delta"]
     gamma <- psychrometric.constant(Tair,pressure)
     rho   <- air.density(Tair,pressure)
     

@@ -102,13 +102,13 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
   Tsurf <- Tair + H / (rho * constants$cp * Ga)
   
   # 2) Humidity
-  esat      <- Esat.slope(Tair,formula=Esat.formula)[,"Esat"]
+  esat      <- Esat.slope(Tair,Esat.formula)[,"Esat"]
   e         <- esat - VPD
-  esat_surf <- Esat.slope(Tsurf,formula=Esat.formula)[,"Esat"]
+  esat_surf <- Esat.slope(Tsurf,Esat.formula)[,"Esat"]
   esurf     <- e + (LE * gamma)/(Ga * rho * constants$cp)
   VPD_surf  <- pmax(esat_surf - esurf,0)
-  qsurf     <- VPD.to.q(VPD_surf,Tsurf,pressure,Esat.formula=Esat.formula,constants)
-  rH_surf   <- VPD.to.rH(VPD_surf,Tsurf,Esat.formula=Esat.formula)
+  qsurf     <- VPD.to.q(VPD_surf,Tsurf,pressure,Esat.formula,constants)
+  rH_surf   <- VPD.to.rH(VPD_surf,Tsurf,Esat.formula)
   
   # 3) CO2 concentration
   if (calc.surface.CO2){

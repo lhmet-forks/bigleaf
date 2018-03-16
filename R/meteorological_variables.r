@@ -260,7 +260,7 @@ latent.heat.vaporization <- function(Tair) {
 #' 
 #' @keywords internal
 wetbulb.solver <- function(ea,Tair,gamma,accuracy,Esat.formula){
-  wetbulb.optim <- optimize(function(Tw){abs(ea - c((Esat.slope(Tw,formula=Esat.formula)[,"Esat"] - 0.93*gamma*(Tair - Tw))))},
+  wetbulb.optim <- optimize(function(Tw){abs(ea - c((Esat.slope(Tw,Esat.formula)[,"Esat"] - 0.93*gamma*(Tair - Tw))))},
                             interval=c(-100,100),tol=accuracy)
   return(wetbulb.optim)
 }
@@ -318,10 +318,10 @@ wetbulb.temp <- function(Tair,pressure,VPD,accuracy=1e-03,Esat.formula=c("Sonnta
   
   
   gamma  <- psychrometric.constant(Tair,pressure)
-  ea     <- VPD.to.e(VPD,Tair,Esat.formula=Esat.formula)
+  ea     <- VPD.to.e(VPD,Tair,Esat.formula)
   
   Tw <- sapply(seq_along(ea),function(i) round(wetbulb.solver(ea[i],Tair[i],gamma[i],
-                                                              accuracy=accuracy,Esat.formula=Esat.formula)$minimum,ndigits))
+                                                              accuracy=accuracy,Esat.formula)$minimum,ndigits))
   
   return(Tw)
   
@@ -354,7 +354,7 @@ wetbulb.temp <- function(Tair,pressure,VPD,accuracy=1e-03,Esat.formula=c("Sonnta
 #' @keywords internal
 dew.point.solver <- function(ea,accuracy,Esat.formula){
   
-  Td.optim <- optimize(function(Td){abs(ea - Esat.slope(Td,formula=Esat.formula)[,"Esat"])},
+  Td.optim <- optimize(function(Td){abs(ea - Esat.slope(Td,Esat.formula)[,"Esat"])},
                        interval=c(-100,100),tol=accuracy)
   return(Td.optim)
 }
@@ -405,9 +405,9 @@ dew.point <- function(Tair,VPD,accuracy=1e-03,Esat.formula=c("Sonntag_1990","Ald
   ndigits <- as.numeric(strsplit(format(accuracy,scientific = TRUE),"-")[[1]][2])
   ndigits <- ifelse(is.na(ndigits),0,ndigits)
   
-  ea <- VPD.to.e(VPD,Tair,Esat.formula=Esat.formula)
+  ea <- VPD.to.e(VPD,Tair,Esat.formula)
   Td <- sapply(seq_along(ea),function(i) round(dew.point.solver(ea[i],accuracy=accuracy,
-                                                                Esat.formula=Esat.formula)$minimum,ndigits))
+                                                                Esat.formula)$minimum,ndigits))
   
   return(Td)
 }
@@ -451,7 +451,7 @@ dew.point <- function(Tair,VPD,accuracy=1e-03,Esat.formula=c("Sonntag_1990","Ald
 virtual.temp <- function(Tair,pressure,VPD,Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                          constants=bigleaf.constants()){
   
-  e    <- VPD.to.e(VPD,Tair,Esat.formula=Esat.formula)
+  e    <- VPD.to.e(VPD,Tair,Esat.formula)
   Tair <- Tair + constants$Kelvin
   
   Tv <- Tair / (1 - (1 - constants$eps) * e/pressure) 

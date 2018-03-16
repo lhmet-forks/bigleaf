@@ -71,7 +71,7 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat.slope(Tair,formula=Esat.formula)[,"Delta"]
+  Delta  <- Esat.slope(Tair,Esat.formula)[,"Delta"]
   
   LE_pot <- (alpha * Delta * (Rn - G - S)) / (Delta + gamma)
   ET_pot <- LE.to.ET(LE_pot,Tair)
@@ -167,7 +167,7 @@ reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD=
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat.slope(Tair,formula=Esat.formula)[,"Delta"]
+  Delta  <- Esat.slope(Tair,Esat.formula)[,"Delta"]
   rho    <- air.density(Tair,pressure)
   
   LE_ref <- (Delta * (Rn - G - S) + rho * constants$cp * VPD * Ga) / 
@@ -270,7 +270,7 @@ equilibrium.imposed.ET <- function(data,Tair="Tair",pressure="pressure",VPD="VPD
   
   rho    <- air.density(Tair,pressure)
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat.slope(Tair,formula=Esat.formula)[,"Delta"]
+  Delta  <- Esat.slope(Tair,Esat.formula)[,"Delta"]
   
   LE_eq  <- (Delta * (Rn - G - S)) / (gamma + Delta)
   LE_imp <- (rho * constants$cp * Gs * VPD) / gamma

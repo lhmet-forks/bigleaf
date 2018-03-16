@@ -76,8 +76,8 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
   
   check.input(data,list(Tair,pressure,Ga,Gs))
   
-  Delta   <- Esat.slope(Tair,formula=Esat.formula)[,"Delta"]
-  gamma   <- psychrometric.constant(Tair,pressure,constants=constants)
+  Delta   <- Esat.slope(Tair,Esat.formula)[,"Delta"]
+  gamma   <- psychrometric.constant(Tair,pressure,constants)
   epsilon <- Delta/gamma
   
   if (approach == "JarvisMcNaughton_1986"){
@@ -92,7 +92,7 @@ decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
       
     } else {
       
-      Gr    <- longwave.conductance(Tair,LAI,constants=constants)
+      Gr    <- longwave.conductance(Tair,LAI,constants)
       Omega <- (epsilon + 1 + Gr/Ga) / (epsilon + 1 + Ga/Gs + Gr/Gs + Gr/Ga)
       
     }

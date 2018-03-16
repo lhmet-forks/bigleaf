@@ -15,7 +15,7 @@ wetbulb.solver(ea, Tair, gamma, accuracy, Esat.formula)
 
 \item{accuracy}{Accuracy of the result (degC)}
 
-\item{Esat.formula}{Formula to be used for the calculation of esat and the slope of esat.
+\item{Esat.formula}{Optional: formula to be used for the calculation of esat and the slope of esat.
 One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
 See \code{\link{Esat.slope}}.}
 }

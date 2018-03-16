@@ -28,7 +28,7 @@ potential.ET(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
 
 \item{missing.S.as.NA}{if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.}
 
-\item{Esat.formula}{Formula to be used for the calculation of esat and the slope of esat.
+\item{Esat.formula}{Optional: formula to be used for the calculation of esat and the slope of esat.
 One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
 See \code{\link{Esat.slope}}.}
 

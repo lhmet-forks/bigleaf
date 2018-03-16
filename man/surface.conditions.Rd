@@ -33,7 +33,7 @@ surface.conditions(data, Tair = "Tair", pressure = "pressure", LE = "LE",
 
 \item{NEE}{Net ecosystem exchange (umol m-2 s-1). Required if \code{calc.surface.CO2 = TRUE}.}
 
-\item{Esat.formula}{Formula to be used for the calculation of esat and the slope of esat.
+\item{Esat.formula}{Optional: formula to be used for the calculation of esat and the slope of esat.
 One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
 See \code{\link{Esat.slope}}.}
 

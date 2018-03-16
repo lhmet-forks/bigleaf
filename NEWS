@@ -1,0 +1,45 @@
+NEWS for Package 'bigleaf'
+
+version 0.4.4 (2018-03-13)
+
+      'reference.ET': argument Gs renamed to Gs_ref
+
+	  
+version 0.4.3 (2018-03-12)
+
+      Function 'bigleaf.constants' restructured in a way that allows changing the constants for each function call
+
+
+version 0.4.2 (2018-03-12)
+
+       - constants (a,b,c) from Allen et al. 1998 added as option to 'Esat.slope' (pull request from Rémi Vezy)
+	   - Argument 'Esat.formula' added to every function that calculates esat or slope of esat to allow consistency among functions.  
+	   - 'light.response': argument "..." added to the nls function
+       - 'stomatal.slope': argument "..." within each call of nls in the function	
+		 
+		 
+version 0.4.1 (2018-03-08)
+
+       - aerodynamic.conductance: Ga_CO2 added to function output 
+
+
+version 0.4.0 (2018-03-08)
+
+       - 'aerodynamic.conductance': Rb can be calculated for other quantities if the respective Schmidt number is provided.
+                                    I.e. new arguments "Sc" and "Sc_name" as the value of the Schmidt number, and the name
+                                    of the quantity for which Sc is provided, respectively.
+       - 'bigleaf.constants': Prandtl number (Pr) and Schmidt number for CO2 (Sc_CO2) added
+	   - 'light.response': bug fix: +Reco replaced by -Reco (sign was reversed)
+		 
+		 
+version 0.3.2 (2018-03-06)	
+	 
+       - rH.to.VPD: if statement vectorized (thanks to Rémi Vezy)
+	   - radiometric.surface.temp: Output renamed	("." replaced by "_")
+
+	   
+version 0.3.1 (2018-02-09)		  
+
+       - Monin.Obukhov.length: default arguments added
+		 
+         		 

@@ -5,7 +5,7 @@
 #'              (\url{http://www.fluxdata.org:8080/sitepages/siteInfo.aspx?AT-Neu}). 
 #'              Data are from July 2010.
 #'              
-#' @format A data frame with 1488 observations and 29 columns:
+#' @format A data frame with 1488 observations and 31 columns:
 #'  \describe{
 #'    \item{year}{year of measurement}
 #'    \item{month}{month of measurement}
@@ -20,22 +20,24 @@
 #'    \item{pressure}{Atmospheric pressure (kPa)}
 #'    \item{precip}{precipitation (mm)}
 #'    \item{precip_qc}{Quality control of \code{precip}}
-#'    \item{ustar}{friction velocity (ms-1)}
+#'    \item{ustar}{friction velocity (m s-1)}
 #'    \item{wind}{horizontal wind velocity (m s-1)}
 #'    \item{wind_qc}{Quality control of \code{wind}}
 #'    \item{Ca}{CO2 concentration (ppm)}
 #'    \item{Ca_qc}{Quality control of \code{Ca}}
-#'    \item{Rn}{Net radiation (Wm-2)}
-#'    \item{LE}{Latent heat flux (Wm-2)}
+#'    \item{LW_up}{upward longwave radiation (W m-2)}
+#'    \item{Rn}{Net radiation (W m-2)}
+#'    \item{LE}{Latent heat flux (W m-2)}
 #'    \item{LE_qc}{Quality control of \code{LE}}
-#'    \item{H}{Sensible heat flux (Wm-2)}
+#'    \item{H}{Sensible heat flux (W m-2)}
 #'    \item{H_qc}{Quality control of \code{H}}
-#'    \item{G}{Ground heat flux (Wm-2)}
+#'    \item{G}{Ground heat flux (W m-2)}
 #'    \item{G_qc}{Quality control of \code{G}}
 #'    \item{NEE}{Net ecosystem exchange (umol m-2 s-1)}
 #'    \item{NEE_qc}{Quality control of \code{NEE}}
 #'    \item{GPP}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}
 #'    \item{GPP_qc}{Quality control of \code{GPP}}
+#'    \item{Reco}{Ecosystem respiration from nighttime partitioning (umol m-2 s-1)}
 #'  }
 #'  
 #' @note Squared brackets denote the original variables as provided by the FLUXNET2015 dataset.
@@ -54,7 +56,7 @@
 #'              (\url{http://www.fluxdata.org:8080/sitepages/siteInfo.aspx?DE-Tha}). 
 #'              Data are from June 2014.
 #'              
-#' @format A data frame with 1440 observations and 29 columns:
+#' @format A data frame with 1440 observations and 31 columns:
 #'  \describe{
 #'    \item{year}{year of measurement}
 #'    \item{month}{month of measurement}
@@ -69,22 +71,24 @@
 #'    \item{pressure}{Atmospheric pressure (kPa)}
 #'    \item{precip}{precipitation (mm)}
 #'    \item{precip_qc}{Quality control of \code{precip}}
-#'    \item{ustar}{friction velocity (ms-1)}
+#'    \item{ustar}{friction velocity (m s-1)}
 #'    \item{wind}{horizontal wind velocity (m s-1)}
 #'    \item{wind_qc}{Quality control of \code{wind}}
 #'    \item{Ca}{CO2 concentration (ppm)}
 #'    \item{Ca_qc}{Quality control of \code{Ca}}
-#'    \item{Rn}{Net radiation (Wm-2)}
-#'    \item{LE}{Latent heat flux (Wm-2)}
+#'    \item{LW_up}{upward longwave radiation (W m-2)}
+#'    \item{Rn}{Net radiation (W m-2)}
+#'    \item{LE}{Latent heat flux (W m-2)}
 #'    \item{LE_qc}{Quality control of \code{LE}}
-#'    \item{H}{Sensible heat flux (Wm-2)}
+#'    \item{H}{Sensible heat flux (W m-2)}
 #'    \item{H_qc}{Quality control of \code{H}}
-#'    \item{G}{Ground heat flux (Wm-2)}
+#'    \item{G}{Ground heat flux (W m-2)}
 #'    \item{G_qc}{Quality control of \code{G}}
 #'    \item{NEE}{Net ecosystem exchange (umol m-2 s-1)}
 #'    \item{NEE_qc}{Quality control of \code{NEE}}
 #'    \item{GPP}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}
 #'    \item{GPP_qc}{Quality control of \code{GPP}}
+#'    \item{Reco}{Ecosystem respiration from nighttime partitioning (umol m-2 s-1)}
 #'  }
 #'  
 #' @note Squared brackets denote the original variables as provided by the FLUXNET2015 dataset.
@@ -103,7 +107,7 @@
 #'              (\url{http://www.fluxdata.org:8080/sitepages/siteInfo.aspx?FR-Pue}).
 #'              Data are from May 2012.
 #'              
-#' @format A data frame with 1488 observations and 27 columns:
+#' @format A data frame with 1488 observations and 29 columns:
 #'  \describe{
 #'    \item{year}{year of measurement}
 #'    \item{month}{month of measurement}
@@ -118,20 +122,22 @@
 #'    \item{pressure}{Atmospheric pressure (kPa)}
 #'    \item{precip}{precipitation (mm)}
 #'    \item{precip_qc}{Quality control of \code{precip}}
-#'    \item{ustar}{friction velocity (ms-1)}
+#'    \item{ustar}{friction velocity (m s-1)}
 #'    \item{wind}{horizontal wind velocity (m s-1)}
 #'    \item{wind_qc}{Quality control of \code{wind}}
 #'    \item{Ca}{CO2 concentration (ppm)}
 #'    \item{Ca_qc}{Quality control of \code{Ca}}
-#'    \item{Rn}{Net radiation (Wm-2)}
-#'    \item{LE}{Latent heat flux (Wm-2)}
+#'    \item{LW_up}{upward longwave radiation (W m-2)}
+#'    \item{Rn}{Net radiation (W m-2)}
+#'    \item{LE}{Latent heat flux (W m-2)}
 #'    \item{LE_qc}{Quality control of \code{LE}}
-#'    \item{H}{Sensible heat flux (Wm-2)}
+#'    \item{H}{Sensible heat flux (W m-2)}
 #'    \item{H_qc}{Quality control of \code{H}}
 #'    \item{NEE}{Net ecosystem exchange (umol m-2 s-1)}
 #'    \item{NEE_qc}{Quality control of \code{NEE}}
 #'    \item{GPP}{Gross primary productivity from nighttime partitioning (umol m-2 s-1)}
 #'    \item{GPP_qc}{Quality control of \code{GPP}}
+#'    \item{Reco}{Ecosystem respiration from nighttime partitioning (umol m-2 s-1)}
 #'  }
 #'  
 #' @note Squared brackets denote the original variables as provided by the FLUXNET2015 dataset.

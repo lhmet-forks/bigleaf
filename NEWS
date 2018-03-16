@@ -1,5 +1,15 @@
 NEWS for Package 'bigleaf'
 
+version 0.4.5 (2018-03-16)
+
+  - variables 'LW_up' (upward longwave radiation) and 'Reco' (ecosystem respiration)
+    were added to all three example datasets
+  - bug fix to 'surface.conditions' and 'pressure.from.elevation' regarding the 
+    'Esat.formulation' argument. In 'Esat.formulation', this argument is not
+	implemented and the default formulation is taken for all calculations.
+  
+  
+
 version 0.4.4 (2018-03-13)
 
   - 'reference.ET': argument Gs renamed to Gs_ref
@@ -19,7 +29,7 @@ version 0.4.2 (2018-03-12)
     or slope of esat to allow consistency among functions.  
   - 'light.response': argument "..." added to the nls function
   - 'stomatal.slope': argument "..." within each call of nls in the function	
-		 
+  
 		 
 version 0.4.1 (2018-03-08)
 

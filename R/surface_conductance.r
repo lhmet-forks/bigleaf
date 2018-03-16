@@ -23,7 +23,7 @@
 #' @param formulation Formulation used. Either \code{"PenmanMonteith"} (the default) 
 #'                    using the inverted Penman-Monteith equation, or \code{"FluxGradient"},
 #'                    for a simple flux-gradient approach requiring ET, pressure, and VPD only.
-#' @param Esat.formula  Formula to be used for the calculation of esat and the slope of esat.
+#' @param Esat.formula  Optional: formula to be used for the calculation of esat and the slope of esat.
 #'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}. 
 #'                      Only used if \code{formulation = "PenmanMonteith"}. See \code{\link{Esat.slope}}.
 #' @param constants   cp - specific heat of air for constant pressure (J K-1 kg-1) \cr

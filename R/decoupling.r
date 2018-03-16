@@ -14,7 +14,7 @@
 #' @param approach    Approach used to calculate omega. Either \code{"JarvisMcNaughton_1986"} (default)
 #'                    or \code{"Martin_1989"}.
 #' @param LAI         Leaf area index (m2 m-2), only used if \code{approach = "Martin_1989"}.
-#' @param Esat.formula  Formula to be used for the calculation of esat and the slope of esat.
+#' @param Esat.formula  Optional: formula to be used for the calculation of esat and the slope of esat.
 #'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
 #'                      See \code{\link{Esat.slope}}. 
 #' @param constants   Kelvin - conversion degree Celsius to Kelvin \cr

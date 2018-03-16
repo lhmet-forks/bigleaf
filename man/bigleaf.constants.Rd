@@ -10,47 +10,63 @@ bigleaf.constants(cp = 1004.834, Rgas = 8.31451, Rv = 461.5,
   k = 0.41, Cmol = 0.012011, Omol = 0.0159994, sigma = 5.670367e-08,
   DwDc = 1.6, Pr = 0.71, Sc_CO2 = 1.07)
 }
-\value{
-This function defines the following constants:
-\item{cp}{specific heat of air for constant pressure (J K-1 kg-1)}
-\item{Rgas}{universal gas constant (J mol-1 K-1)}
-\item{Rv}{gas constant of water vapor (J kg-1 K-1) (Stull 1988 p.641)}
-\item{Rd}{gas constant of dry air (J kg-1 K-1) (Foken p. 245)}
-\item{Md}{molar mass of dry air [kg mol-1]}
-\item{Mw}{molar mass of water vapor (kg mol-1)}
-\item{eps}{ratio of the molecular weight of water vapor to dry air (=Mw/Md)}
-\item{Kelvin}{conversion degree Celsius to Kelvin}
-\item{g}{gravitational acceleration (m s-2)}
-\item{pressure0}{reference atmospheric pressure at sea level (Pa)}
-\item{Tair0}{reference air temperature (K)}
+\arguments{
+\item{cp}{Specific heat of air for constant pressure (J K-1 kg-1)}
+
+\item{Rgas}{Universal gas constant (J mol-1 K-1)}
+
+\item{Rv}{Gas constant of water vapor (J kg-1 K-1) (Stull 1988 p.641)}
+
+\item{Rd}{Gas constant of dry air (J kg-1 K-1) (Foken p. 245)}
+
+\item{Md}{Molar mass of dry air [kg mol-1]}
+
+\item{Mw}{Molar mass of water vapor (kg mol-1)}
+
+\item{eps}{Ratio of the molecular weight of water vapor to dry air (=Mw/Md)}
+
+\item{Kelvin}{Conversion degree Celsius to Kelvin}
+
+\item{g}{Gravitational acceleration (m s-2)}
+
+\item{pressure0}{Reference atmospheric pressure at sea level (Pa)}
+
+\item{Tair0}{Reference air temperature (K)}
+
 \item{k}{von Karman constant}
-\item{Cmol}{molar mass of carbon (kg mol-1)}
-\item{Omol}{molar mass of oxygen (kg mol-1)}
+
+\item{Cmol}{Molar mass of carbon (kg mol-1)}
+
+\item{Omol}{Molar mass of oxygen (kg mol-1)}
+
 \item{sigma}{Stefan-Boltzmann constant (W m-2 K-4)}
+
 \item{DwDc}{Ratio of the molecular diffusivities for water vapor and CO2}
+
 \item{Pr}{Prandtl number}
+
 \item{Sc_CO2}{Schmidt number for CO2}
 }
 \description{
-Constants Used in the bigleaf Package
+This function defines the following constants:
 }
-\note{
+\details{
 This function is passed as an argument to every function that uses one 
-      or more constants. Individual constants passed to a function can be 
-      easily altered. E.g. the following command will change the value of 
-      the von Karman constant from 0.41 to 0.4:
+         or more constants. Individual constants passed to a function can be 
+         easily altered. E.g. the following command will change the value of 
+         the von Karman constant from 0.41 to 0.4:
       
-      \code{bigleaf.constants(k=0.4)}
+         \code{bigleaf.constants(k=0.4)}
       
-      the value of a constant can be returned by calling:
+         the value of a constant can be returned by calling:
       
-      \code{bigleaf.constants()$*name_of_constant*}
+         \code{bigleaf.constants()$*name_of_constant*}
 
-      To permanently change the constants contained within this function (which
-      makes sense for some of them, e.g. for the von Karman constant), 
-      the command \code{\link[utils]{fixInNamespace}} can be used. E.g.
+         To permanently change the constants contained within this function (which
+         makes sense for some of them, e.g. for the von Karman constant), 
+         the command \code{\link[utils]{fixInNamespace}} can be used. E.g.
       
-      \code{fixInNamespace(bigleaf.constants,ns="bigleaf")}
+         \code{fixInNamespace(bigleaf.constants,ns="bigleaf")}
       
-      Note that this has to be repeated every time the package is newly installed/loaded.
+         Note that this has to be repeated every time the package is newly installed/loaded.
 }

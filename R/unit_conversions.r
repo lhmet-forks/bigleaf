@@ -115,7 +115,7 @@ mol.to.ms <- function(G_mol,Tair,pressure,constants=bigleaf.constants()){
 #' @param q         Specific humidity (kg kg-1)
 #' @param VPD       Vapor pressure deficit (kPa)
 #' @param rH        Relative humidity (-)
-#' @param Esat.formula  Formula to be used for the calculation of esat and the slope of esat.
+#' @param Esat.formula  Optional: formula to be used for the calculation of esat and the slope of esat.
 #'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
 #'                      See \code{\link{Esat.slope}}. 
 #' @param constants eps - ratio of the molecular weight of water vapor to dry air (-)

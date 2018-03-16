@@ -15,7 +15,7 @@
 #' @param alpha     Priestley-Taylor coefficient (-)
 #' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
 #' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0. 
-#' @param Esat.formula  Formula to be used for the calculation of esat and the slope of esat.
+#' @param Esat.formula  Optional: formula to be used for the calculation of esat and the slope of esat.
 #'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
 #'                      See \code{\link{Esat.slope}}. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
@@ -98,7 +98,7 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
 #' @param S         Sum of all storage fluxes (W m-2); optional
 #' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
 #' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0. 
-#' @param Esat.formula  Formula to be used for the calculation of esat and the slope of esat.
+#' @param Esat.formula  Optional: formula used for the calculation of esat and the slope of esat.
 #'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
 #'                      See \code{\link{Esat.slope}}. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
@@ -197,7 +197,7 @@ reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD=
 #' @param S         Sum of all storage fluxes (W m-2); optional
 #' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
 #' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.
-#' @param Esat.formula  Formula to be used for the calculation of esat and the slope of esat.
+#' @param Esat.formula  Optional: formula to be used for the calculation of esat and the slope of esat.
 #'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
 #'                      See \code{\link{Esat.slope}}. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr

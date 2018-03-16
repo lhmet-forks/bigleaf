@@ -25,7 +25,7 @@ or \code{"Martin_1989"}.}
 
 \item{LAI}{Leaf area index (m2 m-2), only used if \code{approach = "Martin_1989"}.}
 
-\item{Esat.formula}{Formula to be used for the calculation of esat and the slope of esat.
+\item{Esat.formula}{Optional: formula to be used for the calculation of esat and the slope of esat.
 One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
 See \code{\link{Esat.slope}}.}
 

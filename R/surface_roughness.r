@@ -104,7 +104,7 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 #'            \deqn{z0m = median((zr - d) * exp(-k*wind / ustar - psi_m)}
 #'                  
 #'          By default, d in this equation is fixed to 0.7*zh, but can be set to any
-#'          other value. psi_m is 0 if \code{stab_roughness = FALSE} (the default).       
+#'          other value. psi_m is 0 if \code{stab_roughness = FALSE}.       
 #' 
 #' @return a data.frame with the following columns:
 #'         \item{d}{Zero-plane displacement height (m)}
@@ -136,7 +136,7 @@ Reynolds.Number <- function(Tair,pressure,ustar,z0m,constants=bigleaf.constants(
 roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","wind_profile"),zh,
                                  frac_d=0.7,frac_z0m=0.1,LAI,zr,cd=0.2,hs=0.01,data,Tair="Tair",pressure="pressure",
                                  wind="wind",ustar="ustar",H="H",d=NULL,z0m=NULL,
-                                 stab_roughness=FALSE,stab_formulation=c("Dyer_1970","Businger_1971"),
+                                 stab_roughness=TRUE,stab_formulation=c("Dyer_1970","Businger_1971"),
                                  constants=bigleaf.constants()){
   
   method           <- match.arg(method)

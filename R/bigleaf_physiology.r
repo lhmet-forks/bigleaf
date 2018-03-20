@@ -876,7 +876,7 @@ stomatal.sensitivity <- function(data,Gs="Gs",VPD="VPD",...){
   
   check.input(data,list(Gs,VPD))
   
-  mod <- nls(Gs ~ -m * log(VPD) + b,start=list(m=0.1,b=0.2),...)
+  mod <- nls(Gs ~ -m * log(VPD) + b,start=list(m=0.05,b=0.2),...)
   
   return(mod)
 }

@@ -10,7 +10,7 @@
 #' @param Rgas      Universal gas constant (J mol-1 K-1)
 #' @param Rv        Gas constant of water vapor (J kg-1 K-1) (Stull 1988 p.641)
 #' @param Rd        Gas constant of dry air (J kg-1 K-1) (Foken p. 245)
-#' @param Md        Molar mass of dry air [kg mol-1]
+#' @param Md        Molar mass of dry air (kg mol-1)
 #' @param Mw        Molar mass of water vapor (kg mol-1)
 #' @param eps       Ratio of the molecular weight of water vapor to dry air (=Mw/Md)
 #' @param Kelvin    Conversion degree Celsius to Kelvin

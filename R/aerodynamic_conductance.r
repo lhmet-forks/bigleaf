@@ -183,14 +183,17 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
       
     } else if (Rb_model == "Choudhury_1988"){
       
-      Gb_mod <- Gb.Choudhury(data,leafwidth=Dl,LAI=LAI,zh=zh,zr=zr,d=d,
+      Gb_mod <- Gb.Choudhury(data,Tair=Tair,pressure=pressure,wind=wind,ustar=ustar,
+                             H=H,leafwidth=Dl,LAI=LAI,zh=zh,zr=zr,d=d,
                              stab_formulation=stab_formulation,Sc=Sc,Sc_name=Sc_name,
                              constants=constants)
       
     } else if (Rb_model == "Su_2001"){
       
-      Gb_mod <- Gb.Su(data=data,zh=zh,zr=zr,d=d,Dl=Dl,N=N,fc=fc,LAI=LAI,Cd=Cd,hs=hs,
-                      stab_formulation=stab_formulation,Sc=Sc,Sc_name=Sc_name,constants=constants)  
+      Gb_mod <- Gb.Su(data=data,Tair=Tair,pressure=pressure,ustar=ustar,wind=wind,
+                      H=H,zh=zh,zr=zr,d=d,Dl=Dl,N=N,fc=fc,LAI=LAI,Cd=Cd,hs=hs,
+                      stab_formulation=stab_formulation,Sc=Sc,Sc_name=Sc_name,
+                      constants=constants)  
       
     }
     
@@ -230,11 +233,12 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
     
     if (stab_correction){
       
-      zeta  <-  stability.parameter(data=data,zr=zr,d=d,constants=constants)
+      zeta  <-  stability.parameter(data=data,Tair=Tair,pressure=pressure,ustar=ustar,
+                                    H=H,zr=zr,d=d,constants=constants)
       
       if (stab_formulation %in% c("Dyer_1970","Businger_1971")){
         
-        psi_h <- stability.correction(zeta)[,"psi_h"]
+        psi_h <- stability.correction(zeta,formulation=stab_formulation)[,"psi_h"]
         
       } else {
         stop("'stab_formulation' has to be one of 'Dyer_1970' or 'Businger_1971'.

@@ -168,7 +168,7 @@ reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD=
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
   Delta  <- Esat.slope(Tair,Esat.formula)[,"Delta"]
-  rho    <- air.density(Tair,pressure)
+  rho    <- air.density(Tair,pressure,constants)
   
   LE_ref <- (Delta * (Rn - G - S) + rho * constants$cp * VPD * Ga) / 
             (Delta + gamma * (1 + Ga / Gs_ref))
@@ -268,7 +268,7 @@ equilibrium.imposed.ET <- function(data,Tair="Tair",pressure="pressure",VPD="VPD
     S <- 0
   }
   
-  rho    <- air.density(Tair,pressure)
+  rho    <- air.density(Tair,pressure,constants)
   gamma  <- psychrometric.constant(Tair,pressure,constants)
   Delta  <- Esat.slope(Tair,Esat.formula)[,"Delta"]
   

@@ -95,7 +95,7 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
   
   check.input(data,list(Tair,pressure,LE,H,VPD,Ga))
   
-  rho   <- air.density(Tair,pressure)
+  rho   <- air.density(Tair,pressure,constants)
   gamma <- psychrometric.constant(Tair,pressure,constants)
   
   # 1) Temperature
@@ -115,7 +115,7 @@ surface.conditions <- function(data,Tair="Tair",pressure="pressure",LE="LE",H="H
     check.input(data,Ca,NEE,Ga_CO2)
     Ca_surf <- surface.CO2(Ca,NEE,Ga_CO2,Tair,pressure)
   } else {
-    Ca_surf <- as.numeric(rep(NA,length(Tair)))
+    Ca_surf <- rep(NA_integer_,length(Tair))
   }
   
   return(data.frame(Tsurf,esat_surf,esurf,VPD_surf,qsurf,rH_surf,Ca_surf))

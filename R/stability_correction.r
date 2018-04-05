@@ -41,7 +41,7 @@ Monin.Obukhov.length <- function(data,Tair="Tair",pressure="pressure",ustar="ust
   
   check.input(data,list(Tair,pressure,ustar,H))
   
-  rho  <- air.density(Tair,pressure,constants=bigleaf.constants())
+  rho  <- air.density(Tair,pressure,constants)
   Tair <- Tair + constants$Kelvin
   MOL  <- (-rho*constants$cp*ustar^3*Tair) / (constants$k*constants$g*H)
   

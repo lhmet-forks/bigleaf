@@ -19,7 +19,7 @@ bigleaf.constants(cp = 1004.834, Rgas = 8.31451, Rv = 461.5,
 
 \item{Rd}{Gas constant of dry air (J kg-1 K-1) (Foken p. 245)}
 
-\item{Md}{Molar mass of dry air [kg mol-1]}
+\item{Md}{Molar mass of dry air (kg mol-1)}
 
 \item{Mw}{Molar mass of water vapor (kg mol-1)}
 

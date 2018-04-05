@@ -174,7 +174,7 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
       
       zeta  <- stability.parameter(data=data,Tair=Tair,pressure=pressure,ustar=ustar,H=H,
                                    zr=zr,d=d,constants=constants)
-      psi_m <- stability.correction(zeta)[,"psi_m"]
+      psi_m <- stability.correction(zeta,formulation=stab_formulation)[,"psi_m"]
       z0m_all <- (zr - d) * exp(-constants$k*wind / ustar - psi_m)
       
     } else {
@@ -266,7 +266,9 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
     }
     
     z0m <- roughness.parameters(method="wind_profile",zh=zh,zr=zr,d=d,data=data,
-                                stab_roughness=TRUE,constants=constants)[,"z0m"]
+                                Tair=Tair,pressure=pressure,wind=wind,ustar=ustar,H=H,
+                                stab_roughness=TRUE,stab_formulation=stab_formulation,
+                                constants=constants)[,"z0m"]
     
     if ( any(heights < (d + z0m) & !is.na(d + z0m)) ){
       warning("function is only valid for heights above d + z0m! Wind speed for heights below d + z0m will return 0!") 
@@ -279,7 +281,7 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
     if (stab_correction){
       zeta  <- stability.parameter(data=data,Tair=Tair,pressure=pressure,ustar=ustar,H=H,
                                    zr=z,d=d,constants=constants)
-      psi_m <- stability.correction(zeta)[,"psi_m"]
+      psi_m <- stability.correction(zeta,formulation=stab_formulation)[,"psi_m"]
       wind_heights[,i] <- pmax(0,(ustar / constants$k) * (log(pmax(0,(z - d)) / z0m) - psi_m))
       
     } else {

@@ -5,8 +5,8 @@
 \title{Wind Speed at Given Heights in the Surface Layer}
 \usage{
 wind.profile(data, heights, Tair = "Tair", pressure = "pressure",
-  ustar = "ustar", H = "H", zr, zh, d = NULL, frac_d = 0.7,
-  z0m = NULL, frac_z0m = 0.1, stab_correction = TRUE,
+  ustar = "ustar", H = "H", wind = "wind", zr, zh, d = NULL,
+  frac_d = 0.7, z0m = NULL, frac_z0m = 0.1, stab_correction = TRUE,
   stab_formulation = c("Dyer_1970", "Businger_1971"),
   constants = bigleaf.constants())
 }
@@ -24,6 +24,8 @@ calculated.}
 
 \item{H}{Sensible heat flux (W m-2)}
 
+\item{wind}{Wind speed at height zr (m s-1); only used if \code{stab_correction = TRUE}}
+
 \item{zr}{Instrument (reference) height (m)}
 
 \item{zh}{Canopy height (m)}
@@ -33,7 +35,7 @@ calculated.}
 \item{frac_d}{Fraction of displacement height on canopy height (-);
 only used if \code{d} is not available}
 
-\item{z0m}{Roughness length (m), optional; only used if stab_correction=FALSE (default=0.1)}
+\item{z0m}{Roughness length (m), optional; only used if \code{stab_correction = FALSE} (default=0.1)}
 
 \item{frac_z0m}{Fraction of roughness length on canopy height (-), optional; only used 
 if \code{stab_correction = FALSE} (default=0.1), only used if \code{z0m} is not available}

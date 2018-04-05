@@ -207,12 +207,13 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 #' @param pressure  Atmospheric pressure (kPa)                                                                                  
 #' @param ustar     Friction velocity (m s-1)
 #' @param H         Sensible heat flux (W m-2)
+#' @param wind      Wind speed at height zr (m s-1); only used if \code{stab_correction = TRUE}
 #' @param zr        Instrument (reference) height (m)
 #' @param zh        Canopy height (m)
 #' @param d         Zero-plane displacement height (-)
 #' @param frac_d    Fraction of displacement height on canopy height (-);
 #'                  only used if \code{d} is not available
-#' @param z0m       Roughness length (m), optional; only used if stab_correction=FALSE (default=0.1) 
+#' @param z0m       Roughness length (m), optional; only used if \code{stab_correction = FALSE} (default=0.1) 
 #' @param frac_z0m  Fraction of roughness length on canopy height (-), optional; only used 
 #'                  if \code{stab_correction = FALSE} (default=0.1), only used if \code{z0m} is not available
 #' @param stab_correction Should stability correction be applied? Defaults to \code{TRUE}
@@ -248,8 +249,8 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 #' 
 #' @export                                                                                                                          
 wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ustar",
-                         H="H",zr,zh,d=NULL,frac_d=0.7,z0m=NULL,frac_z0m=0.1,stab_correction=TRUE,
-                         stab_formulation=c("Dyer_1970","Businger_1971"),
+                         H="H",wind="wind",zr,zh,d=NULL,frac_d=0.7,z0m=NULL,frac_z0m=0.1,
+                         stab_correction=TRUE,stab_formulation=c("Dyer_1970","Businger_1971"),
                          constants=bigleaf.constants()){
   
   stab_formulation <- match.arg(stab_formulation)
@@ -261,6 +262,8 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
   
   if (stab_correction){
     
+    check.input(data,wind)
+    
     if (is.null(d)){
       d <- frac_d * zh
     }
@@ -269,11 +272,11 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
                                 Tair=Tair,pressure=pressure,wind=wind,ustar=ustar,H=H,
                                 stab_roughness=TRUE,stab_formulation=stab_formulation,
                                 constants=constants)[,"z0m"]
-    
-    if ( any(heights < (d + z0m) & !is.na(d + z0m)) ){
-      warning("function is only valid for heights above d + z0m! Wind speed for heights below d + z0m will return 0!") 
-    } 
-  }  
+  }
+  
+  if ( any(heights < (d + z0m) & !is.na(d + z0m)) ){
+    warning("function is only valid for heights above d + z0m! Wind speed for heights below d + z0m will return 0!") 
+  } 
   
   for (z in heights){
     i <- which(heights == z)

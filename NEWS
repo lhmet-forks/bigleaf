@@ -1,5 +1,12 @@
 NEWS for Package 'bigleaf'
 
+
+version 0.4.6 (2018-04-05)
+
+  - important bugfix concerning several functions: all required arguments are passed
+    to nested functions
+
+
 version 0.4.5 (2018-03-16)
 
   - variables 'LW_up' (upward longwave radiation) and 'Reco' (ecosystem respiration)

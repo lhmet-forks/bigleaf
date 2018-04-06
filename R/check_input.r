@@ -44,7 +44,7 @@ check.input <- function(data,...){
               stop("column representing '",varname,"' in the input matrix/data.frame must be numeric",call.=FALSE)
             }
           } else {
-            stop ("there is no column named '",var,"' in the input matrix/data.frame",call.=FALSE)
+            stop ("there is no column named '",var,"' in the input matrix/data.frame. Indicate the name of the column representing variable '",varname,"', or alternatively, provide a numeric vector of the same length as the input matrix/data.frame or of length 1.",call.=FALSE)
           }
         } else {
           stop("name of variable '",varname,"' must have length 1",call.=FALSE)

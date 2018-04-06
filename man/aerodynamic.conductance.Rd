@@ -5,7 +5,7 @@
 \title{Aerodynamic Conductance}
 \usage{
 aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
-  wind = "wind", ustar = "ustar", H = "H", zr, zh, d, z0m, Dl, N,
+  wind = "wind", ustar = "ustar", H = "H", zr, zh, d, z0m, Dl, N = 2,
   fc = NULL, LAI, Cd = 0.2, hs = 0.01, wind_profile = FALSE,
   stab_correction = TRUE, stab_formulation = c("Dyer_1970",
   "Businger_1971"), Rb_model = c("Thom_1972", "Choudhury_1988", "Su_2001",
@@ -35,7 +35,8 @@ aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
 
 \item{Dl}{Characteristic leaf dimension (m); only used if \code{Rb_model} is \code{"Choudhury_1988"} or \code{"Su_2001"}.}
 
-\item{N}{Number of leaf sides participating in heat exchange (1 or 2); only used if \code{Rb_model = "Su_2001"}.}
+\item{N}{Number of leaf sides participating in heat exchange (1 or 2); only used if \code{Rb_model = "Su_2001"}.
+Defaults to 2.}
 
 \item{fc}{Fractional vegetation cover (-); only used if \code{Rb_model = "Su_2001"}. See Details.}
 

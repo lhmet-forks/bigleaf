@@ -1,10 +1,11 @@
 NEWS for Package 'bigleaf'
 
 
-version 0.4.6 (2018-04-05)
+version 0.4.6 (2018-04-06)
 
   - important bugfix concerning several functions: all required arguments are passed
     to nested functions
+  - argument 'N' in aerodynamic.conductance() now defaults to 2 as in Gb.Su()
 
 
 version 0.4.5 (2018-03-16)

@@ -19,6 +19,7 @@
 #' @param z0m               Roughness length for momentum (m)
 #' @param Dl                Characteristic leaf dimension (m); only used if \code{Rb_model} is \code{"Choudhury_1988"} or \code{"Su_2001"}.
 #' @param N                 Number of leaf sides participating in heat exchange (1 or 2); only used if \code{Rb_model = "Su_2001"}.
+#'                          Defaults to 2.
 #' @param fc                Fractional vegetation cover (-); only used if \code{Rb_model = "Su_2001"}. See Details.
 #' @param LAI               One-sided leaf area index (m2 m-2); only used if \code{Rb_model} is \code{"Choudhury_1988"} or \code{"Su_2001"}.
 #' @param Cd                Foliage drag coefficient (-); only used if \code{Rb_model = "Su_2001"}. 
@@ -164,7 +165,7 @@
 #' 
 #' @export
 aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H="H",
-                                    zr,zh,d,z0m,Dl,N,fc=NULL,LAI,Cd=0.2,hs=0.01,wind_profile=FALSE,
+                                    zr,zh,d,z0m,Dl,N=2,fc=NULL,LAI,Cd=0.2,hs=0.01,wind_profile=FALSE,
                                     stab_correction=TRUE,stab_formulation=c("Dyer_1970","Businger_1971"),
                                     Rb_model=c("Thom_1972","Choudhury_1988","Su_2001","constant_kB-1"),
                                     kB=NULL,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
@@ -175,7 +176,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
   check.input(data,list(Tair,pressure,wind,ustar,H))
 
   ## calculate canopy boundary layer conductance (Gb)
-  if (Rb_model != "constant_kB-1"){
+  if (Rb_model %in% c("Thom_1972","Choudhury_1988","Su_2001")){
     
     if (Rb_model == "Thom_1972"){
       
@@ -203,7 +204,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
     colnames(Rb_x) <- grep(colnames(Gb_mod),pattern="Rb_",value=TRUE)
     Gb   <- Gb_mod[,"Gb"]
     
-  } else {
+  } else if (Rb_model == "constant_kB-1"){
     
     if(is.null(kB)){
       stop("value of kB-1 has to be specified if Rb_model is set to 'constant_kB-1'!")
@@ -226,7 +227,7 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
       
     }
     
-  }
+  } 
   
   ## calculate aerodynamic conductance for momentum (Ga_m)
   if (wind_profile){

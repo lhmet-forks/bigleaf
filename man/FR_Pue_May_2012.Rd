@@ -38,7 +38,7 @@
  }}
 \source{
 original data were downloaded from
-        \url{https://fluxnet.fluxdata.org/}
+        \url{https://fluxnet.fluxdata.org/} (accessed 09 November 2016)
 }
 \usage{
 FR_Pue_May_2012

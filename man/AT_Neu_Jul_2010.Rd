@@ -40,7 +40,7 @@
  }}
 \source{
 original data were downloaded from
-        \url{https://fluxnet.fluxdata.org/}
+        \url{https://fluxnet.fluxdata.org/} (accessed 09 November 2016)
 }
 \usage{
 AT_Neu_Jul_2010

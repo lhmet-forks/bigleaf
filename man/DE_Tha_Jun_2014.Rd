@@ -41,7 +41,7 @@
  }}
 \source{
 original data were downloaded from
-        \url{https://fluxnet.fluxdata.org/}
+        \url{https://fluxnet.fluxdata.org/} (accessed 09 November 2016)
 }
 \usage{
 DE_Tha_Jun_2014

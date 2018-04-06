@@ -45,7 +45,7 @@
 #'       in some cases (e.g. VPD from hPa to kPa).      
 #'  
 #' @source original data were downloaded from
-#'         \url{https://fluxnet.fluxdata.org/}  
+#'         \url{https://fluxnet.fluxdata.org/} (accessed 09 November 2016)  
 "AT_Neu_Jul_2010"
 
 
@@ -98,7 +98,7 @@
 #'       in some cases (e.g. VPD from hPa to kPa).    
 #'  
 #' @source original data were downloaded from
-#'         \url{https://fluxnet.fluxdata.org/}  
+#'         \url{https://fluxnet.fluxdata.org/} (accessed 09 November 2016) 
 "DE_Tha_Jun_2014"
 
 
@@ -148,5 +148,5 @@
 #'       in some cases (e.g. VPD from hPa to kPa).       
 #'  
 #' @source original data were downloaded from
-#'         \url{https://fluxnet.fluxdata.org/}  
+#'         \url{https://fluxnet.fluxdata.org/} (accessed 09 November 2016) 
 "FR_Pue_May_2012"

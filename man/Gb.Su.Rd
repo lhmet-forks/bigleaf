@@ -85,7 +85,7 @@ The formulation is based on the kB-1 model developed by Massman 1999.
          
          where Pr is the Prandtl number (set to 0.71), and Reh is the Reynolds number for leaves:
          
-           \deqn{Dl wind(zh) / v}
+           \deqn{Reh = Dl wind(zh) / v}
           
          kBs-1, the kB-1 value for bare soil surface, is calculated according 
          to Su et al. 2001:

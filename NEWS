@@ -1,7 +1,16 @@
 NEWS for Package 'bigleaf'
 
 
-version 0.4.6 (2018-04-06)
+version 0.5.0 (2018-04-06)
+
+  - wind.profile() function restructured. z0m can be provided or calculated from
+    the logarithmic wind profile equation
+  - reflectance of downwelling longwave radiation is now accounted for in the 
+    calculation of radiometric surface temperature (function radiometric.surface.temp())
+  - variable 'LW_down' added to dataset DE_Tha_Jun_2014
+  
+
+version 0.4.6 (2018-04-05)
 
   - important bugfix concerning several functions: all required arguments are passed
     to nested functions
@@ -14,7 +23,7 @@ version 0.4.5 (2018-03-16)
     were added to all three example datasets
   - bug fix to 'surface.conditions' and 'pressure.from.elevation' regarding the 
     'Esat.formulation' argument. In 'Esat.formulation', this argument is not
-	implemented and the default formulation is taken for all calculations.
+	  implemented and the default formulation is taken for all calculations.
   
   
 
@@ -49,7 +58,7 @@ version 0.4.0 (2018-03-08)
   - 'aerodynamic.conductance': Rb can be calculated for other quantities if 
     the respective Schmidt number is provided. I.e. new arguments "Sc" and
     "Sc_name" as the value of the Schmidt number, and the name of the quantity
- 	for which Sc is provided, respectively.
+ 	  for which Sc is provided, respectively.
   - 'bigleaf.constants': Prandtl number (Pr) and Schmidt number for CO2 (Sc_CO2)
      added
   - 'light.response': bug fix: +Reco replaced by -Reco (sign was reversed)

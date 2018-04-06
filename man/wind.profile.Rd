@@ -6,9 +6,9 @@
 \usage{
 wind.profile(data, heights, Tair = "Tair", pressure = "pressure",
   ustar = "ustar", H = "H", wind = "wind", zr, zh, d = NULL,
-  frac_d = 0.7, z0m = NULL, frac_z0m = 0.1, stab_correction = TRUE,
-  stab_formulation = c("Dyer_1970", "Businger_1971"),
-  constants = bigleaf.constants())
+  frac_d = 0.7, z0m = NULL, frac_z0m = NULL, estimate_z0m = TRUE,
+  stab_correction = TRUE, stab_formulation = c("Dyer_1970",
+  "Businger_1971"), constants = bigleaf.constants())
 }
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
@@ -40,6 +40,10 @@ only used if \code{d} is not available}
 \item{frac_z0m}{Fraction of roughness length on canopy height (-), optional; only used 
 if \code{stab_correction = FALSE} (default=0.1), only used if \code{z0m} is not available}
 
+\item{estimate_z0m}{Should \code{z0m} be estimated from the logarithmic wind profile? If \code{TRUE} (the default),
+arguments \code{z0m} and \code{frac_z0m} are ignored.
+See \code{\link{roughness.parameters}} for details.}
+
 \item{stab_correction}{Should stability correction be applied? Defaults to \code{TRUE}}
 
 \item{stab_formulation}{Stability correction function used (If \code{stab_correction = TRUE}).
@@ -55,8 +59,8 @@ A data.frame with rows representing time and columns representing heights
         as specified in \code{heights}.
 }
 \description{
-wind speed at a given height above the canopy estimated from single-level
-             measurements of wind speed at some distance above the canopy.
+Wind speed at a given height above the canopy estimated from single-level
+             measurements of wind speed.
 }
 \details{
 The underlying assumption is the existence of a logarithmic wind profile
@@ -67,7 +71,10 @@ The underlying assumption is the existence of a logarithmic wind profile
            \deqn{u(z) = (ustar/k) * (ln((z - d) / z0m) - \psi{m}}
          
          The roughness parameters zero-plane displacement height (d) and roughness length (z0m)
-         can be approximated from \code{\link{roughness.parameters}}.
+         can be approximated from \code{\link{roughness.parameters}}. \eqn{\psi{m}} is omitted
+         if \code{stab_correction = FALSE} (not recommended). If \code{estimate_z0m = TRUE},
+         z0m is first estimated from the wind profile equation and then used in the equation
+         above for the calculation of \code{u(z)} (see e.g. Newman & Klein 2014).
 }
 \note{
 Note that this equation is only valid for z >= d + z0m, and it is not 
@@ -78,6 +85,13 @@ Note that this equation is only valid for z >= d + z0m, and it is not
 df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 
 wind.profile(df,heights=seq(18,40,2),zr=40,zh=25,d=16)
 
+}
+\references{
+Monteith, J.L., Unsworth, M.H., 2008: Principles of Environmental Physics.
+            3rd edition. Academic Press, London. 
+            
+            Newman, J.F., Klein, P.M., 2014: The impacts of atmospheric stability on
+            the accuracy of wind speed extrapolation methods. Resources 3, 81-105.
 }
 \seealso{
 \code{\link{roughness.parameters}}

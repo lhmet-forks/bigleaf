@@ -165,32 +165,51 @@ surface.CO2 <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 
 #' Radiometric Surface Temperature
 #' 
-#' @description Radiometric surface temperature from longwave upward radiation
+#' @description Radiometric surface temperature from longwave radiation
 #'              measurements.
 #'              
-#' @param longwave_up Longwave upward radiation (W m-2)
-#' @param emissivity  Infrared emissivity of the surface (-)
+#' @param LW_up       Longwave upward radiation (W m-2)
+#' @param LW_down     Longwave downward radiation (W m-2)
+#' @param emissivity  Emissivity of the surface (-)
 #' @param constants   sigma - Stefan-Boltzmann constant (W m-2 K-4) \cr
 #'                    Kelvin - conversion degree Celsius to Kelvin 
 #' 
 #' @details Radiometric surface temperature (Trad) is calculated as:
 #' 
-#'            \deqn{Trad = LW_up / (\sigma \epsilon)^(1/4)}   
+#'            \deqn{Trad = ((LW_up - (1 - \epsilon)*LW_down) / (\sigma \epsilon))^(1/4)}   
 #' 
 #' @return a data.frame with the following columns:
 #'         \item{Trad_K}{Radiometric surface temperature (K)} \cr
 #'         \item{Trad_degC}{Radiometric surface temperature (degC)} 
 #' 
 #' @examples 
-#' # determine radiative temperature of an object that has an emissivity of 0.98 
-#' # and emits longwave radiation of 400Wm-2  
-#' radiometric.surface.temp(400,0.98)
+#' # determine radiometric surface temperature for the site DE-Tha in June 2014 
+#' # assuming an emissivity of 0.98.
+#' # (Note that variable 'LW_down' was only included for the DE-Tha example dataset
+#' # and not for the others due restrictions on file size) 
+#' Trad <- radiometric.surface.temp(DE_Tha_Jun_2014[,"LW_up"],DE_Tha_Jun_2014[,"LW_down"],
+#'                                  emissivity=0.98)
+#' summary(Trad)
+#' 
+#' @references Wang, W., Liang, S., Meyers, T. 2008: Validating MODIS land surface
+#'             temperature products using long-term nighttime ground measurements.
+#'             Remote Sensing of Environment 112, 623-635.
 #' 
 #' @export
-radiometric.surface.temp <- function(longwave_up,emissivity,constants=bigleaf.constants()){
+radiometric.surface.temp <- function(LW_up,LW_down,emissivity,constants=bigleaf.constants()){
   
-  Trad_K    <- (longwave_up / (constants$sigma * emissivity))^(1/4)
+  Trad_K    <- ((LW_up - (1 - emissivity)*LW_down) / (constants$sigma * emissivity))^(1/4)
   Trad_degC <- Trad_K - constants$Kelvin
   
   return(data.frame(Trad_K,Trad_degC))
 }
+
+
+### can be added at some point, but the emissivity values seem to be fairly low
+# emissivity.from.albedo <- function(albedo){
+#   
+#   emissivity <- -0.16*albedo + 0.99
+#   
+#   return(emissivity)
+# }
+

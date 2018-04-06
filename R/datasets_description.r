@@ -56,7 +56,7 @@
 #'              (\url{http://www.fluxdata.org:8080/sitepages/siteInfo.aspx?DE-Tha}). 
 #'              Data are from June 2014.
 #'              
-#' @format A data frame with 1440 observations and 31 columns:
+#' @format A data frame with 1440 observations and 32 columns:
 #'  \describe{
 #'    \item{year}{year of measurement}
 #'    \item{month}{month of measurement}
@@ -77,6 +77,7 @@
 #'    \item{Ca}{CO2 concentration (ppm)}
 #'    \item{Ca_qc}{Quality control of \code{Ca}}
 #'    \item{LW_up}{upward longwave radiation (W m-2)}
+#'    \item{LW_down}{downward longwave radiation (W m-2)}
 #'    \item{Rn}{Net radiation (W m-2)}
 #'    \item{LE}{Latent heat flux (W m-2)}
 #'    \item{LE_qc}{Quality control of \code{LE}}

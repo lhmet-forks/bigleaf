@@ -8,6 +8,7 @@ version 0.5.0 (2018-04-06)
   - reflectance of downwelling longwave radiation is now accounted for in the 
     calculation of radiometric surface temperature (function radiometric.surface.temp())
   - variable 'LW_down' added to dataset DE_Tha_Jun_2014
+  - argument 'calc.surface.CO2' removed from intercellular.CO2()
   
 
 version 0.4.6 (2018-04-05)

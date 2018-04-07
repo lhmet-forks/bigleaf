@@ -52,13 +52,7 @@
 #' @examples 
 #' # calculate bulk canopy Ci of a productive ecosystem
 #' intercellular.CO2(Ca=400,GPP=40,Gs=0.7)
-#' 
-#' # now calculate bulk canopy Ci, but with Ca at the canopy surface (Ga and NEE are needed)
-#' # The function aerodynamic.conductance() can be used to calculate Ga_CO2.
-#' # Here, Ga_CO2 of 0.05 m s-1 is assumed.
-#' 
-#' intercellular.CO2(Ca=400,GPP=40,Gs=0.7,calc.surface.CO2=TRUE,Ga_CO2=0.05,NEE=-55,
-#'                   Tair=25,pressure=100) 
+#'  
 #' # note the sign convention for NEE
 #' 
 #' @export

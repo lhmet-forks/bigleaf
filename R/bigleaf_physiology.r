@@ -9,16 +9,10 @@
 #'              atmospheric CO2 concentration (Ca).
 #'                            
 #' @param data             Data.Frame or matrix with all required columns                            
-#' @param Ca               Atmospheric CO2 concentration (umol mol-1)              
+#' @param Ca               Atmospheric or surface CO2 concentration (umol mol-1)              
 #' @param GPP              Gross primary productivity (umol CO2 m-2 s-1)
 #' @param Gs               Surface conductance to water vapor (mol m-2 s-1)
 #' @param Rleaf            Ecosystem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0          
-#' @param calc.surface.CO2 Should the derived surface CO2 concentration be used instead of 
-#'                         measured atmospheric CO2? If \code{TRUE}, Ca is derived as shown in \code{Details}.
-#' @param Ga_CO2           Aerodynamic conductance to CO2 (m s-1) 
-#' @param NEE              Net ecosystem exchange (umol CO2 m-2 s-1), negative values indicate CO2 uptake by the ecosystem
-#' @param Tair             Air temperature (degC); ignored if \code{calc.surface.CO2 = FALSE}.
-#' @param pressure         Atmospheric pressure (kPa); ignored if \code{calc.surface.CO2 = FALSE}.
 #' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
 #'                            or set to 0 (\code{FALSE}, the default)?
 #' @param constants        DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
@@ -30,6 +24,8 @@
 #'          where Gs/1.6 (mol m-2 s-1) represents the surface conductance to CO2.
 #'          Note that Gs is required in mol m-2 s-1 for water vapor. Gs is converted to
 #'          its value for CO2 internally.
+#'          Ca can either be atmospheric CO2 concentration (as measured), or surface
+#'          CO2 concentration as calculated from \code{\link{surface.CO2}}.
 #'          
 #' @note The equation is based on Fick's law of diffusion and is equivalent to the
 #'       often used equation at leaf level (ci = ca - An/gs).
@@ -66,8 +62,7 @@
 #' # note the sign convention for NEE
 #' 
 #' @export
-intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,calc.surface.CO2=FALSE,
-                              Ga_CO2="Ga_CO2",NEE="NEE",Tair="Tair",pressure="pressure",
+intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,
                               missing.Rleaf.as.NA=FALSE,constants=bigleaf.constants()){
   
   check.input(data,list(Ca,GPP,Gs))

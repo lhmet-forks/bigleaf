@@ -304,7 +304,7 @@ wind.profile <- function(data,heights,Tair="Tair",pressure="pressure",ustar="ust
                                 stab_roughness=TRUE,stab_formulation=stab_formulation,
                                 constants=constants)[,"z0m"]
     
-    cat("calculated z0m =",round(z0m,2),"m",fill=TRUE)
+    #cat("calculated z0m =",round(z0m,2),"m",fill=TRUE)
   }
   
 

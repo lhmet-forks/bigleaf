@@ -24,7 +24,7 @@
 #' @param LAI               One-sided leaf area index (m2 m-2); only used if \code{Rb_model} is \code{"Choudhury_1988"} or \code{"Su_2001"}.
 #' @param Cd                Foliage drag coefficient (-); only used if \code{Rb_model = "Su_2001"}. 
 #' @param hs                Roughness length of bare soil (m); only used if \code{Rb_model = "Su_2001"}.
-#' @param wind_profile      Should Ga for resistance be calculated based on the logarithmic wind profile equation? 
+#' @param wind_profile      Should Ga for momentum be calculated based on the logarithmic wind profile equation? 
 #'                          Defaults to \code{FALSE}.
 #' @param stab_correction   Should stability correction be applied? Defaults to \code{TRUE}. Ignored if \code{wind_profile = FALSE}.                         
 #' @param stab_formulation  Stability correction function. Either \code{"Dyer_1970"} (default) or
@@ -200,9 +200,10 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
     
     kB   <- Gb_mod[,"kB"]
     Rb   <- Gb_mod[,"Rb"]
-    Rb_x <- data.frame(Gb_mod[,grep(colnames(Gb_mod),pattern="Rb_")])
-    colnames(Rb_x) <- grep(colnames(Gb_mod),pattern="Rb_",value=TRUE)
     Gb   <- Gb_mod[,"Gb"]
+    Gb_x <- data.frame(Gb_mod[,grep(colnames(Gb_mod),pattern="Gb_")])
+    colnames(Gb_x) <- grep(colnames(Gb_mod),pattern="Gb_",value=TRUE)
+
     
   } else if (Rb_model == "constant_kB-1"){
     
@@ -222,8 +223,8 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
       }
       
       Sc   <- c(constants$Sc_CO2,Sc)
-      Rb_x <- data.frame(lapply(Sc,function(x) Rb * (x/constants$Pr)^0.67))
-      colnames(Rb_x) <- paste0("Rb_",c("CO2",Sc_name))
+      Gb_x <- data.frame(lapply(Sc,function(x) Gb / (x/constants$Pr)^0.67))
+      colnames(Gb_x) <- paste0("Gb_",c("CO2",Sc_name))
       
     }
     
@@ -269,10 +270,13 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
   Ga_m   <- 1/Ra_m
   Ra_h   <- Ra_m + Rb
   Ga_h   <- 1/Ra_h
-  Ra_x   <- Ra_m + Rb_x
-  Ga_CO2 <- 1/Ra_x[,1]
-  colnames(Ra_x) <- paste0("Ra_",c("CO2",Sc_name))
+  Ga_x   <- 1/(Ra_m + 1/Gb_x)
+  Ra_CO2 <- 1/Ga_x[,1]
+  colnames(Ga_x) <- paste0("Ga_",c("CO2",Sc_name))
+  
+  Gab_x <- cbind(Ga_x,Gb_x)
+  Gab_x <- Gab_x[rep(c(1,ncol(Gab_x)-(ncol(Gab_x)/2-1)),ncol(Gab_x)/2) + sort(rep(0:(ncol(Gab_x)/2-1),2))] # reorder columns
 
-  return(data.frame(Ga_m,Ra_m,Ga_h,Ra_h,Gb,Rb,kB,zeta,psi_h,Ga_CO2,Ra_x,Rb_x))
+  return(data.frame(Ga_m,Ra_m,Ga_h,Ra_h,Gb,Rb,kB,zeta,psi_h,Ra_CO2,Gab_x))
   
 }

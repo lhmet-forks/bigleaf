@@ -23,7 +23,7 @@ a data.frame with the following columns:
  \item{Gb}{Boundary layer conductance (m s-1)}
  \item{kB}{kB-1 parameter (-)}
  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
- \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
+ \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
                    \code{Sc_name} are provided}
 }
 \description{
@@ -35,17 +35,17 @@ The empirical equation for Rb to water suggested by Thom 1972 is:
  
    \deqn{Rb = 6.2ustar^-0.67}
  
- Rb for water vapor and heat is assumed to be equal. Rb for other quantities x is calculated as
+ Gb (=1/Rb) for water vapor and heat is assumed to be equal. Gb for other quantities x is calculated as
  (Hicks et al. 1987):
  
-   \deqn{Rb_x = Rb * (Sc_x / Pr)^0.67}
+   \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
  
  where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 }
 \examples{
 Gb.Thom(seq(0.1,1.4,0.1))
 
-## calculate Rb for SO2 as well
+## calculate Gb for SO2 as well
 Gb.Thom(seq(0.1,1.4,0.1),Sc=1.25,Sc_name="SO2")
 
 }

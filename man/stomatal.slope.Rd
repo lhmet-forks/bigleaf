@@ -74,8 +74,10 @@ All stomatal models were developed at leaf-level, but its parameters
          
          Leuning 1995 suggested a revised version of the Ball&Berry model:
          
-            \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
+            \deqn{gs = g0 + g1*GPP / ((Ca - \Gamma) * (1 + VPD/D0))}
          
+         where \eqn{\Gamma} is by default assumed to be constant, but likely varies with temperature and among
+         plant species. 
          The parameters in the models are estimated using nonlinear regression (\code{\link[stats]{nls}}) if
          \code{robust.nls = FALSE} and weighted nonlinear regression if \code{robust.nls = TRUE}.
          The weights are calculated from \code{\link[robustbase]{nlrob}}, and \code{\link[stats]{nls}}

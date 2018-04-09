@@ -497,8 +497,10 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'          
 #'          Leuning 1995 suggested a revised version of the Ball&Berry model:
 #'          
-#'             \deqn{gs = g0 + g1*GPP / ((Ca - Gamma) * (1 + VPD/D0))}
+#'             \deqn{gs = g0 + g1*GPP / ((Ca - \Gamma) * (1 + VPD/D0))}
 #'          
+#'          where \eqn{\Gamma} is by default assumed to be constant, but likely varies with temperature and among
+#'          plant species. 
 #'          The parameters in the models are estimated using nonlinear regression (\code{\link[stats]{nls}}) if
 #'          \code{robust.nls = FALSE} and weighted nonlinear regression if \code{robust.nls = TRUE}.
 #'          The weights are calculated from \code{\link[robustbase]{nlrob}}, and \code{\link[stats]{nls}}
@@ -595,7 +597,13 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
   
   GPP <- (GPP - Rleaf)
   
-  nr_data <- sum(!is.na(GPP) & !is.na(Gs) & !is.na(VPD) & !is.na(Ca))
+  
+  if (model == "Leuning"){
+    nr_data <- sum(!is.na(GPP) & !is.na(Gs) & !is.na(VPD) & !is.na(Ca) & !is.na(Gamma))
+  } else {
+    nr_data <- sum(!is.na(GPP) & !is.na(Gs) & !is.na(VPD) & !is.na(Ca))
+  }
+  
   
   if (nr_data < nmin){
     stop("number of data is less than 'nmin'. g1 is not fitted to the data.")

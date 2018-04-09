@@ -23,7 +23,7 @@ check.input <- function(data,...){
   if (missing(data)){
     data <- NULL
   }
-
+  
   varlist  <- match.call()[-c(1:2)]
   varnames <- c(unlist(sapply(varlist,as.character)))
   varnames <- varnames[!varnames %in% c("c","list")]

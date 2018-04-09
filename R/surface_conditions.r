@@ -168,6 +168,7 @@ surface.CO2 <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 #' @description Radiometric surface temperature from longwave radiation
 #'              measurements.
 #'              
+#' @param data        Data.frame or matrix containing all required input variables            
 #' @param LW_up       Longwave upward radiation (W m-2)
 #' @param LW_down     Longwave downward radiation (W m-2)
 #' @param emissivity  Emissivity of the surface (-)
@@ -196,7 +197,10 @@ surface.CO2 <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 #'             Remote Sensing of Environment 112, 623-635.
 #' 
 #' @export
-radiometric.surface.temp <- function(LW_up,LW_down,emissivity,constants=bigleaf.constants()){
+radiometric.surface.temp <- function(data,LW_up="LW_up",LW_down="LW_down",
+                                     emissivity,constants=bigleaf.constants()){
+  
+  check.input(data,list(LW_up,LW_down))
   
   Trad_K    <- ((LW_up - (1 - emissivity)*LW_down) / (constants$sigma * emissivity))^(1/4)
   Trad_degC <- Trad_K - constants$Kelvin

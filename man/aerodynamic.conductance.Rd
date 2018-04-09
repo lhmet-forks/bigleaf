@@ -46,7 +46,7 @@ Defaults to 2.}
 
 \item{hs}{Roughness length of bare soil (m); only used if \code{Rb_model = "Su_2001"}.}
 
-\item{wind_profile}{Should Ga for resistance be calculated based on the logarithmic wind profile equation? 
+\item{wind_profile}{Should Ga for momentum be calculated based on the logarithmic wind profile equation? 
 Defaults to \code{FALSE}.}
 
 \item{stab_correction}{Should stability correction be applied? Defaults to \code{TRUE}. Ignored if \code{wind_profile = FALSE}.}

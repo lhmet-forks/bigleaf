@@ -20,10 +20,10 @@
 #'  
 #'    \deqn{Rb = 6.2ustar^-0.67}
 #'  
-#'  Rb for water vapor and heat is assumed to be equal. Rb for other quantities x is calculated as
+#'  Gb (=1/Rb) for water vapor and heat is assumed to be equal. Gb for other quantities x is calculated as
 #'  (Hicks et al. 1987):
 #'  
-#'    \deqn{Rb_x = Rb * (Sc_x / Pr)^0.67}
+#'    \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
 #'  
 #'  where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 #'  
@@ -31,7 +31,7 @@
 #'  \item{Gb}{Boundary layer conductance (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
 #'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-#'  \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
+#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #'  
 #' @references Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
@@ -46,11 +46,14 @@
 #' @examples 
 #' Gb.Thom(seq(0.1,1.4,0.1))
 #' 
-#' ## calculate Rb for SO2 as well
+#' ## calculate Gb for SO2 as well
 #' Gb.Thom(seq(0.1,1.4,0.1),Sc=1.25,Sc_name="SO2")
 #' 
 #' @export
 Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
+  
+  check.input(NULL,ustar)
+  
   Rb     <- 6.2*ustar^-0.667
   Gb     <- 1/Rb
   kB     <- Rb*constants$k*ustar
@@ -65,10 +68,10 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
   }
   
   Sc   <- c(constants$Sc_CO2,Sc)
-  Rb_x <- data.frame(lapply(Sc,function(x) Rb * (x/constants$Pr)^0.67))
-  colnames(Rb_x) <- paste0("Rb_",c("CO2",Sc_name))
+  Gb_x <- data.frame(lapply(Sc,function(x) Gb / (x/constants$Pr)^0.67))
+  colnames(Gb_x) <- paste0("Gb_",c("CO2",Sc_name))
   
-  return(data.frame(Gb,kB,Rb,Rb_x))
+  return(data.frame(Gb,kB,Rb,Gb_x))
 }
 
 
@@ -103,7 +106,7 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
 #'  \item{Gb}{Boundary layer conductance (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
 #'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-#'  \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
+#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #' 
 #' @details Boundary layer conductance according to Choudhury & Monteith 1988 is
@@ -120,10 +123,10 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
 #'          
 #'            \deqn{\alpha = 4.39 - 3.97*exp(-0.258*LAI)}
 #'          
-#'          Rb for water vapor and heat is assumed to be equal. Rb for other quantities x is calculated as
+#'          Gb (=1/Rb) for water vapor and heat is assumed to be equal. Gb for other quantities x is calculated as
 #'          (Hicks et al. 1987):
 #'  
-#'           \deqn{Rb_x = Rb * (Sc_x / Pr)^0.67}
+#'            \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
 #'  
 #'          where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 #'          
@@ -180,11 +183,11 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
   kB <- Rb*constants$k*ustar
   
   Sc   <- c(constants$Sc_CO2,Sc)
-  Rb_x <- data.frame(lapply(Sc,function(x) Rb * (x/constants$Pr)^0.67))
-  colnames(Rb_x) <- paste0("Rb_",c("CO2",Sc_name))
+  Gb_x <- data.frame(lapply(Sc,function(x) Gb / (x/constants$Pr)^0.67))
+  colnames(Gb_x) <- paste0("Gb_",c("CO2",Sc_name))
   
   
-  return(data.frame(Gb,kB,Rb,Rb_x))
+  return(data.frame(Gb,kB,Rb,Gb_x))
 }
 
 
@@ -227,7 +230,7 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #'  \item{Gb}{Boundary layer conductance (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
 #'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-#'  \item{Rb_Sc_name}{Boundary layer resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
+#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #'     
 #' @details The formulation is based on the kB-1 model developed by Massman 1999. 
@@ -255,10 +258,10 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #'          
 #'            \deqn{kBs^-1 = 2.46(Re)^0.25 - ln(7.4)}
 #'          
-#'          Rb for water vapor and heat is assumed to be equal. Rb for other quantities x is calculated as
+#'          Gb (=1/Rb) for water vapor and heat is assumed to be equal. Gb for other quantities x is calculated as
 #'          (Hicks et al. 1987):
 #'  
-#'            \deqn{Rb_x = Rb * (Sc_x / Pr)^0.67}
+#'            \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
 #'  
 #'          where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 #' 
@@ -329,8 +332,8 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
   }
   
   Sc   <- c(constants$Sc_CO2,Sc)
-  Rb_x <- data.frame(lapply(Sc,function(x) Rb * (x/constants$Pr)^0.67))
-  colnames(Rb_x) <- paste0("Rb_",c("CO2",Sc_name))
+  Gb_x <- data.frame(lapply(Sc,function(x) Gb / (x/constants$Pr)^0.67))
+  colnames(Gb_x) <- paste0("Gb_",c("CO2",Sc_name))
   
-  return(data.frame(Gb,kB,Rb,Rb_x))
+  return(data.frame(Gb,kB,Rb,Gb_x))
 }

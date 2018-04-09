@@ -188,8 +188,7 @@ surface.CO2 <- function(Ca,NEE,Ga_CO2,Tair,pressure){
 #' # assuming an emissivity of 0.98.
 #' # (Note that variable 'LW_down' was only included for the DE-Tha example dataset
 #' # and not for the others due restrictions on file size) 
-#' Trad <- radiometric.surface.temp(DE_Tha_Jun_2014[,"LW_up"],DE_Tha_Jun_2014[,"LW_down"],
-#'                                  emissivity=0.98)
+#' Trad <- radiometric.surface.temp(DE_Tha_Jun_2014,emissivity=0.98)
 #' summary(Trad)
 #' 
 #' @references Wang, W., Liang, S., Meyers, T. 2008: Validating MODIS land surface

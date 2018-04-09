@@ -136,7 +136,7 @@ VPD.to.rH <- function(VPD,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","Al
 #' @family humidity conversion
 #' @export
 rH.to.VPD <- function(rH,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998")){
-  if(any(rH > 1)){
+  if(any(rH > 1 & !is.na(rH))){
     warning("relative humidity (rH) has to be between 0 and 1.")
   }
   esat <- Esat.slope(Tair,Esat.formula)[,"Esat"]

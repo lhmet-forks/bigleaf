@@ -5,7 +5,7 @@
 #' Boundary Layer Conductance according to Thom 1972
 #' 
 #' @description An empirical formulation for the canopy boundary layer conductance 
-#'              to heat/water vapor based on a simple ustar dependency.
+#'              for heat transfer based on a simple ustar dependency.
 #' 
 #' @param ustar     Friction velocity (m s-1)
 #' @param Sc        Optional: Schmidt number of additional quantities to be calculated
@@ -16,22 +16,22 @@
 #'                  Pr - Prandtl number (if \code{Sc} is provided)
 #'
 #'  
-#' @details The empirical equation for Rb to water vapor suggested by Thom 1972 is:
+#' @details The empirical equation for Rb suggested by Thom 1972 is:
 #'  
-#'    \deqn{Rb = 6.2ustar^-0.67}
+#'      \deqn{Rb = 6.2ustar^-0.67}
 #'  
-#'  Gb (=1/Rb) for water vapor and heat is assumed to be equal. Gb for other quantities x is calculated as
-#'  (Hicks et al. 1987):
+#'    Gb (=1/Rb) for water vapor and heat are assumed to be equal in this package.
+#'    Gb for other quantities x is calculated as (Hicks et al. 1987):
 #'  
-#'    \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
+#'      \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
 #'  
 #'  where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 #'  
 #' @return a data.frame with the following columns:
-#'  \item{Gb}{Boundary layer conductance for heat and water (m s-1)}
-#'  \item{kB}{kB-1 parameter (-)}
-#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
+#'  \item{Gb_h}{Boundary layer conductance for heat transfer (m s-1)}
+#'  \item{Rb_h}{Boundary layer resistance for heat transfer (s m-1)}
+#'  \item{kB_h}{kB-1 parameter for heat transfer}
+#'  \item{Gb_Sc_name}{Boundary layer conductance for \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #'  
 #' @references Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
@@ -54,9 +54,9 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
   
   check.input(NULL,ustar)
   
-  Rb     <- 6.2*ustar^-0.667
-  Gb     <- 1/Rb
-  kB     <- Rb*constants$k*ustar
+  Rb_h <- 6.2*ustar^-0.667
+  Gb_h <- 1/Rb_h
+  kB_h <- Rb_h*constants$k*ustar
   
   if (!is.null(Sc) | !is.null(Sc_name)){
     if (length(Sc) != length(Sc_name)){
@@ -68,10 +68,10 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
   }
   
   Sc   <- c(constants$Sc_CO2,Sc)
-  Gb_x <- data.frame(lapply(Sc,function(x) Gb / (x/constants$Pr)^0.67))
+  Gb_x <- data.frame(lapply(Sc,function(x) Gb_h / (x/constants$Pr)^0.67))
   colnames(Gb_x) <- paste0("Gb_",c("CO2",Sc_name))
   
-  return(data.frame(Gb,kB,Rb,Gb_x))
+  return(data.frame(Gb_h,Rb_h,kB_h,Gb_x))
 }
 
 
@@ -80,7 +80,7 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
 #' Boundary Layer Conductance according to Choudhury & Monteith 1988
 #' 
 #' @description A formulation for the canopy boundary layer conductance 
-#'              to heat/water vapor according to Choudhury & Monteith 1988.
+#'              for heat transfer according to Choudhury & Monteith 1988.
 #'              
 #' @param data             Data.frame or matrix containing all required variables
 #' @param Tair             Air temperature (degC)
@@ -103,16 +103,16 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
 #'                         Pr - Prandtl number (if \code{Sc} is provided)
 #'                         
 #' @return A data frame with the following columns:
-#'  \item{Gb}{Boundary layer conductance for heat and water (m s-1)}
-#'  \item{kB}{kB-1 parameter (-)}
-#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
+#'  \item{Gb_h}{Boundary layer conductance for heat transfer (m s-1)}
+#'  \item{Rb_h}{Boundary layer resistance for heat transfer (s m-1)}
+#'  \item{kB_h}{kB-1 parameter for heat transfer}
+#'  \item{Gb_Sc_name}{Boundary layer conductance for \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #' 
 #' @details Boundary layer conductance according to Choudhury & Monteith 1988 is
 #'          given by:
 #'          
-#'            \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
+#'            \deqn{Gb_h = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
 #'          
 #'          where u(zh) is the wind speed at the canopy surface, approximated from
 #'          measured wind speed at sensor height zr and a wind extinction coefficient \eqn{\alpha}:
@@ -123,8 +123,8 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
 #'          
 #'            \deqn{\alpha = 4.39 - 3.97*exp(-0.258*LAI)}
 #'          
-#'          Gb (=1/Rb) for water vapor and heat is assumed to be equal. Gb for other quantities x is calculated as
-#'          (Hicks et al. 1987):
+#'          Gb (=1/Rb) for water vapor and heat are assumed to be equal in this package.
+#'          Gb for other quantities x is calculated as (Hicks et al. 1987):
 #'  
 #'            \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
 #'  
@@ -178,16 +178,16 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
     }
   }
   
-  Gb <- LAI*((0.02/alpha)*sqrt(wind_zh/leafwidth)*(1-exp(-alpha/2)))
-  Rb <- 1/Gb
-  kB <- Rb*constants$k*ustar
+  Gb_h <- LAI*((0.02/alpha)*sqrt(wind_zh/leafwidth)*(1-exp(-alpha/2)))
+  Rb_h <- 1/Gb_h
+  kB_h <- Rb_h*constants$k*ustar
   
   Sc   <- c(constants$Sc_CO2,Sc)
-  Gb_x <- data.frame(lapply(Sc,function(x) Gb / (x/constants$Pr)^0.67))
+  Gb_x <- data.frame(lapply(Sc,function(x) Gb_h / (x/constants$Pr)^0.67))
   colnames(Gb_x) <- paste0("Gb_",c("CO2",Sc_name))
   
   
-  return(data.frame(Gb,kB,Rb,Gb_x))
+  return(data.frame(Gb_h,Rb_h,kB_h,Gb_x))
 }
 
 
@@ -198,7 +198,7 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #' Boundary Layer Conductance according to Su et al. 2001
 #' 
 #' @description A physically based formulation for the canopy boundary layer conductance
-#'              to heat/water vapor according to Su et al. 2001. 
+#'              to heat transfer according to Su et al. 2001. 
 #'
 #' @param data     Data.frame or matrix containing all required variables
 #' @param Tair     Air temperature (degC)
@@ -227,10 +227,10 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #'                  Pr - Prandtl number (if \code{Sc} is provided)
 #' 
 #' @return A data.frame with the following columns:
-#'  \item{Gb}{Boundary layer conductance for heat and water (m s-1)}
-#'  \item{kB}{kB-1 parameter (-)}
-#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
-#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
+#'  \item{Gb_h}{Boundary layer conductance for heat transfer (m s-1)}
+#'  \item{Rb_h}{Boundary layer resistance for heat transfer (s m-1)}
+#'  \item{kB_h}{kB-1 parameter for heat transfer}
+#'  \item{Gb_Sc_name}{Boundary layer conductance for \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #'     
 #' @details The formulation is based on the kB-1 model developed by Massman 1999. 
@@ -258,8 +258,8 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #'          
 #'            \deqn{kBs^-1 = 2.46(Re)^0.25 - ln(7.4)}
 #'          
-#'          Gb (=1/Rb) for water vapor and heat is assumed to be equal. Gb for other quantities x is calculated as
-#'          (Hicks et al. 1987):
+#'          Gb (=1/Rb) for water vapor and heat are assumed to be equal in this package.
+#'          Gb for other quantities x is calculated as (Hicks et al. 1987):
 #'  
 #'            \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
 #'  
@@ -318,9 +318,9 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
   Reh <- Dl * wind_zh / v
   Ct  <- 1*constants$Pr^-0.6667*Reh^-0.5*N
   
-  kB     <- (constants$k*Cd)/(4*Ct*ustar/wind_zh)*fc^2 + kBs*(1 - fc)^2
-  Rb     <- kB/(constants$k*ustar)
-  Gb     <- 1/Rb
+  kB_h <- (constants$k*Cd)/(4*Ct*ustar/wind_zh)*fc^2 + kBs*(1 - fc)^2
+  Rb_h <- kB_h/(constants$k*ustar)
+  Gb_h <- 1/Rb_h
   
   if (!is.null(Sc) | !is.null(Sc_name)){
     if (length(Sc) != length(Sc_name)){
@@ -332,8 +332,8 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
   }
   
   Sc   <- c(constants$Sc_CO2,Sc)
-  Gb_x <- data.frame(lapply(Sc,function(x) Gb / (x/constants$Pr)^0.67))
+  Gb_x <- data.frame(lapply(Sc,function(x) Gb_h / (x/constants$Pr)^0.67))
   colnames(Gb_x) <- paste0("Gb_",c("CO2",Sc_name))
   
-  return(data.frame(Gb,kB,Rb,Gb_x))
+  return(data.frame(Gb_h,Rb_h,kB_h,Gb_x))
 }

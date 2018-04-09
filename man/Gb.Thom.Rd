@@ -20,25 +20,25 @@ Pr - Prandtl number (if \code{Sc} is provided)}
 }
 \value{
 a data.frame with the following columns:
- \item{Gb}{Boundary layer conductance for heat and water (m s-1)}
- \item{kB}{kB-1 parameter (-)}
- \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
- \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
+ \item{Gb_h}{Boundary layer conductance for heat transfer (m s-1)}
+ \item{Rb_h}{Boundary layer resistance for heat transfer (s m-1)}
+ \item{kB_h}{kB-1 parameter for heat transfer}
+ \item{Gb_Sc_name}{Boundary layer conductance for \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
                    \code{Sc_name} are provided}
 }
 \description{
 An empirical formulation for the canopy boundary layer conductance 
-             to heat/water vapor based on a simple ustar dependency.
+             for heat transfer based on a simple ustar dependency.
 }
 \details{
-The empirical equation for Rb to water vapor suggested by Thom 1972 is:
+The empirical equation for Rb suggested by Thom 1972 is:
  
-   \deqn{Rb = 6.2ustar^-0.67}
+     \deqn{Rb = 6.2ustar^-0.67}
  
- Gb (=1/Rb) for water vapor and heat is assumed to be equal. Gb for other quantities x is calculated as
- (Hicks et al. 1987):
+   Gb (=1/Rb) for water vapor and heat are assumed to be equal in this package.
+   Gb for other quantities x is calculated as (Hicks et al. 1987):
  
-   \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
+     \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
  
  where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 }

@@ -9,7 +9,7 @@ aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
   fc = NULL, LAI, Cd = 0.2, hs = 0.01, wind_profile = FALSE,
   stab_correction = TRUE, stab_formulation = c("Dyer_1970",
   "Businger_1971"), Rb_model = c("Thom_1972", "Choudhury_1988", "Su_2001",
-  "constant_kB-1"), kB = NULL, Sc = NULL, Sc_name = NULL,
+  "constant_kB-1"), kB_h = NULL, Sc = NULL, Sc_name = NULL,
   constants = bigleaf.constants())
 }
 \arguments{
@@ -56,7 +56,7 @@ Defaults to \code{FALSE}.}
 
 \item{Rb_model}{Boundary layer resistance formulation. One of \code{"Thom_1972","Choudhury_1988","Su_2001","constant_kB-1"}.}
 
-\item{kB}{kB-1 value; only used if \code{Rb_model = "constant_kB-1"}}
+\item{kB_h}{kB-1 value for heat transfer; only used if \code{Rb_model = "constant_kB-1"}}
 
 \item{Sc}{Optional: Schmidt number of additional quantities to be calculated}
 
@@ -74,21 +74,21 @@ Pr - Prandtl number (if \code{Sc} is provided)}
 }
 \value{
 a dataframe with the following columns:
-        \item{Ga_m}{Aerodynamic conductance for momentum (m s-1)}
-        \item{Ra_m}{Aerodynamic resistance for momentum (s m-1)}
-        \item{Ga_h}{Aerodynamic conductance for heat and water vapor (m s-1)}
-        \item{Ra_h}{Aerodynamic resistance for heat and water vapor (s m-1)}
-        \item{Gb}{Canopy boundary layer conductance for heat and water vapor (m s-1)}
-        \item{Rb}{Canopy boundary layer resistance for heat and water vapor (s m-1)}
-        \item{kB}{kB-1 parameter}
+        \item{Ga_m}{Aerodynamic conductance for momentum transfer (m s-1)}
+        \item{Ra_m}{Aerodynamic resistance for momentum transfer (s m-1)}
+        \item{Ga_h}{Aerodynamic conductance for heat transfer (m s-1)}
+        \item{Ra_h}{Aerodynamic resistance for heat transfer (s m-1)}
+        \item{Gb_h}{Canopy boundary layer conductance for heat transfer (m s-1)}
+        \item{Rb_h}{Canopy boundary layer resistance for heat transfer (s m-1)}
+        \item{kB_h}{kB-1 parameter for heat transfer}
         \item{zeta}{Stability parameter 'zeta' (NA if \code{wind_profile = FALSE})}
         \item{psi_h}{Integrated stability correction function (NA if \code{wind_profile = FALSE})}
-        \item{Ra_CO2}{Aerodynamic resistance for CO2 (s m-1)}
-        \item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1)}
-        \item{Gb_CO2}{Canopy boundary layer conductance for CO2 (m s-1)}
-        \item{Ga_Sc_name}{Aerodynamic conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
+        \item{Ra_CO2}{Aerodynamic resistance for CO2 transfer (s m-1)}
+        \item{Ga_CO2}{Aerodynamic conductance for CO2 transfer (m s-1)}
+        \item{Gb_CO2}{Canopy boundary layer conductance for CO2 transfer (m s-1)}
+        \item{Ga_Sc_name}{Aerodynamic conductance for \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
                           \code{Sc_name} are provided}
-        \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
+        \item{Gb_Sc_name}{Boundary layer conductance for \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
                           \code{Sc_name} are provided}
 }
 \description{
@@ -98,7 +98,7 @@ Bulk aerodynamic conductance, including options for the boundary layer conductan
 \details{
 Aerodynamic conductance for heat (Ga_h) is calculated as:
 
-    \deqn{Ga_h = 1 / (Ra_m + Rb)}
+    \deqn{Ga_h = 1 / (Ra_m + Rb_h)}
  
  where Ra_m is the aerodynamic resistance for momentum and Rb the (quasi-laminar) canopy boundary
  layer resistance ('excess resistance').
@@ -124,33 +124,31 @@ Aerodynamic conductance for heat (Ga_h) is calculated as:
  The stability correction function is chosen by the argument \code{stab_formulation}. Options are 
  \code{"Dyer_1970"} and \code{"Businger_1971"}.
  
- The model used to determine the canopy boundary layer resistance (Rb) is specified by 
+ The model used to determine the canopy boundary layer resistance for heat (Rb_h) is specified by 
  the argument \code{Rb_model}. The following options are implemented:
  \code{"Thom_1972"} is an empirical formulation based on the friction velocity (ustar) (Thom 1972):
  
-   \deqn{Rb = 6.2ustar^-0.667}
+   \deqn{Rb_h = 6.2ustar^-0.667}
    
- The model by Choudhury 1988 (\code{"Choudhury_1988"}), calculates Rb
+ The model by Choudhury 1988 (\code{"Choudhury_1988"}), calculates Rb_h
  based on leaf width, LAI and ustar (Note that in the original formulation leaf width
  instead of the characteristic leaf dimension (Dl) is taken):
   
-    \deqn{Gb = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
+    \deqn{Gb_h = LAI((2a/\alpha)*sqrt(u(h)/w)*(1-exp(-\alpha/2)))}
     
- The option \code{"Su_2001"} calculates Rb based on the physically-based Rb model by Su et al. 2001,
+ The option \code{"Su_2001"} calculates Rb_h based on the physically-based Rb model by Su et al. 2001,
  a simplification of the model developed by Massman 1999:
  
     \deqn{kB-1 = (k Cd fc^2) / (4Ct ustar/u(zh)) + kBs-1(1 - fc)^2}
  
- The models calculate the parameter kB-1, which is related to Rb:
+ The models calculate the parameter kB-1, which is related to Rb_h:
  
-    \deqn{kB-1 = Rb * (k * ustar)}
+    \deqn{kB-1 = Rb_h * (k * ustar)}
  
- Both kB-1 and Rb, as well as Gb are given in the output.
+ Rb (and Gb) for water vapor and heat are assumed to be equal in this package.
+ Gb for other quantities x is calculated as (Hicks et al. 1987):
  
- Rb (and Gb) for water vapor and heat are assumed to be equal. Rb for other quantities
- x is calculated as (Hicks et al. 1987):
- 
-    \deqn{Rb_x = Rb * (Sc_x / Pr)^0.67}
+    \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
  
  where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 }
@@ -166,8 +164,12 @@ The roughness length for water and heat (z0h) is not returned by this function, 
       
       \code{kB-1} is an output of this function.
       
-      Note that input variables such as LAI, Dl, or zh can be either constants, or
-      time varying (i.e. vectors of the same length as \code{data}).
+      Input variables such as LAI, Dl, or zh can be either constants, or
+      vary with time (i.e. vectors of the same length as \code{data}).
+      
+      Note that boundary layer conductance to water vapor transfer (Gb_w) is often 
+      assumed to equal Gb_h. This assumption is also made in this R package, for 
+      example in the function \code{\link{surface.conductance}}.
 }
 \examples{
 df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250))   

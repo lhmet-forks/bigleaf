@@ -56,15 +56,15 @@ Pr - Prandtl number (if \code{Sc} is provided)}
 }
 \value{
 A data.frame with the following columns:
- \item{Gb}{Boundary layer conductance for heat and water (m s-1)}
- \item{kB}{kB-1 parameter (-)}
- \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
- \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
+ \item{Gb_h}{Boundary layer conductance for heat transfer (m s-1)}
+ \item{Rb_h}{Boundary layer resistance for heat transfer (s m-1)}
+ \item{kB_h}{kB-1 parameter for heat transfer}
+ \item{Gb_Sc_name}{Boundary layer conductance for \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
                    \code{Sc_name} are provided}
 }
 \description{
 A physically based formulation for the canopy boundary layer conductance
-             to heat/water vapor according to Su et al. 2001.
+             to heat transfer according to Su et al. 2001.
 }
 \details{
 The formulation is based on the kB-1 model developed by Massman 1999. 
@@ -92,8 +92,8 @@ The formulation is based on the kB-1 model developed by Massman 1999.
          
            \deqn{kBs^-1 = 2.46(Re)^0.25 - ln(7.4)}
          
-         Gb (=1/Rb) for water vapor and heat is assumed to be equal. Gb for other quantities x is calculated as
-         (Hicks et al. 1987):
+         Gb (=1/Rb) for water vapor and heat are assumed to be equal in this package.
+         Gb for other quantities x is calculated as (Hicks et al. 1987):
  
            \deqn{Gb_x = Gb / (Sc_x / Pr)^0.67}
  

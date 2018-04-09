@@ -56,10 +56,10 @@ Pr - Prandtl number (if \code{Sc} is provided)}
 }
 \value{
 A data.frame with the following columns:
- \item{Gb}{Boundary layer conductance to heat and water (m s-1)}
+ \item{Gb}{Boundary layer conductance for heat and water (m s-1)}
  \item{kB}{kB-1 parameter (-)}
- \item{Rb}{Boundary layer resistance to heat and water (s m-1)}
- \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
+ \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+ \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
                    \code{Sc_name} are provided}
 }
 \description{

@@ -28,10 +28,10 @@
 #'  where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 #'  
 #' @return a data.frame with the following columns:
-#'  \item{Gb}{Boundary layer conductance to heat and water (m s-1)}
+#'  \item{Gb}{Boundary layer conductance for heat and water (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
-#'  \item{Rb}{Boundary layer resistance to heat and water (s m-1)}
-#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
+#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #'  
 #' @references Thom, A., 1972: Momentum, mass and heat exchange of vegetation.
@@ -103,10 +103,10 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
 #'                         Pr - Prandtl number (if \code{Sc} is provided)
 #'                         
 #' @return A data frame with the following columns:
-#'  \item{Gb}{Boundary layer conductance to heat and water (m s-1)}
+#'  \item{Gb}{Boundary layer conductance for heat and water (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
-#'  \item{Rb}{Boundary layer resistance to heat and water (s m-1)}
-#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
+#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #' 
 #' @details Boundary layer conductance according to Choudhury & Monteith 1988 is
@@ -227,10 +227,10 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #'                  Pr - Prandtl number (if \code{Sc} is provided)
 #' 
 #' @return A data.frame with the following columns:
-#'  \item{Gb}{Boundary layer conductance to heat and water (m s-1)}
+#'  \item{Gb}{Boundary layer conductance for heat and water (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
-#'  \item{Rb}{Boundary layer resistance to heat and water (s m-1)}
-#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
+#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+#'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (m s-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #'     
 #' @details The formulation is based on the kB-1 model developed by Massman 1999. 

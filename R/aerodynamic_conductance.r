@@ -103,7 +103,6 @@
 #'  
 #'  where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 #'  
-#'  data.frame(Ga_m,Ra_m,Ga_h,Ra_h,Gb,Rb,kB,zeta,psi_h,Ra_x,Rb_x))
 #' @return a dataframe with the following columns:
 #'         \item{Ga_m}{Aerodynamic conductance for momentum (m s-1)}
 #'         \item{Ra_m}{Aerodynamic resistance for momentum (s m-1)}
@@ -112,8 +111,8 @@
 #'         \item{Gb}{Canopy boundary layer conductance for heat and water vapor (m s-1)}
 #'         \item{Rb}{Canopy boundary layer resistance for heat and water vapor (s m-1)}
 #'         \item{kB}{kB-1 parameter}
-#'         \item{zeta}{Stability parameter 'zeta'}
-#'         \item{psi_h}{Integrated stability correction function}
+#'         \item{zeta}{Stability parameter 'zeta' (NA if \code{wind_profile = FALSE})}
+#'         \item{psi_h}{Integrated stability correction function (NA if \code{wind_profile = FALSE})}
 #'         \item{Ga_CO2}{Aerodynamic conductance for CO2 (m s-1)}
 #'         \item{Ra_CO2}{Aerodynamic resistance for CO2 (s m-1)}
 #'         \item{Ra_Sc_name}{Aerodynamic resistance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 

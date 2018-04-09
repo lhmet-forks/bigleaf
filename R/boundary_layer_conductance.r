@@ -16,7 +16,7 @@
 #'                  Pr - Prandtl number (if \code{Sc} is provided)
 #'
 #'  
-#' @details The empirical equation for Rb to water suggested by Thom 1972 is:
+#' @details The empirical equation for Rb to water vapor suggested by Thom 1972 is:
 #'  
 #'    \deqn{Rb = 6.2ustar^-0.67}
 #'  
@@ -28,9 +28,9 @@
 #'  where Sc_x is the Schmidt number of quantity x, and Pr is the Prandtl number (0.71).
 #'  
 #' @return a data.frame with the following columns:
-#'  \item{Gb}{Boundary layer conductance (m s-1)}
+#'  \item{Gb}{Boundary layer conductance to heat and water (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
-#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+#'  \item{Rb}{Boundary layer resistance to heat and water (s m-1)}
 #'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #'  
@@ -103,9 +103,9 @@ Gb.Thom <- function(ustar,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
 #'                         Pr - Prandtl number (if \code{Sc} is provided)
 #'                         
 #' @return A data frame with the following columns:
-#'  \item{Gb}{Boundary layer conductance (m s-1)}
+#'  \item{Gb}{Boundary layer conductance to heat and water (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
-#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+#'  \item{Rb}{Boundary layer resistance to heat and water (s m-1)}
 #'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #' 
@@ -227,9 +227,9 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
 #'                  Pr - Prandtl number (if \code{Sc} is provided)
 #' 
 #' @return A data.frame with the following columns:
-#'  \item{Gb}{Boundary layer conductance (m s-1)}
+#'  \item{Gb}{Boundary layer conductance to heat and water (m s-1)}
 #'  \item{kB}{kB-1 parameter (-)}
-#'  \item{Rb}{Boundary layer resistance for heat and water (s m-1)}
+#'  \item{Rb}{Boundary layer resistance to heat and water (s m-1)}
 #'  \item{Gb_Sc_name}{Boundary layer conductance of \code{Sc_name} (s m-1). Only added if \code{Sc_name} and 
 #'                    \code{Sc_name} are provided}
 #'     

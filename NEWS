@@ -4,6 +4,7 @@ version 0.5.2 (2018-04-10)
   - Gb output in aerodynamic.conductance and Gb functions renamed to Gb_h to clarify
     that values correspond to heat transfer. Same for Rb and kB.
 
+
 version 0.5.1 (2018-04-09)
 
   - results of additional quantities (for which Sc is provided) are expressed as 

@@ -782,7 +782,7 @@ light.response <- function(data,NEE="NEE",Reco="Reco",PPFD="PPFD",PPFD_ref=2000,
 
   
 
-#' Light Use Efficiency (LUE)
+#' Light-Use Efficiency (LUE)
 #' 
 #' @description Amount of carbon fixed (GPP) per incoming light.
 #' 

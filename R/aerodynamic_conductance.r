@@ -80,8 +80,8 @@
 #'  
 #'    \deqn{Rb_h = 6.2ustar^-0.667}
 #'    
-#'  The model by Choudhury 1988 (\code{Rb_model = "Choudhury_1988"}), calculates Rb_h
-#'  based on leaf width, LAI and ustar (Note that function argument \code{Dl}
+#'  The model by Choudhury & Monteith 1988 (\code{Rb_model = "Choudhury_1988"}),
+#'  calculates Rb_h based on leaf width, LAI and ustar (Note that function argument \code{Dl}
 #'  represents leaf width (w) and not characteristic leaf dimension (Dl)
 #'  if \code{Rb_model} = \code{"Choudhury_1988"}):
 #'   

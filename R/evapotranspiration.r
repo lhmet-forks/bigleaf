@@ -139,7 +139,27 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
 #' 
 #' @description Reference evapotranspiration calculated from the Penman-Monteith
 #'              equation with a prescribed surface conductance.
-#'              This function is deprecated. Use potential.ET(...,approach="Penman-Monteith") instead
+#'              This function is deprecated. Use potential.ET(...,approach="Penman-Monteith") instead.
+#' 
+#' @param data      Data.frame or matrix containing all required variables; optional
+#' @param Gs_ref    Reference surface conductance (m s-1); defaults to 0.0143 m s-1.
+#' @param Tair      Air temperature (degC)
+#' @param pressure  Atmospheric pressure (kPa)
+#' @param VPD       Vapor pressure deficit (kPa)
+#' @param Ga        Aerodynamic conductance (m s-1)
+#' @param Rn        Net radiation (W m-2)
+#' @param G         Ground heat flux (W m-2); optional
+#' @param S         Sum of all storage fluxes (W m-2); optional
+#' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
+#' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0. 
+#' @param Esat.formula  Optional: formula to be used for the calculation of esat and the slope of esat.
+#'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
+#'                      See \code{\link{Esat.slope}}. 
+#' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+#'                  eps - ratio of the molecular weight of water vapor to dry air \cr
+#'                  Rd - gas constant of dry air (J kg-1 K-1) (only if \code{approach = "Penman-Monteith"}) \cr
+#'                  Rgas - universal gas constant (J mol-1 K-1) (only if \code{approach = "Penman-Monteith"}) \cr
+#'                  Kelvin - conversion degree Celsius to Kelvin (only if \code{approach = "Penman-Monteith"}) \cr
 #' 
 #' @export                            
 reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="Rn",Ga="Ga",

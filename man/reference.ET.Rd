@@ -10,8 +10,41 @@ reference.ET(data, Gs_ref = 0.0143, Tair = "Tair", pressure = "pressure",
   Esat.formula = c("Sonntag_1990", "Alduchov_1996", "Allen_1998"),
   constants = bigleaf.constants())
 }
+\arguments{
+\item{data}{Data.frame or matrix containing all required variables; optional}
+
+\item{Gs_ref}{Reference surface conductance (m s-1); defaults to 0.0143 m s-1.}
+
+\item{Tair}{Air temperature (degC)}
+
+\item{pressure}{Atmospheric pressure (kPa)}
+
+\item{VPD}{Vapor pressure deficit (kPa)}
+
+\item{Rn}{Net radiation (W m-2)}
+
+\item{Ga}{Aerodynamic conductance (m s-1)}
+
+\item{G}{Ground heat flux (W m-2); optional}
+
+\item{S}{Sum of all storage fluxes (W m-2); optional}
+
+\item{missing.G.as.NA}{if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0.}
+
+\item{missing.S.as.NA}{if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0.}
+
+\item{Esat.formula}{Optional: formula to be used for the calculation of esat and the slope of esat.
+One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
+See \code{\link{Esat.slope}}.}
+
+\item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
+eps - ratio of the molecular weight of water vapor to dry air \cr
+Rd - gas constant of dry air (J kg-1 K-1) (only if \code{approach = "Penman-Monteith"}) \cr
+Rgas - universal gas constant (J mol-1 K-1) (only if \code{approach = "Penman-Monteith"}) \cr
+Kelvin - conversion degree Celsius to Kelvin (only if \code{approach = "Penman-Monteith"}) \cr}
+}
 \description{
 Reference evapotranspiration calculated from the Penman-Monteith
              equation with a prescribed surface conductance.
-             This function is deprecated. Use potential.ET(...,approach="Penman-Monteith") instead
+             This function is deprecated. Use potential.ET(...,approach="Penman-Monteith") instead.
 }

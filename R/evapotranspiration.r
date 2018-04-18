@@ -140,8 +140,7 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
 #'              equation with a prescribed surface conductance.
 #'              This function is deprecated. Use potential.ET(...,approach="Penman-Monteith") instead
 #' 
-#'                                
-#' 
+#' @export                            
 reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="Rn",Ga="Ga",
                          G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                          Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),

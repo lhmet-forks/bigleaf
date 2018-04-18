@@ -1,5 +1,12 @@
 NEWS for Package 'bigleaf'
 
+version 0.6.1 (2018-04-18)
+
+ - default names for 'formulation' arguments changed for clarity in surface.conductance() 
+   and decoupling(). "PenmanMonteith" is changed to "Penman-Monteith", "FluxGradient" to 
+   "Flux-Gradient", and "JarvisMcNaughton_1986" to "Jarvis&McNaughton_1986".
+
+
 version 0.6.0 (2018-04-18)
 
  - function reference.ET() is now covered by potential.ET(). If 'approach=Penman-Monteith',

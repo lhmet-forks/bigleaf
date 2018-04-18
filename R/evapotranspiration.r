@@ -76,8 +76,9 @@
 #' 
 #' # Calculate potential ET for a surface with known Gs (0.5 mol m-2 s-1) and Ga (0.1 m s-1)
 #' # using Penman-Monteith:
-#' LE_pot_PM <- potential.ET(Gs_ref=0.5,Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400,
+#' LE_pot_PM <- potential.ET(Gs_pot=0.5,Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400,
 #'                           approach="Penman-Monteith")[,"LE_pot"]
+#' LE_pot_PM
 #' 
 #' # now cross-check with the inverted equation
 #' surface.conductance(Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400,LE=LE_pot_PM)
@@ -146,7 +147,7 @@ reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD=
                          Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                          constants=bigleaf.constants()){
   
-  stop("this function is deprecated (since bigleaf version 0.6.0). For the calculation of potential ET from the Penman-Monteith equation (as formerly calculated with this function), use function potential.ET() with the argument approach='Penman-Monteith'")
+  stop("this function is deprecated (since bigleaf version 0.6.0). For the calculation of potential ET from the Penman-Monteith equation (as formerly calculated with this function), use function potential.ET() with the argument approach='Penman-Monteith'. Note that the default value for argument 'Gs_pot' is expressed now in mol m-2 s-1 for simplicity (0.6 mol m-2 s-1).")
   
 }
 

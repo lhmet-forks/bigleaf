@@ -74,8 +74,7 @@ The package provides the following functionalities:
 - radiometric surface temperature 
 
 ## Evapotranspiration (ET) and water-use efficiency (WUE)
-- potential ET (Priestley-Taylor equation)
-- reference ET (Penman-Monteith equation)
+- potential ET (Priestley-Taylor and Penman-Monteith equations)
 - imposed and equilibrum ET
 - WUE, inherent WUE, underlying WUE
 
@@ -83,7 +82,7 @@ The package provides the following functionalities:
 - canopy conductance (inverted Penman-Monteith equation)
 - bulk intercellular CO2 concentration (Ci)
 - bulk photosynthetic capacity (Vcmax25 and Jmax25)
-- stomatal slope g1 (USO, Ball&Berry, Leuning models)
+- stomatal slope parameter g1 (USO, Ball&Berry, Leuning models)
 - stomatal sensitivity to VPD
 - ecosystem light response, light-use efficiency
 

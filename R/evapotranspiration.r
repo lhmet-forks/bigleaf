@@ -5,7 +5,7 @@
 #' Potential Evapotranspiration
 #' 
 #' @description Potential evapotranspiration according to Priestley & Taylor 1972 or
-#'              from the Penman-Monteith equation with a prescribed surface conductance.
+#'              the Penman-Monteith equation with a prescribed surface conductance.
 #' 
 #' @param data      Data.frame or matrix containing all required variables; optional
 #' @param Tair      Air temperature (degC)
@@ -17,7 +17,8 @@
 #' @param Ga        Aerodynamic conductance (m s-1); only used if \code{approach = "Penman-Monteith"}.
 #' @param approach  Approach used. Either \code{"Priestley-Taylor} (default), or \code{"Penman-Monteith}.
 #' @param alpha     Priestley-Taylor coefficient; only used if \code{approach = "Priestley-Taylor"}.
-#' @param Gs_pot    Potential/maximum surface conductance (mol m-2 s-1); defaults to 0.6 mol m-2 s-1.
+#' @param Gs_pot    Potential/maximum surface conductance (mol m-2 s-1); defaults to 0.6 mol m-2 s-1;
+#'                  only used if \code{approach = "Penman-Monteith"}.
 #' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0. 
 #' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise set to 0. 
 #' @param Esat.formula  Optional: formula to be used for the calculation of esat and the slope of esat.
@@ -25,9 +26,9 @@
 #'                      See \code{\link{Esat.slope}}. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air \cr
-#'                  Rd - gas constant of dry air (J kg-1 K-1) (only if \code{approach = "Penman-Monteith"}) \cr
-#'                  Rgas - universal gas constant (J mol-1 K-1) (only if \code{approach = "Penman-Monteith"}) \cr
-#'                  Kelvin - conversion degree Celsius to Kelvin (only if \code{approach = "Penman-Monteith"}) \cr
+#'                  Rd - gas constant of dry air (J kg-1 K-1) (only used if \code{approach = "Penman-Monteith"}) \cr
+#'                  Rgas - universal gas constant (J mol-1 K-1) (only used if \code{approach = "Penman-Monteith"}) \cr
+#'                  Kelvin - conversion degree Celsius to Kelvin (only used if \code{approach = "Penman-Monteith"}) \cr
 #' 
 #' @details Potential evapotranspiration is calculated according to Priestley & Taylor, 1972
 #'          if \code{approach = "Priestley-Taylor"} (the default):

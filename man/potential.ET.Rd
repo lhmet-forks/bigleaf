@@ -32,7 +32,8 @@ potential.ET(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
 
 \item{alpha}{Priestley-Taylor coefficient; only used if \code{approach = "Priestley-Taylor"}.}
 
-\item{Gs_pot}{Potential/maximum surface conductance (mol m-2 s-1); defaults to 0.6 mol m-2 s-1.}
+\item{Gs_pot}{Potential/maximum surface conductance (mol m-2 s-1); defaults to 0.6 mol m-2 s-1;
+only used if \code{approach = "Penman-Monteith"}.}
 
 \item{missing.G.as.NA}{if \code{TRUE}, missing G are treated as \code{NA}s, otherwise set to 0.}
 
@@ -44,9 +45,9 @@ See \code{\link{Esat.slope}}.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air \cr
-Rd - gas constant of dry air (J kg-1 K-1) (only if \code{approach = "Penman-Monteith"}) \cr
-Rgas - universal gas constant (J mol-1 K-1) (only if \code{approach = "Penman-Monteith"}) \cr
-Kelvin - conversion degree Celsius to Kelvin (only if \code{approach = "Penman-Monteith"}) \cr}
+Rd - gas constant of dry air (J kg-1 K-1) (only used if \code{approach = "Penman-Monteith"}) \cr
+Rgas - universal gas constant (J mol-1 K-1) (only used if \code{approach = "Penman-Monteith"}) \cr
+Kelvin - conversion degree Celsius to Kelvin (only used if \code{approach = "Penman-Monteith"}) \cr}
 }
 \value{
 a data.frame with the following columns:
@@ -55,7 +56,7 @@ a data.frame with the following columns:
 }
 \description{
 Potential evapotranspiration according to Priestley & Taylor 1972 or
-             from the Penman-Monteith equation with a prescribed surface conductance.
+             the Penman-Monteith equation with a prescribed surface conductance.
 }
 \details{
 Potential evapotranspiration is calculated according to Priestley & Taylor, 1972

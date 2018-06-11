@@ -1,5 +1,10 @@
 NEWS for Package 'bigleaf'
 
+version 0.7.1 (2018-06-11)
+
+ - rownames corrected in the example datasets (starting at 1 now)
+
+
 version 0.7.0 (2018-06-11)
 
  - hard-coded conversion factors replaced by constants (e.g. g2kg, Pa2kPa, umol2mol, etc.)

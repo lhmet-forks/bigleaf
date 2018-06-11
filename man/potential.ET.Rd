@@ -71,7 +71,7 @@ Potential evapotranspiration is calculated according to Priestley & Taylor, 1972
          if \code{approach = "Penman-Monteith"}, potential evapotranspiration is calculated according
          to the Penman-Monteith equation:
 
-         \deqn{LE_pot,PM = (\Delta * (Rn - G - S) * \rho * cp * VPD * Ga) / (\Delta + \gamma * (1 + Ga/Gs_pot)}
+         \deqn{LE_pot,PM = (\Delta * (Rn - G - S) + \rho * cp * VPD * Ga) / (\Delta + \gamma * (1 + Ga/Gs_pot)}
          
          where \eqn{\Delta} is the slope of the saturation vapor pressure curve (kPa K-1),
          \eqn{\rho} is the air density (kg m-3), and \eqn{\gamma} is the psychrometric constant (kPa K-1).

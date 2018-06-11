@@ -49,7 +49,8 @@ eps - ratio of the molecular weight of water vapor to dry air (-) \cr
 Rd - gas constant of dry air (J kg-1 K-1) \cr
 Rgas - universal gas constant (J mol-1 K-1) \cr
 Kelvin - conversion degree Celsius to Kelvin \cr
-Mw - molar mass of water vapor (kg mol-1)}
+Mw - molar mass of water vapor (kg mol-1) \cr
+Pa2kPa - conversion pascal (Pa) to kilopascal (kPa)}
 }
 \value{
 a dataframe with the following columns: 

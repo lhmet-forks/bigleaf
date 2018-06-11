@@ -38,7 +38,8 @@ One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_
 See \code{\link{Esat.slope}}.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr 
-eps - ratio of the molecular weight of water vapor to dry air (-) \cr}
+eps - ratio of the molecular weight of water vapor to dry air (-) \cr
+Pa2kPa - conversion pascal (Pa) to kilopascal (kPa)}
 }
 \value{
 a data.frame with the following columns:

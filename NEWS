@@ -1,5 +1,11 @@
 NEWS for Package 'bigleaf'
 
+version 0.7.0 (2018-06-11)
+
+ - hard-coded conversion factors replaced by constants (e.g. g2kg, Pa2kPa, umol2mol, etc.)
+   which were added to the bigleaf.constants() list.
+ 
+ 
 version 0.6.1 (2018-04-18)
 
  - default names for 'formulation' arguments changed for clarity in surface.conductance() 

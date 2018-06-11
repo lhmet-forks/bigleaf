@@ -45,6 +45,7 @@ See \code{\link{Esat.slope}}.}
 
 \item{constants}{cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 eps - ratio of the molecular weight of water vapor to dry air \cr
+Pa2kPa - conversion pascal (Pa) to kilopascal (kPa) \cr
 Rd - gas constant of dry air (J kg-1 K-1) (only used if \code{approach = "Penman-Monteith"}) \cr
 Rgas - universal gas constant (J mol-1 K-1) (only used if \code{approach = "Penman-Monteith"}) \cr
 Kelvin - conversion degree Celsius to Kelvin (only used if \code{approach = "Penman-Monteith"}) \cr}

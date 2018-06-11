@@ -115,7 +115,10 @@ intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,
 #'                     is considered to be CO2-limited (umol mol-1), ignored
 #'                     if \code{C3 = TRUE}. 
 #' @param constants    Kelvin - conversion degree Celsius to Kelvin \cr
-#'                     Rgas - universal gas constant (J mol-1 K-1)
+#'                     Rgas - universal gas constant (J mol-1 K-1) \cr
+#'                     kJ2J - conversion kilojoule (kJ) to joule (J) \cr
+#'                     J2kJ - conversion joule (J) to kilojoule (kJ) \cr
+#'                     se_median - conversion standard error (SE) of the mean to SE of the median
 #'                  
 #' @details The maximum carboxylation rate at 25degC (Vcmax25) and the maximum electron
 #'          transport rate at 25degC (Jmax25), which characterize photosynthetic capacity,
@@ -283,15 +286,15 @@ photosynthetic.capacity <- function(data,C3=TRUE,Temp,GPP="GPP",Ci,PPFD="PPFD",P
   Tref <- 25.0 + constants$Kelvin
   
   if (C3){  # C3 vegetation
-    Kc_Ha    <- Kc_Ha * 1000
-    Ko_Ha    <- Ko_Ha * 1000
-    Gam_Ha   <- Gam_Ha * 1000
+    Kc_Ha    <- Kc_Ha * constants$kJ2J
+    Ko_Ha    <- Ko_Ha * constants$kJ2J
+    Gam_Ha   <- Gam_Ha * constants$kJ2J
     
     # Temperature dependencies of photosynthetic parameters 
     Kc  <- Kc25 * exp(Kc_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
     Ko  <- Ko25 * exp(Ko_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
     Gam <- Gam25 * exp(Gam_Ha * (Temp - Tref) / (Tref*constants$Rgas*Temp))
-    Ko  <- Ko / 1000
+    Ko  <- Ko * constants$J2kJ
     
     # basic filtering on Ci 
     Ci[Ci < 80 | is.na(Ci)] <- NA
@@ -354,9 +357,9 @@ photosynthetic.capacity <- function(data,C3=TRUE,Temp,GPP="GPP",Ci,PPFD="PPFD",P
   
   # calculate medians and standard errors of the median
   Vcmax25_Median <- median(Vcmax25,na.rm=TRUE)
-  Vcmax25_SE     <- 1.253 * sd(Vcmax25,na.rm=TRUE)/sqrt((sum(!is.na(Vcmax25))))
+  Vcmax25_SE     <- constants$se_median * sd(Vcmax25,na.rm=TRUE)/sqrt((sum(!is.na(Vcmax25))))
   Jmax25_Median  <- median(Jmax25,na.rm=TRUE)
-  Jmax25_SE      <- 1.253 * sd(Jmax25,na.rm=TRUE)/sqrt((sum(!is.na(Jmax25))))
+  Jmax25_SE      <- constants$se_median * sd(Jmax25,na.rm=TRUE)/sqrt((sum(!is.na(Jmax25))))
   
   return(c("Vcmax25"=round(Vcmax25_Median,2),"Vcmax25_SE"=round(Vcmax25_SE,2),
            "Jmax25"=round(Jmax25_Median,2),"Jmax25_SE"=round(Jmax25_SE,2)))
@@ -377,7 +380,8 @@ photosynthetic.capacity <- function(data,C3=TRUE,Temp,GPP="GPP",Ci,PPFD="PPFD",P
 #' @param Hd    Deactivation energy for param (kJ mol-1)
 #' @param dS    Entropy term for param (kJ mol-1 K-1)
 #' @param constants Kelvin - conversion degree Celsius to Kelvin \cr
-#'                  Rgas - universal gas constant (J mol-1 K-1)
+#'                  Rgas - universal gas constant (J mol-1 K-1) \cr
+#'                  kJ2J - conversion kilojoule (kJ) to joule (J)
 #'                  
 #' @details The function returns the biochemical rate at a reference
 #'          temperature of 25degC given a predefined temperature response function.
@@ -418,9 +422,9 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
   Temp <- Temp + constants$Kelvin
   Tref <- 25.0 + constants$Kelvin
   
-  Ha <- ifelse(missing(Ha),NA,Ha*1000)
-  Hd <- ifelse(missing(Hd),NA,Hd*1000)
-  dS <- ifelse(missing(dS),NA,dS*1000)
+  Ha <- ifelse(missing(Ha),NA,Ha*constants$kJ2J)
+  Hd <- ifelse(missing(Hd),NA,Hd*constants$kJ2J)
+  dS <- ifelse(missing(dS),NA,dS*constants$kJ2J)
   
   if (is.na(Ha)){
     
@@ -479,7 +483,8 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #' @param Gamma      Canopy CO2 compensation point (umol mol-1); only used if \code{model = "Leuning"}. 
 #'                   Can be a constant or a variable. Defaults to 50 umol mol-1.
 #' @param constants  Kelvin - conversion degree Celsius to Kelvin \cr
-#'                   Rgas - universal gas constant (J mol-1 K-1)
+#'                   Rgas - universal gas constant (J mol-1 K-1) \cr
+#'                   DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
 #' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
 #'                            or set to 0 (\code{FALSE}, the default)?
 #' @param ...        Additional arguments to \code{\link[stats]{nls}} or \code{\link[robustbase]{nlrob}} if \code{robust.nls = TRUE}.
@@ -613,20 +618,20 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
       
       if (fitg0){
         if (robust.nls){
-          mod_weights <- nlrob(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g0=0,g1=3),
+          mod_weights <- nlrob(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g0=0,g1=3),
                                na.action=na.exclude,...)$w
-          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),weights=mod_weights,...)
+          mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),weights=mod_weights,...)
         } else {
-          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),...)
+          mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),...)
         }
       } else {
         if (robust.nls){
           df$g0   <- rep(g0,nrow(df)) # g0 as constant does not work in the nlrob function...
-          mod_weights <- nlrob(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g1=3),
+          mod_weights <- nlrob(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g1=3),
                                na.action=na.exclude,...)$w
-          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),weights=mod_weights,...)
+          mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),weights=mod_weights,...)
         } else {
-          mod <- nls(Gs ~ g0 + 1.6*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),...)
+          mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),...)
         }
       }
       

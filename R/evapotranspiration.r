@@ -26,6 +26,7 @@
 #'                      See \code{\link{Esat.slope}}. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 #'                  eps - ratio of the molecular weight of water vapor to dry air \cr
+#'                  Pa2kPa - conversion pascal (Pa) to kilopascal (kPa) \cr
 #'                  Rd - gas constant of dry air (J kg-1 K-1) (only used if \code{approach = "Penman-Monteith"}) \cr
 #'                  Rgas - universal gas constant (J mol-1 K-1) (only used if \code{approach = "Penman-Monteith"}) \cr
 #'                  Kelvin - conversion degree Celsius to Kelvin (only used if \code{approach = "Penman-Monteith"}) \cr
@@ -109,7 +110,7 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
   }
   
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat.slope(Tair,Esat.formula)[,"Delta"]
+  Delta  <- Esat.slope(Tair,Esat.formula,constants)[,"Delta"]
   
   
   if (approach == "Priestley-Taylor"){
@@ -194,7 +195,8 @@ reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD=
 #'                      One of \code{"Sonntag_1990"} (Default), \code{"Alduchov_1996"}, or \code{"Allen_1998"}.
 #'                      See \code{\link{Esat.slope}}. 
 #' @param constants cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
-#'                  eps - ratio of the molecular weight of water vapor to dry air (-)
+#'                  eps - ratio of the molecular weight of water vapor to dry air (-) \cr
+#'                  Pa2kPa - conversion pascal (Pa) to kilopascal (kPa)
 #'                  
 #' @details Total evapotranspiration can be written in the form (Jarvis & McNaughton 1986):
 #' 
@@ -263,7 +265,7 @@ equilibrium.imposed.ET <- function(data,Tair="Tair",pressure="pressure",VPD="VPD
   
   rho    <- air.density(Tair,pressure,constants)
   gamma  <- psychrometric.constant(Tair,pressure,constants)
-  Delta  <- Esat.slope(Tair,Esat.formula)[,"Delta"]
+  Delta  <- Esat.slope(Tair,Esat.formula,constants)[,"Delta"]
   
   LE_eq  <- (Delta * (Rn - G - S)) / (gamma + Delta)
   LE_imp <- (rho * constants$cp * Gs * VPD) / gamma

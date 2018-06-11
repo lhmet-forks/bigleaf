@@ -48,7 +48,8 @@ Can be a constant or a variable. Defaults to 50 umol mol-1.}
 or set to 0 (\code{FALSE}, the default)?}
 
 \item{constants}{Kelvin - conversion degree Celsius to Kelvin \cr
-Rgas - universal gas constant (J mol-1 K-1)}
+Rgas - universal gas constant (J mol-1 K-1) \cr
+DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)}
 
 \item{...}{Additional arguments to \code{\link[stats]{nls}} or \code{\link[robustbase]{nlrob}} if \code{robust.nls = TRUE}.}
 }

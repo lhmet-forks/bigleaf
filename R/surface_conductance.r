@@ -31,7 +31,8 @@
 #'                    Rd - gas constant of dry air (J kg-1 K-1) \cr
 #'                    Rgas - universal gas constant (J mol-1 K-1) \cr
 #'                    Kelvin - conversion degree Celsius to Kelvin \cr
-#'                    Mw - molar mass of water vapor (kg mol-1)
+#'                    Mw - molar mass of water vapor (kg mol-1) \cr
+#'                    Pa2kPa - conversion pascal (Pa) to kilopascal (kPa)
 #' 
 #' 
 #' @details If \code{formulation = "Penman-Monteith"} (the default), surface conductance (Gs) in m s-1 
@@ -145,7 +146,7 @@ surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=N
       S <- 0
     }
     
-    Delta <- Esat.slope(Tair,Esat.formula)[,"Delta"]
+    Delta <- Esat.slope(Tair,Esat.formula,constants)[,"Delta"]
     gamma <- psychrometric.constant(Tair,pressure,constants)
     rho   <- air.density(Tair,pressure,constants)
     

@@ -1,8 +1,9 @@
 NEWS for Package 'bigleaf'
 
-version 0.7.1 (2018-06-11)
+version 0.7.1 (2018-06-13)
 
  - rownames corrected in the example datasets (starting at 1 now)
+ - second part of output in filter.data() function is only shown if at least one variable is actually filtered.
 
 
 version 0.7.0 (2018-06-11)

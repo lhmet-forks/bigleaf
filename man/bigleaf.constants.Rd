@@ -49,6 +49,28 @@ bigleaf.constants(cp = 1004.834, Rgas = 8.31451, Rv = 461.5,
 \item{Kelvin}{Conversion degree Celsius to Kelvin}
 
 \item{DwDc}{Ratio of the molecular diffusivities for water vapor and CO2}
+
+\item{days2seconds}{Seconds per day}
+
+\item{kPa2Pa}{Conversion kilopascal (kPa) to pascal (Pa)}
+
+\item{Pa2kPa}{Conversion pascal (Pa) to kilopascal (kPa)}
+
+\item{umol2mol}{Conversion micromole (umol) to mole (mol)}
+
+\item{mol2umol}{Conversion mole (mol) to micromole (umol)}
+
+\item{kg2g}{Conversion kilogram (kg) to gram (g)}
+
+\item{g2kg}{Conversion gram (g) to kilogram (kg)}
+
+\item{kJ2J}{Conversion kilojoule (kJ) to joule (J)}
+
+\item{J2kJ}{Conversion joule (J) to kilojoule (kJ)}
+
+\item{se_median}{Conversion standard error (SE) of the mean to SE of the median}
+
+\item{frac2percent}{Conversion between fraction and percent}
 }
 \description{
 This function defines the following constants:

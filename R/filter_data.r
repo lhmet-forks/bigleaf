@@ -229,32 +229,39 @@ filter.data <- function(data,quality.control=TRUE,filter.growseas=FALSE,
   
   
   # 5) write to output
-  var.names <- c("growing season","precipitation",filter.vars)
-  cat("Data filtering:",fill=TRUE)
+  if (filter.growseas | filter.precip | length(filter.vars) > 0){
+    var.names <- c("growing season","precipitation",filter.vars)
+    cat("Data filtering:",fill=TRUE)
   
-  cat(length(growseas_invalid)," data points (",invalids_perc[1],"%) excluded by growing season filter",fill=TRUE,sep="")
+    cat(length(growseas_invalid)," data points (",invalids_perc[1],"%) excluded by growing season filter",fill=TRUE,sep="")
   
-  invisible(sapply(c(1:(length(invalids)-1)), function(x) cat(additional_invalids[x]," additional data points (",
-                                                              additional_invalids_perc[x],"%) excluded by ",var.names[x+1],
-                                                              " filter (",length(unlist(invalids[x+1]))," data points = ",
-                                                              invalids_perc[x+1]," % in total)",fill=TRUE,sep="")))
-  
-  
-  invalid        <- unique(unlist(invalids))
-  valid[invalid] <- 0
-  
-  excl_perc <- round((length(invalid)/nrow(data))*constants$frac2percent,2)
-  
-  cat(length(invalid)," data points (",excl_perc,"%) excluded in total",fill=TRUE,sep="")
-  cat(nrow(data) - length(invalid)," valid data points (",constants$frac2percent-excl_perc,"%) remaining.",fill=TRUE,sep="")
+    invisible(sapply(c(1:(length(invalids)-1)), function(x) cat(additional_invalids[x]," additional data points (",
+                                                                additional_invalids_perc[x],"%) excluded by ",var.names[x+1],
+                                                                " filter (",length(unlist(invalids[x+1]))," data points = ",
+                                                                invalids_perc[x+1]," % in total)",fill=TRUE,sep="")))
   
   
-  # 6) return input data frame with filtered time steps set to NA or an additional 'valid' column
-  if (filtered.data.to.NA){
-    data_filtered <- data
-    data_filtered[valid < 1,] <- NA
+    invalid        <- unique(unlist(invalids))
+    valid[invalid] <- 0
+  
+    excl_perc <- round((length(invalid)/nrow(data))*constants$frac2percent,2)
+  
+    cat(length(invalid)," data points (",excl_perc,"%) excluded in total",fill=TRUE,sep="")
+    cat(nrow(data) - length(invalid)," valid data points (",constants$frac2percent-excl_perc,"%) remaining.",fill=TRUE,sep="")
+  
+  
+    # 6) return input data frame with filtered time steps set to NA or an additional 'valid' column
+    if (filtered.data.to.NA){
+      data_filtered <- data
+      data_filtered[valid < 1,] <- NA
+    } else {
+      data_filtered <- data.frame(data,valid)
+    }
+  
   } else {
-    data_filtered <- data.frame(data,valid)
+    
+    data_filtered <- data
+    
   }
   
   return(data_filtered)

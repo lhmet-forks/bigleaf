@@ -6,24 +6,35 @@
 #'
 #' @description This function defines the following constants:
 #' 
-#' @param cp        Specific heat of air for constant pressure (J K-1 kg-1)
-#' @param Rgas      Universal gas constant (J mol-1 K-1)
-#' @param Rv        Gas constant of water vapor (J kg-1 K-1) (Stull 1988 p.641)
-#' @param Rd        Gas constant of dry air (J kg-1 K-1) (Foken p. 245)
-#' @param Md        Molar mass of dry air (kg mol-1)
-#' @param Mw        Molar mass of water vapor (kg mol-1)
-#' @param eps       Ratio of the molecular weight of water vapor to dry air (=Mw/Md)
-#' @param Kelvin    Conversion degree Celsius to Kelvin
-#' @param g         Gravitational acceleration (m s-2)
-#' @param pressure0 Reference atmospheric pressure at sea level (Pa)
-#' @param Tair0     Reference air temperature (K)
-#' @param k         von Karman constant
-#' @param Cmol      Molar mass of carbon (kg mol-1)
-#' @param Omol      Molar mass of oxygen (kg mol-1)
-#' @param sigma     Stefan-Boltzmann constant (W m-2 K-4)
-#' @param DwDc      Ratio of the molecular diffusivities for water vapor and CO2
-#' @param Pr        Prandtl number
-#' @param Sc_CO2    Schmidt number for CO2
+#' @param cp           Specific heat of air for constant pressure (J K-1 kg-1)
+#' @param Rgas         Universal gas constant (J mol-1 K-1)
+#' @param Rv           Gas constant of water vapor (J kg-1 K-1) (Stull 1988 p.641)
+#' @param Rd           Gas constant of dry air (J kg-1 K-1) (Foken p. 245)
+#' @param Md           Molar mass of dry air (kg mol-1)
+#' @param Mw           Molar mass of water vapor (kg mol-1)
+#' @param eps          Ratio of the molecular weight of water vapor to dry air (=Mw/Md)
+#' @param g            Gravitational acceleration (m s-2)
+#' @param pressure0    Reference atmospheric pressure at sea level (Pa)
+#' @param Tair0        Reference air temperature (K)
+#' @param k            von Karman constant
+#' @param Cmol         Molar mass of carbon (kg mol-1)
+#' @param Omol         Molar mass of oxygen (kg mol-1)
+#' @param sigma        Stefan-Boltzmann constant (W m-2 K-4)
+#' @param Pr           Prandtl number
+#' @param Sc_CO2       Schmidt number for CO2
+#' @param Kelvin       Conversion degree Celsius to Kelvin
+#' @param DwDc         Ratio of the molecular diffusivities for water vapor and CO2
+#' @param days2seconds Seconds per day
+#' @param kPa2Pa       Conversion kilopascal (kPa) to pascal (Pa)
+#' @param Pa2kPa       Conversion pascal (Pa) to kilopascal (kPa)
+#' @param umol2mol     Conversion micromole (umol) to mole (mol)
+#' @param mol2umol     Conversion mole (mol) to micromole (umol) 
+#' @param kg2g         Conversion kilogram (kg) to gram (g)
+#' @param g2kg         Conversion gram (g) to kilogram (kg)
+#' @param kJ2J         Conversion kilojoule (kJ) to joule (J)
+#' @param J2kJ         Conversion joule (J) to kilojoule (kJ)
+#' @param se_median    Conversion standard error (SE) of the mean to SE of the median
+#' @param frac2percent Conversion between fraction and percent
 #'
 #' @details This function is passed as an argument to every function that uses one 
 #'          or more constants. Individual constants passed to a function can be 

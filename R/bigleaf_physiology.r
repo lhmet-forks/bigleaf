@@ -620,18 +620,20 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
       
       if (fitg0){
         if (robust.nls){
-          mod_weights <- nlrob(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g0=0,g1=3),
+          df$DwDc <- rep(constants$DwDc,nrow(df))
+          mod_weights <- nlrob(Gs ~ g0 + DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g0=0,g1=3),
                                na.action=na.exclude,...)$w
-          mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),weights=mod_weights,...)
+          mod <- nls(Gs ~ g0 + DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),weights=mod_weights,...)
         } else {
           mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),...)
         }
       } else {
         if (robust.nls){
-          df$g0   <- rep(g0,nrow(df)) # g0 as constant does not work in the nlrob function...
-          mod_weights <- nlrob(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g1=3),
+          df$g0   <- rep(g0,nrow(df))              # g0 as constant does not work in the nlrob function...
+          df$DwDc <- rep(constants$DwDc,nrow(df))  # same with constants$DwDc
+          mod_weights <- nlrob(Gs ~ g0 + DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g1=3),
                                na.action=na.exclude,...)$w
-          mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),weights=mod_weights,...)
+          mod <- nls(Gs ~ g0 + DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),weights=mod_weights,...)
         } else {
           mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),...)
         }

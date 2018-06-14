@@ -14,7 +14,7 @@
 #' @param G         Ground heat flux (W m-2); optional
 #' @param S         Sum of all storage fluxes (W m-2); optional
 #' @param VPD       Vapor pressure deficit (kPa); only used if \code{approach = "Penman-Monteith"}.
-#' @param Ga        Aerodynamic conductance (m s-1); only used if \code{approach = "Penman-Monteith"}.
+#' @param Ga        Aerodynamic conductance to heat/water vapor (m s-1); only used if \code{approach = "Penman-Monteith"}.
 #' @param approach  Approach used. Either \code{"Priestley-Taylor} (default), or \code{"Penman-Monteith}.
 #' @param alpha     Priestley-Taylor coefficient; only used if \code{approach = "Priestley-Taylor"}.
 #' @param Gs_pot    Potential/maximum surface conductance (mol m-2 s-1); defaults to 0.6 mol m-2 s-1;
@@ -86,7 +86,7 @@
 #' surface.conductance(Tair=20,pressure=100,VPD=2,Ga=0.1,Rn=400,LE=LE_pot_PM)
 #' @export
 potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,
-                         VPD="VPD",Ga="Ga",approach=c("Priestley-Taylor","Penman-Monteith"),
+                         VPD="VPD",Ga="Ga_h",approach=c("Priestley-Taylor","Penman-Monteith"),
                          alpha=1.26,Gs_pot=0.6,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                          Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                          constants=bigleaf.constants()){
@@ -148,7 +148,7 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
 #' @param Tair      Air temperature (degC)
 #' @param pressure  Atmospheric pressure (kPa)
 #' @param VPD       Vapor pressure deficit (kPa)
-#' @param Ga        Aerodynamic conductance (m s-1)
+#' @param Ga        Aerodynamic conductance to heat/water vapor (m s-1)
 #' @param Rn        Net radiation (W m-2)
 #' @param G         Ground heat flux (W m-2); optional
 #' @param S         Sum of all storage fluxes (W m-2); optional
@@ -164,7 +164,7 @@ potential.ET <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=N
 #'                  Kelvin - conversion degree Celsius to Kelvin (only if \code{approach = "Penman-Monteith"}) \cr
 #' 
 #' @export                            
-reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="Rn",Ga="Ga",
+reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD="VPD",Rn="Rn",Ga="Ga_h",
                          G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                          Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                          constants=bigleaf.constants()){
@@ -185,7 +185,7 @@ reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD=
 #' @param Tair      Air temperature (deg C)
 #' @param pressure  Atmospheric pressure (kPa)
 #' @param VPD       Air vapor pressure deficit (kPa)
-#' @param Gs        surface conductance (m s-1)
+#' @param Gs        surface conductance to water vapor (m s-1)
 #' @param Rn        Net radiation (W m-2)
 #' @param G         Ground heat flux (W m-2); optional
 #' @param S         Sum of all storage fluxes (W m-2); optional
@@ -242,7 +242,7 @@ reference.ET <- function(data,Gs_ref=0.0143,Tair="Tair",pressure="pressure",VPD=
 #' equilibrium.imposed.ET(df)            
 #'             
 #' @export
-equilibrium.imposed.ET <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs",
+equilibrium.imposed.ET <- function(data,Tair="Tair",pressure="pressure",VPD="VPD",Gs="Gs_ms",
                                    Rn="Rn",G=NULL,S=NULL,missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                                    Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                                    constants=bigleaf.constants()){

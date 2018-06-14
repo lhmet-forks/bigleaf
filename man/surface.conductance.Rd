@@ -5,7 +5,7 @@
 \title{Surface Conductance to Water Vapor}
 \usage{
 surface.conductance(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
-  G = NULL, S = NULL, VPD = "VPD", LE = "LE", Ga = "Ga",
+  G = NULL, S = NULL, VPD = "VPD", LE = "LE", Ga = "Ga_h",
   missing.G.as.NA = FALSE, missing.S.as.NA = FALSE,
   formulation = c("Penman-Monteith", "Flux-Gradient"),
   Esat.formula = c("Sonntag_1990", "Alduchov_1996", "Allen_1998"),
@@ -28,7 +28,7 @@ surface.conductance(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
 
 \item{LE}{Latent heat flux (W m-2)}
 
-\item{Ga}{Aerodynamic conductance (m s-1)}
+\item{Ga}{Aerodynamic conductance to heat/water vapor (m s-1)}
 
 \item{missing.G.as.NA}{if \code{TRUE}, missing G are treated as \code{NA}s, otherwise they are set to 0.
 Only used if \code{formulation = "Penman-Monteith"}.}

@@ -56,7 +56,7 @@
 #' # note the sign convention for NEE
 #' 
 #' @export
-intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs",Rleaf=NULL,
+intercellular.CO2 <- function(data,Ca="Ca",GPP="GPP",Gs="Gs_mol",Rleaf=NULL,
                               missing.Rleaf.as.NA=FALSE,constants=bigleaf.constants()){
   
   check.input(data,list(Ca,GPP,Gs))
@@ -494,18 +494,20 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'          
 #'          The unified stomatal optimization (USO) model is given by (Medlyn et al. 2011):
 #'      
-#'             \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * GPP/Ca}
+#'             \deqn{gs = g0 + 1.6*(1.0 + g1/sqrt(VPD)) * An/ca}
 #'          
 #'          The semi-empirical model by Ball et al. 1987 is defined as:
 #'          
-#'             \deqn{gs = g0 + g1* ((An * rH) / Ca)}
+#'             \deqn{gs = g0 + g1* ((An * rH) / ca)}
 #'          
 #'          Leuning 1995 suggested a revised version of the Ball&Berry model:
 #'          
-#'             \deqn{gs = g0 + g1*GPP / ((Ca - \Gamma) * (1 + VPD/D0))}
+#'             \deqn{gs = g0 + g1*An / ((ca - \Gamma) * (1 + VPD/D0))}
 #'          
 #'          where \eqn{\Gamma} is by default assumed to be constant, but likely varies with temperature and among
 #'          plant species. 
+#'          The equations above are valid at leaf-level. At ecosystem level, An is replaced by GPP (or GPP - Rleaf,
+#'          where Rleaf is leaf respiration), and gs (stomatal conductance) by Gs (surface conductance). 
 #'          The parameters in the models are estimated using nonlinear regression (\code{\link[stats]{nls}}) if
 #'          \code{robust.nls = FALSE} and weighted nonlinear regression if \code{robust.nls = TRUE}.
 #'          The weights are calculated from \code{\link[robustbase]{nlrob}}, and \code{\link[stats]{nls}}
@@ -574,7 +576,7 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #' @importFrom robustbase nlrob
 #' 
 #' @export 
-stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs",
+stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs_mol",
                            VPD="VPD",Ca="Ca",Rleaf=NULL,model=c("USO","Ball&Berry","Leuning"),
                            robust.nls=FALSE,nmin=40,fitg0=FALSE,g0=0,fitD0=FALSE,
                            D0=1.5,Gamma=50,missing.Rleaf.as.NA=FALSE,
@@ -827,7 +829,7 @@ light.use.efficiency <- function(GPP,PPFD){
 #' @description Sensitivity of surface conductance to vapor pressure deficit.
 #' 
 #' @param data  Data.frame or matrix containing all required columns
-#' @param Gs    Surface conductance (mol m-2 s-1)
+#' @param Gs    Surface conductance to water vapor (mol m-2 s-1)
 #' @param VPD   Vapor pressure deficit (kPa)
 #' @param ...   Additional arguments to \code{\link[stats]{nls}}
 #' 
@@ -873,7 +875,7 @@ light.use.efficiency <- function(GPP,PPFD){
 #' @importFrom stats nls
 #' 
 #' @export
-stomatal.sensitivity <- function(data,Gs="Gs",VPD="VPD",...){
+stomatal.sensitivity <- function(data,Gs="Gs_mol",VPD="VPD",...){
   
   check.input(data,list(Gs,VPD))
   

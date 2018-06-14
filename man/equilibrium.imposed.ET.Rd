@@ -5,7 +5,7 @@
 \title{Equilibrium and Imposed Evapotranspiration}
 \usage{
 equilibrium.imposed.ET(data, Tair = "Tair", pressure = "pressure",
-  VPD = "VPD", Gs = "Gs", Rn = "Rn", G = NULL, S = NULL,
+  VPD = "VPD", Gs = "Gs_ms", Rn = "Rn", G = NULL, S = NULL,
   missing.G.as.NA = FALSE, missing.S.as.NA = FALSE,
   Esat.formula = c("Sonntag_1990", "Alduchov_1996", "Allen_1998"),
   constants = bigleaf.constants())
@@ -19,7 +19,7 @@ equilibrium.imposed.ET(data, Tair = "Tair", pressure = "pressure",
 
 \item{VPD}{Air vapor pressure deficit (kPa)}
 
-\item{Gs}{surface conductance (m s-1)}
+\item{Gs}{surface conductance to water vapor (m s-1)}
 
 \item{Rn}{Net radiation (W m-2)}
 

@@ -9,7 +9,7 @@
 #' @param data        Data.frame or matrix containing all required input variables
 #' @param Tair        Air temperature (deg C)
 #' @param pressure    Atmospheric pressure (kPa)
-#' @param Ga          Aerodynamic conductance (m s-1)
+#' @param Ga          Aerodynamic conductance to heat/water vapor (m s-1)
 #' @param Gs          Surface conductance (m s-1)
 #' @param approach    Approach used to calculate omega. Either \code{"Jarvis&McNaughton_1986"} (default)
 #'                    or \code{"Martin_1989"}.
@@ -68,7 +68,7 @@
 #' decoupling(df,approach="Martin_1989",LAI=4)
 #' 
 #' @export
-decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga",Gs="Gs",
+decoupling <- function(data,Tair="Tair",pressure="pressure",Ga="Ga_h",Gs="Gs_ms",
                        approach=c("Jarvis&McNaughton_1986","Martin_1989"),
                        LAI,Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                        constants=bigleaf.constants()){

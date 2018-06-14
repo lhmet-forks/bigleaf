@@ -15,7 +15,7 @@
 #' @param S         Sum of all storage fluxes (W m-2); optional
 #' @param LE        Latent heat flux (W m-2)
 #' @param VPD       Vapor pressure deficit (kPa)
-#' @param Ga        Aerodynamic conductance (m s-1)
+#' @param Ga        Aerodynamic conductance to heat/water vapor (m s-1)
 #' @param missing.G.as.NA  if \code{TRUE}, missing G are treated as \code{NA}s, otherwise they are set to 0.
 #'                         Only used if \code{formulation = "Penman-Monteith"}.
 #' @param missing.S.as.NA  if \code{TRUE}, missing S are treated as \code{NA}s, otherwise they are set to 0. 
@@ -114,7 +114,7 @@
 #'             
 #' @export
 surface.conductance <- function(data,Tair="Tair",pressure="pressure",Rn="Rn",G=NULL,S=NULL,
-                                VPD="VPD",LE="LE",Ga="Ga",missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
+                                VPD="VPD",LE="LE",Ga="Ga_h",missing.G.as.NA=FALSE,missing.S.as.NA=FALSE,
                                 formulation=c("Penman-Monteith","Flux-Gradient"),
                                 Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
                                 constants=bigleaf.constants()){ 

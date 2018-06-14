@@ -4,8 +4,8 @@
 \alias{decoupling}
 \title{Canopy-Atmosphere Decoupling Coefficient}
 \usage{
-decoupling(data, Tair = "Tair", pressure = "pressure", Ga = "Ga",
-  Gs = "Gs", approach = c("Jarvis&McNaughton_1986", "Martin_1989"), LAI,
+decoupling(data, Tair = "Tair", pressure = "pressure", Ga = "Ga_h",
+  Gs = "Gs_ms", approach = c("Jarvis&McNaughton_1986", "Martin_1989"), LAI,
   Esat.formula = c("Sonntag_1990", "Alduchov_1996", "Allen_1998"),
   constants = bigleaf.constants())
 }
@@ -16,7 +16,7 @@ decoupling(data, Tair = "Tair", pressure = "pressure", Ga = "Ga",
 
 \item{pressure}{Atmospheric pressure (kPa)}
 
-\item{Ga}{Aerodynamic conductance (m s-1)}
+\item{Ga}{Aerodynamic conductance to heat/water vapor (m s-1)}
 
 \item{Gs}{Surface conductance (m s-1)}
 

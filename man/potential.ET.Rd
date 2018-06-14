@@ -5,7 +5,7 @@
 \title{Potential Evapotranspiration}
 \usage{
 potential.ET(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
-  G = NULL, S = NULL, VPD = "VPD", Ga = "Ga",
+  G = NULL, S = NULL, VPD = "VPD", Ga = "Ga_h",
   approach = c("Priestley-Taylor", "Penman-Monteith"), alpha = 1.26,
   Gs_pot = 0.6, missing.G.as.NA = FALSE, missing.S.as.NA = FALSE,
   Esat.formula = c("Sonntag_1990", "Alduchov_1996", "Allen_1998"),
@@ -26,7 +26,7 @@ potential.ET(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
 
 \item{VPD}{Vapor pressure deficit (kPa); only used if \code{approach = "Penman-Monteith"}.}
 
-\item{Ga}{Aerodynamic conductance (m s-1); only used if \code{approach = "Penman-Monteith"}.}
+\item{Ga}{Aerodynamic conductance to heat/water vapor (m s-1); only used if \code{approach = "Penman-Monteith"}.}
 
 \item{approach}{Approach used. Either \code{"Priestley-Taylor} (default), or \code{"Penman-Monteith}.}
 

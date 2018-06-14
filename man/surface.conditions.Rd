@@ -5,7 +5,7 @@
 \title{Big-Leaf Surface Conditions}
 \usage{
 surface.conditions(data, Tair = "Tair", pressure = "pressure", LE = "LE",
-  H = "H", VPD = "VPD", Ga = "Ga", calc.surface.CO2 = FALSE,
+  H = "H", VPD = "VPD", Ga = "Ga_h", calc.surface.CO2 = FALSE,
   Ca = "Ca", Ga_CO2 = "Ga_CO2", NEE = "NEE",
   Esat.formula = c("Sonntag_1990", "Alduchov_1996", "Allen_1998"),
   constants = bigleaf.constants())

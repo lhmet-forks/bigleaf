@@ -4,6 +4,7 @@ version 0.7.1 (2018-06-13)
 
  - rownames corrected in the example datasets (starting at 1 now)
  - second part of output in filter.data() function is only shown if at least one variable is actually filtered.
+ - default values for several arguments changed (e.g. "Ga" to "Ga_h") to ensure internal consistency
 
 
 version 0.7.0 (2018-06-11)

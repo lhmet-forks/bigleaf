@@ -586,7 +586,9 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
   
   check.input(data,list(Tair,pressure,GPP,Gs,VPD,Ca))
 
-  df <- data.frame(Tair,pressure,GPP,Gs,VPD,Ca)
+  df   <- data.frame(Tair,pressure,GPP,Gs,VPD,Ca)
+  DwDc <- constants$DwDc  # ...to work within nls()
+  
   
   if (model == "Leuning"){
     check.input(data,Gamma)
@@ -620,22 +622,22 @@ stomatal.slope <- function(data,Tair="Tair",pressure="pressure",GPP="GPP",Gs="Gs
       
       if (fitg0){
         if (robust.nls){
-          df$DwDc <- rep(constants$DwDc,nrow(df))
+          df$DwDc <- rep(DwDc,nrow(df))
           mod_weights <- nlrob(Gs ~ g0 + DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g0=0,g1=3),
                                na.action=na.exclude,...)$w
-          mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),weights=mod_weights,...)
+          mod <- nls(Gs ~ g0 + DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),weights=mod_weights,...)
         } else {
-          mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),...)
+          mod <- nls(Gs ~ g0 + DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g0=0,g1=3),...)
         }
       } else {
         if (robust.nls){
-          df$g0   <- rep(g0,nrow(df))              # g0 as constant does not work in the nlrob function...
-          df$DwDc <- rep(constants$DwDc,nrow(df))  # same with constants$DwDc
+          df$g0   <- rep(g0,nrow(df))    # g0 as constant does not work in the nlrob function...
+          df$DwDc <- rep(DwDc,nrow(df))  # same with constants$DwDc
           mod_weights <- nlrob(Gs ~ g0 + DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,data=df,start=list(g1=3),
                                na.action=na.exclude,...)$w
-          mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),weights=mod_weights,...)
+          mod <- nls(Gs ~ g0 + DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),weights=mod_weights,...)
         } else {
-          mod <- nls(Gs ~ g0 + constants$DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),...)
+          mod <- nls(Gs ~ g0 + DwDc*(1.0 + g1/sqrt(VPD))*GPP/Ca,start=list(g1=3),...)
         }
       }
       

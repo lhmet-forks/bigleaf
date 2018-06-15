@@ -484,7 +484,7 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'                   Can be a constant or a variable. Defaults to 50 umol mol-1.
 #' @param constants  Kelvin - conversion degree Celsius to Kelvin \cr
 #'                   Rgas - universal gas constant (J mol-1 K-1) \cr
-#'                   DwDc - Ratio of the molecular diffusivities for water vapor and CO2 (-)
+#'                   DwDc - Ratio of the molecular diffusivities for water vapor and CO2
 #' @param missing.Rleaf.as.NA if Rleaf is provided, should missing values be treated as \code{NA} (\code{TRUE})
 #'                            or set to 0 (\code{FALSE}, the default)?
 #' @param ...        Additional arguments to \code{\link[stats]{nls}} or \code{\link[robustbase]{nlrob}} if \code{robust.nls = TRUE}.

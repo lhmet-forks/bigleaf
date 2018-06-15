@@ -15,7 +15,7 @@
 #' @param S         Sum of all storage fluxes (W m-2); optional
 #' @param VPD       Vapor pressure deficit (kPa); only used if \code{approach = "Penman-Monteith"}.
 #' @param Ga        Aerodynamic conductance to heat/water vapor (m s-1); only used if \code{approach = "Penman-Monteith"}.
-#' @param approach  Approach used. Either \code{"Priestley-Taylor} (default), or \code{"Penman-Monteith}.
+#' @param approach  Approach used. Either \code{"Priestley-Taylor"} (default), or \code{"Penman-Monteith"}.
 #' @param alpha     Priestley-Taylor coefficient; only used if \code{approach = "Priestley-Taylor"}.
 #' @param Gs_pot    Potential/maximum surface conductance (mol m-2 s-1); defaults to 0.6 mol m-2 s-1;
 #'                  only used if \code{approach = "Penman-Monteith"}.

@@ -77,7 +77,7 @@ Surface conductance (Gs) can be calculated with \code{\link{surface.conductance}
 }
 \examples{
 df <- data.frame(Tair=20,pressure=100,VPD=seq(0.5,4,0.5),
-                 Gs=seq(0.01,0.002,length.out=8),Rn=seq(50,400,50))            
+                 Gs_ms=seq(0.01,0.002,length.out=8),Rn=seq(50,400,50))            
 equilibrium.imposed.ET(df)            
             
 }

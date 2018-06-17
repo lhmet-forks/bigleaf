@@ -1,11 +1,16 @@
 NEWS for Package 'bigleaf'
 
 
+version 0.6.5 (2018-06-17)
+
+  - Vignette "Tutorial on bigleaf" added 
+
+  
 version 0.6.4 (2018-06-15)
 
-  - bug fix to energy.closure(): G and S were previously always ignored in the calculation of the intercept and slope.
-  
+  - bug fix to energy.closure(): G and S were previously always ignored in the calculation of the intercept and slope.  
 
+  
 version 0.6.3 (2018-06-13)
 
  - rownames corrected in the example datasets (starting at 1 now)

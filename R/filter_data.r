@@ -232,7 +232,10 @@ filter.data <- function(data,quality.control=TRUE,filter.growseas=FALSE,
     
     var.names <- c("growing season","precipitation",filter.vars)
     
-    cat("----------------------------------------------------------------",fill=TRUE)
+    if (quality.control){
+      cat("-------------------------------------------------------------------",fill=TRUE)
+    }
+      
     cat("Data filtering:",fill=TRUE)
   
     cat(length(growseas_invalid)," data points (",invalids_perc[1],"%) excluded by growing season filter",fill=TRUE,sep="")

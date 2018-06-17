@@ -28,7 +28,7 @@ potential.ET(data, Tair = "Tair", pressure = "pressure", Rn = "Rn",
 
 \item{Ga}{Aerodynamic conductance to heat/water vapor (m s-1); only used if \code{approach = "Penman-Monteith"}.}
 
-\item{approach}{Approach used. Either \code{"Priestley-Taylor} (default), or \code{"Penman-Monteith}.}
+\item{approach}{Approach used. Either \code{"Priestley-Taylor"} (default), or \code{"Penman-Monteith"}.}
 
 \item{alpha}{Priestley-Taylor coefficient; only used if \code{approach = "Priestley-Taylor"}.}
 

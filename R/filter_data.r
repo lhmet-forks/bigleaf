@@ -174,7 +174,6 @@ filter.data <- function(data,quality.control=TRUE,filter.growseas=FALSE,
       
       cat(var,": ",qc_invalid," data points (",qc_invalid_perc,"%) set to NA",fill=TRUE,sep="")
     }
-    cat("----------------------------------------------------------------",fill=TRUE)
   }
   
   
@@ -230,7 +229,10 @@ filter.data <- function(data,quality.control=TRUE,filter.growseas=FALSE,
   
   # 5) write to output
   if (filter.growseas | filter.precip | length(filter.vars) > 0){
+    
     var.names <- c("growing season","precipitation",filter.vars)
+    
+    cat("----------------------------------------------------------------",fill=TRUE)
     cat("Data filtering:",fill=TRUE)
   
     cat(length(growseas_invalid)," data points (",invalids_perc[1],"%) excluded by growing season filter",fill=TRUE,sep="")

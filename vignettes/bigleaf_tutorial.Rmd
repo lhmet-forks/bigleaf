@@ -14,9 +14,7 @@ knitr::opts_chunk$set(collapse=TRUE,comment="#>")
 ```
 
 
-\vspace{2cm}
-
-This vignette is a short introduction to the functionalities of the `bigleaf` R package version 0.6.4. It is directed to first-time package users who are familiar with the basic concepts of R. After a tutorial presenting several key functions of the package, some useful hints and guidelines are given at the end of the vignette.
+This vignette is a short introduction to the functionalities of the `bigleaf` R package (version 0.6.5). It is directed to first-time package users who are familiar with the basic concepts of R. After presenting the use of several key functions of the package, some useful hints and guidelines are given at the end of the vignette.
 
 \vspace{1cm}
 
@@ -48,7 +46,7 @@ library(bigleaf)
 
 ## Important conceptual considerations
 
-All calculations in the `bigleaf` package assume that vegetation is simplified to a  "big-leaf", i.e. a single, homogenous plane which acts as the only source and sink of the measured fluxes. This assumption comes with the advantages that calculations are simplified considerably and that (in most cases) little ancillary information on the EC sites is required. It is important to keep in mind that these simplifications go hand in hand with critical limitations. All derived variables are bulk ecosystem characteristics and have to be interpreted as such. It is for example not possible to infer within-canopy variations of a certain property.
+All calculations in the `bigleaf` package assume that the ecosystem behaves like a  "big-leaf", i.e. a single, homogenous plane which acts as the only source and sink of the measured fluxes. This assumption comes with the advantages that calculations are simplified considerably and that (in most cases) little ancillary information on the EC sites is required. It is important to keep in mind that these simplifications go hand in hand with critical limitations. All derived variables are bulk ecosystem characteristics and have to be interpreted as such. It is for example not possible to infer within-canopy variations of a certain property.
 
 Please also keep in mind that the `bigleaf` package does NOT provide formulations for bottom-up modelling. The principle applied here is to use an inversion approach in which ecosystem properties are inferred top-down from the measured fluxes. Such an inversion can, in principle, be also be conducted with more complex models (e.g. sun/shade or canopy/soil models), but keep in mind that these approaches also require that the additional, site-specific parameters are adequately well known. 
 
@@ -66,8 +64,15 @@ head(DE_Tha_Jun_2014)
 tha <- DE_Tha_Jun_2014
 ```
 
-We give the data.frame a shorter name here. More information on the data (e.g. meaning of column names and units) can be found when typing `?DE_Tha_Jun_2014`.
+We give the data.frame a shorter name here. More information on the data (e.g. meaning of column names and units) can be found when typing `?DE_Tha_Jun_2014`. For more information on the site see e.g. Grünwald & Bernhofer 2007.
+In addition, we will need some ancillary data on the site throughout this tutorial. To ensure consistency, we define them here at the beginning:
 
+```{r}
+LAI <- 7.6   # leaf area index
+zh  <- 26.5  # average vegetation height (m)
+zr  <- 42    # sensor height (m)
+Dl  <- 0.01  # leaf characteristic dimension (m)
+```
 
 
 
@@ -121,7 +126,7 @@ Many functions require the available energy ($A$), which is defined as ($A = R_n
 
 ## Function walkthrough
 
-In the following, we explain how to use several of the packages key functions. Further information on the function usage can be found in the respective function help pages, the publication, or other references.
+In the following, we explain how to use several of the package's key functions. Further information on the functions can be found on the respective function help pages and the references therein.
 
 
 ### Data filtering
@@ -201,8 +206,8 @@ For comparison, we now calculate a second estimate of $G_a$, where the calculati
 
 
 ```{r}
-Ga_Su <- aerodynamic.conductance(tha_filtered,Rb_model="Su_2001",LAI=7.6,zh=26.5,d=0.7*26.5,
-                                 zr=42,Dl=0.01)
+Ga_Su <- aerodynamic.conductance(tha_filtered,Rb_model="Su_2001",LAI=LAI,zh=zh,d=0.7*zh,
+                                 zr=zr,Dl=Dl)
 summary(Ga_Su)
 tha_filtered <- cbind(tha_filtered,Ga_Su)
 ```
@@ -227,8 +232,20 @@ summary(surf)
 tha_filtered <- cbind(tha_filtered,surf)
 ```
 
-By default, the function calculates surface temperature and several humidity measures, including VPD and relative humidity. If we set `calc.surface.CO2=TRUE`, the CO$_2$ concentration at the surface is calculated additionally. Useful to know is that the expression "surface" depends on the type of aerodynamic conductance we provide. If $G_a = G_{a,h}$, we derive the conditions at the notional canopy surface (or the "big-leaf" surface). If $G_a = G_{a,m}$, we derive conditions in the intercanopy airspace (because $G_a$ does not account for the leaf boundary layer).
+By default, the function calculates surface temperature and several humidity measures, including VPD and relative humidity. If we set `calc.surface.CO2=TRUE`, the CO$_2$ concentration at the surface is calculated additionally. Useful to know is that the expression "surface" depends on what kind of aerodynamic conductance we provide. If $G_a = G_{a,h}$, we derive the conditions at the notional canopy surface (or the "big-leaf" surface). If $G_a = G_{a,m}$, we derive conditions in the intercanopy airspace (because $G_a$ does not account for the leaf boundary layer).
 
+We can compare the surface and air temperature:
+
+```{r}
+par(mfrow=c(1,2),mar=c(5,4,2,0.5))
+plot(tha_filtered[,"Tair"] ~ tha_filtered[,"Tsurf"],xlim=c(8,35),ylim=c(8,35),las=1,
+     xlab="Tsurf (°C)",ylab="Tair (°C)",mgp=c(2.2,0.5,0),tcl=-0.2)
+abline(0,1)
+plot(tha_filtered[,"VPD"] ~ tha_filtered[,"VPD_surf"],xlim=c(0,4),ylim=c(0,4),las=1,
+     xlab="VPD surface (kPa)",ylab="VPD air (kPa)",mgp=c(2.2,0.5,0),tcl=-0.2)
+abline(0,1)
+```
+Both surface temperature and VPD are in most cases higher than the ones measured at tower height.  
 
 
 
@@ -273,7 +290,8 @@ By default, the model takes VPD and atmospheric CO$_2$ concentration as measured
 
 ```{r}
 ## stomatal slope from the USO model (Medlyn et al. 2011)
-stomatal.slope(tha_filtered,Tair="Tsurf",VPD="VPD_surf",Ca="Ca_surf",model="USO",g0=0,robust.nls=TRUE)
+g1_USO <- stomatal.slope(tha_filtered,Tair="Tsurf",VPD="VPD_surf",Ca="Ca_surf",model="USO",g0=0,robust.nls=TRUE)
+g1_USO
 ```
 which in this case, does not change our $g_1$ value significantly.
 
@@ -288,26 +306,40 @@ stomatal.slope(tha_filtered,model="Ball&Berry",g0=0,robust.nls=TRUE)
 stomatal.slope(tha_filtered,model="Leuning",g0=0,fitD0=TRUE,robust.nls=TRUE)
 ```
 
-Note that the absolute value of the g1 parameter depends on the model. In the Leuning model, we have a third parameter $D_0$ that can again either be estimated (as in the example above) or fixed to a pre-defined value (by default 1.5 kPa). $D_0$ describes the stomatal sensitivity to VPD (higher values correspond to a lower stomatal sensitivity to VPD - note however that $g_1$ and $D_0$ are strongly correlated, which makes an independent estimates of $D_0$ difficult to achieve). 
+Note that the absolute value of the $g_1$ parameter depends on the model. In the Leuning model, we have a third parameter $D_0$ that can again either be estimated (as in the example above) or fixed to a pre-defined value (by default 1.5 kPa). $D_0$ describes the stomatal sensitivity to VPD (higher values correspond to a lower stomatal sensitivity to VPD - note however that $g_1$ and $D_0$ are strongly correlated, which makes an independent estimates of $D_0$ difficult to achieve). 
 
+We can visualize the $g_1$ parameter by plotting $G_s$ against the "stomatal index":
 
+```{r}
+stomatal_index <- tha_filtered[,"GPP"] / (tha_filtered[,"Ca"] * sqrt(tha_filtered[,"VPD"]))
 
-
+plot(tha_filtered[,"Gs_mol"] ~ stomatal_index,las=1,xlab=expression("GPP / (C"["a"]~sqrt("D"["a"])*")"),
+     ylab=expression("G"["s,w"]~"(mol m"^{-2}~"s"^{-1}*")"),tcl=0.2,mgp=c(2.2,0.5,0),xlim=c(0,0.12))
+```
 
 
 
 ### Wind profile
 
-The 'big-leaf' framework assumes that wind speed is zero at height d + $z_{0m}$ (where $z_{0m}$ is the roughness length for momentum) and then increases exponentially with height. The shape of the wind profile further depends on the stability conditions in the air layers above the canopy.
-In `bigleaf`, a wind profile can be calculated assuming an exponential increase with height, which is affected by atmospheric stability:
+The 'big-leaf' framework assumes that wind speed is zero at height d + $z_{0m}$ (where $z_{0m}$ is the roughness length for momentum) and then increases exponentially with height. The shape of the wind profile further depends on the stability conditions of the air above the canopy.
+In `bigleaf`, a wind profile can be calculated assuming an exponential increase with height, which is affected by atmospheric stability. Here, we calculate wind speed at heights of 22-60m in steps of 2m. As expected, the gradient in wind speed is strongest close to the surface and weaker at greater heights:
 
 ```{r}
-summary(wind.profile(tha_filtered,heights=seq(22,42,4),zh=26.5,zr=42))
+wind_heights <- seq(22,60,2)
+wp <- wind.profile(tha_filtered,heights=wind_heights,zh=zh,zr=zr)
+wp_means <- colMeans(wp,na.rm=TRUE)
+wp_sd    <- apply(wp,2,sd,na.rm=TRUE)
+
+plot(wind_heights ~ wp_means,xlab=expression("wind speed (m s"^{-1}*")"),ylab="height (m)",las=1,
+     mgp=c(2.2,0.5,0),tcl=0.2,xlim=c(0,5))
+arrows(wp_means-wp_sd,wind_heights,wp_means+wp_sd,wind_heights,angle=90,
+       length=0.02,code=3)
+points(x=mean(tha_filtered[,"wind"],na.rm=TRUE),y=zr,col="blue",pch=16)
+arrows(mean(tha_filtered[,"wind"],na.rm=TRUE)-sd(tha_filtered[,"wind"],na.rm=TRUE),
+       zr,mean(tha_filtered[,"wind"],na.rm=TRUE)+sd(tha_filtered[,"wind"],na.rm=TRUE),
+       zr,angle=90,length=0.02,code=3,col="blue")
 ```
-
-In this case, we have calculated wind speed at heights of 22-42m in steps of 4m. As expected, the gradient in wind speed is strongest close to the surface and weaker at greater heights.
-
-
+Here, the points denote the mean wind speed and the bars denote the standard deviation. The blue point/bars represent the values that were measured at 42m. In this case we see that the wind speed "back-calculated" from the wind profile agrees well with the actual measurements.
 
 
 
@@ -459,18 +491,25 @@ We can use this function with our data:
 
 ```{r, results="hide"}
 tha_G1BT <- G1.bootstrap(dat = tha_filtered,LoopNum = 300,SampSizeRel = 0.75) #300 times resampling; each time 75 % of the data. 
-boxplot(tha_G1BT)
+# estimate using all data
+g1_mean <- summary(g1_USO)$coef[1,1]
+g1_se   <- summary(g1_USO)$coef[1,2]
+
+par(mar=c(2,6,1,1))
+boxplot(tha_G1BT,ylab=expression(italic("G")["1,USO"]~"(kPa"^{0.5}*")"),las=1,mgp=c(2,0.5,0))
+points(g1_mean,col="blue",pch=16,cex=1.5)
+arrows(1,g1_mean - g1_se,1,g1_mean + g1_se,angle=90,length=0.2,code=3,col="blue",lwd=2)
 ```
 
-The bootstrapping technique can also be applied to other (regression-based) functions.
+The blue point shows the estimate (+/- standard error) when we take all data, as calculated above. The two estimates agree well, but we are likely to overestimate $g_1$ slightly if we do not apply bootstrapping. The bootstrapping technique can also be applied to other (regression-based) functions in the package.
 
 
 
 
 
 
-In the second example we implement a simple Monte Carlo analysis in which we propagate uncertainties in the calculation of $G_a$ to uncertainties in $G_s$ (which takes $G_a$ as input). To do this, we first estimate the uncertainty in $G_a$ that is caused by uncertainties in three of its input parameters: the leaf characteristic dimension $D_l$, the LAI, and the roughness length $z_{0m}$. The uncertainty of other parameters could be included, but for demonstration purposes we only use these three. 
-First, we have to assess the variation in the input parameters. We estimated $D_l$ = 1cm, LAI=7.6 (as measured at the site), and $z_{0m}=2.65m$ (10% of the vegetation height), but these estimates have an error distribution. In this case we assume that their errors are normally distributed with a standard deviation (sd) equal to 0.25 the mean in case of $z_{0m}$ and $D_l$, or a sd of 0.5 in case of LAI. 
+In the second example we implement a simple Monte Carlo analysis in which we propagate uncertainties in the calculation of $G_a$ to uncertainties in $G_s$ (which takes $G_a$ as input). To do this, we first estimate the uncertainty in $G_a$ that is caused by uncertainties in three of its input parameters: the leaf characteristic dimension $D_l$, the LAI, and the roughness length $z_{0,m}$. The uncertainty of other parameters could be included, but for demonstration purposes we only use these three. 
+First, we have to assess the mean and the error distribution of the input parameters. We estimated $D_l$ = 1cm, LAI=7.6 (as measured at the site), and $z_{0,m}=2.65m$ (10% of the vegetation height), and we assume that their errors are normally distributed with a standard deviation (sd) equal to 25% of the mean in case of $z_{0,m}$ and $D_l$. In case of LAI we assume a sd of 0.5. 
 
 ```{r}
 n_pert <- 200
@@ -482,7 +521,7 @@ Dl_sample  <- pmax(rnorm(n=n_pert,mean=Dl1,sd=0.25*Dl1),0)
 LAI_sample <- rnorm(n=n_pert,mean=LAI1,sd=0.5)
 ```
 
-In the example above we create a parameter space that we use for the subsequent calculations. We have chosen the most simple settings here, that means we assume that parameters have a normal error distribution and that they are independent of each other. In many cases these assumptions are not valid. For example, measured fluxes are more likely to have a Laplace error distribution (Hollinger & Richardson 2005), which would be better sampled using `rlaplace` from the `rmutil` package instead of `rnorm`. In many cases, the parameters are also not independent of each other. In our case, $z_{0m}$ and $D_l$ may not be strongly correlated, but one could expect a certain correlation between LAI and $z_{0m}$. We can account for this relationship by assuming a variance-covariance matrix that accounts for these effects between all variables.
+In the example above we create a parameter space that we use for the subsequent calculations. We have chosen the most simple settings here, that means we assume that parameters have a normal error distribution and that they are independent of each other. In many cases these assumptions are not valid. For example, measured fluxes are more likely to have a Laplace error distribution (Hollinger & Richardson 2005), which would be better sampled using `rlaplace` from the `rmutil` package instead of `rnorm`. In many cases, the parameters are also not independent of each other. In our case, $z_{0,m}$ and $D_l$ may not be strongly correlated, but one would possibly expect a correlation between LAI and $z_{0,m}$. We can account for dependencies among variables by doing the sampling based on a variance-covariance matrix that prescribes correlations between variables.
  
 
 ```{r}
@@ -511,7 +550,30 @@ Gs_high <- surface.conductance(tha_filtered,Ga=Ga[,"Ga_high"],G="G")[,"Gs_mol"]
 Gs <- cbind(Gs_low,Gs_mean,Gs_high)
 summary(Gs)
 ```
-The first and the last columns of the output give us now an uncertainty envelope around our $G_a$ and $G_s$ calculations. The example shows that variations in the three input parameters are sensitive for the estimation of $G_a$, but not so much for $G_s$. Also note that we use a bit of a shortcut here when we calculate the uncertainty of $G_s$.
+The first and the last columns of the output give us now an uncertainty envelope around our $G_a$ and $G_s$ calculations. The example shows that variations in the three input parameters are sensitive for the estimation of $G_a$, but not so much for $G_s$:
+
+
+```{r}
+par(mfrow=c(1,2))
+ind <- c(1:48) # first day
+plot(Ga_mean[ind],type="l",lwd=2,xlab="timestep",ylab=expression("G"["a,h"]~"(m s"^{-1}*")"),las=1,
+     mgp=c(2.2,0.5,0),tcl=-0.2,ylim=c(0.045,0.14))
+
+ok <- which(!is.na(Ga_mean[ind]))
+polygon(c(ok,rev(ok)),c(Ga_high[ind][ok],rev(Ga_low[ind][ok])),
+        col="grey70",border=NA)
+points(Ga_mean[ind],type="l",lwd=2)
+
+
+plot(Gs_mean[ind],type="l",lwd=2,xlab="timestep",ylab=expression("G"["s,w"]~"(mol m"^{-2}~"s"^{-1}*")"),
+     las=1,mgp=c(2.2,0.5,0),tcl=-0.2)
+
+ok <- which(!is.na(Gs_mean[ind]))
+polygon(c(ok,rev(ok)),c(Gs_high[ind][ok],rev(Gs_low[ind][ok])),
+        col="grey70",border=NA)
+points(Gs_mean[ind],type="l",lwd=2)
+```
+
 In general, these operations are more effectively implemented elsewhere, and we just show an example for demonstration purposes. The reader might be interested in the `FME` package and the `sensRange` function. The package also provides functions (e.g. `Norm`) that generates parameter sets based on a parameter variance-covariance matrix.
 
 
@@ -523,14 +585,16 @@ In general, these operations are more effectively implemented elsewhere, and we 
 
 Ball, J. T.; Woodrow, I. E. & Berry, J. A. Biggins, J. (Ed.) A model predicting stomatal conductance and its contribution to the control of photosynthesis under different environmental conditions Progress in photosynthesis research, Martinus Nijhoff Publishers, Dordrecht, Netherlands, 1987, 221-224
 
-Hollinger, D. & Richardson, A. Uncertainty in eddy covariance measurements and its application to physiological models Tree physiology, Heron Publishing, 2005, 25, 873-885
+Grünwald, T. & Bernhofer, C. A decade of carbon, water and energy flux measurements of an old spruce forest at the Anchor Station Tharandt Tellus B, Wiley Online Library, 2007, 59, 387-396
 
-Leuning, R.; Van Gorsel, E.; Massman, W. J. & Isaac, P. R. Reflections on the surface energy imbalance problem Agricultural and Forest Meteorology, Elsevier, 2012, 156, 65-74
+Hollinger, D. & Richardson, A. Uncertainty in eddy covariance measurements and its application to physiological models. Tree physiology, 2005, 25, 873-885
 
-Medlyn, B. E.; Duursma, R. A.; Eamus, D.; Ellsworth, D. S.; Prentice, I. C.; Barton, C. V.; Crous, K. Y.; de Angelis, P.; Freeman, M. & Wingate, L. Reconciling the optimal and empirical approaches to modelling stomatal conductance Global Change Biology, Wiley Online Library, 2011, 17, 2134-2144
+Leuning, R.; Van Gorsel, E.; Massman, W. J. & Isaac, P. R. Reflections on the surface energy imbalance problem Agricultural and Forest Meteorology, 2012, 156, 65-74
 
-Su, Z.; Schmugge, T.; Kustas, W. & Massman, W. An evaluation of two models for estimation of the roughness height for heat transfer between the land surface and the atmosphere Journal of Applied Meteorology, 2001, 40, 1933-1951
+Medlyn, B. E.; Duursma, R. A.; Eamus, D.; Ellsworth, D. S.; Prentice, I. C.; Barton, C. V.; Crous, K. Y.; de Angelis, P.; Freeman, M. & Wingate, L. Reconciling the optimal and empirical approaches to modelling stomatal conductance. Global Change Biology, 2011, 17, 2134-2144
 
-Thom, A. Momentum, mass and heat exchange of vegetation Quarterly Journal of the Royal Meteorological Society, Wiley Online Library, 1972, 98, 124-134
+Su, Z.; Schmugge, T.; Kustas, W. & Massman, W. An evaluation of two models for estimation of the roughness height for heat transfer between the land surface and the atmosphere. Journal of Applied Meteorology, 2001, 40, 1933-1951
+
+Thom, A. Momentum, mass and heat exchange of vegetation. Quarterly Journal of the Royal Meteorological Society, 1972, 98, 124-134
 
 Verma, S. Black, T.; Spittlehouse, D.; Novak, M. & Price, D. (Eds.) Aerodynamic resistances to transfers of heat, mass and momentum Estimation of areal evapotranspiration, Estimation of areal evapotranspiration, International Association of Hydrological Sciences, 1989, 177, 13-20

@@ -14,7 +14,7 @@ stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP",
 \arguments{
 \item{data}{Data.frame or matrix containing all required columns}
 
-\item{Tair}{Air temperature (deg C)}
+\item{Tair}{Air (or surface) temperature (deg C)}
 
 \item{pressure}{Atmospheric pressure (kPa)}
 
@@ -24,7 +24,7 @@ stomatal.slope(data, Tair = "Tair", pressure = "pressure", GPP = "GPP",
 
 \item{VPD}{Vapor pressure deficit (kPa)}
 
-\item{Ca}{Atmospheric CO2 concentration (umol mol-1)}
+\item{Ca}{Atmospheric CO2 concentration (air or surface) (umol mol-1)}
 
 \item{Rleaf}{Ecosystem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0}
 

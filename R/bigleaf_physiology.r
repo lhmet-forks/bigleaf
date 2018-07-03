@@ -466,12 +466,12 @@ Arrhenius.temp.response <- function(param,Temp,Ha,Hd,dS,constants=bigleaf.consta
 #'              from nonlinear regression.
 #' 
 #' @param data       Data.frame or matrix containing all required columns
-#' @param Tair       Air temperature (deg C)
+#' @param Tair       Air (or surface) temperature (deg C)
 #' @param pressure   Atmospheric pressure (kPa)
 #' @param GPP        Gross primary productivity (umol CO2 m-2 s-1)
 #' @param Gs         Surface conductance to water vapor (mol m-2 s-1)
 #' @param VPD        Vapor pressure deficit (kPa)
-#' @param Ca         Atmospheric CO2 concentration (umol mol-1)
+#' @param Ca         Atmospheric CO2 concentration (air or surface) (umol mol-1)
 #' @param Rleaf      Ecosystem respiration stemming from leaves (umol CO2 m-2 s-1); defaults to 0 
 #' @param model      Stomatal model used. One of \code{"USO","Ball&Berry","Leuning"}.
 #' @param robust.nls Use robust nonlinear regression (\code{\link[robustbase]{nlrob}})? Default is \code{FALSE}.

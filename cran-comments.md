@@ -9,4 +9,4 @@
 there are currently no downstream dependencies for this package.
 
 ## Resubmission
-this is a resubmission with some minor changes to existing functions
+this is a resubmission with some minor changes to existing functions and the addition of a vignette 

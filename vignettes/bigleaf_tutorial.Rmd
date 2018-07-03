@@ -18,7 +18,7 @@ This vignette is a short introduction to the functionalities of the `bigleaf` R 
 
 
 
-## Package scope and important conceptual considerations
+# Package scope and important conceptual considerations
 
 `bigleaf` calculates physical and physiological ecosystem properties from eddy covariance data. Examples for such properties are aerodynamic and surface conductance, surface conditions(e.g. temperature, VPD), wind profile, roughness parameters, vegetation-atmosphere decoupling, potential evapotranspiration, (intrinsic) water-use efficiency, stomatal sensitivity to VPD, or intercellular CO2 concentration.  All calculations in the `bigleaf` package assume that the ecosystem behaves like a  "big-leaf", i.e. a single, homogenous plane which acts as the only source and sink of the measured fluxes. This assumption comes with the advantages that calculations are simplified considerably and that (in most cases) little ancillary information on the EC sites is required. It is important to keep in mind that these simplifications go hand in hand with critical limitations. All derived variables are bulk ecosystem characteristics and have to be interpreted as such. It is for example not possible to infer within-canopy variations of a certain property.
 
@@ -28,7 +28,7 @@ The use of more detailed models is not within the scope of the `bigleaf` R packa
 
 \vspace{0.5cm}
 
-## Installation and Loading
+# Installation and Loading
 
 The `bigleaf` R package is on CRAN and can be installed with the usual command:
 
@@ -53,7 +53,7 @@ library(bigleaf)
 
 
 
-## Preparing the data
+# Preparing the data
 
 In this tutorial, we will work with a dataset from the eddy covariance site Tharandt (DE-Tha), a spruce forest in Eastern Germany. The data.frame `DE_Tha_Jun_2014` is automatically loaded when the `bigleaf` package is loaded and contains half-hourly data of meteorological and flux measurements made in June 2014:
 
@@ -75,18 +75,18 @@ Dl  <- 0.01  # leaf characteristic dimension (m)
 
 \vspace{1cm}
 
-## General guidelines on package usage
+# General guidelines on package usage
 
 There are a few general guidelines that are important to consider when using the `bigleaf` package. 
 
 
-### Units
+## Units
 
 It is imperative that variables are provided in the right units, as the plausibility of the input units is not checked in most cases. The required units of the input arguments can be found in the respective help file of the function. The good news is that units do not change across functions. For example, pressure is always required in kPa, and temperature always in °c.
 
 
 
-### Function arguments
+## Function arguments
 
 Most functions of the `bigleaf` package require an input matrix or (more common) a data.frame, from which the required variables are extracted. This is usually the first argument of a function. Most functions further provide default values for their arguments, such that in many cases it is not necessary to provide them explicitly.
 
@@ -111,7 +111,7 @@ potential.ET(Tair=25,pressure=100,Rn=400)
 When using your own data, it is not mandatory to use exactly the same variable names as here, but working with `bigleaf` is easier if you do so because then the variable names do not have to be specified when calling a function.
 
 
-### Ground heat flux and storage fluxes
+## Ground heat flux and storage fluxes
 
 Many functions require the available energy ($A$), which is defined as ($A = R_n - G - S$, all in $\text{W m}^{-2}$), where $R_n$ is the net radiation, $G$ is the ground heat flux, and $S$ is the sum of all storage fluxes of the ecosystem (see e.g. Leuning et al. 2012 for an overview). For some sites, $G$ is not available, and for most sites, only a few components of $S$ are measured. In `bigleaf` it is not a problem if $G$ and/or $S$ are missing (other than the results might be (slightly) biased), but special options exist for the treatment of missing $S$ and $G$ values. If the options `missing.G.as.NA = TRUE` or `missing.S.as.NA = TRUE`, then the output variable is not calculated for that time period. Otherwise missing $S$ and $G$ values are set to O automatically. Please note that the default is to ignore $S$ and $G$ values. If $G$ and/or $S$ are available, they always have to be added explicitly to the function call (by providing the column name of $G$/$S$ or a vector).  
 
@@ -127,7 +127,7 @@ Many functions require the available energy ($A$), which is defined as ($A = R_n
 In the following, we explain how to use several of the package's key functions. Further information on the functions can be found on the respective function help pages and the references therein.
 
 
-### Data filtering
+## Data filtering
 
 For most applications it is meaningful to filter your data. There are two main reasons why we want to filter our data before we start calculating ecosystem properties. The first one is to exclude datapoints that do not fulfill the requirements of the EC technique or that are of bad quality due to e.g. instrument failure or gap-filling with poor confidence. Note that the quality assessment of the EC data is not the purpose of the `bigleaf` package. This is done by other packages (e.g. `REddyProc`), which often provide quality control flags for the variables. These quality control flags are used here to filter out bad-quality datapoints.
 
@@ -148,7 +148,8 @@ tha_filtered2 <- filter.data(tha,quality.control=FALSE,filter.growseas=TRUE,
                              filter.vars=c("PPFD","ustar","LE","VPD"),
                              filter.vals.min=c(200,0.2,0,0.01), filter.vals.max=c(NA,NA,NA,NA),
                              NA.as.invalid = TRUE,
-                             GPP="GPP",doy="doy",year="year",tGPP=0.4,ws=15,min.int=5) # arguments for growing season filter.
+                             # arguments for growing season filter:
+                             GPP="GPP",doy="doy",year="year",tGPP=0.4,ws=15,min.int=5) 
 ```
 
 The arguments `filter.vars`, `filter.vals.min`, and `filter.vals.max` control the variables to be filtered (corresponding to the column names of the data.frame), the minimum and the maximum acceptable values, respectively. If there is no minimum or maximum, the respective entry can be set to `NA`. In this case we filter for time periods in which PPFD (photosynthetic photon flux density) has to be higher than 200 $\mu$mol m$^{-2}$ s$^{-1}$, but no maximum limit is considered.
@@ -188,7 +189,7 @@ When looking at the function output we see that we these settings, we exclude in
 
 
 
-### Aerodynamic conductance
+## Aerodynamic conductance
 
 An important metric for many calculations in the `bigleaf` package is the aerodynamic conductance ($G_a$) between the land surface and the measurement height. $G_a$ characterizes how efficiently mass and energy is transferred between the land surface and the atmosphere. $G_a$ consists of two parts: $G_{am}$, the aerodynamic conductance for momentum, and $G_b$, the canopy boundary layer (or quasi-laminar) conductance. $G_a$ can be defined as $G_a = 1/(1/G_{am} + 1/G_b)$. In this tutorial we will focus on how to use the function `aerodynamic.conductance`. For further details on the equations, the reader is directed to the publication of the bigleaf package (Knauer et al. 2018, PLOS ONE) and the references therein. A good overview is provided by e.g. Verma 1989.
 
@@ -215,7 +216,7 @@ We add the output of this function (`Ga_Su`) to our dataframe `tha_filtered`. We
 
 
 
-### Surface conditions
+## Surface conditions
 
 When we have an estimate of $G_a$, we are able to infer surface conditions of temperature and atmospheric humidity by inverting the bulk transfer relations of the sensible and latent heat fluxes. E.g. for temperature we can solve the following relation for $T_s$, the aerodynamic surface temperature:
 
@@ -248,7 +249,7 @@ Both surface temperature and VPD are in most cases higher than the ones measured
 
 
 
-### Surface conductance
+## Surface conductance
 
 Knowledge on $G_a$ allows us to calculate the bulk surface conductance ($G_s$) of the site (In this case by inverting the Penman-Monteith equation). Gs represents the combined conductance of the vegetation and the soil to water vapor transfer (and as such it is not a purely physiological quantity). Calculating $G_s$ in `bigleaf` is simple:
 
@@ -273,7 +274,7 @@ Again, we have added the two output columns to our data.frame `tha_filtered`.
 
 
 
-### Stomatal slope parameter
+## Stomatal slope parameter
 
 With both $G_s$ and $G_a$ available, we can estimate the stomatal slope parameter $g_1$. The $g_1$ parameter characterizes the slope between the surface conductance and the gross carbon uptake (GPP) of the ecosystem, and is thus strongly related to the ecosystem-level intrinsic water-use efficiency. However, it corrects for the confounding effects of VPD and $C_a$, and is thus better comparable across sites than e.g. GPP/$G_s$. 
 
@@ -289,11 +290,12 @@ By default, the model takes VPD and atmospheric CO$_2$ concentration as measured
 
 ```{r}
 ## stomatal slope from the USO model (Medlyn et al. 2011)
-stomatal.slope(tha_filtered,Tair="Tsurf",VPD="VPD_surf",Ca="Ca_surf",model="USO",g0=0,robust.nls=TRUE)
+stomatal.slope(tha_filtered,Tair="Tsurf",VPD="VPD_surf",Ca="Ca_surf",model="USO",
+               g0=0,robust.nls=TRUE)
 ```
 which in this case, does not change our $g_1$ value significantly.
 
-We can also calculate $g_1$ using two different models. One is the long-standing Ball & Berry model (Ball et al. 1987), and the other one is a modification of the Ball & Berry model suggested by Leuning et al. 1995:
+We can also calculate $g_1$ using two different models. One is the long-standing Ball & Berry model (Ball et al. 1987), and the other one is a modification of the Ball & Berry model suggested by Leuning 1995:
 
 ```{r}
 ## Ball&Berry slope
@@ -311,13 +313,15 @@ We can visualize the $g_1$ parameter by plotting $G_s$ against the "stomatal ind
 ```{r}
 stomatal_index <- tha_filtered[,"GPP"] / (tha_filtered[,"Ca"] * sqrt(tha_filtered[,"VPD"]))
 
-plot(tha_filtered[,"Gs_mol"] ~ stomatal_index,las=1,xlab=expression("GPP / (C"["a"]~sqrt("D"["a"])*")"),
-     ylab=expression("G"["sw"]~"(mol m"^{-2}~"s"^{-1}*")"),tcl=0.2,mgp=c(2.2,0.5,0),xlim=c(0,0.12))
+plot(tha_filtered[,"Gs_mol"] ~ stomatal_index,las=1,
+     xlab=expression("GPP / (C"["a"]~sqrt("D"["a"])*")"),
+     ylab=expression("G"["sw"]~"(mol m"^{-2}~"s"^{-1}*")"),
+     tcl=0.2,mgp=c(2.2,0.5,0),xlim=c(0,0.12))
 ```
 
 
 
-### Wind profile
+## Wind profile
 
 The 'big-leaf' framework assumes that wind speed is zero at height d + $z_{0m}$ (where $z_{0m}$ is the roughness length for momentum) and then increases exponentially with height. The shape of the wind profile further depends on the stability conditions of the air above the canopy.
 In `bigleaf`, a wind profile can be calculated assuming an exponential increase with height, which is affected by atmospheric stability. Here, we calculate wind speed at heights of 22-60m in steps of 2m. As expected, the gradient in wind speed is strongest close to the surface and weaker at greater heights:
@@ -328,8 +332,8 @@ wp <- wind.profile(tha_filtered,heights=wind_heights,zh=zh,zr=zr)
 wp_means <- colMeans(wp,na.rm=TRUE)
 wp_sd    <- apply(wp,2,sd,na.rm=TRUE)
 
-plot(wind_heights ~ wp_means,xlab=expression("wind speed (m s"^{-1}*")"),ylab="height (m)",las=1,
-     mgp=c(2.2,0.5,0),tcl=0.2,xlim=c(0,5))
+plot(wind_heights ~ wp_means,xlab=expression("wind speed (m s"^{-1}*")"),ylab="height (m)",
+     las=1,mgp=c(2.2,0.5,0),tcl=0.2,xlim=c(0,5))
 arrows(wp_means-wp_sd,wind_heights,wp_means+wp_sd,wind_heights,angle=90,
        length=0.02,code=3)
 points(x=mean(tha_filtered[,"wind"],na.rm=TRUE),y=zr,col="blue",pch=16)
@@ -341,7 +345,7 @@ Here, the points denote the mean wind speed and the bars denote the standard dev
 
 
 
-### Potential evapotranspiration
+## Potential evapotranspiration
 
 For many hydrological applications, it is relevant to get an estimate on the potential evapotranspiration (PET). At the moment, the `bigleaf` package contains two formulations for the estimate of PET: the Priestley-Taylor equation, and the Penman-Monteith equation:
 
@@ -357,7 +361,7 @@ In the second calculation it is important to provide an estimate of `Gs_pot`, wh
 
 
 
-### Energy balance closure (EBC)
+## Energy balance closure (EBC)
 
 The `bigleaf` package offers a function which characterizes the degree of the EBC (i.e. $A = \lambda E + H$, where A is available energy, $\lambda E$ is the latent heat flux, and H is the sensible heat flux, all in $\text{W m}^{-2}$). We can calculate the EBC with the following command:
 
@@ -377,7 +381,7 @@ In this case the ground heat flux improves the EBC, but only marginally. This im
 
 
 
-### Meteorological variables
+## Meteorological variables
 
 The `bigleaf` package provides calculation routines for a number of meteorological variables, which are basic to the calculation of many other variables. A few examples on their usage are given below:
 
@@ -407,7 +411,7 @@ pressure.from.elevation(elev=500,Tair=25)
 ```
 
 
-### Unit interconversions
+## Unit interconversions
 
 The package further provides a number of useful unit interconversions, which are straightforward to use (please make sure that the input variable is in the right unit, e.g. rH has to be between 0 and 1 and not in percent):
 
@@ -433,12 +437,12 @@ umolCO2.to.gC(CO2_flux=20)
 ```
 
 
+\vspace{1cm}
+
+# Useful hints for advanced users
 
 
-## Useful hints for advanced users
-
-
-### Hide function messages
+## Hide function messages
 
 As shown earlier in this tutorial, many functions of the `bigleaf` package print messages to make the reader aware that e.g. some flux components are missing. This output can be a bit annoying when functions are used in loops or `apply`-functions. A simple way to not show these messages is to use a combination of `invisible` and `capture.output`:
 
@@ -451,13 +455,13 @@ invisible(capture.output(PET <- potential.ET(Tair=25,pressure=100,Rn=200)))
 
 
 
-### Constants
+## Constants
 
 The `bigleaf` package contains a single list of constants (see `?bigleaf.constants`). Whenever one or more constants are used in a function, this list is provided as a default argument, so the user does usually not need to interact with this list. However, should you wish to change a certain constant for the calculations (which could make sense in some cases, e.g. using a different value for the von-Karman constant (k)), individual constants can be changed within a function call. As an example, let's call a function with the `bigleaf` default value of k=0.41, and the alternative, often used value of k=0.4:
 
 ```{r}
-summary(aerodynamic.conductance(tha_filtered,wind_profile=TRUE,zr=42,d=0.7*26.5,z0m=2.65)[,"Ga_h"])
-summary(aerodynamic.conductance(tha_filtered,wind_profile=TRUE,zr=42,d=0.7*26.5,z0m=2.65,
+summary(aerodynamic.conductance(tha_filtered,wind_profile=TRUE,zr=zr,d=0.7*zh,z0m=2.65)[,"Ga_h"])
+summary(aerodynamic.conductance(tha_filtered,wind_profile=TRUE,zr=zr,d=0.7*zh,z0m=2.65,
                                 constants=bigleaf.constants(k=0.4))[,"Ga_h"])
 ```
 
@@ -465,7 +469,7 @@ We see that in this case, small changes in k have an effect on the calculated va
 
 
 
-### Boundary layer conductance for trace gases
+## Boundary layer conductance for trace gases
 
 By default, the function `aerodynamic.conductance` returns the (quasi-laminar) canopy boundary layer ($G_{b}$) for heat and water vapor (which are assumed to be equal in the `bigleaf` package), as well as for CO$_2$. The function further provides the possibility to calculate $G_b$ for other trace gases, provided that the respective Schmidt number is known. Further, if we are only interested in $G_b$ (or the kB$^{-1}$ parameter) we can use one of the following functions: `Gb.Thom`, `Gb.Choudhury`, `Gb.Su`. These functions are integrated in the main function `aerodynamic.conductance`, but the modular design of the package allows them to be called separately. We can demonstrate the calculation of $G_b$ for methane (CH$_4$) with a simple example:
 
@@ -477,10 +481,11 @@ summary(Gb.Thom(tha_filtered$ustar,Sc=0.99,Sc_name="CH4"))
 In the first line we get the standard output of the function, whereas in the second line we get in addition the $G_b$ for methane.  
 
 
-### Dealing with uncertainties
+## Dealing with uncertainties
 
-It is important to note that the `bigleaf` package does not calculate uncertainties of most variables. This is firstly because it is challenging to properly account for all the uncertainties present in EC data, and secondly because this would lead to much slower and more complex function calls. Nevertheless, we argue that uncertainties of the calculated ecosystem properties should not be ignored. Here, we present strategies on how to quantify uncertainties. In general, we leave the calculations/function calls untouched, but we add wrapper functions that use different techniques (e.g. bootstrapping) to calculate uncertainties of the output variables.
+It is important to note that the `bigleaf` package does not calculate uncertainties of most variables. This is firstly because it is challenging to properly account for all the uncertainties present in EC data, and secondly because this would lead to much slower and more complex function calls. Nevertheless, uncertainties of the calculated ecosystem properties should not be ignored. Here, we present two main strategies on how to quantify uncertainties: 1) bootstrapping, and 2) Monte Carlo analysis. In general, we leave the calculations/function calls untouched, but we add wrapper functions that use different techniques (e.g. bootstrapping) to calculate uncertainties of the output variables.
 
+### Bootstrapping
 
 As a first example, we use bootstrapping to estimate the uncertainty of the $g_1$ parameter calculated above. The principle is easy: we calculate $g_1$ a given number of times (in this case 300 times), and each time we only use a (different) subset of the data. In each iteration, 25% of the data are discarded. To do this, we can define the following function (note that this function can be written in a more efficient way, but by using a loop the principle becomes clear):
 
@@ -494,7 +499,9 @@ G1.bootstrap <- function(dat,LoopNum,SampSizeRel){
   SampSize=round(length(dat$RunNum)*SampSizeRel) #calculate number of data used for resampling
 
   for (m in 1:LoopNum){
-    SampIDX=sample(x = dat$RunNum,size = SampSize,replace = T) # which values to take
+    # sample data:
+    SampIDX=sample(x = dat$RunNum,size = SampSize,replace = T) 
+    # run the function on the sample data:
     dfout$G1[m]=summary(stomatal.slope(data = dat[SampIDX,],
                                        Tair = dat$Tair[SampIDX],
                                        Gs=dat$Gs_mol[SampIDX],
@@ -502,7 +509,7 @@ G1.bootstrap <- function(dat,LoopNum,SampSizeRel){
                                        GPP = dat$GPP[SampIDX],
                                        VPD = dat$VPD[SampIDX],
                                        Ca = dat$Ca[SampIDX],
-                       model="USO",g0=0,robust.nls=T))$coef[1,1] # run the function on the sample data
+                       model="USO",g0=0,robust.nls=T))$coef[1,1] 
   }
 
   return(dfout) # return output dataframe
@@ -512,8 +519,9 @@ G1.bootstrap <- function(dat,LoopNum,SampSizeRel){
 We can use this function with our data:
 
 ```{r, results="hide"}
-tha_G1BT <- G1.bootstrap(dat = tha_filtered,LoopNum = 300,SampSizeRel = 0.75) #300 times resampling; each time 75 % of the data. 
-# estimate using all data
+# 300 times resampling; each time 75 % of the data: 
+tha_G1BT <- G1.bootstrap(dat = tha_filtered,LoopNum = 300,SampSizeRel = 0.75) 
+# estimate using all data:
 g1_mean <- summary(g1_USO)$coef[1,1]
 g1_se   <- summary(g1_USO)$coef[1,2]
 
@@ -528,7 +536,7 @@ The blue point shows the estimate (+/- standard error) when we take all data, as
 
 
 
-
+### Monte Carlo analysis
 
 In the second example we implement a simple Monte Carlo analysis in which we propagate uncertainties in the calculation of $G_a$ to uncertainties in $G_s$ (which takes $G_a$ as input). To do this, we first estimate the uncertainty in $G_a$ that is caused by uncertainties in three of its input parameters: the leaf characteristic dimension $D_l$, the LAI, and the roughness length $z_{0m}$. The uncertainty of other parameters could be included, but for demonstration purposes we only use these three. 
 First, we have to assess the mean and the error distribution of the input parameters. We estimated $D_l$ = 1cm, LAI=7.6 (as measured at the site), and $z_{0m}=2.65m$ (10% of the vegetation height), and we assume that their errors are normally distributed with a standard deviation (sd) equal to 25% of the mean in case of $z_{0m}$ and $D_l$. In case of LAI we assume a sd of 0.5. 
@@ -578,8 +586,8 @@ The first and the last columns of the output give us now an uncertainty envelope
 ```{r}
 par(mfrow=c(1,2))
 ind <- c(1:48) # first day
-plot(Ga_mean[ind],type="l",lwd=2,xlab="timestep",ylab=expression("G"["ah"]~"(m s"^{-1}*")"),las=1,
-     mgp=c(2.2,0.5,0),tcl=-0.2,ylim=c(0.045,0.14))
+plot(Ga_mean[ind],type="l",lwd=2,xlab="timestep",ylab=expression("G"["ah"]~"(m s"^{-1}*")"),
+     las=1,mgp=c(2.2,0.5,0),tcl=-0.2,ylim=c(0.045,0.14))
 
 ok <- which(!is.na(Ga_mean[ind]))
 polygon(c(ok,rev(ok)),c(Ga_high[ind][ok],rev(Ga_low[ind][ok])),
@@ -587,8 +595,8 @@ polygon(c(ok,rev(ok)),c(Ga_high[ind][ok],rev(Ga_low[ind][ok])),
 points(Ga_mean[ind],type="l",lwd=2)
 
 
-plot(Gs_mean[ind],type="l",lwd=2,xlab="timestep",ylab=expression("G"["sw"]~"(mol m"^{-2}~"s"^{-1}*")"),
-     las=1,mgp=c(2.2,0.5,0),tcl=-0.2)
+plot(Gs_mean[ind],type="l",lwd=2,xlab="timestep",tcl=-0.2,
+     ylab=expression("G"["sw"]~"(mol m"^{-2}~"s"^{-1}*")"),las=1,mgp=c(2.2,0.5,0))
 
 ok <- which(!is.na(Gs_mean[ind]))
 polygon(c(ok,rev(ok)),c(Gs_high[ind][ok],rev(Gs_low[ind][ok])),
@@ -600,7 +608,7 @@ In general, these operations are more effectively implemented elsewhere, and we 
 
 
 
-
+\vspace{1cm}
 
 
 ## References
@@ -610,6 +618,8 @@ Ball, J. T.; Woodrow, I. E. & Berry, J. A. Biggins, J. (Ed.) A model predicting 
 Grünwald, T. & Bernhofer, C. A decade of carbon, water and energy flux measurements of an old spruce forest at the Anchor Station Tharandt Tellus B, Wiley Online Library, 2007, 59, 387-396
 
 Hollinger, D. & Richardson, A. Uncertainty in eddy covariance measurements and its application to physiological models. Tree physiology, 2005, 25, 873-885
+
+Leuning, R. A critical appraisal of a combined stomatal-photosynthesis model for C3 plants Plant, Cell & Environment, Wiley Online Library, 1995, 18, 339-355
 
 Leuning, R.; Van Gorsel, E.; Massman, W. J. & Isaac, P. R. Reflections on the surface energy imbalance problem Agricultural and Forest Meteorology, 2012, 156, 65-74
 

@@ -26,7 +26,7 @@ Please also keep in mind that the `bigleaf` package does NOT provide formulation
 
 The use of more detailed models is not within the scope of the `bigleaf` R package, but it is preferable to use such approaches when important assumptions of the "big-leaf" approach are not met. This is the case in particular when the ecosystem is sparsely covered with vegetation (low LAI, e.g. sparse crops, some savanna systems). 
 
-
+\vspace{0.5cm}
 
 ## Installation and Loading
 
@@ -73,7 +73,7 @@ Dl  <- 0.01  # leaf characteristic dimension (m)
 ```
 
 
-
+\vspace{1cm}
 
 ## General guidelines on package usage
 
@@ -118,7 +118,7 @@ Many functions require the available energy ($A$), which is defined as ($A = R_n
 
 
 
-
+\vspace{1cm}
 
 
 
@@ -219,9 +219,9 @@ We add the output of this function (`Ga_Su`) to our dataframe `tha_filtered`. We
 
 When we have an estimate of $G_a$, we are able to infer surface conditions of temperature and atmospheric humidity by inverting the bulk transfer relations of the sensible and latent heat fluxes. E.g. for temperature we can solve the following relation for $T_s$, the aerodynamic surface temperature:
 
-  $T_a = T_s - \frac{H}{(\rho \cdot G_{a,h} \cdot c_p)}$
+  $T_a = T_s - \frac{H}{(\rho \cdot G_{ah} \cdot c_p)}$
 
-where $T_a$ is air temperature, $H$ is the sensible heat flux ($\text{W m}^{-2}$) $\rho$ is air density ($\text{kg m}^{-3}$), $G_{\text{a,h}}$ is the aerodynamic conductance for heat ($\text{m s}^{-1}$), and $c_p$ is the specific heat of air ($\text{J K}^{-1} \text{kg}^{-1}$). 
+where $T_a$ is air temperature, $H$ is the sensible heat flux ($\text{W m}^{-2}$) $\rho$ is air density ($\text{kg m}^{-3}$), $G_{\text{ah}}$ is the aerodynamic conductance for heat ($\text{m s}^{-1}$), and $c_p$ is the specific heat of air ($\text{J K}^{-1} \text{kg}^{-1}$). 
 In `bigleaf`, the following function calculates conditions at the big-leaf surface:
 
 ```{r}
@@ -530,8 +530,8 @@ The blue point shows the estimate (+/- standard error) when we take all data, as
 
 
 
-In the second example we implement a simple Monte Carlo analysis in which we propagate uncertainties in the calculation of $G_a$ to uncertainties in $G_s$ (which takes $G_a$ as input). To do this, we first estimate the uncertainty in $G_a$ that is caused by uncertainties in three of its input parameters: the leaf characteristic dimension $D_l$, the LAI, and the roughness length $z_{0,m}$. The uncertainty of other parameters could be included, but for demonstration purposes we only use these three. 
-First, we have to assess the mean and the error distribution of the input parameters. We estimated $D_l$ = 1cm, LAI=7.6 (as measured at the site), and $z_{0,m}=2.65m$ (10% of the vegetation height), and we assume that their errors are normally distributed with a standard deviation (sd) equal to 25% of the mean in case of $z_{0,m}$ and $D_l$. In case of LAI we assume a sd of 0.5. 
+In the second example we implement a simple Monte Carlo analysis in which we propagate uncertainties in the calculation of $G_a$ to uncertainties in $G_s$ (which takes $G_a$ as input). To do this, we first estimate the uncertainty in $G_a$ that is caused by uncertainties in three of its input parameters: the leaf characteristic dimension $D_l$, the LAI, and the roughness length $z_{0m}$. The uncertainty of other parameters could be included, but for demonstration purposes we only use these three. 
+First, we have to assess the mean and the error distribution of the input parameters. We estimated $D_l$ = 1cm, LAI=7.6 (as measured at the site), and $z_{0m}=2.65m$ (10% of the vegetation height), and we assume that their errors are normally distributed with a standard deviation (sd) equal to 25% of the mean in case of $z_{0m}$ and $D_l$. In case of LAI we assume a sd of 0.5. 
 
 ```{r}
 n_pert <- 200
@@ -543,7 +543,7 @@ Dl_sample  <- pmax(rnorm(n=n_pert,mean=Dl1,sd=0.25*Dl1),0)
 LAI_sample <- rnorm(n=n_pert,mean=LAI1,sd=0.5)
 ```
 
-In the example above we create a parameter space that we use for the subsequent calculations. We have chosen the most simple settings here, that means we assume that parameters have a normal error distribution and that they are independent of each other. In many cases these assumptions are not valid. For example, measured fluxes are more likely to have a Laplace error distribution (Hollinger & Richardson 2005), which would be better sampled using `rlaplace` from the `rmutil` package instead of `rnorm`. In many cases, the parameters are also not independent of each other. In our case, $z_{0,m}$ and $D_l$ may not be strongly correlated, but one would possibly expect a correlation between LAI and $z_{0,m}$. We can account for dependencies among variables by doing the sampling based on a variance-covariance matrix that prescribes correlations between variables.
+In the example above we create a parameter space that we use for the subsequent calculations. We have chosen the most simple settings here, that means we assume that parameters have a normal error distribution and that they are independent of each other. In many cases these assumptions are not valid. For example, measured fluxes are more likely to have a Laplace error distribution (Hollinger & Richardson 2005), which would be better sampled using `rlaplace` from the `rmutil` package instead of `rnorm`. In many cases, the parameters are also not independent of each other. In our case, $z_{0m}$ and $D_l$ may not be strongly correlated, but one would possibly expect a correlation between LAI and $z_{0m}$. We can account for dependencies among variables by doing the sampling based on a variance-covariance matrix that prescribes correlations between variables.
  
 
 ```{r}

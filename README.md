@@ -6,6 +6,12 @@
 (e.g. canopy conductance, water-use efficiency) ecosystem properties from eddy covariance data and accompanying meteorological measurements. 
 All calculations are based on a 'big-leaf' representation of the vegetation and return representative bulk ecosystem/canopy variables.
 
+
+# Citation
+Knauer J, El-Madany TS, Zaehle S, Migliavacca M (2018) Bigleaf—An R package for the calculation of physical and physiological ecosystem properties from eddy covariance data.
+PLoS ONE 13(8): e0201114. [https://doi.org/10.1371/journal.pone.0201114] (https://doi.org/10.1371/journal.pone.0201114)
+
+
 # Installation
 The bigleaf R package is on CRAN and can be installed using:
 ```

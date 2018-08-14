@@ -6,7 +6,13 @@
 (e.g. canopy conductance, water-use efficiency) ecosystem properties from eddy covariance data and accompanying meteorological measurements. 
 All calculations are based on a 'big-leaf' representation of the vegetation and return representative bulk ecosystem/canopy variables.
 
-# Installation
+
+## Citation
+Knauer J, El-Madany TS, Zaehle S, Migliavacca M (2018) Bigleaf—An R package for the calculation of physical and physiological ecosystem properties from eddy covariance data.
+PLoS ONE 13(8): e0201114. [https://doi.org/10.1371/journal.pone.0201114] (https://doi.org/10.1371/journal.pone.0201114)
+
+
+## Installation
 The bigleaf R package is on CRAN and can be installed using:
 ```
 install.packages("bigleaf")
@@ -19,7 +25,7 @@ install_bitbucket("juergenknauer/bigleaf")
 ```
 
 
-# Usage
+## Usage
 Most functions work by providing a data.frame or matrix which contains all required variables:
 For example, surface conductance for the spruce forest in Tharandt, Germany (DE-Tha) can be calculated with 
 the following commands:
@@ -39,15 +45,15 @@ Important: please ensure that all input variables are in the correct units as de
 
 [Please report bugs or issues here](https://bitbucket.org/juergenknauer/bigleaf/issues?status=new&status=open)
 
-# Package content 
+## Package content 
 The package provides the following functionalities:
 
-## Data filtering
+### Data filtering
 - data quality filter
 - filter based on meteorological variables (radiation, precipitation, ustar, temperature, etc.)
 - growing season filter (based on daily GPP)
 
-## Meteorological variables
+### Meteorological variables
 - air density
 - virtual temperature
 - pressure from altitude
@@ -56,7 +62,7 @@ The package provides the following functionalities:
 - saturation vapor pressure
 - slope of saturation vapor pressure curve
 
-## Aerodynamic properties
+### Aerodynamic properties
 - aerodynamic conductance (different versions) for momentum, water, heat, and CO2
 - Canopy boundary-layer conductance (Rb and kB-1 parameter; empirical and physically-based models)
 - Monin-Obhukov length
@@ -67,18 +73,18 @@ The package provides the following functionalities:
 - Reynolds number
 - wind speed at a given height from the logarithmic wind profile equation
 
-## Surface conditions
+### Surface conditions
 - vapor pressure, specific humidity, and VPD at the big-leaf surface
 - CO2 concentration at the big-leaf surface
 - aerodynamic surface temperature
 - radiometric surface temperature 
 
-## Evapotranspiration (ET) and water-use efficiency (WUE)
+### Evapotranspiration (ET) and water-use efficiency (WUE)
 - potential ET (Priestley-Taylor and Penman-Monteith equations)
 - imposed and equilibrum ET
 - WUE, inherent WUE, underlying WUE
 
-## Physiological variables
+### Physiological variables
 - canopy conductance (inverted Penman-Monteith equation)
 - bulk intercellular CO2 concentration (Ci)
 - bulk photosynthetic capacity (Vcmax25 and Jmax25)
@@ -86,18 +92,18 @@ The package provides the following functionalities:
 - stomatal sensitivity to VPD
 - ecosystem light response, light-use efficiency
 
-## Energy balance
+### Energy balance
 - energy balance closure (EBR and slope method)
 - biochemical energy
 - energy-use efficiency
 
-## Unit conversions
+### Unit conversions
 - conductance conversion from m s-1 to mol m-2 s-1 and vice versa
 - conversions between humidity measures (vapor pressure, specific humidity, relative humidity, and VPD)
 - conversion between latent heat flux (W m-2) and evapotranspiration (kg m-2 s-1)
 - conversion between radiation in W m-2 and umol m-2 s-1
 - carbon fluxes from umol m-2 s-1 to g m-2 day-1
 
-# Contact
+## Contact
 For questions, remarks, and suggestions please contact jknauer@bgc-jena.mpg.de
 

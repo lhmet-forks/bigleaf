@@ -1,5 +1,5 @@
 bibentry(bibtype = "article",
-         title = "Bigleaf — An R package for the calculation of physical and physiological ecosystem properties from eddy covariance data",
+         title = "Bigleaf - An R package for the calculation of physical and physiological ecosystem properties from eddy covariance data",
          volume = "13",
          doi = "10.1371/journal.pone.0201114",
          number = {8},

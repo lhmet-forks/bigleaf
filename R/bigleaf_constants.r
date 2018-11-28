@@ -19,6 +19,7 @@
 #' @param k            von Karman constant
 #' @param Cmol         Molar mass of carbon (kg mol-1)
 #' @param Omol         Molar mass of oxygen (kg mol-1)
+#' @param H2Omol       Molar mass of water (kg mol-1)
 #' @param sigma        Stefan-Boltzmann constant (W m-2 K-4)
 #' @param Pr           Prandtl number
 #' @param Sc_CO2       Schmidt number for CO2

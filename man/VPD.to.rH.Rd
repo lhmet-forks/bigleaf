@@ -54,7 +54,7 @@ Pa2kPa - conversion pascal (Pa) to kilopascal (kPa)}
 \item{q}{Specific humidity (kg kg-1)}
 }
 \description{
-Conversion between vapor pressure (e), vapor pressure deficit (VPD), 
+Conversion between vapor pressure (e), vapor pressure deficit (VPD),
              specific humidity (q), and relative humidity (rH).
 }
 \references{

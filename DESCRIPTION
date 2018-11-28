@@ -16,10 +16,10 @@ Description: Calculation of physical (e.g. aerodynamic conductance, surface temp
 URL: https://bitbucket.org/juergenknauer/bigleaf
 BugReports: https://bitbucket.org/juergenknauer/bigleaf/issues
 Depends: R (>= 2.10)
-Imports: robustbase
+Imports: robustbase, solartime
 License: GPL (>= 2)
 LazyData: yes
 RoxygenNote: 6.0.1
 Suggests: knitr,
-    rmarkdown
+    rmarkdown, testthat
 VignetteBuilder: knitr

@@ -150,6 +150,19 @@ rH.to.VPD <- function(rH,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","All
   return(VPD)
 }
 
+#' @rdname VPD.to.rH
+#' @family humidity conversion
+#' @export
+e.to.rH <- function(e,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
+                      constants=bigleaf.constants()){
+  esat <- Esat.slope(Tair,Esat.formula,constants)[,"Esat"]
+  if (any(e > esat + .Machine$double.eps^0.5 )) warning(
+    "provided vapour pressure that was higher than saturation. "
+    ,"Returning rH=1 for those cases.")
+  rH  <- pmin(1, e/esat)
+  return(rH)
+}
+
 
 #' @rdname VPD.to.rH
 #' @family humidity conversion
@@ -301,11 +314,10 @@ umolCO2.to.gC <- function(CO2_flux,constants=bigleaf.constants()){
 #' @param molarMass numeric vector of molar mass of the substance
 #' @param constants list with entry kg2g, see \code{\link{bigleaf.constants}}
 #'
-#' @return numeric vector of amoutn of substance in umol
+#' @return numeric vector of amount of substance in umol
 g.to.umol <- function(massFlux, molarMass, constants=bigleaf.constants()){
   #TODO test and fix, compare to REddyProc formulation by Moffat
   molarFlux <- (constants$umol2mol * molarMass * constants$kg2g)/massFlux
-
   return(molarFlux)
 }
 

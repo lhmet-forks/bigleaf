@@ -14,7 +14,7 @@ g.to.umol(massFlux, molarMass, constants = bigleaf.constants())
 \item{constants}{list with entry kg2g, see \code{\link{bigleaf.constants}}}
 }
 \value{
-numeric vector of amoutn of substance in umol
+numeric vector of amount of substance in umol
 }
 \description{
 convert mass in g to amount of substance in umol

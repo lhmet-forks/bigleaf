@@ -16,3 +16,10 @@ test_that("e.to.rH",{
   expect_equal(rHOversat, 1)
 })
 
+test_that("kg.to.mol",{
+  mass <- 10
+  molarMass <- bigleaf.constants()$H2Omol
+  amountOfSubstance <- kg.to.mol(mass, molarMass)
+  expect_equal(amountOfSubstance, mass/molarMass)
+})
+

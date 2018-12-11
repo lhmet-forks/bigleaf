@@ -14,6 +14,7 @@
 #' @param Mw           Molar mass of water vapor (kg mol-1)
 #' @param eps          Ratio of the molecular weight of water vapor to dry air (=Mw/Md)
 #' @param g            Gravitational acceleration (m s-2)
+#' @param solar.constant Solar constant (W m-2)
 #' @param pressure0    Reference atmospheric pressure at sea level (Pa)
 #' @param Tair0        Reference air temperature (K)
 #' @param k            von Karman constant
@@ -67,6 +68,7 @@ bigleaf.constants <- function(
   Mw         = 0.0180153,       # molar mass of water vapor (kg mol-1)
   eps        = 0.622,           # ratio of the molecular weight of water vapor to dry air (=Mw/Md)
   g          = 9.81,            # gravitational acceleration (m s-2)
+  solar.constant = 1366.1,      # solar constant, i.e. solar radation at earth distance from the sun (W m-2)
   pressure0  = 101325,          # reference atmospheric pressure at sea level (Pa)
   Tair0      = 273.15,          # reference air temperature (K)
   k          = 0.41,            # von Karman constant
@@ -95,6 +97,7 @@ bigleaf.constants <- function(
 
   list(
     cp = cp, Rgas = Rgas, Rv = Rv, Rd = Rd, Md = Md, Mw = Mw, eps = eps, g = g,
+    solar.constant = solar.constant,
     pressure0 = pressure0, Tair0 = Tair0, k = k, Cmol = Cmol, Omol = Omol,
     H2Omol = H2Omol,
     sigma = sigma, Pr = Pr, Sc_CO2 = Sc_CO2, Kelvin = Kelvin, DwDc = DwDc,

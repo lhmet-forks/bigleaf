@@ -5,6 +5,7 @@
 ## eccentricity correction.
 #'
 #' @param doy integer vector with day of year (DoY)
+#' @param constants list with item solar.constant in W/m2
 #'
 #' @section Details:
 #' Computation follows Lanini, 2010 (Master thesis, Bern University)
@@ -13,15 +14,18 @@
 #' @export
 #'
 #' @examples
-#' plot(1:365, computeExtRadiation(1:365), type = "l"
+#' plot(1:365, extraterrestrial.radiation(1:365), type = "l"
 #'   , ylab = "radiation (W m-2)", xlab = "day of year")
-computeExtRadiation <- function(doy) {
+extraterrestrial.radiation <- function(
+  doy
+  , constants = bigleaf.constants()
+) {
   # Fractional year in radians
   FracYearRad <- 2 * pi * (doy - 1) / 365.24
-  # Total solar irradiance
-  SolarIrr_Wm2.c <- 1366.1 #W / m-2
+  # constants$solar.constant: Total solar irradiance
+  #SolarIrr_Wm2.c <- constants$solar.constant #1366.1 #W / m-2
   #Eccentricity correction
-  ExtRadiation.V.n <- SolarIrr_Wm2.c * (
+  ExtRadiation.V.n <- constants$solar.constant * (
     1.00011 + 0.034221 * cos(FracYearRad) + 0.00128 * sin(FracYearRad)
      + 0.000719 * cos(2 * FracYearRad) + 0.000077 * sin(2 * FracYearRad)
      )
@@ -41,14 +45,15 @@ computeExtRadiation <- function(doy) {
 #' @param useSolartime by default corrects hour (given in local winter time)
 #'   for latitude to solar time (where noon is exactly at 12:00).
 #'   Set this to FALSE to directly use local winter time
+#'
 #' @return vector of potential radiation (PotRad, W_m-2)
 #' @export
 #' @importFrom solartime computeSunPositionDoyHour
 #' @examples
 #' hour <- seq(5, 18, by = 0.1)
-#' potRadApparentLocal <- computePotentialRadiation(
+#' potRadApparentLocal <- potential.radiation(
 #'   160, hour, 39.94, -5.77, timezone = +1)
-#' potRadTimezone <- computePotentialRadiation(
+#' potRadTimezone <- potential.radiation(
 #'   160, hour, 39.94, -5.77, timezone = +1, useSolartime = FALSE)
 #' plot(potRadApparentLocal ~ hour, type = 'l'
 #'   , ylab = 'potential radiation (W m-2)')
@@ -56,7 +61,7 @@ computeExtRadiation <- function(doy) {
 #' abline(v = 12, col = "blue", lty = "dotted")
 #' legend("bottomright", legend = c("solar time", "local winter time")
 #' , col = c("black", "blue"), inset = 0.05, lty = 1)
-computePotentialRadiation <- function(
+potential.radiation <- function(
   doy, hour, latDeg, longDeg, timezone, useSolartime = TRUE
 ) {
   # Calculate potential radiation from solar elevation and extraterrestrial
@@ -64,7 +69,7 @@ computePotentialRadiation <- function(
   solElevRad <- computeSunPositionDoyHour(
     doy, hour, latDeg, longDeg, timezone
     , isCorrectSolartime = useSolartime)[,"elevation"]
-  extRadiation <- computeExtRadiation(doy)
+  extRadiation <- extraterrestrial.radiation(doy)
   potRad <- ifelse(
     solElevRad <= 0, 0, extRadiation * sin(solElevRad) )
   potRad

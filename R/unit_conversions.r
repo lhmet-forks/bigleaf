@@ -307,17 +307,18 @@ umolCO2.to.gC <- function(CO2_flux,constants=bigleaf.constants()){
 #   return(massFlux)
 # }
 
-# #' @export
 #' convert mass in g to amount of substance in umol
 #'
-#' @param massFlux numeric vector of mass in g
-#' @param molarMass numeric vector of molar mass of the substance
-#' @param constants list with entry kg2g, see \code{\link{bigleaf.constants}}
+#' @param mass numeric vector of mass in kg
+#' @param molarMass numeric vector of molar mass of the substance in kg/mol
+#'     e.g. as provided by \code{\link{bigleaf.constants}}()$H2Omol
+#'     Default is molar mass of Water.
 #'
-#' @return numeric vector of amount of substance in umol
-g.to.umol <- function(massFlux, molarMass, constants=bigleaf.constants()){
+#' @return numeric vector of amount of substance in mol
+#' @export
+kg.to.mol <- function(mass, molarMass=bigleaf.constants()$H2Omol){
   #TODO test and fix, compare to REddyProc formulation by Moffat
-  molarFlux <- (constants$umol2mol * molarMass * constants$kg2g)/massFlux
+  molarFlux <- mass / molarMass
   return(molarFlux)
 }
 

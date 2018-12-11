@@ -6,8 +6,8 @@
 \usage{
 bigleaf.constants(cp = 1004.834, Rgas = 8.31451, Rv = 461.5,
   Rd = 287.0586, Md = 0.0289645, Mw = 0.0180153, eps = 0.622,
-  g = 9.81, pressure0 = 101325, Tair0 = 273.15, k = 0.41,
-  Cmol = 0.012011, Omol = 0.0159994, H2Omol = 18.01528/1000,
+  g = 9.81, solar.constant = 1366.1, pressure0 = 101325, Tair0 = 273.15,
+  k = 0.41, Cmol = 0.012011, Omol = 0.0159994, H2Omol = 18.01528/1000,
   sigma = 5.670367e-08, Pr = 0.71, Sc_CO2 = 1.07, Kelvin = 273.15,
   DwDc = 1.6, days2seconds = 86400, kPa2Pa = 1000, Pa2kPa = 0.001,
   umol2mol = 1e-06, mol2umol = 1e+06, kg2g = 1000, g2kg = 0.001,
@@ -29,6 +29,8 @@ bigleaf.constants(cp = 1004.834, Rgas = 8.31451, Rv = 461.5,
 \item{eps}{Ratio of the molecular weight of water vapor to dry air (=Mw/Md)}
 
 \item{g}{Gravitational acceleration (m s-2)}
+
+\item{solar.constant}{Solar constant (W m-2)}
 
 \item{pressure0}{Reference atmospheric pressure at sea level (Pa)}
 

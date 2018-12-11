@@ -2,10 +2,10 @@
 context("potentialRadiation")
 
 
-test_that("Regression test computePotentialRadiation",{
+test_that("Regression test potential.radiation",{
   hour <- seq(8,16, by = 1)
-  potRadSolar <- computePotentialRadiation(160, hour, 39.94, -5.77, timezone = +1)
-  potRadLocal <- computePotentialRadiation(
+  potRadSolar <- potential.radiation(160, hour, 39.94, -5.77, timezone = +1)
+  potRadLocal <- potential.radiation(
     160, hour, 39.94, -5.77, timezone = +1, useSolartime = FALSE)
   expSolar <- structure(c(
     484.152670743821, 717.876981534078, 925.130678985721,
@@ -19,10 +19,10 @@ test_that("Regression test computePotentialRadiation",{
   expect_that( potRadLocal, equals(expLocal) )
 })
 
-test_that("computePotentialRadiation: warn on non-matching day-hour length",{
+test_that("potential.radiation: warn on non-matching day-hour length",{
   hour <- seq(8,16, by = 0.1)
   expect_warning(
-    potRadSolar <- computePotentialRadiation(160:161, hour, 39.94, -5.77, timezone = +1)
+    potRadSolar <- potential.radiation(160:161, hour, 39.94, -5.77, timezone = +1)
   )
 })
 

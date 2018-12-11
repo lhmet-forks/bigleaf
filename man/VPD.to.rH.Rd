@@ -3,6 +3,7 @@
 \name{VPD.to.rH}
 \alias{VPD.to.rH}
 \alias{rH.to.VPD}
+\alias{e.to.rH}
 \alias{VPD.to.e}
 \alias{e.to.VPD}
 \alias{e.to.q}
@@ -15,6 +16,9 @@ VPD.to.rH(VPD, Tair, Esat.formula = c("Sonntag_1990", "Alduchov_1996",
   "Allen_1998"), constants = bigleaf.constants())
 
 rH.to.VPD(rH, Tair, Esat.formula = c("Sonntag_1990", "Alduchov_1996",
+  "Allen_1998"), constants = bigleaf.constants())
+
+e.to.rH(e, Tair, Esat.formula = c("Sonntag_1990", "Alduchov_1996",
   "Allen_1998"), constants = bigleaf.constants())
 
 VPD.to.e(VPD, Tair, Esat.formula = c("Sonntag_1990", "Alduchov_1996",
@@ -54,7 +58,7 @@ Pa2kPa - conversion pascal (Pa) to kilopascal (kPa)}
 \item{q}{Specific humidity (kg kg-1)}
 }
 \description{
-Conversion between vapor pressure (e), vapor pressure deficit (VPD), 
+Conversion between vapor pressure (e), vapor pressure deficit (VPD),
              specific humidity (q), and relative humidity (rH).
 }
 \references{

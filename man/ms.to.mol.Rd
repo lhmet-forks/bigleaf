@@ -38,7 +38,7 @@ where Tair is in Kelvin and pressure in Pa (converted from kPa internally)
 }
 \examples{
 ms.to.mol(0.005,25,100)
-            
+
 }
 \references{
 Jones, H.G. 1992. Plants and microclimate: a quantitative approach to environmental plant physiology.

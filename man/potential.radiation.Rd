@@ -2,31 +2,31 @@
 % Please edit documentation in R/potential_radiation.r
 \name{potential.radiation}
 \alias{potential.radiation}
-\title{potential radiation}
+\title{Potential radiation}
 \usage{
-potential.radiation(doy, hour, latDeg, longDeg, timezone, useSolartime = TRUE)
+potential.radiation(doy, hour, latDeg, longDeg, timezone,
+  useSolartime = TRUE)
 }
 \arguments{
-\item{doy}{integer vector with day of year (start at 1),
-same length as hour or length 1}
+\item{doy}{Integer vector with day of year (start at 1), same length as \code{hour} or length 1.}
 
-\item{hour}{numeric vector with daytime as decimal hour of local time zone}
+\item{hour}{Numeric vector with daytime as decimal hour of local time zone}
 
-\item{latDeg}{Latitude in (decimal) degrees}
+\item{latDeg}{Latitude (decimal degrees)}
 
-\item{longDeg}{Longitude in (decimal) degrees}
+\item{longDeg}{Longitude (decimal degrees)}
 
-\item{timezone}{Time zone (in hours)}
+\item{timezone}{Time zone (hours)}
 
 \item{useSolartime}{by default corrects hour (given in local winter time)
 for latitude to solar time (where noon is exactly at 12:00).
-Set this to FALSE to directly use local winter time}
+Set this to \code{FALSE} to directly use local winter time.}
 }
 \value{
-vector of potential radiation (PotRad, W_m-2)
+vector of potential radiation (W m-2)
 }
 \description{
-Compute potential radiation for given geolocation and day of yeat
+Compute potential radiation for given geolocation and day of year.
 }
 \examples{
 hour <- seq(5, 18, by = 0.1)

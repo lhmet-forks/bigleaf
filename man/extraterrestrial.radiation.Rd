@@ -2,14 +2,14 @@
 % Please edit documentation in R/potential_radiation.r
 \name{extraterrestrial.radiation}
 \alias{extraterrestrial.radiation}
-\title{extraterrestrial solar radiation}
+\title{Extraterrestrial solar radiation}
 \usage{
 extraterrestrial.radiation(doy, constants = bigleaf.constants())
 }
 \arguments{
 \item{doy}{integer vector with day of year (DoY)}
 
-\item{constants}{list with item solar.constant in W/m2}
+\item{constants}{solar_constant - solar constant (W m-2)}
 }
 \value{
 numeric vector of extraterrestrial radiation (W_m-2)
@@ -17,12 +17,11 @@ numeric vector of extraterrestrial radiation (W_m-2)
 \description{
 Compute the extraterrestrial solar radiation with the
 }
-\section{Details}{
-
+\details{
 Computation follows Lanini, 2010 (Master thesis, Bern University)
 }
-
 \examples{
 plot(1:365, extraterrestrial.radiation(1:365), type = "l"
   , ylab = "radiation (W m-2)", xlab = "day of year")
+  
 }

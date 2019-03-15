@@ -3,7 +3,6 @@
 \name{ms.to.mol}
 \alias{ms.to.mol}
 \alias{mol.to.ms}
-\alias{mol.to.ms}
 \title{Conversion between Conductance Units}
 \usage{
 ms.to.mol(G_ms, Tair, pressure, constants = bigleaf.constants())

@@ -31,8 +31,8 @@ e.to.q(e, pressure, constants = bigleaf.constants())
 
 q.to.e(q, pressure, constants = bigleaf.constants())
 
-q.to.VPD(q, Tair, pressure, Esat.formula = c("Sonntag_1990", "Alduchov_1996",
-  "Allen_1998"), constants = bigleaf.constants())
+q.to.VPD(q, Tair, pressure, Esat.formula = c("Sonntag_1990",
+  "Alduchov_1996", "Allen_1998"), constants = bigleaf.constants())
 
 VPD.to.q(VPD, Tair, pressure, Esat.formula = c("Sonntag_1990",
   "Alduchov_1996", "Allen_1998"), constants = bigleaf.constants())
@@ -64,3 +64,4 @@ Conversion between vapor pressure (e), vapor pressure deficit (VPD),
 \references{
 Foken, T, 2008: Micrometeorology. Springer, Berlin, Germany.
 }
+\concept{humidity conversion}

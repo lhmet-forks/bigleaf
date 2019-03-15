@@ -14,7 +14,7 @@
 #' @param Mw           Molar mass of water vapor (kg mol-1)
 #' @param eps          Ratio of the molecular weight of water vapor to dry air (=Mw/Md)
 #' @param g            Gravitational acceleration (m s-2)
-#' @param solar.constant Solar constant (W m-2)
+#' @param solar_constant Solar constant (W m-2)
 #' @param pressure0    Reference atmospheric pressure at sea level (Pa)
 #' @param Tair0        Reference air temperature (K)
 #' @param k            von Karman constant
@@ -68,13 +68,13 @@ bigleaf.constants <- function(
   Mw         = 0.0180153,       # molar mass of water vapor (kg mol-1)
   eps        = 0.622,           # ratio of the molecular weight of water vapor to dry air (=Mw/Md)
   g          = 9.81,            # gravitational acceleration (m s-2)
-  solar.constant = 1366.1,      # solar constant, i.e. solar radation at earth distance from the sun (W m-2)
+  solar_constant = 1366.1,      # solar constant, i.e. solar radation at earth distance from the sun (W m-2)
   pressure0  = 101325,          # reference atmospheric pressure at sea level (Pa)
   Tair0      = 273.15,          # reference air temperature (K)
   k          = 0.41,            # von Karman constant
   Cmol       = 0.012011,        # molar mass of carbon (kg mol-1)
   Omol       = 0.0159994,       # molar mass of oxygen (kg mol-1)
-  H2Omol     = 18.01528/1000,   # molar mass of water (kg mol-1)
+  H2Omol     = 0.01801528,      # molar mass of water (kg mol-1)
   sigma      = 5.670367e-08,    # Stefan-Boltzmann constant (W m-2 K-4)
   Pr         = 0.71,            # Prandtl number
   Sc_CO2     = 1.07,            # Schmidt number for CO2 (Hicks et al. 1987)
@@ -97,7 +97,7 @@ bigleaf.constants <- function(
 
   list(
     cp = cp, Rgas = Rgas, Rv = Rv, Rd = Rd, Md = Md, Mw = Mw, eps = eps, g = g,
-    solar.constant = solar.constant,
+    solar_constant = solar_constant,
     pressure0 = pressure0, Tair0 = Tair0, k = k, Cmol = Cmol, Omol = Omol,
     H2Omol = H2Omol,
     sigma = sigma, Pr = Pr, Sc_CO2 = Sc_CO2, Kelvin = Kelvin, DwDc = DwDc,

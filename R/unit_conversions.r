@@ -145,6 +145,7 @@ rH.to.VPD <- function(rH,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","All
   if(any(rH > 1 & !is.na(rH))){
     warning("relative humidity (rH) has to be between 0 and 1.")
   }
+  
   esat <- Esat.slope(Tair,Esat.formula,constants)[,"Esat"]
   VPD  <- esat - rH*esat
   return(VPD)
@@ -154,11 +155,15 @@ rH.to.VPD <- function(rH,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","All
 #' @family humidity conversion
 #' @export
 e.to.rH <- function(e,Tair,Esat.formula=c("Sonntag_1990","Alduchov_1996","Allen_1998"),
-                      constants=bigleaf.constants()){
+                    constants=bigleaf.constants()){
+  
   esat <- Esat.slope(Tair,Esat.formula,constants)[,"Esat"]
-  if (any(e > esat + .Machine$double.eps^0.5 )) warning(
-    "provided vapour pressure that was higher than saturation. "
-    ,"Returning rH=1 for those cases.")
+  
+  if (any(e > esat + .Machine$double.eps^0.5 & !is.na(e))){
+    warning("Provided vapour pressure that was higher than saturation.
+             Returning rH=1 for those cases.")
+  }
+    
   rH  <- pmin(1, e/esat)
   return(rH)
 }
@@ -275,6 +280,29 @@ PPFD.to.Rg <- function(PPFD,J_to_mol=4.6,frac_PAR=0.5){
 
 
 
+#' Conversion between Mass and Molar Units
+#' 
+#' @description Converts mass units of a substance to the corresponding molar units
+#'              and vice versa.
+#'
+#' @param mass      Numeric vector of mass in kg
+#' @param molarMass Numeric vector of molar mass of the substance (kg mol-1)
+#'                  e.g. as provided by \code{\link{bigleaf.constants}}()$H2Omol
+#'                  Default is molar mass of Water.
+#'
+#' @return Numeric vector of amount of substance in mol.
+#' @export
+kg.to.mol <- function(mass, molarMass=bigleaf.constants()$H2Omol){
+  
+  moles <- mass / molarMass
+  
+  return(moles)
+
+}
+
+
+
+
 #' Conversion between Mass and Molar Units of Carbon and CO2
 #'
 #' @description Converts CO2 quantities from umol CO2 m-2 s-1 to g C m-2 d-1 and vice versa.
@@ -294,33 +322,12 @@ PPFD.to.Rg <- function(PPFD,J_to_mol=4.6,frac_PAR=0.5){
 #' @export
 umolCO2.to.gC <- function(CO2_flux,constants=bigleaf.constants()){
 
-  #TODO base on g.to.mol
   C_flux <- CO2_flux * constants$umol2mol * constants$Cmol * constants$kg2g * constants$days2seconds
 
   return(C_flux)
 }
 
-# umol.to.g <- function(flux, molarMass, constants=bigleaf.constants()){
-#
-#   massFlux <- CO2_flux * constants$umol2mol * molarMass * constants$kg2g * constants$days2seconds
-#
-#   return(massFlux)
-# }
 
-#' convert mass in g to amount of substance in umol
-#'
-#' @param mass numeric vector of mass in kg
-#' @param molarMass numeric vector of molar mass of the substance in kg/mol
-#'     e.g. as provided by \code{\link{bigleaf.constants}}()$H2Omol
-#'     Default is molar mass of Water.
-#'
-#' @return numeric vector of amount of substance in mol
-#' @export
-kg.to.mol <- function(mass, molarMass=bigleaf.constants()$H2Omol){
-  #TODO test and fix, compare to REddyProc formulation by Moffat
-  molarFlux <- mass / molarMass
-  return(molarFlux)
-}
 
 
 #' @rdname umolCO2.to.gC

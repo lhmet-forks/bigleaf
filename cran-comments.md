@@ -1,6 +1,6 @@
 ## Test environments
-- i386-w64-mingw32/i386 (32-bit); Windows 7 x64; R version 3.3.3 (package development) and R devel version (winbuilder)
-- i686-pc-linux-gnu (32-bit); Ubuntu 17.10; R version 3.4.2
+- x86_64-w64-mingw32/x64 (64-bit); R version 3.5.1 (package development)
+- x86_64-pc-linux-gnu (64-bit); SUSE Linux Enterprise Server 12 SP3; R version 3.2.5
 
 ## R CMD check results
 0 errors, 0 warnings, 0 notes
@@ -9,4 +9,5 @@
 there are currently no downstream dependencies for this package.
 
 ## Resubmission
-this is a resubmission with some minor changes to existing functions and the addition of a vignette 
+this is a resubmission with some minor changes to existing functions and the vignette.
+Encoding: UTF-8 was added to DESCRIPTION.

@@ -7,7 +7,8 @@ urlcolor: blue
 vignette: >
   %\VignetteIndexEntry{Tutorial on bigleaf}
   %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
+  %\usepackage[utf8]{inputenc}
 ---
 
 ```{r, echo = FALSE}

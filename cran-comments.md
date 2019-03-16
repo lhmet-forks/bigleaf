@@ -8,6 +8,9 @@
 ## Downstream dependencies
 there are currently no downstream dependencies for this package.
 
+## Email address changed
+Note that the maintainer's email address was updated
+
 ## Resubmission
 this is a resubmission with some minor changes to existing functions and the vignette.
 Encoding: UTF-8 was added to DESCRIPTION.

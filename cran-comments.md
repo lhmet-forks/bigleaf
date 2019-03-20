@@ -1,6 +1,9 @@
 ## Test environments
 - x86_64-w64-mingw32/x64 (64-bit); R version 3.5.1 (package development)
-- x86_64-pc-linux-gnu (64-bit); SUSE Linux Enterprise Server 12 SP3; R version 3.2.5
+- checks on other environments using the rhub package:
+  - Debian Linux, R-release, GCC
+  - Debian Linux, R-devel, GCC ASAN/UBSAN
+  - Windows Server 2008 R2 SP1, R-devel, 32/64 bit
 
 ## R CMD check results
 0 errors, 0 warnings, 0 notes

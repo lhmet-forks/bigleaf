@@ -9,11 +9,9 @@
 0 errors, 0 warnings, 0 notes
 
 ## Downstream dependencies
-there are currently no downstream dependencies for this package.
-
-## Email address changed
-Note that the maintainer's email address was updated
+the package has the following revers dependencies:
+Reverse suggests: REddyProc
 
 ## Resubmission
-this is a resubmission with some minor changes to existing functions and the vignette.
-Encoding: UTF-8 was added to DESCRIPTION.
+this is a resubmission in response to the email by Kurt Hornik from 26/05/2019.
+The package was rebuilt with an updated version (1.23) of the knitr package.

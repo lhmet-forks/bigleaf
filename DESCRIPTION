@@ -1,7 +1,7 @@
 Package: bigleaf
 Type: Package
-Version: 0.7.0
-Date: 2019-03-15
+Version: 0.7.1
+Date: 2019-06-08
 Title: Physical and Physiological Ecosystem Properties from Eddy Covariance Data
 Authors@R: c( person("Juergen", "Knauer", role=c("aut","cre"), email="Juergen.Knauer@csiro.au"),
               person("Soenke", "Zaehle", role=c("ctb"), email="szaehle@bgc-jena.mpg.de"),
@@ -21,7 +21,6 @@ Imports: robustbase, solartime
 License: GPL (>= 2)
 LazyData: yes
 RoxygenNote: 6.1.1
-Encoding: UTF-8
 Suggests: knitr,
     rmarkdown, testthat
 VignetteBuilder: knitr

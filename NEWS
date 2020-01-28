@@ -1,6 +1,11 @@
 NEWS for Package 'bigleaf'
 
 
+version 0.7.2 (2020-01-28)
+
+ - z0m as input to Choudhury_1988 and Su_2001 functions for boundary layer conductance. Avoids the implicit assumptions that z0m is constant over the    entire time period. If z0m is not provided as input, the assumption of a constant z0m is still made and z0m is estimated from the roughness.parameters(  (method='wind_profile') function. 
+
+
 version 0.7.1 (2019-06-08)
 
  - package rebuilt with knitr version 1.23 (fixed encoding issue)

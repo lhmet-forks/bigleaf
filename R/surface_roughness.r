@@ -215,8 +215,8 @@ roughness.parameters <- function(method=c("canopy_height","canopy_height&LAI","w
 #' @param frac_d    Fraction of displacement height on canopy height (-);
 #'                  only used if \code{d} is not available
 #' @param z0m       Roughness length (m), optional; only used if \code{stab_correction = FALSE} (default=0.1) 
-#' @param frac_z0m  Fraction of roughness length on canopy height (-), optional; only used 
-#'                  if \code{stab_correction = FALSE} (default=0.1), only used if \code{z0m} is not available
+#' @param frac_z0m  Fraction of roughness length on canopy height (-), optional; only used if \code{z0m} is not provided.
+#'                  Default is 0.1.
 #' @param estimate_z0m Should \code{z0m} be estimated from the logarithmic wind profile? If \code{TRUE} (the default),
 #'                     arguments \code{z0m} and \code{frac_z0m} are ignored.
 #'                     See \code{\link{roughness.parameters}} for details. 

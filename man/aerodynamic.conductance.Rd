@@ -5,8 +5,8 @@
 \title{Aerodynamic Conductance}
 \usage{
 aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
-  wind = "wind", ustar = "ustar", H = "H", zr, zh, d, z0m, Dl,
-  N = 2, fc = NULL, LAI, Cd = 0.2, hs = 0.01,
+  wind = "wind", ustar = "ustar", H = "H", zr, zh, d, z0m = NULL,
+  Dl, N = 2, fc = NULL, LAI, Cd = 0.2, hs = 0.01,
   wind_profile = FALSE, stab_correction = TRUE,
   stab_formulation = c("Dyer_1970", "Businger_1971"),
   Rb_model = c("Thom_1972", "Choudhury_1988", "Su_2001",
@@ -32,7 +32,9 @@ aerodynamic.conductance(data, Tair = "Tair", pressure = "pressure",
 
 \item{d}{Zero-plane displacement height (m)}
 
-\item{z0m}{Roughness length for momentum (m)}
+\item{z0m}{Roughness length for momentum (m), optional; if not provided, it is estimated from \code{roughness.parameters}
+(method="wind_profile"). Only used if \code{wind_profile = TRUE} and/or \code{Rb_model} = \code{"Su_2001"} or
+\code{"Choudhury_1988"}.}
 
 \item{Dl}{Characteristic leaf dimension (m) (if \code{Rb_model} = \code{"Su_2001"}) 
 or leaf width (if \code{Rb_model} = \code{"Choudhury_1988"}); ignored otherwise.}
@@ -183,6 +185,12 @@ The roughness length for water and heat (z0h) is not returned by this function, 
       Note that boundary layer conductance to water vapor transfer (Gb_w) is often 
       assumed to equal Gb_h. This assumption is also made in this R package, for 
       example in the function \code{\link{surface.conductance}}.
+      
+      If the roughness length for momentum (\code{z0m}) is not provided as input, it is estimated 
+      from the function \code{roughness.parameters} within \code{wind.profile} if \code{wind_profile = TRUE} 
+      and/or \code{Rb_model} = \code{"Su_2001"} or \code{"Choudhury_1988"} The \code{roughness.parameters}
+      function estimates a single \code{z0m} value for the entire time period! If a varying \code{z0m} value 
+      (e.g. across seasons or years) is required, \code{z0m} should be provided as input argument.
 }
 \examples{
 df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250))   

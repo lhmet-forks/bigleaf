@@ -16,7 +16,9 @@
 #' @param zr                Instrument (reference) height (m)
 #' @param zh                Canopy height (m)
 #' @param d                 Zero-plane displacement height (m)
-#' @param z0m               Roughness length for momentum (m)
+#' @param z0m               Roughness length for momentum (m), optional; if not provided, it is estimated from \code{roughness.parameters}
+#'                          (method="wind_profile"). Only used if \code{wind_profile = TRUE} and/or \code{Rb_model} = \code{"Su_2001"} or
+#'                          \code{"Choudhury_1988"}.
 #' @param Dl                Characteristic leaf dimension (m) (if \code{Rb_model} = \code{"Su_2001"}) 
 #'                          or leaf width (if \code{Rb_model} = \code{"Choudhury_1988"}); ignored otherwise.
 #' @param N                 Number of leaf sides participating in heat exchange (1 or 2); only used if \code{Rb_model = "Su_2001"}.
@@ -148,6 +150,13 @@
 #'       Note that boundary layer conductance to water vapor transfer (Gb_w) is often 
 #'       assumed to equal Gb_h. This assumption is also made in this R package, for 
 #'       example in the function \code{\link{surface.conductance}}.
+#'       
+#'       If the roughness length for momentum (\code{z0m}) is not provided as input, it is estimated 
+#'       from the function \code{roughness.parameters} within \code{wind.profile} if \code{wind_profile = TRUE} 
+#'       and/or \code{Rb_model} = \code{"Su_2001"} or \code{"Choudhury_1988"} The \code{roughness.parameters}
+#'       function estimates a single \code{z0m} value for the entire time period! If a varying \code{z0m} value 
+#'       (e.g. across seasons or years) is required, \code{z0m} should be provided as input argument.
+#'       
 #'         
 #' @references Verma, S., 1989: Aerodynamic resistances to transfers of heat, mass and momentum.
 #'             In: Estimation of areal evapotranspiration, IAHS Pub, 177, 13-20.
@@ -178,7 +187,7 @@
 #' 
 #' @export
 aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar="ustar",H="H",
-                                    zr,zh,d,z0m,Dl,N=2,fc=NULL,LAI,Cd=0.2,hs=0.01,wind_profile=FALSE,
+                                    zr,zh,d,z0m=NULL,Dl,N=2,fc=NULL,LAI,Cd=0.2,hs=0.01,wind_profile=FALSE,
                                     stab_correction=TRUE,stab_formulation=c("Dyer_1970","Businger_1971"),
                                     Rb_model=c("Thom_1972","Choudhury_1988","Su_2001","constant_kB-1"),
                                     kB_h=NULL,Sc=NULL,Sc_name=NULL,constants=bigleaf.constants()){
@@ -198,14 +207,14 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
     } else if (Rb_model == "Choudhury_1988"){
       
       Gb_mod <- Gb.Choudhury(data,Tair=Tair,pressure=pressure,wind=wind,ustar=ustar,
-                             H=H,leafwidth=Dl,LAI=LAI,zh=zh,zr=zr,d=d,
+                             H=H,leafwidth=Dl,LAI=LAI,zh=zh,zr=zr,d=d,z0m=z0m,
                              stab_formulation=stab_formulation,Sc=Sc,Sc_name=Sc_name,
                              constants=constants)
       
     } else if (Rb_model == "Su_2001"){
       
       Gb_mod <- Gb.Su(data=data,Tair=Tair,pressure=pressure,ustar=ustar,wind=wind,
-                      H=H,zh=zh,zr=zr,d=d,Dl=Dl,N=N,fc=fc,LAI=LAI,Cd=Cd,hs=hs,
+                      H=H,zh=zh,zr=zr,d=d,z0m=z0m,Dl=Dl,N=N,fc=fc,LAI=LAI,Cd=Cd,hs=hs,
                       stab_formulation=stab_formulation,Sc=Sc,Sc_name=Sc_name,
                       constants=constants)  
       
@@ -245,6 +254,16 @@ aerodynamic.conductance <- function(data,Tair="Tair",pressure="pressure",wind="w
   
   ## calculate aerodynamic conductance for momentum (Ga_m)
   if (wind_profile){
+    
+    if (is.null(z0m) & Rb_model %in% c("constant_kB-1","Thom_1972")){
+      stop("z0m must be provided if wind_profile=TRUE!")
+    } else if (is.null(z0m) & Rb_model %in% c("Choudhury_1988","Su_2001")){
+      # z0m estimated as in Choudhury_1988 or Su_2001
+      z0m <- roughness.parameters(method="wind_profile",zh=zh,zr=zr,d=d,data=data,
+                                  Tair=Tair,pressure=pressure,wind=wind,ustar=ustar,H=H,
+                                  stab_roughness=TRUE,stab_formulation=stab_formulation,
+                                  constants=constants)[,"z0m"]
+    }
     
     if (stab_correction){
       

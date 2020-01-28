@@ -4,7 +4,7 @@
 \alias{wind.profile}
 \title{Wind Speed at Given Heights in the Surface Layer}
 \usage{
-wind.profile(data, heights, Tair = "Tair", pressure = "pressure",
+wind.profile(data, z, Tair = "Tair", pressure = "pressure",
   ustar = "ustar", H = "H", wind = "wind", zr, zh, d = NULL,
   frac_d = 0.7, z0m = NULL, frac_z0m = NULL, estimate_z0m = TRUE,
   stab_correction = TRUE, stab_formulation = c("Dyer_1970",
@@ -13,8 +13,8 @@ wind.profile(data, heights, Tair = "Tair", pressure = "pressure",
 \arguments{
 \item{data}{Data.frame or matrix containing all required variables}
 
-\item{heights}{Vector with heights for which wind speed is to be 
-calculated.}
+\item{z}{Heights above ground for which wind speed is calculated.
+Needs to be of same length as \code{data} or of length 1}
 
 \item{Tair}{Air temperature (deg C)}
 
@@ -55,8 +55,7 @@ cp - specific heat of air for constant pressure (J K-1 kg-1) \cr
 g - gravitational acceleration (m s-2)}
 }
 \value{
-A data.frame with rows representing time and columns representing heights 
-        as specified in \code{heights}.
+A vector of wind speed at heights \code{z}.
 }
 \description{
 Wind speed at a given height above the canopy estimated from single-level
@@ -82,8 +81,13 @@ Note that this equation is only valid for z >= d + z0m, and it is not
       smaller than d + z0m will return 0.
 }
 \examples{
+heights <- seq(18,40,2)  # heights above ground for which to calculate wind speed
 df <- data.frame(Tair=25,pressure=100,wind=c(3,4,5),ustar=c(0.5,0.6,0.65),H=c(200,230,250)) 
-wind.profile(df,heights=seq(18,40,2),zr=40,zh=25,d=16)
+ws <- data.frame(matrix(NA,ncol=length(heights),nrow=nrow(df)))
+colnames(ws) <- paste0(heights,"m")
+for (i in seq_along(heights)){
+  ws[,i] <- wind.profile(df,z=heights[i],zr=40,zh=25,d=16)
+}
 
 }
 \references{

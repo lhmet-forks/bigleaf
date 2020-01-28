@@ -177,9 +177,9 @@ Gb.Choudhury <- function(data,Tair="Tair",pressure="pressure",wind="wind",ustar=
     estimate_z0m <- FALSE
   }
   
-  wind_zh <- wind.profile(data=data,heights=zh,Tair=Tair,pressure=pressure,ustar=ustar,H=H,
+  wind_zh <- wind.profile(data=data,z=zh,Tair=Tair,pressure=pressure,ustar=ustar,H=H,
                           zr=zr,estimate_z0m=estimate_z0m,zh=zh,d=d,z0m=z0m,frac_z0m=NULL,
-                          stab_correction=TRUE,stab_formulation=stab_formulation)[,1]
+                          stab_correction=TRUE,stab_formulation=stab_formulation)
   
   ## avoid zero windspeed
   wind_zh <- pmax(0.01,wind_zh)
@@ -338,9 +338,9 @@ Gb.Su <- function(data,Tair="Tair",pressure="pressure",ustar="ustar",wind="wind"
     estimate_z0m <- FALSE
   }
   
-  wind_zh <- wind.profile(data=data,heights=zh,Tair=Tair,pressure=pressure,ustar=ustar,H=H,
+  wind_zh <- wind.profile(data=data,z=zh,Tair=Tair,pressure=pressure,ustar=ustar,H=H,
                           zr=zr,estimate_z0m=estimate_z0m,zh=zh,d=d,z0m=z0m,frac_z0m=NULL,
-                          stab_correction=TRUE,stab_formulation=stab_formulation)[,1]
+                          stab_correction=TRUE,stab_formulation=stab_formulation)
   
   v   <- kinematic.viscosity(Tair,pressure,constants)
   Re  <- Reynolds.Number(Tair,pressure,ustar,hs,constants)

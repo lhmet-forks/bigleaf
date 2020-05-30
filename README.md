@@ -105,5 +105,5 @@ The package provides the following functionalities:
 - carbon fluxes from umol m-2 s-1 to g m-2 day-1
 
 ## Contact
-For questions, remarks, and suggestions please contact jknauer@bgc-jena.mpg.de
+For questions, remarks, and suggestions please contact Juergen.Knauer@csiro.au
 
